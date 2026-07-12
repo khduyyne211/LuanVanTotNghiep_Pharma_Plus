@@ -1,0 +1,29 @@
+# Frontend React/Vite
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Backend Spring Boot/Maven
+backend/target/
+*.class
+*.jar
+*.log
+
+# Biến môi trường
+**/.env
+**/.env.*
+!**/.env.example
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Hệ điều hành
+.DS_Store
+Thumbs.db
+
+# File tạm
+*.tmp
+*.temp
+backend/src/main/resources/application.properties
