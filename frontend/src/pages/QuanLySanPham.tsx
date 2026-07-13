@@ -6,6 +6,7 @@ import SanPhamFormModal from "../components/SanPhamFormModal";
 import DonViSanPhamFormModal from "../components/DonViSanPhamFormModal";
 import QuyDoiDonViFormModal from "../components/QuyDoiDonViFormModal";
 import SanPhamBoLoc from "../features/san-pham/components/SanPhamBoLoc";
+import SanPhamTable from "../features/san-pham/components/SanPhamTable";
 type DanhMucSanPham = {
   maDanhMuc: number;
   tenDanhMuc: string;
@@ -321,9 +322,6 @@ function QuanLySanPham() {
     return giaTri.toLocaleString("vi-VN") + " đ";
   };
 
-  const dinhDangNgay = (ngay: string) => {
-    return new Date(ngay).toLocaleDateString("vi-VN");
-  };
 
   return (
     <div>
@@ -381,137 +379,20 @@ function QuanLySanPham() {
           setPage(0);
         }}
       />
-
-      <div className="table-card">
-        {loading ? (
-          <p style={{ padding: "16px" }}>Đang tải danh sách sản phẩm...</p>
-        ) : (
-          <>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Mã</th>
-                  <th>Tên sản phẩm</th>
-                  <th>Danh mục</th>
-                  <th>Nhà sản xuất</th>
-                  <th>Giá bán</th>
-                  <th>Kê đơn</th>
-                  <th>Trạng thái</th>
-                  <th>Ngày tạo</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {danhSachSanPham.map((sp) => (
-                  <tr key={sp.maSanPham}>
-                    <td>{sp.maSanPham}</td>
-
-                    <td>
-                      <strong>{sp.tenSanPham}</strong>
-                      <div className="muted-text">{sp.moTaNgan}</div>
-                    </td>
-
-                    <td>{sp.tenDanhMuc}</td>
-
-                    <td>{sp.tenNhaSanXuat || "Chưa cập nhật"}</td>
-
-                    <td>{dinhDangTien(sp.giaBan)}</td>
-
-                    <td>{sp.laThuocKeDon ? "Có" : "Không"}</td>
-
-                    <td>
-                      <span
-                        className={
-                          sp.trangThaiSanPham
-                            ? "status-active"
-                            : "status-inactive"
-                        }
-                      >
-                        {sp.trangThaiSanPham ? "Đang bán" : "Ngừng bán"}
-                      </span>
-                    </td>
-
-                    <td>{dinhDangNgay(sp.ngayTao)}</td>
-
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="small-button"
-                          onClick={() => moFormSua(sp)}
-                        >
-                          Sửa
-                        </button>
-
-                        <button
-                          className="small-button"
-                          onClick={() => xemChiTietSanPham(sp.maSanPham)}
-                        >
-                          Xem chi tiết
-                        </button>
-
-                        {sp.trangThaiSanPham ? (
-                          <button
-                            className="small-button warning-button"
-                            onClick={() => anSanPham(sp.maSanPham)}
-                          >
-                            Ẩn
-                          </button>
-                        ) : (
-                          <button
-                            className="small-button success-button"
-                            onClick={() => hienSanPham(sp.maSanPham)}
-                          >
-                            Hiện
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-
-                {danhSachSanPham.length === 0 && (
-                  <tr>
-                    <td colSpan={9} className="empty-cell">
-                      Không tìm thấy sản phẩm phù hợp.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-
-            <div className="pagination-row" style={{ padding: "0 16px 16px" }}>
-              <div>
-                Tổng cộng <strong>{totalElements}</strong> sản phẩm
-              </div>
-
-              <div className="pagination-actions">
-                <button
-                  className="small-button"
-                  disabled={first}
-                  onClick={() => setPage(page - 1)}
-                >
-                  Trang trước
-                </button>
-
-                <span>
-                  Trang <strong>{totalPages === 0 ? 0 : page + 1}</strong> /{" "}
-                  <strong>{totalPages}</strong>
-                </span>
-
-                <button
-                  className="small-button"
-                  disabled={last}
-                  onClick={() => setPage(page + 1)}
-                >
-                  Trang sau
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
+      <SanPhamTable
+        danhSachSanPham={danhSachSanPham}
+        loading={loading}
+        page={page}
+        totalElements={totalElements}
+        totalPages={totalPages}
+        first={first}
+        last={last}
+        onSua={moFormSua}
+        onXemChiTiet={xemChiTietSanPham}
+        onAn={anSanPham}
+        onHien={hienSanPham}
+        onPageChange={setPage}
+      />
       {dangTaiChiTiet && (
         <div className="modal-overlay">
           <div className="modal-card product-detail-modal">
