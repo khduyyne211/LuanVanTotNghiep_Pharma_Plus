@@ -24,7 +24,7 @@ public class DonViTinhService {
                 .toList();
     }
 
-    public DonViTinhResponse layChiTietDonViTinh(Long maDonViTinh) {
+    public DonViTinhResponse layChiTietDonViTinh(long maDonViTinh) {
         DonViTinh donViTinh = donViTinhRepository.findById(maDonViTinh)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính"));
 
@@ -47,7 +47,7 @@ public class DonViTinhService {
         return toResponse(saved);
     }
 
-    public DonViTinhResponse capNhatDonViTinh(Long maDonViTinh, DonViTinhRequest request) {
+    public DonViTinhResponse capNhatDonViTinh(long maDonViTinh, DonViTinhRequest request) {
         DonViTinh donViTinh = donViTinhRepository.findById(maDonViTinh)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính"));
 
@@ -69,7 +69,7 @@ public class DonViTinhService {
         return toResponse(updated);
     }
 
-    public DonViTinhResponse anDonViTinh(Long maDonViTinh) {
+    public DonViTinhResponse anDonViTinh(long maDonViTinh) {
         DonViTinh donViTinh = donViTinhRepository.findById(maDonViTinh)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính"));
 
@@ -80,7 +80,7 @@ public class DonViTinhService {
         return toResponse(updated);
     }
 
-    public DonViTinhResponse hienDonViTinh(Long maDonViTinh) {
+    public DonViTinhResponse hienDonViTinh(long maDonViTinh) {
         DonViTinh donViTinh = donViTinhRepository.findById(maDonViTinh)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính"));
 

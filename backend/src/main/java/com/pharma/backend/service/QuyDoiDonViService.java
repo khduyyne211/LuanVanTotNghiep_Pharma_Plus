@@ -27,47 +27,75 @@ public class QuyDoiDonViService {
     private final DonViSanPhamRepository donViSanPhamRepository;
 
     @Transactional(readOnly = true)
-    public List<QuyDoiDonViResponse> layDanhSachQuyDoiTheoSanPham(Long maSanPham) {
-        return quyDoiDonViRepository.findBySanPham_MaSanPhamOrderByMaQuyDoiAsc(maSanPham)
+    public List<QuyDoiDonViResponse> layDanhSachQuyDoiTheoSanPham(
+            long maSanPham
+    ) {
+        return quyDoiDonViRepository
+                .findBySanPham_MaSanPhamOrderByMaQuyDoiAsc(maSanPham)
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public QuyDoiDonViResponse layChiTietQuyDoiDonVi(Long maQuyDoi) {
-        QuyDoiDonVi quyDoiDonVi = quyDoiDonViRepository.findById(maQuyDoi)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy quy đổi đơn vị"));
+    public QuyDoiDonViResponse layChiTietQuyDoiDonVi(
+            long maQuyDoi
+    ) {
+        QuyDoiDonVi quyDoiDonVi = quyDoiDonViRepository
+                .findById(maQuyDoi)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy quy đổi đơn vị"
+                ));
 
         return toResponse(quyDoiDonVi);
     }
 
     @Transactional
-    public QuyDoiDonViResponse themQuyDoiDonVi(QuyDoiDonViRequest request) {
+    public QuyDoiDonViResponse themQuyDoiDonVi(
+            QuyDoiDonViRequest request
+    ) {
         kiemTraDuLieuRequest(request);
 
-        SanPham sanPham = laySanPham(request.getMaSanPham());
-        DonViSanPham donViNguon = layDonViSanPham(request.getMaDonViNguon());
-        DonViSanPham donViDich = layDonViSanPham(request.getMaDonViDich());
+        long maSanPham = layGiaTriLongBatBuoc(
+                request.getMaSanPham(),
+                "Sản phẩm không được để trống"
+        );
+
+        long maDonViNguon = layGiaTriLongBatBuoc(
+                request.getMaDonViNguon(),
+                "Đơn vị nguồn không được để trống"
+        );
+
+        long maDonViDich = layGiaTriLongBatBuoc(
+                request.getMaDonViDich(),
+                "Đơn vị đích không được để trống"
+        );
+
+        SanPham sanPham = laySanPham(maSanPham);
+        DonViSanPham donViNguon = layDonViSanPham(maDonViNguon);
+        DonViSanPham donViDich = layDonViSanPham(maDonViDich);
 
         kiemTraDonViThuocDungSanPham(
-                request.getMaSanPham(),
+                maSanPham,
                 donViNguon,
                 donViDich
         );
 
         boolean biTrungQuyDoi = quyDoiDonViRepository
                 .existsBySanPham_MaSanPhamAndDonViNguon_MaDonViSanPhamAndDonViDich_MaDonViSanPham(
-                        request.getMaSanPham(),
-                        request.getMaDonViNguon(),
-                        request.getMaDonViDich()
+                        maSanPham,
+                        maDonViNguon,
+                        maDonViDich
                 );
 
         if (biTrungQuyDoi) {
-            throw new IllegalArgumentException("Quy đổi đơn vị này đã tồn tại");
+            throw new IllegalArgumentException(
+                    "Quy đổi đơn vị này đã tồn tại"
+            );
         }
 
         QuyDoiDonVi quyDoiDonVi = new QuyDoiDonVi();
+
         quyDoiDonVi.setSanPham(sanPham);
         quyDoiDonVi.setDonViNguon(donViNguon);
         quyDoiDonVi.setSoLuongNguon(request.getSoLuongNguon());
@@ -75,41 +103,62 @@ public class QuyDoiDonViService {
         quyDoiDonVi.setSoLuongDich(request.getSoLuongDich());
         quyDoiDonVi.setTrangThai(true);
 
-        QuyDoiDonVi saved = quyDoiDonViRepository.save(quyDoiDonVi);
+        QuyDoiDonVi quyDoiDaLuu =
+                quyDoiDonViRepository.save(quyDoiDonVi);
 
-        return toResponse(saved);
+        return toResponse(quyDoiDaLuu);
     }
 
     @Transactional
     public QuyDoiDonViResponse capNhatQuyDoiDonVi(
-            Long maQuyDoi,
+            long maQuyDoi,
             QuyDoiDonViRequest request
     ) {
         kiemTraDuLieuRequest(request);
 
-        QuyDoiDonVi quyDoiDonVi = quyDoiDonViRepository.findById(maQuyDoi)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy quy đổi đơn vị"));
+        long maSanPham = layGiaTriLongBatBuoc(
+                request.getMaSanPham(),
+                "Sản phẩm không được để trống"
+        );
 
-        SanPham sanPham = laySanPham(request.getMaSanPham());
-        DonViSanPham donViNguon = layDonViSanPham(request.getMaDonViNguon());
-        DonViSanPham donViDich = layDonViSanPham(request.getMaDonViDich());
+        long maDonViNguon = layGiaTriLongBatBuoc(
+                request.getMaDonViNguon(),
+                "Đơn vị nguồn không được để trống"
+        );
+
+        long maDonViDich = layGiaTriLongBatBuoc(
+                request.getMaDonViDich(),
+                "Đơn vị đích không được để trống"
+        );
+
+        QuyDoiDonVi quyDoiDonVi = quyDoiDonViRepository
+                .findById(maQuyDoi)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy quy đổi đơn vị"
+                ));
+
+        SanPham sanPham = laySanPham(maSanPham);
+        DonViSanPham donViNguon = layDonViSanPham(maDonViNguon);
+        DonViSanPham donViDich = layDonViSanPham(maDonViDich);
 
         kiemTraDonViThuocDungSanPham(
-                request.getMaSanPham(),
+                maSanPham,
                 donViNguon,
                 donViDich
         );
 
         boolean biTrungQuyDoi = quyDoiDonViRepository
                 .existsBySanPham_MaSanPhamAndDonViNguon_MaDonViSanPhamAndDonViDich_MaDonViSanPhamAndMaQuyDoiNot(
-                        request.getMaSanPham(),
-                        request.getMaDonViNguon(),
-                        request.getMaDonViDich(),
+                        maSanPham,
+                        maDonViNguon,
+                        maDonViDich,
                         maQuyDoi
                 );
 
         if (biTrungQuyDoi) {
-            throw new IllegalArgumentException("Quy đổi đơn vị này đã tồn tại");
+            throw new IllegalArgumentException(
+                    "Quy đổi đơn vị này đã tồn tại"
+            );
         }
 
         quyDoiDonVi.setSanPham(sanPham);
@@ -118,112 +167,240 @@ public class QuyDoiDonViService {
         quyDoiDonVi.setDonViDich(donViDich);
         quyDoiDonVi.setSoLuongDich(request.getSoLuongDich());
 
-        QuyDoiDonVi updated = quyDoiDonViRepository.save(quyDoiDonVi);
+        QuyDoiDonVi quyDoiDaCapNhat =
+                quyDoiDonViRepository.save(quyDoiDonVi);
 
-        return toResponse(updated);
+        return toResponse(quyDoiDaCapNhat);
     }
 
     @Transactional
-    public QuyDoiDonViResponse anQuyDoiDonVi(Long maQuyDoi) {
-        QuyDoiDonVi quyDoiDonVi = quyDoiDonViRepository.findById(maQuyDoi)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy quy đổi đơn vị"));
+    public QuyDoiDonViResponse anQuyDoiDonVi(
+            long maQuyDoi
+    ) {
+        QuyDoiDonVi quyDoiDonVi = quyDoiDonViRepository
+                .findById(maQuyDoi)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy quy đổi đơn vị"
+                ));
 
         quyDoiDonVi.setTrangThai(false);
 
-        QuyDoiDonVi updated = quyDoiDonViRepository.save(quyDoiDonVi);
+        QuyDoiDonVi quyDoiDaCapNhat =
+                quyDoiDonViRepository.save(quyDoiDonVi);
 
-        return toResponse(updated);
+        return toResponse(quyDoiDaCapNhat);
     }
 
     @Transactional
-    public QuyDoiDonViResponse hienQuyDoiDonVi(Long maQuyDoi) {
-        QuyDoiDonVi quyDoiDonVi = quyDoiDonViRepository.findById(maQuyDoi)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy quy đổi đơn vị"));
+    public QuyDoiDonViResponse hienQuyDoiDonVi(
+            long maQuyDoi
+    ) {
+        QuyDoiDonVi quyDoiDonVi = quyDoiDonViRepository
+                .findById(maQuyDoi)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy quy đổi đơn vị"
+                ));
 
         quyDoiDonVi.setTrangThai(true);
 
-        QuyDoiDonVi updated = quyDoiDonViRepository.save(quyDoiDonVi);
+        QuyDoiDonVi quyDoiDaCapNhat =
+                quyDoiDonViRepository.save(quyDoiDonVi);
 
-        return toResponse(updated);
+        return toResponse(quyDoiDaCapNhat);
     }
 
-    private void kiemTraDuLieuRequest(QuyDoiDonViRequest request) {
+    private void kiemTraDuLieuRequest(
+            QuyDoiDonViRequest request
+    ) {
+        if (request == null) {
+            throw new IllegalArgumentException(
+                    "Dữ liệu quy đổi không được để trống"
+            );
+        }
+
         if (request.getMaSanPham() == null) {
-            throw new IllegalArgumentException("Sản phẩm không được để trống");
+            throw new IllegalArgumentException(
+                    "Sản phẩm không được để trống"
+            );
         }
 
         if (request.getMaDonViNguon() == null) {
-            throw new IllegalArgumentException("Đơn vị nguồn không được để trống");
+            throw new IllegalArgumentException(
+                    "Đơn vị nguồn không được để trống"
+            );
         }
 
         if (request.getMaDonViDich() == null) {
-            throw new IllegalArgumentException("Đơn vị đích không được để trống");
+            throw new IllegalArgumentException(
+                    "Đơn vị đích không được để trống"
+            );
         }
 
-        if (request.getMaDonViNguon().equals(request.getMaDonViDich())) {
-            throw new IllegalArgumentException("Đơn vị nguồn và đơn vị đích không được giống nhau");
+        if (request.getMaDonViNguon()
+                .equals(request.getMaDonViDich())) {
+            throw new IllegalArgumentException(
+                    "Đơn vị nguồn và đơn vị đích không được giống nhau"
+            );
         }
 
         if (request.getSoLuongNguon() == null
-                || request.getSoLuongNguon().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Số lượng nguồn phải lớn hơn 0");
+                || request.getSoLuongNguon()
+                .compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException(
+                    "Số lượng nguồn phải lớn hơn 0"
+            );
         }
 
         if (request.getSoLuongDich() == null
-                || request.getSoLuongDich().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Số lượng đích phải lớn hơn 0");
+                || request.getSoLuongDich()
+                .compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException(
+                    "Số lượng đích phải lớn hơn 0"
+            );
         }
     }
 
-    private SanPham laySanPham(Long maSanPham) {
-        return sanPhamRepository.findById(maSanPham)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
+    private long layGiaTriLongBatBuoc(
+            Long giaTri,
+            String thongBao
+    ) {
+        if (giaTri == null) {
+            throw new IllegalArgumentException(thongBao);
+        }
+
+        return giaTri.longValue();
     }
 
-    private DonViSanPham layDonViSanPham(Long maDonViSanPham) {
+    private SanPham laySanPham(
+            long maSanPham
+    ) {
+        return sanPhamRepository.findById(maSanPham)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy sản phẩm"
+                ));
+    }
+
+    private DonViSanPham layDonViSanPham(
+            long maDonViSanPham
+    ) {
         return donViSanPhamRepository.findById(maDonViSanPham)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn vị sản phẩm"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy đơn vị sản phẩm"
+                ));
     }
 
     private void kiemTraDonViThuocDungSanPham(
-            Long maSanPham,
+            long maSanPham,
             DonViSanPham donViNguon,
             DonViSanPham donViDich
     ) {
-        Long maSanPhamCuaDonViNguon = donViNguon.getSanPham().getMaSanPham();
-        Long maSanPhamCuaDonViDich = donViDich.getSanPham().getMaSanPham();
+        SanPham sanPhamCuaDonViNguon =
+                donViNguon.getSanPham();
 
-        if (!maSanPham.equals(maSanPhamCuaDonViNguon)) {
-            throw new IllegalArgumentException("Đơn vị nguồn không thuộc sản phẩm đã chọn");
+        SanPham sanPhamCuaDonViDich =
+                donViDich.getSanPham();
+
+        Long maSanPhamCuaDonViNguon =
+                sanPhamCuaDonViNguon != null
+                        ? sanPhamCuaDonViNguon.getMaSanPham()
+                        : null;
+
+        Long maSanPhamCuaDonViDich =
+                sanPhamCuaDonViDich != null
+                        ? sanPhamCuaDonViDich.getMaSanPham()
+                        : null;
+
+        if (maSanPhamCuaDonViNguon == null
+                || maSanPhamCuaDonViNguon.longValue() != maSanPham) {
+            throw new IllegalArgumentException(
+                    "Đơn vị nguồn không thuộc sản phẩm đã chọn"
+            );
         }
 
-        if (!maSanPham.equals(maSanPhamCuaDonViDich)) {
-            throw new IllegalArgumentException("Đơn vị đích không thuộc sản phẩm đã chọn");
+        if (maSanPhamCuaDonViDich == null
+                || maSanPhamCuaDonViDich.longValue() != maSanPham) {
+            throw new IllegalArgumentException(
+                    "Đơn vị đích không thuộc sản phẩm đã chọn"
+            );
         }
     }
 
-    private QuyDoiDonViResponse toResponse(QuyDoiDonVi quyDoiDonVi) {
+    private QuyDoiDonViResponse toResponse(
+            QuyDoiDonVi quyDoiDonVi
+    ) {
         SanPham sanPham = quyDoiDonVi.getSanPham();
 
-        DonViSanPham donViNguon = quyDoiDonVi.getDonViNguon();
-        DonViTinh donViTinhNguon = donViNguon.getDonViTinh();
+        DonViSanPham donViNguon =
+                quyDoiDonVi.getDonViNguon();
 
-        DonViSanPham donViDich = quyDoiDonVi.getDonViDich();
-        DonViTinh donViTinhDich = donViDich.getDonViTinh();
+        DonViTinh donViTinhNguon =
+                donViNguon != null
+                        ? donViNguon.getDonViTinh()
+                        : null;
+
+        DonViSanPham donViDich =
+                quyDoiDonVi.getDonViDich();
+
+        DonViTinh donViTinhDich =
+                donViDich != null
+                        ? donViDich.getDonViTinh()
+                        : null;
 
         return QuyDoiDonViResponse.builder()
                 .maQuyDoi(quyDoiDonVi.getMaQuyDoi())
-                .maSanPham(sanPham != null ? sanPham.getMaSanPham() : null)
-                .tenSanPham(sanPham != null ? sanPham.getTenSanPham() : null)
-                .maDonViNguon(donViNguon != null ? donViNguon.getMaDonViSanPham() : null)
-                .tenDonViNguon(donViTinhNguon != null ? donViTinhNguon.getTenDonViTinh() : null)
-                .kyHieuDonViNguon(donViTinhNguon != null ? donViTinhNguon.getKyHieu() : null)
-                .soLuongNguon(quyDoiDonVi.getSoLuongNguon())
-                .maDonViDich(donViDich != null ? donViDich.getMaDonViSanPham() : null)
-                .tenDonViDich(donViTinhDich != null ? donViTinhDich.getTenDonViTinh() : null)
-                .kyHieuDonViDich(donViTinhDich != null ? donViTinhDich.getKyHieu() : null)
-                .soLuongDich(quyDoiDonVi.getSoLuongDich())
-                .trangThai(quyDoiDonVi.getTrangThai())
+
+                .maSanPham(
+                        sanPham != null
+                                ? sanPham.getMaSanPham()
+                                : null
+                )
+                .tenSanPham(
+                        sanPham != null
+                                ? sanPham.getTenSanPham()
+                                : null
+                )
+
+                .maDonViNguon(
+                        donViNguon != null
+                                ? donViNguon.getMaDonViSanPham()
+                                : null
+                )
+                .tenDonViNguon(
+                        donViTinhNguon != null
+                                ? donViTinhNguon.getTenDonViTinh()
+                                : null
+                )
+                .kyHieuDonViNguon(
+                        donViTinhNguon != null
+                                ? donViTinhNguon.getKyHieu()
+                                : null
+                )
+                .soLuongNguon(
+                        quyDoiDonVi.getSoLuongNguon()
+                )
+
+                .maDonViDich(
+                        donViDich != null
+                                ? donViDich.getMaDonViSanPham()
+                                : null
+                )
+                .tenDonViDich(
+                        donViTinhDich != null
+                                ? donViTinhDich.getTenDonViTinh()
+                                : null
+                )
+                .kyHieuDonViDich(
+                        donViTinhDich != null
+                                ? donViTinhDich.getKyHieu()
+                                : null
+                )
+                .soLuongDich(
+                        quyDoiDonVi.getSoLuongDich()
+                )
+
+                .trangThai(
+                        quyDoiDonVi.getTrangThai()
+                )
                 .build();
     }
 }

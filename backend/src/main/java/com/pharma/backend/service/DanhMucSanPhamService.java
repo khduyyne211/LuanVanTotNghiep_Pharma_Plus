@@ -27,7 +27,7 @@ public class DanhMucSanPhamService {
     }
 
     @Transactional(readOnly = true)
-    public DanhMucSanPhamResponse layChiTietDanhMucSanPham(Long maDanhMuc) {
+    public DanhMucSanPhamResponse layChiTietDanhMucSanPham(long maDanhMuc) {
         DanhMucSanPham danhMuc = danhMucSanPhamRepository.findById(maDanhMuc)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy danh mục sản phẩm"));
 
@@ -56,7 +56,7 @@ public class DanhMucSanPhamService {
 
     @Transactional
     public DanhMucSanPhamResponse capNhatDanhMucSanPham(
-            Long maDanhMuc,
+            long maDanhMuc,
             DanhMucSanPhamRequest request
     ) {
         DanhMucSanPham danhMuc = danhMucSanPhamRepository.findById(maDanhMuc)
@@ -88,7 +88,7 @@ public class DanhMucSanPhamService {
     }
 
     @Transactional
-    public DanhMucSanPhamResponse anDanhMucSanPham(Long maDanhMuc) {
+    public DanhMucSanPhamResponse anDanhMucSanPham(long maDanhMuc) {
         DanhMucSanPham danhMuc = danhMucSanPhamRepository.findById(maDanhMuc)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy danh mục sản phẩm"));
 
@@ -100,7 +100,7 @@ public class DanhMucSanPhamService {
     }
 
     @Transactional
-    public DanhMucSanPhamResponse hienDanhMucSanPham(Long maDanhMuc) {
+    public DanhMucSanPhamResponse hienDanhMucSanPham(long maDanhMuc) {
         DanhMucSanPham danhMuc = danhMucSanPhamRepository.findById(maDanhMuc)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy danh mục sản phẩm"));
 

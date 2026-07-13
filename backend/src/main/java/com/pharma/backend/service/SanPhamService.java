@@ -100,7 +100,7 @@ public class SanPhamService {
     }
 
     @Transactional(readOnly = true)
-    public SanPhamResponse layChiTietSanPham(Long maSanPham) {
+    public SanPhamResponse layChiTietSanPham(long maSanPham) {
         SanPham sanPham = sanPhamRepository.findById(maSanPham)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
 
@@ -108,7 +108,7 @@ public class SanPhamService {
     }
 
     @Transactional(readOnly = true)
-    public SanPhamResponse layChiTietSanPhamDayDu(Long maSanPham) {
+    public SanPhamResponse layChiTietSanPhamDayDu(long maSanPham) {
         SanPham sanPham = sanPhamRepository.findById(maSanPham)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
 
@@ -159,7 +159,7 @@ public class SanPhamService {
     }
 
     @Transactional
-    public SanPhamResponse capNhatSanPham(Long maSanPham, SanPhamRequest request) {
+    public SanPhamResponse capNhatSanPham(long maSanPham, SanPhamRequest request) {
         SanPham sanPham = sanPhamRepository.findById(maSanPham)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
 
@@ -189,7 +189,7 @@ public class SanPhamService {
     }
 
     @Transactional
-    public SanPhamResponse anSanPham(Long maSanPham) {
+    public SanPhamResponse anSanPham(long maSanPham) {
         SanPham sanPham = sanPhamRepository.findById(maSanPham)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
 
@@ -201,7 +201,7 @@ public class SanPhamService {
     }
 
     @Transactional
-    public SanPhamResponse hienSanPham(Long maSanPham) {
+    public SanPhamResponse hienSanPham(long maSanPham) {
         SanPham sanPham = sanPhamRepository.findById(maSanPham)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
 

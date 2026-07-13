@@ -25,7 +25,7 @@ public class DonViSanPhamService {
     private final DonViTinhRepository donViTinhRepository;
 
     @Transactional(readOnly = true)
-    public List<DonViSanPhamResponse> layDanhSachDonViTheoSanPham(Long maSanPham) {
+    public List<DonViSanPhamResponse> layDanhSachDonViTheoSanPham(long maSanPham) {
         return donViSanPhamRepository.findBySanPham_MaSanPham(maSanPham)
                 .stream()
                 .map(this::toResponse)
@@ -33,7 +33,7 @@ public class DonViSanPhamService {
     }
 
     @Transactional(readOnly = true)
-    public DonViSanPhamResponse layChiTietDonViSanPham(Long maDonViSanPham) {
+    public DonViSanPhamResponse layChiTietDonViSanPham(long maDonViSanPham) {
         DonViSanPham donViSanPham = donViSanPhamRepository.findById(maDonViSanPham)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn vị sản phẩm"));
 
@@ -84,7 +84,7 @@ public class DonViSanPhamService {
 
     @Transactional
     public DonViSanPhamResponse capNhatDonViSanPham(
-            Long maDonViSanPham,
+            long maDonViSanPham,
             DonViSanPhamRequest request
     ) {
         DonViSanPham donViSanPham = donViSanPhamRepository.findById(maDonViSanPham)
@@ -133,7 +133,7 @@ public class DonViSanPhamService {
     }
 
     @Transactional
-    public DonViSanPhamResponse anDonViSanPham(Long maDonViSanPham) {
+    public DonViSanPhamResponse anDonViSanPham(long maDonViSanPham) {
         DonViSanPham donViSanPham = donViSanPhamRepository.findById(maDonViSanPham)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn vị sản phẩm"));
 
@@ -145,7 +145,7 @@ public class DonViSanPhamService {
     }
 
     @Transactional
-    public DonViSanPhamResponse hienDonViSanPham(Long maDonViSanPham) {
+    public DonViSanPhamResponse hienDonViSanPham(long maDonViSanPham) {
         DonViSanPham donViSanPham = donViSanPhamRepository.findById(maDonViSanPham)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn vị sản phẩm"));
 

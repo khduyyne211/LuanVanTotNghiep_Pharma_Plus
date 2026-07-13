@@ -27,7 +27,7 @@ public class NhaSanXuatService {
     }
 
     @Transactional(readOnly = true)
-    public NhaSanXuatResponse layChiTietNhaSanXuat(Long maNhaSanXuat) {
+    public NhaSanXuatResponse layChiTietNhaSanXuat(long maNhaSanXuat) {
         NhaSanXuat nhaSanXuat = nhaSanXuatRepository.findById(maNhaSanXuat)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhà sản xuất"));
 
@@ -53,7 +53,7 @@ public class NhaSanXuatService {
 
     @Transactional
     public NhaSanXuatResponse capNhatNhaSanXuat(
-            Long maNhaSanXuat,
+            long maNhaSanXuat,
             NhaSanXuatRequest request
     ) {
         NhaSanXuat nhaSanXuat = nhaSanXuatRepository.findById(maNhaSanXuat)
@@ -78,7 +78,7 @@ public class NhaSanXuatService {
     }
 
     @Transactional
-    public NhaSanXuatResponse anNhaSanXuat(Long maNhaSanXuat) {
+    public NhaSanXuatResponse anNhaSanXuat(long maNhaSanXuat) {
         NhaSanXuat nhaSanXuat = nhaSanXuatRepository.findById(maNhaSanXuat)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhà sản xuất"));
 
@@ -90,7 +90,7 @@ public class NhaSanXuatService {
     }
 
     @Transactional
-    public NhaSanXuatResponse hienNhaSanXuat(Long maNhaSanXuat) {
+    public NhaSanXuatResponse hienNhaSanXuat(long maNhaSanXuat) {
         NhaSanXuat nhaSanXuat = nhaSanXuatRepository.findById(maNhaSanXuat)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhà sản xuất"));
 
