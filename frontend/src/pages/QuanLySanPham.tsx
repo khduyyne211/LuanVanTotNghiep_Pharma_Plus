@@ -1,12 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
+
 import axiosClient from "../api/axiosClient";
-import type { SanPham, DonViSanPham, QuyDoiDonVi } from "../types/SanPham";
+
+import type {
+  DonViSanPham,
+  QuyDoiDonVi,
+  SanPham,
+} from "../types/SanPham";
 import type { PhanTrangResponse } from "../types/PhanTrangResponse";
+
 import SanPhamFormModal from "../components/SanPhamFormModal";
 import DonViSanPhamFormModal from "../components/DonViSanPhamFormModal";
 import QuyDoiDonViFormModal from "../components/QuyDoiDonViFormModal";
+
 import SanPhamBoLoc from "../features/san-pham/components/SanPhamBoLoc";
 import SanPhamTable from "../features/san-pham/components/SanPhamTable";
+import SanPhamChiTietModal from "../features/san-pham/components/SanPhamChiTietModal";
+
 type DanhMucSanPham = {
   maDanhMuc: number;
   tenDanhMuc: string;
@@ -20,9 +30,15 @@ type NhaSanXuat = {
 };
 
 function QuanLySanPham() {
+  /*
+   * State danh sách sản phẩm.
+   */
   const [danhSachSanPham, setDanhSachSanPham] = useState<SanPham[]>([]);
   const [loading, setLoading] = useState(true);
 
+  /*
+   * State phân trang.
+   */
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [totalElements, setTotalElements] = useState(0);
@@ -30,6 +46,9 @@ function QuanLySanPham() {
   const [first, setFirst] = useState(true);
   const [last, setLast] = useState(true);
 
+  /*
+   * State tìm kiếm và bộ lọc.
+   */
   const [keywordInput, setKeywordInput] = useState("");
   const [keyword, setKeyword] = useState("");
 
@@ -38,39 +57,69 @@ function QuanLySanPham() {
   const [maDanhMucFilter, setMaDanhMucFilter] = useState("");
   const [maNhaSanXuatFilter, setMaNhaSanXuatFilter] = useState("");
 
-  const [danhSachDanhMuc, setDanhSachDanhMuc] = useState<DanhMucSanPham[]>([]);
-  const [danhSachNhaSanXuat, setDanhSachNhaSanXuat] = useState<NhaSanXuat[]>([]);
+  /*
+   * Dữ liệu cho các ô chọn của bộ lọc.
+   */
+  const [danhSachDanhMuc, setDanhSachDanhMuc] = useState<
+    DanhMucSanPham[]
+  >([]);
 
-  const [sanPhamChiTiet, setSanPhamChiTiet] = useState<SanPham | null>(null);
+  const [danhSachNhaSanXuat, setDanhSachNhaSanXuat] = useState<
+    NhaSanXuat[]
+  >([]);
+
+  /*
+   * State xem chi tiết sản phẩm.
+   */
+  const [sanPhamChiTiet, setSanPhamChiTiet] =
+    useState<SanPham | null>(null);
+
   const [dangTaiChiTiet, setDangTaiChiTiet] = useState(false);
 
+  /*
+   * State form thêm và sửa sản phẩm.
+   */
   const [hienForm, setHienForm] = useState(false);
-  const [sanPhamCanSua, setSanPhamCanSua] = useState<SanPham | null>(null);
+  const [sanPhamCanSua, setSanPhamCanSua] =
+    useState<SanPham | null>(null);
 
+  /*
+   * State form đơn vị sản phẩm.
+   */
   const [hienFormDonVi, setHienFormDonVi] = useState(false);
-  const [donViCanSua, setDonViCanSua] = useState<DonViSanPham | null>(null);
 
+  const [donViCanSua, setDonViCanSua] =
+    useState<DonViSanPham | null>(null);
+
+  /*
+   * State form quy đổi đơn vị.
+   */
   const [hienFormQuyDoi, setHienFormQuyDoi] = useState(false);
-  const [quyDoiCanSua, setQuyDoiCanSua] = useState<QuyDoiDonVi | null>(null);
 
+  const [quyDoiCanSua, setQuyDoiCanSua] =
+    useState<QuyDoiDonVi | null>(null);
+
+  /*
+   * Lấy danh sách sản phẩm theo phân trang và bộ lọc.
+   */
   const layDanhSachSanPham = useCallback(async () => {
     try {
       setLoading(true);
 
-      const response = await axiosClient.get<PhanTrangResponse<SanPham>>(
-        "/san-pham/phan-trang",
-        {
-          params: {
-            page,
-            size,
-            keyword: keyword || undefined,
-            laThuocKeDon: laThuocKeDonFilter || undefined,
-            trangThaiSanPham: trangThaiSanPhamFilter || undefined,
-            maDanhMuc: maDanhMucFilter || undefined,
-            maNhaSanXuat: maNhaSanXuatFilter || undefined,
-          },
-        }
-      );
+      const response = await axiosClient.get<
+        PhanTrangResponse<SanPham>
+      >("/san-pham/phan-trang", {
+        params: {
+          page,
+          size,
+          keyword: keyword || undefined,
+          laThuocKeDon: laThuocKeDonFilter || undefined,
+          trangThaiSanPham:
+            trangThaiSanPhamFilter || undefined,
+          maDanhMuc: maDanhMucFilter || undefined,
+          maNhaSanXuat: maNhaSanXuatFilter || undefined,
+        },
+      });
 
       setDanhSachSanPham(response.data.content);
       setTotalElements(response.data.totalElements);
@@ -93,12 +142,18 @@ function QuanLySanPham() {
     maNhaSanXuatFilter,
   ]);
 
+  /*
+   * Lấy danh mục và nhà sản xuất cho bộ lọc.
+   */
   const layDuLieuBoLoc = useCallback(async () => {
     try {
-      const [danhMucResponse, nhaSanXuatResponse] = await Promise.all([
-        axiosClient.get<DanhMucSanPham[]>("/danh-muc-san-pham"),
-        axiosClient.get<NhaSanXuat[]>("/nha-san-xuat"),
-      ]);
+      const [danhMucResponse, nhaSanXuatResponse] =
+        await Promise.all([
+          axiosClient.get<DanhMucSanPham[]>(
+            "/danh-muc-san-pham"
+          ),
+          axiosClient.get<NhaSanXuat[]>("/nha-san-xuat"),
+        ]);
 
       setDanhSachDanhMuc(danhMucResponse.data);
       setDanhSachNhaSanXuat(nhaSanXuatResponse.data);
@@ -108,6 +163,9 @@ function QuanLySanPham() {
     }
   }, []);
 
+  /*
+   * Tải lại sản phẩm khi page, size hoặc bộ lọc thay đổi.
+   */
   useEffect(() => {
     const timerId = window.setTimeout(() => {
       void layDanhSachSanPham();
@@ -116,6 +174,9 @@ function QuanLySanPham() {
     return () => window.clearTimeout(timerId);
   }, [layDanhSachSanPham]);
 
+  /*
+   * Tải dữ liệu danh mục và nhà sản xuất khi trang được mở.
+   */
   useEffect(() => {
     const timerId = window.setTimeout(() => {
       void layDuLieuBoLoc();
@@ -124,11 +185,17 @@ function QuanLySanPham() {
     return () => window.clearTimeout(timerId);
   }, [layDuLieuBoLoc]);
 
+  /*
+   * Xử lý tìm kiếm.
+   */
   const timKiemSanPham = () => {
     setPage(0);
     setKeyword(keywordInput.trim());
   };
 
+  /*
+   * Xóa toàn bộ bộ lọc.
+   */
   const xoaTatCaBoLoc = () => {
     setKeywordInput("");
     setKeyword("");
@@ -139,26 +206,40 @@ function QuanLySanPham() {
     setPage(0);
   };
 
-
+  /*
+   * Mở form thêm sản phẩm.
+   */
   const moFormThem = () => {
     setSanPhamCanSua(null);
     setHienForm(true);
   };
 
+  /*
+   * Mở form sửa sản phẩm.
+   */
   const moFormSua = (sanPham: SanPham) => {
     setSanPhamCanSua(sanPham);
     setHienForm(true);
   };
 
+  /*
+   * Đóng form sản phẩm.
+   */
   const dongForm = () => {
     setHienForm(false);
     setSanPhamCanSua(null);
   };
 
+  /*
+   * Tải lại danh sách sau khi lưu sản phẩm.
+   */
   const xuLyLuuThanhCong = async () => {
     await layDanhSachSanPham();
   };
 
+  /*
+   * Lấy chi tiết đầy đủ của một sản phẩm.
+   */
   const xemChiTietSanPham = async (maSanPham: number) => {
     try {
       setDangTaiChiTiet(true);
@@ -177,6 +258,9 @@ function QuanLySanPham() {
     }
   };
 
+  /*
+   * Đóng modal chi tiết và các form con.
+   */
   const dongChiTietSanPham = () => {
     setSanPhamChiTiet(null);
 
@@ -187,7 +271,12 @@ function QuanLySanPham() {
     setQuyDoiCanSua(null);
   };
 
-  const napLaiChiTietSanPham = async (maSanPham: number) => {
+  /*
+   * Tải lại chi tiết sản phẩm sau khi thay đổi đơn vị hoặc quy đổi.
+   */
+  const napLaiChiTietSanPham = async (
+    maSanPham: number
+  ) => {
     const response = await axiosClient.get<SanPham>(
       `/san-pham/${maSanPham}/chi-tiet-day-du`
     );
@@ -195,8 +284,13 @@ function QuanLySanPham() {
     setSanPhamChiTiet(response.data);
   };
 
+  /*
+   * Các hàm xử lý đơn vị sản phẩm.
+   */
   const moFormThemDonVi = () => {
-    if (!sanPhamChiTiet) return;
+    if (!sanPhamChiTiet) {
+      return;
+    }
 
     setDonViCanSua(null);
     setHienFormDonVi(true);
@@ -213,46 +307,88 @@ function QuanLySanPham() {
   };
 
   const xuLyLuuDonViThanhCong = async () => {
-    if (!sanPhamChiTiet) return;
+    if (!sanPhamChiTiet) {
+      return;
+    }
 
-    await napLaiChiTietSanPham(sanPhamChiTiet.maSanPham);
+    await napLaiChiTietSanPham(
+      sanPhamChiTiet.maSanPham
+    );
   };
 
-  const anDonViSanPham = async (maDonViSanPham: number) => {
-    if (!sanPhamChiTiet) return;
+  const anDonViSanPham = async (
+    maDonViSanPham: number
+  ) => {
+    if (!sanPhamChiTiet) {
+      return;
+    }
 
-    const dongY = confirm("Bạn có chắc muốn ẩn đơn vị sản phẩm này không?");
-    if (!dongY) return;
+    const dongY = confirm(
+      "Bạn có chắc muốn ẩn đơn vị sản phẩm này không?"
+    );
+
+    if (!dongY) {
+      return;
+    }
 
     try {
-      await axiosClient.put(`/don-vi-san-pham/${maDonViSanPham}/an`);
-      await napLaiChiTietSanPham(sanPhamChiTiet.maSanPham);
+      await axiosClient.put(
+        `/don-vi-san-pham/${maDonViSanPham}/an`
+      );
+
+      await napLaiChiTietSanPham(
+        sanPhamChiTiet.maSanPham
+      );
     } catch (error) {
-      console.error("Lỗi khi ẩn đơn vị sản phẩm:", error);
+      console.error(
+        "Lỗi khi ẩn đơn vị sản phẩm:",
+        error
+      );
+
       alert("Ẩn đơn vị sản phẩm thất bại");
     }
   };
 
-  const hienDonViSanPham = async (maDonViSanPham: number) => {
-    if (!sanPhamChiTiet) return;
+  const hienDonViSanPham = async (
+    maDonViSanPham: number
+  ) => {
+    if (!sanPhamChiTiet) {
+      return;
+    }
 
     try {
-      await axiosClient.put(`/don-vi-san-pham/${maDonViSanPham}/hien`);
-      await napLaiChiTietSanPham(sanPhamChiTiet.maSanPham);
+      await axiosClient.put(
+        `/don-vi-san-pham/${maDonViSanPham}/hien`
+      );
+
+      await napLaiChiTietSanPham(
+        sanPhamChiTiet.maSanPham
+      );
     } catch (error) {
-      console.error("Lỗi khi hiện đơn vị sản phẩm:", error);
+      console.error(
+        "Lỗi khi hiện đơn vị sản phẩm:",
+        error
+      );
+
       alert("Hiện đơn vị sản phẩm thất bại");
     }
   };
 
+  /*
+   * Các hàm xử lý quy đổi đơn vị.
+   */
   const moFormThemQuyDoi = () => {
-    if (!sanPhamChiTiet) return;
+    if (!sanPhamChiTiet) {
+      return;
+    }
 
     setQuyDoiCanSua(null);
     setHienFormQuyDoi(true);
   };
 
-  const moFormSuaQuyDoi = (quyDoi: QuyDoiDonVi) => {
+  const moFormSuaQuyDoi = (
+    quyDoi: QuyDoiDonVi
+  ) => {
     setQuyDoiCanSua(quyDoi);
     setHienFormQuyDoi(true);
   };
@@ -263,44 +399,90 @@ function QuanLySanPham() {
   };
 
   const xuLyLuuQuyDoiThanhCong = async () => {
-    if (!sanPhamChiTiet) return;
+    if (!sanPhamChiTiet) {
+      return;
+    }
 
-    await napLaiChiTietSanPham(sanPhamChiTiet.maSanPham);
+    await napLaiChiTietSanPham(
+      sanPhamChiTiet.maSanPham
+    );
   };
 
-  const anQuyDoiDonVi = async (maQuyDoi: number) => {
-    if (!sanPhamChiTiet) return;
+  const anQuyDoiDonVi = async (
+    maQuyDoi: number
+  ) => {
+    if (!sanPhamChiTiet) {
+      return;
+    }
 
-    const dongY = confirm("Bạn có chắc muốn ẩn quy đổi đơn vị này không?");
-    if (!dongY) return;
+    const dongY = confirm(
+      "Bạn có chắc muốn ẩn quy đổi đơn vị này không?"
+    );
+
+    if (!dongY) {
+      return;
+    }
 
     try {
-      await axiosClient.put(`/quy-doi-don-vi/${maQuyDoi}/an`);
-      await napLaiChiTietSanPham(sanPhamChiTiet.maSanPham);
+      await axiosClient.put(
+        `/quy-doi-don-vi/${maQuyDoi}/an`
+      );
+
+      await napLaiChiTietSanPham(
+        sanPhamChiTiet.maSanPham
+      );
     } catch (error) {
-      console.error("Lỗi khi ẩn quy đổi đơn vị:", error);
+      console.error(
+        "Lỗi khi ẩn quy đổi đơn vị:",
+        error
+      );
+
       alert("Ẩn quy đổi đơn vị thất bại");
     }
   };
 
-  const hienQuyDoiDonVi = async (maQuyDoi: number) => {
-    if (!sanPhamChiTiet) return;
+  const hienQuyDoiDonVi = async (
+    maQuyDoi: number
+  ) => {
+    if (!sanPhamChiTiet) {
+      return;
+    }
 
     try {
-      await axiosClient.put(`/quy-doi-don-vi/${maQuyDoi}/hien`);
-      await napLaiChiTietSanPham(sanPhamChiTiet.maSanPham);
+      await axiosClient.put(
+        `/quy-doi-don-vi/${maQuyDoi}/hien`
+      );
+
+      await napLaiChiTietSanPham(
+        sanPhamChiTiet.maSanPham
+      );
     } catch (error) {
-      console.error("Lỗi khi hiện quy đổi đơn vị:", error);
+      console.error(
+        "Lỗi khi hiện quy đổi đơn vị:",
+        error
+      );
+
       alert("Hiện quy đổi đơn vị thất bại");
     }
   };
 
+  /*
+   * Ẩn sản phẩm.
+   */
   const anSanPham = async (maSanPham: number) => {
-    const dongY = confirm("Bạn có chắc muốn ẩn sản phẩm này không?");
-    if (!dongY) return;
+    const dongY = confirm(
+      "Bạn có chắc muốn ẩn sản phẩm này không?"
+    );
+
+    if (!dongY) {
+      return;
+    }
 
     try {
-      await axiosClient.put(`/san-pham/${maSanPham}/an`);
+      await axiosClient.put(
+        `/san-pham/${maSanPham}/an`
+      );
+
       await layDanhSachSanPham();
     } catch (error) {
       console.error("Lỗi khi ẩn sản phẩm:", error);
@@ -308,9 +490,15 @@ function QuanLySanPham() {
     }
   };
 
+  /*
+   * Hiển thị lại sản phẩm.
+   */
   const hienSanPham = async (maSanPham: number) => {
     try {
-      await axiosClient.put(`/san-pham/${maSanPham}/hien`);
+      await axiosClient.put(
+        `/san-pham/${maSanPham}/hien`
+      );
+
       await layDanhSachSanPham();
     } catch (error) {
       console.error("Lỗi khi hiện sản phẩm:", error);
@@ -318,23 +506,23 @@ function QuanLySanPham() {
     }
   };
 
-  const dinhDangTien = (giaTri: number) => {
-    return giaTri.toLocaleString("vi-VN") + " đ";
-  };
-
-
   return (
     <div>
       <div className="page-header">
         <div>
           <h1>Quản lý sản phẩm</h1>
+
           <p>
-            Dược sĩ theo dõi thông tin sản phẩm, trạng thái kinh doanh, đơn vị
-            bán và quy đổi đơn vị.
+            Dược sĩ theo dõi thông tin sản phẩm, trạng thái
+            kinh doanh, đơn vị bán và quy đổi đơn vị.
           </p>
         </div>
 
-        <button className="primary-button" onClick={moFormThem}>
+        <button
+          type="button"
+          className="primary-button"
+          onClick={moFormThem}
+        >
           + Thêm sản phẩm
         </button>
       </div>
@@ -379,6 +567,7 @@ function QuanLySanPham() {
           setPage(0);
         }}
       />
+
       <SanPhamTable
         danhSachSanPham={danhSachSanPham}
         loading={loading}
@@ -393,251 +582,23 @@ function QuanLySanPham() {
         onHien={hienSanPham}
         onPageChange={setPage}
       />
-      {dangTaiChiTiet && (
-        <div className="modal-overlay">
-          <div className="modal-card product-detail-modal">
-            <p>Đang tải chi tiết sản phẩm...</p>
-          </div>
-        </div>
-      )}
 
-      {sanPhamChiTiet && !dangTaiChiTiet && (
+      <SanPhamChiTietModal
+        sanPhamChiTiet={sanPhamChiTiet}
+        dangTaiChiTiet={dangTaiChiTiet}
+        onClose={dongChiTietSanPham}
+        onThemDonVi={moFormThemDonVi}
+        onSuaDonVi={moFormSuaDonVi}
+        onAnDonVi={anDonViSanPham}
+        onHienDonVi={hienDonViSanPham}
+        onThemQuyDoi={moFormThemQuyDoi}
+        onSuaQuyDoi={moFormSuaQuyDoi}
+        onAnQuyDoi={anQuyDoiDonVi}
+        onHienQuyDoi={hienQuyDoiDonVi}
+      />
+
+      {sanPhamChiTiet && (
         <>
-          <div className="modal-overlay">
-            <div className="modal-card product-detail-modal">
-              <div className="modal-header">
-                <div>
-                  <h2>Chi tiết sản phẩm</h2>
-                  <p>{sanPhamChiTiet.tenSanPham}</p>
-                </div>
-
-                <button
-                  className="modal-close-button"
-                  onClick={dongChiTietSanPham}
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="detail-section">
-                <h3>Thông tin chung</h3>
-
-                <div className="detail-grid">
-                  <div>
-                    <span>Mã sản phẩm</span>
-                    <strong>{sanPhamChiTiet.maSanPham}</strong>
-                  </div>
-
-                  <div>
-                    <span>Danh mục</span>
-                    <strong>{sanPhamChiTiet.tenDanhMuc}</strong>
-                  </div>
-
-                  <div>
-                    <span>Nhà sản xuất</span>
-                    <strong>
-                      {sanPhamChiTiet.tenNhaSanXuat || "Chưa cập nhật"}
-                    </strong>
-                  </div>
-
-                  <div>
-                    <span>Giá bán mặc định</span>
-                    <strong>{dinhDangTien(sanPhamChiTiet.giaBan)}</strong>
-                  </div>
-
-                  <div>
-                    <span>Thuốc kê đơn</span>
-                    <strong>
-                      {sanPhamChiTiet.laThuocKeDon ? "Có" : "Không"}
-                    </strong>
-                  </div>
-
-                  <div>
-                    <span>Trạng thái</span>
-                    <strong>
-                      {sanPhamChiTiet.trangThaiSanPham
-                        ? "Đang bán"
-                        : "Ngừng bán"}
-                    </strong>
-                  </div>
-                </div>
-
-                <div className="detail-description">
-                  <span>Mô tả ngắn</span>
-                  <p>{sanPhamChiTiet.moTaNgan || "Chưa có mô tả"}</p>
-                </div>
-              </div>
-
-              <div className="detail-section">
-                <div className="detail-section-header">
-                  <h3>Đơn vị sản phẩm</h3>
-
-                  <button className="small-button" onClick={moFormThemDonVi}>
-                    + Thêm đơn vị
-                  </button>
-                </div>
-
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Mã đơn vị SP</th>
-                      <th>Đơn vị</th>
-                      <th>Giá theo đơn vị</th>
-                      <th>Đơn vị cơ sở</th>
-                      <th>Cho phép bán</th>
-                      <th>Cho phép nhập</th>
-                      <th>Trạng thái</th>
-                      <th>Thao tác</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {sanPhamChiTiet.danhSachDonViSanPham?.map((dv) => (
-                      <tr key={dv.maDonViSanPham}>
-                        <td>{dv.maDonViSanPham}</td>
-
-                        <td>
-                          {dv.tenDonViTinh} ({dv.kyHieu})
-                        </td>
-
-                        <td>
-                          {dv.giaBanTheoDonVi !== null
-                            ? dinhDangTien(dv.giaBanTheoDonVi)
-                            : "Không có"}
-                        </td>
-
-                        <td>{dv.laDonViCoSo ? "Có" : "Không"}</td>
-                        <td>{dv.choPhepBan ? "Có" : "Không"}</td>
-                        <td>{dv.choPhepNhap ? "Có" : "Không"}</td>
-                        <td>{dv.trangThai ? "Đang dùng" : "Đã ẩn"}</td>
-
-                        <td>
-                          <div className="action-buttons">
-                            <button
-                              className="small-button"
-                              onClick={() => moFormSuaDonVi(dv)}
-                            >
-                              Sửa
-                            </button>
-
-                            {dv.trangThai ? (
-                              <button
-                                className="small-button warning-button"
-                                onClick={() =>
-                                  anDonViSanPham(dv.maDonViSanPham)
-                                }
-                              >
-                                Ẩn
-                              </button>
-                            ) : (
-                              <button
-                                className="small-button success-button"
-                                onClick={() =>
-                                  hienDonViSanPham(dv.maDonViSanPham)
-                                }
-                              >
-                                Hiện
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-
-                    {(sanPhamChiTiet.danhSachDonViSanPham?.length ?? 0) ===
-                      0 && (
-                      <tr>
-                        <td colSpan={8} className="empty-cell">
-                          Sản phẩm chưa có đơn vị.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="detail-section">
-                <div className="detail-section-header">
-                  <h3>Quy đổi đơn vị</h3>
-
-                  <button className="small-button" onClick={moFormThemQuyDoi}>
-                    + Thêm quy đổi
-                  </button>
-                </div>
-
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Mã quy đổi</th>
-                      <th>Đơn vị nguồn</th>
-                      <th>Số lượng nguồn</th>
-                      <th>Đơn vị đích</th>
-                      <th>Số lượng đích</th>
-                      <th>Diễn giải</th>
-                      <th>Trạng thái</th>
-                      <th>Thao tác</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {sanPhamChiTiet.danhSachQuyDoiDonVi?.map((qd) => (
-                      <tr key={qd.maQuyDoi}>
-                        <td>{qd.maQuyDoi}</td>
-                        <td>{qd.tenDonViNguon}</td>
-                        <td>{qd.soLuongNguon}</td>
-                        <td>{qd.tenDonViDich}</td>
-                        <td>{qd.soLuongDich}</td>
-
-                        <td>
-                          {qd.soLuongNguon} {qd.tenDonViNguon} ={" "}
-                          {qd.soLuongDich} {qd.tenDonViDich}
-                        </td>
-
-                        <td>{qd.trangThai ? "Đang dùng" : "Đã ẩn"}</td>
-
-                        <td>
-                          <div className="action-buttons">
-                            <button
-                              className="small-button"
-                              onClick={() => moFormSuaQuyDoi(qd)}
-                            >
-                              Sửa
-                            </button>
-
-                            {qd.trangThai ? (
-                              <button
-                                className="small-button warning-button"
-                                onClick={() => anQuyDoiDonVi(qd.maQuyDoi)}
-                              >
-                                Ẩn
-                              </button>
-                            ) : (
-                              <button
-                                className="small-button success-button"
-                                onClick={() => hienQuyDoiDonVi(qd.maQuyDoi)}
-                              >
-                                Hiện
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-
-                    {(sanPhamChiTiet.danhSachQuyDoiDonVi?.length ?? 0) ===
-                      0 && (
-                      <tr>
-                        <td colSpan={8} className="empty-cell">
-                          Sản phẩm chưa có quy đổi đơn vị.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
           <DonViSanPhamFormModal
             isOpen={hienFormDonVi}
             maSanPham={sanPhamChiTiet.maSanPham}
@@ -649,7 +610,9 @@ function QuanLySanPham() {
           <QuyDoiDonViFormModal
             isOpen={hienFormQuyDoi}
             maSanPham={sanPhamChiTiet.maSanPham}
-            danhSachDonViSanPham={sanPhamChiTiet.danhSachDonViSanPham || []}
+            danhSachDonViSanPham={
+              sanPhamChiTiet.danhSachDonViSanPham || []
+            }
             quyDoiCanSua={quyDoiCanSua}
             onClose={dongFormQuyDoi}
             onSuccess={xuLyLuuQuyDoiThanhCong}
