@@ -2,7 +2,7 @@ import type {
   DonViSanPham,
   QuyDoiDonVi,
   SanPham,
-} from "../../../types/SanPham";
+} from "../types/SanPham";
 
 type SanPhamChiTietModalProps = {
   sanPhamChiTiet: SanPham | null;

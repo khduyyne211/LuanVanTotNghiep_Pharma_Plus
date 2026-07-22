@@ -1,4 +1,4 @@
-import type { SanPham } from "../../../types/SanPham";
+import type { SanPham } from "../types/SanPham";
 
 type SanPhamTableProps = {
   danhSachSanPham: SanPham[];
@@ -96,8 +96,8 @@ function SanPhamTable({
                       }
                     >
                       {sanPham.trangThaiSanPham
-                        ? "Đang bán"
-                        : "Ngừng bán"}
+                        ? "Hiện"
+                        : "Ẩn"}
                     </span>
                   </td>
 
@@ -118,7 +118,7 @@ function SanPhamTable({
                           onXemChiTiet(sanPham.maSanPham)
                         }
                       >
-                        Xem chi tiết
+                        <i className="bi bi-eye" />
                       </button>
 
                       {sanPham.trangThaiSanPham ? (
