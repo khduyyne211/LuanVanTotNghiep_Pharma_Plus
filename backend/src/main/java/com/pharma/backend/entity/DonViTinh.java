@@ -23,7 +23,7 @@ public class DonViTinh {
     @Column(name = "ten_don_vi_tinh", nullable = false, length = 50, unique = true)
     private String tenDonViTinh;
 
-    @Column(name = " ky_hieu", length = 20)
+    @Column(name = "ky_hieu", length = 20)
     private String kyHieu;
 
 
