@@ -7,15 +7,13 @@ import type {
   QuyDoiDonVi,
   SanPham,
 } from "../types/SanPham";
-import type { PhanTrangResponse } from "../../../types/PhanTrangResponse";
-
 import SanPhamFormModal from "../components/SanPhamFormModal";
 import DonViSanPhamFormModal from "../components/DonViSanPhamFormModal";
 import QuyDoiDonViFormModal from "../components/QuyDoiDonViFormModal";
 import SanPhamBoLoc from "../components/SanPhamBoLoc";
 import SanPhamTable from "../components/SanPhamTable";
 import SanPhamChiTietModal from "../components/SanPhamChiTietModal";
-
+import { layDanhSachSanPhamPhanTrang } from "../api/sanPhamApi";
 type DanhMucSanPham = {
   maDanhMuc: number;
   tenDanhMuc: string;
@@ -83,20 +81,20 @@ function QuanLySanPhamPage() {
     try {
       setLoading(true);
 
-      const response = await axiosClient.get<
-        PhanTrangResponse<SanPham>
-      >("/san-pham/phan-trang", {
-        params: {
-          page,
-          size,
-          keyword: keyword || undefined,
-          laThuocKeDon: laThuocKeDonFilter || undefined,
-          trangThaiSanPham:
-            trangThaiSanPhamFilter || undefined,
-          maDanhMuc: maDanhMucFilter || undefined,
-          maNhaSanXuat:
-            maNhaSanXuatFilter || undefined,
-        },
+      const response = await layDanhSachSanPhamPhanTrang({
+        page,
+        size,
+
+        keyword: keyword || undefined,
+
+        laThuocKeDon:
+          laThuocKeDonFilter === "" ? undefined : laThuocKeDonFilter === "true",
+        trangThaiSanPham:
+          trangThaiSanPhamFilter === "" ? undefined : trangThaiSanPhamFilter === "true",
+        maDanhMuc:
+          maDanhMucFilter === "" ? undefined : Number(maDanhMucFilter),
+        maNhaSanXuat:
+          maNhaSanXuatFilter === "" ? undefined : Number(maNhaSanXuatFilter),
       });
 
       setDanhSachSanPham(response.data.content);
