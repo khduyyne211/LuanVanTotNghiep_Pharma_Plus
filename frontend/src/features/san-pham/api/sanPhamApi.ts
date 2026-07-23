@@ -1,6 +1,6 @@
 import axiosClient from "../../../api/axiosClient";
 import type { PhanTrangResponse } from "../../../types/PhanTrangResponse";
-import type { SanPham } from "../types/SanPham";
+import type { SanPham, DanhMucSanPhamOption, NhaSanXuatOption } from "../types/SanPham";
 
 export interface ThamSoLocSanPham{
     page: number;
@@ -55,3 +55,14 @@ export const hienSanPham = (ma:number)=>{
     return axiosClient.put<SanPham>(`/san-pham/${ma}/hien`);
 };
 
+export const layDanhSachDanhMucSanPham = ()=>{
+    return axiosClient.get<DanhMucSanPhamOption[]>(
+        "/danh-muc-san-pham"
+    );
+};
+
+export const layDanhSachNhaSanXuat = ()=>{
+    return axiosClient.get<NhaSanXuatOption[]>(
+        "/nha-san-xuat"
+    );
+};

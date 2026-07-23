@@ -6,6 +6,8 @@ import type {
   DonViSanPham,
   QuyDoiDonVi,
   SanPham,
+  DanhMucSanPhamOption,
+  NhaSanXuatOption
 } from "../types/SanPham";
 import SanPhamFormModal from "../components/SanPhamFormModal";
 import DonViSanPhamFormModal from "../components/DonViSanPhamFormModal";
@@ -16,19 +18,9 @@ import SanPhamChiTietModal from "../components/SanPhamChiTietModal";
 import {
   layChiTietSanPhamDayDu,
   layDanhSachSanPhamPhanTrang,
+  layDanhSachDanhMucSanPham,
+  layDanhSachNhaSanXuat,
 } from "../api/sanPhamApi";
-type DanhMucSanPham = {
-  maDanhMuc: number;
-  tenDanhMuc: string;
-  trangThaiHienThi: boolean;
-};
-
-type NhaSanXuat = {
-  maNhaSanXuat: number;
-  tenNhaSanXuat: string;
-  trangThai: boolean;
-};
-
 function QuanLySanPhamPage() {
   const [danhSachSanPham, setDanhSachSanPham] =
     useState<SanPham[]>([]);
@@ -56,10 +48,10 @@ function QuanLySanPhamPage() {
     useState("");
 
   const [danhSachDanhMuc, setDanhSachDanhMuc] = useState<
-    DanhMucSanPham[]
+    DanhMucSanPhamOption[]
   >([]);
   const [danhSachNhaSanXuat, setDanhSachNhaSanXuat] =
-    useState<NhaSanXuat[]>([]);
+    useState<NhaSanXuatOption[]>([]);
 
   const [sanPhamChiTiet, setSanPhamChiTiet] =
     useState<SanPham | null>(null);
@@ -128,12 +120,8 @@ function QuanLySanPhamPage() {
     try {
       const [danhMucResponse, nhaSanXuatResponse] =
         await Promise.all([
-          axiosClient.get<DanhMucSanPham[]>(
-            "/danh-muc-san-pham"
-          ),
-          axiosClient.get<NhaSanXuat[]>(
-            "/nha-san-xuat"
-          ),
+          layDanhSachDanhMucSanPham(),
+          layDanhSachNhaSanXuat(),
         ]);
 
       setDanhSachDanhMuc(danhMucResponse.data);
