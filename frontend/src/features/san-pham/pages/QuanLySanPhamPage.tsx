@@ -22,6 +22,8 @@ import {
   layDanhSachNhaSanXuat,
   anSanPham as anSanPhamAPI,
   hienSanPham as hienSanPhamAPI,
+  anDonViSanPham as anDonViSanPhamAPI,
+  hienDonViSanPham as hienDonViSanPhamAPI,
 } from "../api/sanPhamApi";
 function QuanLySanPhamPage() {
   const [danhSachSanPham, setDanhSachSanPham] =
@@ -281,9 +283,7 @@ function QuanLySanPhamPage() {
     }
 
     try {
-      await axiosClient.put(
-        `/don-vi-san-pham/${maDonViSanPham}/an`
-      );
+      await anDonViSanPhamAPI(maDonViSanPham);
 
       await napLaiChiTietSanPham(
         sanPhamChiTiet.maSanPham
@@ -305,9 +305,7 @@ function QuanLySanPhamPage() {
     }
 
     try {
-      await axiosClient.put(
-        `/don-vi-san-pham/${maDonViSanPham}/hien`
-      );
+      await hienDonViSanPhamAPI(maDonViSanPham);
 
       await napLaiChiTietSanPham(
         sanPhamChiTiet.maSanPham
