@@ -20,6 +20,8 @@ import {
   layDanhSachSanPhamPhanTrang,
   layDanhSachDanhMucSanPham,
   layDanhSachNhaSanXuat,
+  anSanPham as anSanPhamAPI,
+  hienSanPham as hienSanPhamAPI,
 } from "../api/sanPhamApi";
 function QuanLySanPhamPage() {
   const [danhSachSanPham, setDanhSachSanPham] =
@@ -418,9 +420,7 @@ function QuanLySanPhamPage() {
     }
 
     try {
-      await axiosClient.put(
-        `/san-pham/${maSanPham}/an`
-      );
+      await anSanPhamAPI(maSanPham);
       await layDanhSachSanPham();
     } catch (error) {
       console.error("Lỗi khi ẩn sản phẩm:", error);
@@ -432,9 +432,7 @@ function QuanLySanPhamPage() {
     maSanPham: number
   ) => {
     try {
-      await axiosClient.put(
-        `/san-pham/${maSanPham}/hien`
-      );
+      await hienSanPhamAPI(maSanPham);
       await layDanhSachSanPham();
     } catch (error) {
       console.error("Lỗi khi hiện sản phẩm:", error);
