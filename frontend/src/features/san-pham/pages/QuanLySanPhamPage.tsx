@@ -13,7 +13,10 @@ import QuyDoiDonViFormModal from "../components/QuyDoiDonViFormModal";
 import SanPhamBoLoc from "../components/SanPhamBoLoc";
 import SanPhamTable from "../components/SanPhamTable";
 import SanPhamChiTietModal from "../components/SanPhamChiTietModal";
-import { layDanhSachSanPhamPhanTrang } from "../api/sanPhamApi";
+import {
+  layChiTietSanPhamDayDu,
+  layDanhSachSanPhamPhanTrang,
+} from "../api/sanPhamApi";
 type DanhMucSanPham = {
   maDanhMuc: number;
   tenDanhMuc: string;
@@ -192,14 +195,12 @@ function QuanLySanPhamPage() {
 
   const napLaiChiTietSanPham = async (
     maSanPham: number
-  ): Promise<SanPham> => {
-    const response = await axiosClient.get<SanPham>(
-      `/san-pham/${maSanPham}/chi-tiet-day-du`
-    );
+    ): Promise<SanPham> => {
+      const response = await layChiTietSanPhamDayDu(maSanPham);
 
-    setSanPhamChiTiet(response.data);
-    return response.data;
-  };
+      setSanPhamChiTiet(response.data);
+      return response.data;
+    };
 
   const xuLyLuuThanhCong = async (
     sanPhamDaLuu: SanPham,
