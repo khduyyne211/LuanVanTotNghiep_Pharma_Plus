@@ -1,54 +1,60 @@
 import { useCallback, useEffect, useState } from "react";
-import type {
-  DonViSanPham,
-  QuyDoiDonVi,
-  SanPham,
-  DanhMucSanPhamOption,
-  NhaSanXuatOption
-} from "../types/SanPham";
-import SanPhamFormModal from "../components/SanPhamFormModal";
+import {
+  anDonViSanPham as anDonViSanPhamAPI,
+  anQuyDoiDonVi as anQuyDoiDonViAPI,
+  anSanPham as anSanPhamAPI,
+  hienDonViSanPham as hienDonViSanPhamAPI,
+  hienQuyDoiDonVi as hienQuyDoiDonViAPI,
+  hienSanPham as hienSanPhamAPI,
+  layChiTietSanPhamDayDu,
+  layDanhSachDanhMucSanPham,
+  layDanhSachNhaSanXuat,
+} from "../api/sanPhamApi";
 import DonViSanPhamFormModal from "../components/DonViSanPhamFormModal";
 import QuyDoiDonViFormModal from "../components/QuyDoiDonViFormModal";
 import SanPhamBoLoc from "../components/SanPhamBoLoc";
-import SanPhamTable from "../components/SanPhamTable";
 import SanPhamChiTietModal from "../components/SanPhamChiTietModal";
-import {
-  layChiTietSanPhamDayDu,
-  layDanhSachSanPhamPhanTrang,
-  layDanhSachDanhMucSanPham,
-  layDanhSachNhaSanXuat,
-  anSanPham as anSanPhamAPI,
-  hienSanPham as hienSanPhamAPI,
-  anDonViSanPham as anDonViSanPhamAPI,
-  hienDonViSanPham as hienDonViSanPhamAPI,
-  anQuyDoiDonVi as anQuyDoiDonViAPI,
-  hienQuyDoiDonVi as hienQuyDoiDonViAPI,
-} from "../api/sanPhamApi";
+import SanPhamFormModal from "../components/SanPhamFormModal";
+import SanPhamTable from "../components/SanPhamTable";
+import useDanhSachSanPham from "../hooks/useDanhSachSanPham";
+import type {
+  DanhMucSanPhamOption,
+  DonViSanPham,
+  NhaSanXuatOption,
+  QuyDoiDonVi,
+  SanPham,
+} from "../types/SanPham";
+
 function QuanLySanPhamPage() {
-  const [danhSachSanPham, setDanhSachSanPham] =
-    useState<SanPham[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    danhSachSanPham,
+    loading,
 
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(10);
-  const [totalElements, setTotalElements] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [first, setFirst] = useState(true);
-  const [last, setLast] = useState(true);
+    page,
+    size,
+    totalElements,
+    totalPages,
+    first,
+    last,
 
-  const [keywordInput, setKeywordInput] = useState("");
-  const [keyword, setKeyword] = useState("");
-
-  const [laThuocKeDonFilter, setLaThuocKeDonFilter] =
-    useState("");
-  const [
+    keywordInput,
+    laThuocKeDonFilter,
     trangThaiSanPhamFilter,
+    maDanhMucFilter,
+    maNhaSanXuatFilter,
+
+    setPage,
+    setSize,
+    setKeywordInput,
+    setLaThuocKeDonFilter,
     setTrangThaiSanPhamFilter,
-  ] = useState("");
-  const [maDanhMucFilter, setMaDanhMucFilter] =
-    useState("");
-  const [maNhaSanXuatFilter, setMaNhaSanXuatFilter] =
-    useState("");
+    setMaDanhMucFilter,
+    setMaNhaSanXuatFilter,
+
+    layDanhSachSanPham,
+    timKiemSanPham,
+    xoaTatCaBoLoc,
+  } = useDanhSachSanPham();
 
   const [danhSachDanhMuc, setDanhSachDanhMuc] = useState<
     DanhMucSanPhamOption[]
@@ -75,50 +81,6 @@ function QuanLySanPhamPage() {
   const [quyDoiCanSua, setQuyDoiCanSua] =
     useState<QuyDoiDonVi | null>(null);
 
-  const layDanhSachSanPham = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      const response = await layDanhSachSanPhamPhanTrang({
-        page,
-        size,
-
-        keyword: keyword || undefined,
-
-        laThuocKeDon:
-          laThuocKeDonFilter === "" ? undefined : laThuocKeDonFilter === "true",
-        trangThaiSanPham:
-          trangThaiSanPhamFilter === "" ? undefined : trangThaiSanPhamFilter === "true",
-        maDanhMuc:
-          maDanhMucFilter === "" ? undefined : Number(maDanhMucFilter),
-        maNhaSanXuat:
-          maNhaSanXuatFilter === "" ? undefined : Number(maNhaSanXuatFilter),
-      });
-
-      setDanhSachSanPham(response.data.content);
-      setTotalElements(response.data.totalElements);
-      setTotalPages(response.data.totalPages);
-      setFirst(response.data.first);
-      setLast(response.data.last);
-    } catch (error) {
-      console.error(
-        "Lỗi khi lấy danh sách sản phẩm:",
-        error
-      );
-      alert("Không thể tải danh sách sản phẩm");
-    } finally {
-      setLoading(false);
-    }
-  }, [
-    page,
-    size,
-    keyword,
-    laThuocKeDonFilter,
-    trangThaiSanPhamFilter,
-    maDanhMucFilter,
-    maNhaSanXuatFilter,
-  ]);
-
   const layDuLieuBoLoc = useCallback(async () => {
     try {
       const [danhMucResponse, nhaSanXuatResponse] =
@@ -140,34 +102,11 @@ function QuanLySanPhamPage() {
 
   useEffect(() => {
     const timerId = window.setTimeout(() => {
-      void layDanhSachSanPham();
-    }, 0);
-
-    return () => window.clearTimeout(timerId);
-  }, [layDanhSachSanPham]);
-
-  useEffect(() => {
-    const timerId = window.setTimeout(() => {
       void layDuLieuBoLoc();
     }, 0);
 
     return () => window.clearTimeout(timerId);
   }, [layDuLieuBoLoc]);
-
-  const timKiemSanPham = () => {
-    setPage(0);
-    setKeyword(keywordInput.trim());
-  };
-
-  const xoaTatCaBoLoc = () => {
-    setKeywordInput("");
-    setKeyword("");
-    setLaThuocKeDonFilter("");
-    setTrangThaiSanPhamFilter("");
-    setMaDanhMucFilter("");
-    setMaNhaSanXuatFilter("");
-    setPage(0);
-  };
 
   const moFormThem = () => {
     setSanPhamCanSua(null);
@@ -186,12 +125,13 @@ function QuanLySanPhamPage() {
 
   const napLaiChiTietSanPham = async (
     maSanPham: number
-    ): Promise<SanPham> => {
-      const response = await layChiTietSanPhamDayDu(maSanPham);
+  ): Promise<SanPham> => {
+    const response =
+      await layChiTietSanPhamDayDu(maSanPham);
 
-      setSanPhamChiTiet(response.data);
-      return response.data;
-    };
+    setSanPhamChiTiet(response.data);
+    return response.data;
+  };
 
   const xuLyLuuThanhCong = async (
     sanPhamDaLuu: SanPham,
@@ -439,8 +379,9 @@ function QuanLySanPhamPage() {
         <div>
           <h1>Quản lý sản phẩm</h1>
           <p>
-            Dược sĩ theo dõi thông tin sản phẩm, trạng
-            thái kinh doanh, đơn vị bán và quy đổi đơn vị.
+            Quản trị viên theo dõi thông tin sản phẩm,
+            trạng thái kinh doanh, đơn vị bán và quy đổi
+            đơn vị.
           </p>
         </div>
 
@@ -542,7 +483,8 @@ function QuanLySanPhamPage() {
             isOpen={hienFormQuyDoi}
             maSanPham={sanPhamChiTiet.maSanPham}
             danhSachDonViSanPham={
-              sanPhamChiTiet.danhSachDonViSanPham || []
+              sanPhamChiTiet.danhSachDonViSanPham ||
+              []
             }
             quyDoiCanSua={quyDoiCanSua}
             onClose={dongFormQuyDoi}
