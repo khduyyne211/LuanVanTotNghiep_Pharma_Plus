@@ -1,7 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-
-import axiosClient from "../../../api/axiosClient";
-
 import type {
   DonViSanPham,
   QuyDoiDonVi,
@@ -24,6 +21,8 @@ import {
   hienSanPham as hienSanPhamAPI,
   anDonViSanPham as anDonViSanPhamAPI,
   hienDonViSanPham as hienDonViSanPhamAPI,
+  anQuyDoiDonVi as anQuyDoiDonViAPI,
+  hienQuyDoiDonVi as hienQuyDoiDonViAPI,
 } from "../api/sanPhamApi";
 function QuanLySanPhamPage() {
   const [danhSachSanPham, setDanhSachSanPham] =
@@ -366,9 +365,7 @@ function QuanLySanPhamPage() {
     }
 
     try {
-      await axiosClient.put(
-        `/quy-doi-don-vi/${maQuyDoi}/an`
-      );
+      await anQuyDoiDonViAPI(maQuyDoi);
 
       await napLaiChiTietSanPham(
         sanPhamChiTiet.maSanPham
@@ -390,9 +387,7 @@ function QuanLySanPhamPage() {
     }
 
     try {
-      await axiosClient.put(
-        `/quy-doi-don-vi/${maQuyDoi}/hien`
-      );
+      await hienQuyDoiDonViAPI(maQuyDoi);
 
       await napLaiChiTietSanPham(
         sanPhamChiTiet.maSanPham
