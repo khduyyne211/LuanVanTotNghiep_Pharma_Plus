@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  anDonViSanPham as anDonViSanPhamAPI,
   anQuyDoiDonVi as anQuyDoiDonViAPI,
-  hienDonViSanPham as hienDonViSanPhamAPI,
   hienQuyDoiDonVi as hienQuyDoiDonViAPI,
   layChiTietSanPhamDayDu,
   layDanhSachDanhMucSanPham,
@@ -15,9 +13,9 @@ import SanPhamChiTietModal from "../components/SanPhamChiTietModal";
 import SanPhamFormModal from "../components/SanPhamFormModal";
 import SanPhamTable from "../components/SanPhamTable";
 import useDanhSachSanPham from "../hooks/useDanhSachSanPham";
+import useDonViSanPham from "../hooks/useDonViSanPham";
 import type {
   DanhMucSanPhamOption,
-  DonViSanPham,
   NhaSanXuatOption,
   QuyDoiDonVi,
   SanPham,
@@ -70,12 +68,6 @@ function QuanLySanPhamPage() {
   const [hienForm, setHienForm] = useState(false);
   const [sanPhamCanSua, setSanPhamCanSua] =
     useState<SanPham | null>(null);
-
-  const [hienFormDonVi, setHienFormDonVi] =
-    useState(false);
-  const [donViCanSua, setDonViCanSua] =
-    useState<DonViSanPham | null>(null);
-
   const [hienFormQuyDoi, setHienFormQuyDoi] =
     useState(false);
   const [quyDoiCanSua, setQuyDoiCanSua] =
@@ -132,7 +124,20 @@ function QuanLySanPhamPage() {
     setSanPhamChiTiet(response.data);
     return response.data;
   };
+  const {
+    hienFormDonVi,
+    donViCanSua,
 
+    moFormThemDonVi,
+    moFormSuaDonVi,
+    dongFormDonVi,
+    xuLyLuuDonViThanhCong,
+    anDonViSanPham,
+    hienDonViSanPham,
+  } = useDonViSanPham({
+    sanPhamChiTiet,
+    napLaiChiTietSanPham,
+  });
   const xuLyLuuThanhCong = async (
     sanPhamDaLuu: SanPham,
     laThemMoi: boolean
@@ -168,96 +173,11 @@ function QuanLySanPhamPage() {
   const dongChiTietSanPham = () => {
     setSanPhamChiTiet(null);
 
-    setHienFormDonVi(false);
-    setDonViCanSua(null);
+    dongFormDonVi();
 
     setHienFormQuyDoi(false);
     setQuyDoiCanSua(null);
   };
-
-  const moFormThemDonVi = () => {
-    if (!sanPhamChiTiet) {
-      return;
-    }
-
-    setDonViCanSua(null);
-    setHienFormDonVi(true);
-  };
-
-  const moFormSuaDonVi = (
-    donVi: DonViSanPham
-  ) => {
-    setDonViCanSua(donVi);
-    setHienFormDonVi(true);
-  };
-
-  const dongFormDonVi = () => {
-    setHienFormDonVi(false);
-    setDonViCanSua(null);
-  };
-
-  const xuLyLuuDonViThanhCong = async () => {
-    if (!sanPhamChiTiet) {
-      return;
-    }
-
-    await napLaiChiTietSanPham(
-      sanPhamChiTiet.maSanPham
-    );
-  };
-
-  const anDonViSanPham = async (
-    maDonViSanPham: number
-  ) => {
-    if (!sanPhamChiTiet) {
-      return;
-    }
-
-    const dongY = confirm(
-      "Bạn có chắc muốn ẩn đơn vị sản phẩm này không?"
-    );
-
-    if (!dongY) {
-      return;
-    }
-
-    try {
-      await anDonViSanPhamAPI(maDonViSanPham);
-
-      await napLaiChiTietSanPham(
-        sanPhamChiTiet.maSanPham
-      );
-    } catch (error) {
-      console.error(
-        "Lỗi khi ẩn đơn vị sản phẩm:",
-        error
-      );
-      alert("Ẩn đơn vị sản phẩm thất bại");
-    }
-  };
-
-  const hienDonViSanPham = async (
-    maDonViSanPham: number
-  ) => {
-    if (!sanPhamChiTiet) {
-      return;
-    }
-
-    try {
-      await hienDonViSanPhamAPI(maDonViSanPham);
-
-      await napLaiChiTietSanPham(
-        sanPhamChiTiet.maSanPham
-      );
-    } catch (error) {
-      console.error(
-        "Lỗi khi hiện đơn vị sản phẩm:",
-        error
-      );
-      alert("Hiện đơn vị sản phẩm thất bại");
-    }
-  };
-
   const moFormThemQuyDoi = () => {
     if (!sanPhamChiTiet) {
       return;
