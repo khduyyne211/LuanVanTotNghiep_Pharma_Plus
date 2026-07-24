@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  layChiTietSanPhamDayDu,
   layDanhSachDanhMucSanPham,
   layDanhSachNhaSanXuat,
 } from "../api/sanPhamApi";
@@ -13,6 +12,7 @@ import SanPhamTable from "../components/SanPhamTable";
 import useDanhSachSanPham from "../hooks/useDanhSachSanPham";
 import useDonViSanPham from "../hooks/useDonViSanPham";
 import useQuyDoiDonVi from "../hooks/useQuyDoiDonVi";
+import useChiTietSanPham from "../hooks/useChiTietSanPham";
 import type {
   DanhMucSanPhamOption,
   NhaSanXuatOption,
@@ -57,12 +57,6 @@ function QuanLySanPhamPage() {
   >([]);
   const [danhSachNhaSanXuat, setDanhSachNhaSanXuat] =
     useState<NhaSanXuatOption[]>([]);
-
-  const [sanPhamChiTiet, setSanPhamChiTiet] =
-    useState<SanPham | null>(null);
-  const [dangTaiChiTiet, setDangTaiChiTiet] =
-    useState(false);
-
   const [hienForm, setHienForm] = useState(false);
   const [sanPhamCanSua, setSanPhamCanSua] =
     useState<SanPham | null>(null);
@@ -107,16 +101,14 @@ function QuanLySanPhamPage() {
     setHienForm(false);
     setSanPhamCanSua(null);
   };
+  const {
+    sanPhamChiTiet,
+    dangTaiChiTiet,
 
-  const napLaiChiTietSanPham = async (
-    maSanPham: number
-  ): Promise<SanPham> => {
-    const response =
-      await layChiTietSanPhamDayDu(maSanPham);
-
-    setSanPhamChiTiet(response.data);
-    return response.data;
-  };
+    napLaiChiTietSanPham,
+    xemChiTietSanPham,
+    dongChiTietSanPhamCoBan,
+  } = useChiTietSanPham();
   const {
     hienFormDonVi,
     donViCanSua,
@@ -157,28 +149,8 @@ function QuanLySanPhamPage() {
       );
     }
   };
-
-  const xemChiTietSanPham = async (
-    maSanPham: number
-  ) => {
-    try {
-      setDangTaiChiTiet(true);
-      setSanPhamChiTiet(null);
-
-      await napLaiChiTietSanPham(maSanPham);
-    } catch (error) {
-      console.error(
-        "Lỗi khi lấy chi tiết sản phẩm:",
-        error
-      );
-      alert("Không thể tải chi tiết sản phẩm");
-    } finally {
-      setDangTaiChiTiet(false);
-    }
-  };
-
   const dongChiTietSanPham = () => {
-    setSanPhamChiTiet(null);
+    dongChiTietSanPhamCoBan();
 
     dongFormDonVi();
     dongFormQuyDoi();
