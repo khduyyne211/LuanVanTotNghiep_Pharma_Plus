@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  anQuyDoiDonVi as anQuyDoiDonViAPI,
-  hienQuyDoiDonVi as hienQuyDoiDonViAPI,
   layChiTietSanPhamDayDu,
   layDanhSachDanhMucSanPham,
   layDanhSachNhaSanXuat,
@@ -14,10 +12,10 @@ import SanPhamFormModal from "../components/SanPhamFormModal";
 import SanPhamTable from "../components/SanPhamTable";
 import useDanhSachSanPham from "../hooks/useDanhSachSanPham";
 import useDonViSanPham from "../hooks/useDonViSanPham";
+import useQuyDoiDonVi from "../hooks/useQuyDoiDonVi";
 import type {
   DanhMucSanPhamOption,
   NhaSanXuatOption,
-  QuyDoiDonVi,
   SanPham,
 } from "../types/SanPham";
 
@@ -68,11 +66,6 @@ function QuanLySanPhamPage() {
   const [hienForm, setHienForm] = useState(false);
   const [sanPhamCanSua, setSanPhamCanSua] =
     useState<SanPham | null>(null);
-  const [hienFormQuyDoi, setHienFormQuyDoi] =
-    useState(false);
-  const [quyDoiCanSua, setQuyDoiCanSua] =
-    useState<QuyDoiDonVi | null>(null);
-
   const layDuLieuBoLoc = useCallback(async () => {
     try {
       const [danhMucResponse, nhaSanXuatResponse] =
@@ -138,6 +131,20 @@ function QuanLySanPhamPage() {
     sanPhamChiTiet,
     napLaiChiTietSanPham,
   });
+  const {
+    hienFormQuyDoi,
+    quyDoiCanSua,
+
+    moFormThemQuyDoi,
+    moFormSuaQuyDoi,
+    dongFormQuyDoi,
+    xuLyLuuQuyDoiThanhCong,
+    anQuyDoiDonVi,
+    hienQuyDoiDonVi,
+  } = useQuyDoiDonVi({
+    sanPhamChiTiet,
+    napLaiChiTietSanPham,
+  });
   const xuLyLuuThanhCong = async (
     sanPhamDaLuu: SanPham,
     laThemMoi: boolean
@@ -174,91 +181,7 @@ function QuanLySanPhamPage() {
     setSanPhamChiTiet(null);
 
     dongFormDonVi();
-
-    setHienFormQuyDoi(false);
-    setQuyDoiCanSua(null);
-  };
-  const moFormThemQuyDoi = () => {
-    if (!sanPhamChiTiet) {
-      return;
-    }
-
-    setQuyDoiCanSua(null);
-    setHienFormQuyDoi(true);
-  };
-
-  const moFormSuaQuyDoi = (
-    quyDoi: QuyDoiDonVi
-  ) => {
-    setQuyDoiCanSua(quyDoi);
-    setHienFormQuyDoi(true);
-  };
-
-  const dongFormQuyDoi = () => {
-    setHienFormQuyDoi(false);
-    setQuyDoiCanSua(null);
-  };
-
-  const xuLyLuuQuyDoiThanhCong = async () => {
-    if (!sanPhamChiTiet) {
-      return;
-    }
-
-    await napLaiChiTietSanPham(
-      sanPhamChiTiet.maSanPham
-    );
-  };
-
-  const anQuyDoiDonVi = async (
-    maQuyDoi: number
-  ) => {
-    if (!sanPhamChiTiet) {
-      return;
-    }
-
-    const dongY = confirm(
-      "Bạn có chắc muốn ẩn quy đổi đơn vị này không?"
-    );
-
-    if (!dongY) {
-      return;
-    }
-
-    try {
-      await anQuyDoiDonViAPI(maQuyDoi);
-
-      await napLaiChiTietSanPham(
-        sanPhamChiTiet.maSanPham
-      );
-    } catch (error) {
-      console.error(
-        "Lỗi khi ẩn quy đổi đơn vị:",
-        error
-      );
-      alert("Ẩn quy đổi đơn vị thất bại");
-    }
-  };
-
-  const hienQuyDoiDonVi = async (
-    maQuyDoi: number
-  ) => {
-    if (!sanPhamChiTiet) {
-      return;
-    }
-
-    try {
-      await hienQuyDoiDonViAPI(maQuyDoi);
-
-      await napLaiChiTietSanPham(
-        sanPhamChiTiet.maSanPham
-      );
-    } catch (error) {
-      console.error(
-        "Lỗi khi hiện quy đổi đơn vị:",
-        error
-      );
-      alert("Hiện quy đổi đơn vị thất bại");
-    }
+    dongFormQuyDoi();
   };
   return (
     <div>
