@@ -13,10 +13,10 @@ import useDanhSachSanPham from "../hooks/useDanhSachSanPham";
 import useDonViSanPham from "../hooks/useDonViSanPham";
 import useQuyDoiDonVi from "../hooks/useQuyDoiDonVi";
 import useChiTietSanPham from "../hooks/useChiTietSanPham";
+import useFormSanPham from "../hooks/useFormSanPham";
 import type {
   DanhMucSanPhamOption,
   NhaSanXuatOption,
-  SanPham,
 } from "../types/SanPham";
 
 function QuanLySanPhamPage() {
@@ -57,9 +57,6 @@ function QuanLySanPhamPage() {
   >([]);
   const [danhSachNhaSanXuat, setDanhSachNhaSanXuat] =
     useState<NhaSanXuatOption[]>([]);
-  const [hienForm, setHienForm] = useState(false);
-  const [sanPhamCanSua, setSanPhamCanSua] =
-    useState<SanPham | null>(null);
   const layDuLieuBoLoc = useCallback(async () => {
     try {
       const [danhMucResponse, nhaSanXuatResponse] =
@@ -86,21 +83,7 @@ function QuanLySanPhamPage() {
 
     return () => window.clearTimeout(timerId);
   }, [layDuLieuBoLoc]);
-
-  const moFormThem = () => {
-    setSanPhamCanSua(null);
-    setHienForm(true);
-  };
-
-  const moFormSua = (sanPham: SanPham) => {
-    setSanPhamCanSua(sanPham);
-    setHienForm(true);
-  };
-
-  const dongForm = () => {
-    setHienForm(false);
-    setSanPhamCanSua(null);
-  };
+  
   const {
     sanPhamChiTiet,
     dangTaiChiTiet,
@@ -109,6 +92,18 @@ function QuanLySanPhamPage() {
     xemChiTietSanPham,
     dongChiTietSanPhamCoBan,
   } = useChiTietSanPham();
+  const {
+    hienForm,
+    sanPhamCanSua,
+
+    moFormThem,
+    moFormSua,
+    dongForm,
+    xuLyLuuThanhCong,
+  } = useFormSanPham({
+    layDanhSachSanPham,
+    napLaiChiTietSanPham,
+  });
   const {
     hienFormDonVi,
     donViCanSua,
@@ -137,18 +132,6 @@ function QuanLySanPhamPage() {
     sanPhamChiTiet,
     napLaiChiTietSanPham,
   });
-  const xuLyLuuThanhCong = async (
-    sanPhamDaLuu: SanPham,
-    laThemMoi: boolean
-  ) => {
-    await layDanhSachSanPham();
-
-    if (laThemMoi) {
-      await napLaiChiTietSanPham(
-        sanPhamDaLuu.maSanPham
-      );
-    }
-  };
   const dongChiTietSanPham = () => {
     dongChiTietSanPhamCoBan();
 
