@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { layDanhSachSanPhamPhanTrang } from "../api/sanPhamApi";
+import {
+  anSanPham as anSanPhamApi,
+  hienSanPham as hienSanPhamApi,
+  layDanhSachSanPhamPhanTrang,
+} from "../api/sanPhamApi";
 import type { SanPham } from "../types/SanPham";
 
 function useDanhSachSanPham() {
@@ -105,6 +109,37 @@ function useDanhSachSanPham() {
     setMaNhaSanXuatFilter("");
     setPage(0);
   };
+  const anSanPham = async (
+    maSanPham: number
+  ) => {
+    const dongY = confirm(
+      "Bạn có chắc muốn ẩn sản phẩm này không?"
+    );
+
+    if (!dongY) {
+      return;
+    }
+
+    try {
+      await anSanPhamApi(maSanPham);
+      await layDanhSachSanPham();
+    } catch (error) {
+      console.error("Lỗi khi ẩn sản phẩm:", error);
+      alert("Ẩn sản phẩm thất bại");
+    }
+  };
+
+  const hienSanPham = async (
+    maSanPham: number
+  ) => {
+    try {
+      await hienSanPhamApi(maSanPham);
+      await layDanhSachSanPham();
+    } catch (error) {
+      console.error("Lỗi khi hiện sản phẩm:", error);
+      alert("Hiện sản phẩm thất bại");
+    }
+  };
 
   return {
     danhSachSanPham,
@@ -134,7 +169,9 @@ function useDanhSachSanPham() {
     layDanhSachSanPham,
     timKiemSanPham,
     xoaTatCaBoLoc,
-  };
+    anSanPham,
+    hienSanPham,
+  };  
 }
 
 export default useDanhSachSanPham;

@@ -2,10 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import {
   anDonViSanPham as anDonViSanPhamAPI,
   anQuyDoiDonVi as anQuyDoiDonViAPI,
-  anSanPham as anSanPhamAPI,
   hienDonViSanPham as hienDonViSanPhamAPI,
   hienQuyDoiDonVi as hienQuyDoiDonViAPI,
-  hienSanPham as hienSanPhamAPI,
   layChiTietSanPhamDayDu,
   layDanhSachDanhMucSanPham,
   layDanhSachNhaSanXuat,
@@ -54,6 +52,8 @@ function QuanLySanPhamPage() {
     layDanhSachSanPham,
     timKiemSanPham,
     xoaTatCaBoLoc,
+    anSanPham,
+    hienSanPham,
   } = useDanhSachSanPham();
 
   const [danhSachDanhMuc, setDanhSachDanhMuc] = useState<
@@ -340,39 +340,6 @@ function QuanLySanPhamPage() {
       alert("Hiện quy đổi đơn vị thất bại");
     }
   };
-
-  const anSanPham = async (
-    maSanPham: number
-  ) => {
-    const dongY = confirm(
-      "Bạn có chắc muốn ẩn sản phẩm này không?"
-    );
-
-    if (!dongY) {
-      return;
-    }
-
-    try {
-      await anSanPhamAPI(maSanPham);
-      await layDanhSachSanPham();
-    } catch (error) {
-      console.error("Lỗi khi ẩn sản phẩm:", error);
-      alert("Ẩn sản phẩm thất bại");
-    }
-  };
-
-  const hienSanPham = async (
-    maSanPham: number
-  ) => {
-    try {
-      await hienSanPhamAPI(maSanPham);
-      await layDanhSachSanPham();
-    } catch (error) {
-      console.error("Lỗi khi hiện sản phẩm:", error);
-      alert("Hiện sản phẩm thất bại");
-    }
-  };
-
   return (
     <div>
       <div className="page-header">
