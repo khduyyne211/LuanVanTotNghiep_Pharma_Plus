@@ -18,30 +18,17 @@ import type {
   SanPhamRequest,
   SanPhamTaoDayDuRequest,
 } from "../api/sanPhamApi";
-type SanPhamForm = {
-  maDanhMuc: string;
-  maNhaSanXuat: string;
-  tenSanPham: string;
-  hinhAnh: string;
-  moTaNgan: string;
-  giaBan: string;
-  laThuocKeDon: boolean;
-};
+import SanPhamThongTinStep from "./form-san-pham/SanPhamThongTinStep";
+import type { SanPhamThongTinFormData } from "./form-san-pham/SanPhamThongTinStep";
+import SanPhamDonViStep from "./form-san-pham/SanPhamDonViStep";
+import type { SanPhamDonViFormData } from "./form-san-pham/SanPhamDonViStep";
+import SanPhamQuyDoiStep from "./form-san-pham/SanPhamQuyDoiStep";
+import type { SanPhamQuyDoiFormData } from "./form-san-pham/SanPhamQuyDoiStep";
 
-type DonViTaoMoiForm = {
-  maDonViTinh: string;
-  giaBanTheoDonVi: string;
-  laDonViCoSo: boolean;
-  choPhepBan: boolean;
-  choPhepNhap: boolean;
-};
 
-type QuyDoiTaoMoiForm = {
-  maDonViTinhNguon: string;
-  soLuongNguon: string;
-  maDonViTinhDich: string;
-  soLuongDich: string;
-};
+type SanPhamForm = SanPhamThongTinFormData;
+type DonViTaoMoiForm = SanPhamDonViFormData;
+type QuyDoiTaoMoiForm = SanPhamQuyDoiFormData;
 
 type SanPhamFormModalProps = {
   isOpen: boolean;
@@ -661,9 +648,13 @@ function SanPhamFormNoiDung({
             </div>
           </div>
         )}
-
         {buocHienTai === 1 && (
-          <form
+          <SanPhamThongTinStep
+            formData={formData}
+            danhSachDanhMuc={danhSachDanhMuc}
+            danhSachNhaSanXuat={danhSachNhaSanXuat}
+            laThemMoi={laThemMoi}
+            dangLuu={dangLuu}
             onSubmit={
               laThemMoi
                 ? (event) => {
@@ -672,524 +663,37 @@ function SanPhamFormNoiDung({
                   }
                 : xuLyCapNhatSanPham
             }
-          >
-            <div className="product-form-grid">
-              <div className="form-group">
-                <label>Danh mục sản phẩm</label>
-                <select
-                  name="maDanhMuc"
-                  value={formData.maDanhMuc}
-                  onChange={xuLyThayDoiInput}
-                  required
-                >
-                  <option value="">-- Chọn danh mục --</option>
-
-                  {danhSachDanhMuc
-                    .filter((dm) => dm.trangThaiHienThi)
-                    .map((dm) => (
-                      <option
-                        key={dm.maDanhMuc}
-                        value={dm.maDanhMuc}
-                      >
-                        {dm.tenDanhMuc}
-                      </option>
-                    ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Nhà sản xuất</label>
-                <select
-                  name="maNhaSanXuat"
-                  value={formData.maNhaSanXuat}
-                  onChange={xuLyThayDoiInput}
-                >
-                  <option value="">
-                    -- Chưa chọn nhà sản xuất --
-                  </option>
-
-                  {danhSachNhaSanXuat
-                    .filter((nsx) => nsx.trangThai)
-                    .map((nsx) => (
-                      <option
-                        key={nsx.maNhaSanXuat}
-                        value={nsx.maNhaSanXuat}
-                      >
-                        {nsx.tenNhaSanXuat}
-                      </option>
-                    ))}
-                </select>
-              </div>
-
-              <div className="form-group product-form-full-row">
-                <label>Tên sản phẩm</label>
-                <input
-                  type="text"
-                  name="tenSanPham"
-                  value={formData.tenSanPham}
-                  onChange={xuLyThayDoiInput}
-                  placeholder="Nhập tên sản phẩm"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Giá bán mặc định</label>
-                <input
-                  type="number"
-                  name="giaBan"
-                  value={formData.giaBan}
-                  onChange={xuLyThayDoiInput}
-                  placeholder="Nhập giá bán"
-                  min={1}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Đường dẫn hình ảnh</label>
-                <input
-                  type="text"
-                  name="hinhAnh"
-                  value={formData.hinhAnh}
-                  onChange={xuLyThayDoiInput}
-                  placeholder="/images/products/san-pham.webp"
-                />
-              </div>
-
-              <div className="form-group product-form-full-row">
-                <label>Mô tả ngắn</label>
-                <textarea
-                  name="moTaNgan"
-                  value={formData.moTaNgan}
-                  onChange={xuLyThayDoiInput}
-                  placeholder="Nhập mô tả ngắn"
-                  rows={3}
-                />
-              </div>
-
-              <label className="product-inline-checkbox">
-                <input
-                  type="checkbox"
-                  name="laThuocKeDon"
-                  checked={formData.laThuocKeDon}
-                  onChange={xuLyThayDoiCheckbox}
-                />
-                Là thuốc kê đơn
-              </label>
-            </div>
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="secondary-button"
-                onClick={onClose}
-                disabled={dangLuu}
-              >
-                <i className="bi bi-x-circle" />
-                Hủy
-              </button>
-
-              <button
-                type="submit"
-                className="primary-button"
-                disabled={dangLuu}
-              >
-                {laThemMoi ? (
-                  <>
-                    Tiếp tục
-                    <i className="bi bi-arrow-right" />
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-check-circle" />
-                    {dangLuu ? "Đang lưu..." : "Cập nhật"}
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
+            onInputChange={xuLyThayDoiInput}
+            onCheckboxChange={xuLyThayDoiCheckbox}
+            onClose={onClose}
+          />
         )}
-
         {laThemMoi && buocHienTai === 2 && (
-          <div>
-            <div className="product-step-title">
-              <div>
-                <h3>Đơn vị sản phẩm</h3>
-                <p>
-                  Chọn đúng một đơn vị cơ sở. Đơn vị được bán
-                  phải có giá bán.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                className="primary-button"
-                onClick={themDongDonVi}
-              >
-                <i className="bi bi-plus-circle" />
-                Thêm đơn vị
-              </button>
-            </div>
-
-            <div className="product-table-wrapper">
-              <table className="data-table product-entry-table">
-                <thead>
-                  <tr>
-                    <th>Đơn vị tính</th>
-                    <th>Giá bán</th>
-                    <th>Cơ sở</th>
-                    <th>Cho bán</th>
-                    <th>Cho nhập</th>
-                    <th>Thao tác</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {danhSachDonVi.map((donVi, index) => (
-                    <tr key={`don-vi-${index}`}>
-                      <td>
-                        <select
-                          value={donVi.maDonViTinh}
-                          onChange={(event) =>
-                            capNhatDonVi(
-                              index,
-                              "maDonViTinh",
-                              event.target.value
-                            )
-                          }
-                        >
-                          <option value="">
-                            -- Chọn đơn vị --
-                          </option>
-
-                          {donViTinhDangDung.map((item) => {
-                            const daDuocDongKhacChon =
-                              danhSachDonVi.some(
-                                (donViKhac, viTriKhac) =>
-                                  viTriKhac !== index &&
-                                  donViKhac.maDonViTinh ===
-                                    String(item.maDonViTinh)
-                              );
-
-                            return (
-                              <option
-                                key={item.maDonViTinh}
-                                value={item.maDonViTinh}
-                                disabled={daDuocDongKhacChon}
-                              >
-                                {item.tenDonViTinh}
-                                {item.kyHieu
-                                  ? ` (${item.kyHieu})`
-                                  : ""}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </td>
-
-                      <td>
-                        <input
-                          type="number"
-                          min={0}
-                          value={donVi.giaBanTheoDonVi}
-                          onChange={(event) =>
-                            capNhatDonVi(
-                              index,
-                              "giaBanTheoDonVi",
-                              event.target.value
-                            )
-                          }
-                          placeholder="Giá bán"
-                        />
-                      </td>
-
-                      <td className="product-center-cell">
-                        <input
-                          type="radio"
-                          name="donViCoSo"
-                          checked={donVi.laDonViCoSo}
-                          onChange={() => chonDonViCoSo(index)}
-                          title="Chọn làm đơn vị cơ sở"
-                        />
-                      </td>
-
-                      <td className="product-center-cell">
-                        <input
-                          type="checkbox"
-                          checked={donVi.choPhepBan}
-                          onChange={(event) =>
-                            capNhatDonVi(
-                              index,
-                              "choPhepBan",
-                              event.target.checked
-                            )
-                          }
-                        />
-                      </td>
-
-                      <td className="product-center-cell">
-                        <input
-                          type="checkbox"
-                          checked={donVi.choPhepNhap}
-                          onChange={(event) =>
-                            capNhatDonVi(
-                              index,
-                              "choPhepNhap",
-                              event.target.checked
-                            )
-                          }
-                        />
-                      </td>
-
-                      <td className="product-center-cell">
-                        <button
-                          type="button"
-                          className="icon-button danger"
-                          onClick={() => xoaDongDonVi(index)}
-                          title="Xóa đơn vị"
-                          aria-label="Xóa đơn vị"
-                        >
-                          <i className="bi bi-trash" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="secondary-button"
-                onClick={() => setBuocHienTai(1)}
-              >
-                <i className="bi bi-arrow-left" />
-                Quay lại
-              </button>
-
-              <button
-                type="button"
-                className="primary-button"
-                onClick={sangBuoc3}
-              >
-                Tiếp tục
-                <i className="bi bi-arrow-right" />
-              </button>
-            </div>
-          </div>
+          <SanPhamDonViStep
+            danhSachDonVi={danhSachDonVi}
+            donViTinhDangDung={donViTinhDangDung}
+            onCapNhatDonVi={capNhatDonVi}
+            onChonDonViCoSo={chonDonViCoSo}
+            onThemDongDonVi={themDongDonVi}
+            onXoaDongDonVi={xoaDongDonVi}
+            onQuayLai={() => setBuocHienTai(1)}
+            onTiepTuc={sangBuoc3}
+          />
         )}
 
         {laThemMoi && buocHienTai === 3 && (
-          <div>
-            <div className="product-step-title">
-              <div>
-                <h3>Quy đổi đơn vị</h3>
-                <p>
-                  Khai báo mối quan hệ giữa các đơn vị vừa chọn.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                className="primary-button"
-                onClick={themDongQuyDoi}
-                disabled={donViDaChon.length < 2}
-              >
-                <i className="bi bi-plus-circle" />
-                Thêm quy đổi
-              </button>
-            </div>
-
-            {donViDaChon.length === 1 ? (
-              <div className="product-empty-note">
-                Sản phẩm chỉ có một đơn vị nên không cần khai
-                báo quy đổi.
-              </div>
-            ) : (
-              <div className="product-table-wrapper">
-                <table className="data-table product-entry-table">
-                  <thead>
-                    <tr>
-                      <th>Đơn vị nguồn</th>
-                      <th>SL nguồn</th>
-                      <th>Đơn vị đích</th>
-                      <th>SL đích</th>
-                      <th>Diễn giải</th>
-                      <th>Thao tác</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {danhSachQuyDoi.map((quyDoi, index) => (
-                      <tr key={`quy-doi-${index}`}>
-                        <td>
-                          <select
-                            value={
-                              quyDoi.maDonViTinhNguon
-                            }
-                            onChange={(event) =>
-                              capNhatQuyDoi(
-                                index,
-                                "maDonViTinhNguon",
-                                event.target.value
-                              )
-                            }
-                          >
-                            <option value="">
-                              -- Chọn nguồn --
-                            </option>
-
-                            {donViDaChon.map((donVi) => (
-                              <option
-                                key={donVi.maDonViTinh}
-                                value={donVi.maDonViTinh}
-                                disabled={
-                                  donVi.maDonViTinh ===
-                                  quyDoi.maDonViTinhDich
-                                }
-                              >
-                                {donVi.tenDonViTinh}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-
-                        <td>
-                          <input
-                            type="number"
-                            min={0.001}
-                            step="0.001"
-                            value={quyDoi.soLuongNguon}
-                            onChange={(event) =>
-                              capNhatQuyDoi(
-                                index,
-                                "soLuongNguon",
-                                event.target.value
-                              )
-                            }
-                          />
-                        </td>
-
-                        <td>
-                          <select
-                            value={quyDoi.maDonViTinhDich}
-                            onChange={(event) =>
-                              capNhatQuyDoi(
-                                index,
-                                "maDonViTinhDich",
-                                event.target.value
-                              )
-                            }
-                          >
-                            <option value="">
-                              -- Chọn đích --
-                            </option>
-
-                            {donViDaChon.map((donVi) => (
-                              <option
-                                key={donVi.maDonViTinh}
-                                value={donVi.maDonViTinh}
-                                disabled={
-                                  donVi.maDonViTinh ===
-                                  quyDoi.maDonViTinhNguon
-                                }
-                              >
-                                {donVi.tenDonViTinh}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-
-                        <td>
-                          <input
-                            type="number"
-                            min={0.001}
-                            step="0.001"
-                            value={quyDoi.soLuongDich}
-                            onChange={(event) =>
-                              capNhatQuyDoi(
-                                index,
-                                "soLuongDich",
-                                event.target.value
-                              )
-                            }
-                            placeholder="Số lượng"
-                          />
-                        </td>
-
-                        <td>
-                          {quyDoi.soLuongNguon || "?"}{" "}
-                          {donViDaChon.find(
-                            (item) =>
-                              item.maDonViTinh ===
-                              quyDoi.maDonViTinhNguon
-                          )?.tenDonViTinh || "đơn vị nguồn"}
-                          {" = "}
-                          {quyDoi.soLuongDich || "?"}{" "}
-                          {donViDaChon.find(
-                            (item) =>
-                              item.maDonViTinh ===
-                              quyDoi.maDonViTinhDich
-                          )?.tenDonViTinh || "đơn vị đích"}
-                        </td>
-
-                        <td className="product-center-cell">
-                          <button
-                            type="button"
-                            className="icon-button danger"
-                            onClick={() =>
-                              xoaDongQuyDoi(index)
-                            }
-                            title="Xóa quy đổi"
-                            aria-label="Xóa quy đổi"
-                          >
-                            <i className="bi bi-trash" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-
-                    {danhSachQuyDoi.length === 0 && (
-                      <tr>
-                        <td
-                          colSpan={6}
-                          className="empty-cell"
-                        >
-                          Chưa có quy đổi đơn vị.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="secondary-button"
-                onClick={() => setBuocHienTai(2)}
-                disabled={dangLuu}
-              >
-                <i className="bi bi-arrow-left" />
-                Quay lại
-              </button>
-
-              <button
-                type="button"
-                className="primary-button"
-                onClick={() => void xuLyTaoSanPhamDayDu()}
-                disabled={dangLuu}
-              >
-                <i className="bi bi-check-circle" />
-                {dangLuu
-                  ? "Đang tạo..."
-                  : "Hoàn tất tạo sản phẩm"}
-              </button>
-            </div>
-          </div>
+          <SanPhamQuyDoiStep
+            danhSachQuyDoi={danhSachQuyDoi}
+            donViDaChon={donViDaChon}
+            dangLuu={dangLuu}
+            onCapNhatQuyDoi={capNhatQuyDoi}
+            onThemDongQuyDoi={themDongQuyDoi}
+            onXoaDongQuyDoi={xoaDongQuyDoi}
+            onQuayLai={() => setBuocHienTai(2)}
+            onHoanTat={() =>
+              void xuLyTaoSanPhamDayDu()
+            }
+          />
         )}
       </div>
     </div>
