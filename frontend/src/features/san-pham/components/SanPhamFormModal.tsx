@@ -1,30 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-
-import axiosClient from "../../../api/axiosClient";
-import type { SanPham } from "../types/SanPham";
-
+import type {
+  DanhMucSanPhamOption,
+  DonViTinhOption,
+  NhaSanXuatOption,
+  SanPham,
+} from "../types/SanPham";
 import "../styles/SanPhamTaoDayDuModal.css";
-
-type DanhMucSanPham = {
-  maDanhMuc: number;
-  tenDanhMuc: string;
-  trangThaiHienThi: boolean;
-};
-
-type NhaSanXuat = {
-  maNhaSanXuat: number;
-  tenNhaSanXuat: string;
-  trangThai: boolean;
-};
-
-type DonViTinh = {
-  maDonViTinh: number;
-  tenDonViTinh: string;
-  kyHieu: string | null;
-  trangThai: boolean;
-};
-
+import {
+  capNhatSanPham,
+  layDanhSachDanhMucSanPham,
+  layDanhSachDonViTinh,
+  layDanhSachNhaSanXuat,
+  taoSanPhamDayDu,
+} from "../api/sanPhamApi";
+import type {
+  SanPhamRequest,
+  SanPhamTaoDayDuRequest,
+} from "../api/sanPhamApi";
 type SanPhamForm = {
   maDanhMuc: string;
   maNhaSanXuat: string;
@@ -131,13 +124,15 @@ function SanPhamFormNoiDung({
   >([]);
 
   const [danhSachDanhMuc, setDanhSachDanhMuc] = useState<
-    DanhMucSanPham[]
+    DanhMucSanPhamOption[]
   >([]);
+
   const [danhSachNhaSanXuat, setDanhSachNhaSanXuat] = useState<
-    NhaSanXuat[]
+    NhaSanXuatOption[]
   >([]);
+
   const [danhSachDonViTinh, setDanhSachDonViTinh] = useState<
-    DonViTinh[]
+    DonViTinhOption[]
   >([]);
 
   const [dangLuu, setDangLuu] = useState(false);
@@ -152,13 +147,10 @@ function SanPhamFormNoiDung({
           nhaSanXuatResponse,
           donViTinhResponse,
         ] = await Promise.all([
-          axiosClient.get<DanhMucSanPham[]>(
-            "/danh-muc-san-pham"
-          ),
-          axiosClient.get<NhaSanXuat[]>("/nha-san-xuat"),
-          axiosClient.get<DonViTinh[]>("/don-vi-tinh"),
+          layDanhSachDanhMucSanPham(),
+          layDanhSachNhaSanXuat(),
+          layDanhSachDonViTinh(),
         ]);
-
         if (daHuy) {
           return;
         }
@@ -513,7 +505,7 @@ function SanPhamFormNoiDung({
     setBuocHienTai(3);
   };
 
-  const taoThongTinSanPhamGuiLen = () => ({
+  const taoThongTinSanPhamGuiLen = (): SanPhamRequest => ({
     maDanhMuc: Number(formData.maDanhMuc),
     maNhaSanXuat: formData.maNhaSanXuat
       ? Number(formData.maNhaSanXuat)
@@ -537,8 +529,8 @@ function SanPhamFormNoiDung({
     try {
       setDangLuu(true);
 
-      const response = await axiosClient.put<SanPham>(
-        `/san-pham/${sanPhamCanSua.maSanPham}`,
+      const response = await capNhatSanPham(
+        sanPhamCanSua.maSanPham,
         taoThongTinSanPhamGuiLen()
       );
 
@@ -562,7 +554,7 @@ function SanPhamFormNoiDung({
       return;
     }
 
-    const duLieuGuiLen = {
+    const duLieuGuiLen: SanPhamTaoDayDuRequest = {
       thongTinSanPham: taoThongTinSanPhamGuiLen(),
       danhSachDonVi: danhSachDonVi.map((donVi) => ({
         maDonViTinh: Number(donVi.maDonViTinh),
@@ -588,11 +580,7 @@ function SanPhamFormNoiDung({
     try {
       setDangLuu(true);
 
-      const response = await axiosClient.post<SanPham>(
-        "/san-pham/tao-day-du",
-        duLieuGuiLen
-      );
-
+      const response = await taoSanPhamDayDu(duLieuGuiLen);
       await onSuccess(response.data, true);
       onClose();
       alert(

@@ -1,6 +1,13 @@
 import axiosClient from "../../../api/axiosClient";
 import type { PhanTrangResponse } from "../../../types/PhanTrangResponse";
-import type { SanPham, DanhMucSanPhamOption, NhaSanXuatOption, DonViSanPham, QuyDoiDonVi } from "../types/SanPham";
+import type {
+  DanhMucSanPhamOption,
+  DonViSanPham,
+  DonViTinhOption,
+  NhaSanXuatOption,
+  QuyDoiDonVi,
+  SanPham,
+} from "../types/SanPham";
 
 export interface ThamSoLocSanPham{
     page: number;
@@ -21,7 +28,26 @@ export interface SanPhamRequest{
     giaBan:number;
     laThuocKeDon:boolean;
     moTaNgan:string|null;
+}
+export interface DonViSanPhamTaoMoiRequest {
+  maDonViTinh: number;
+  giaBanTheoDonVi: number | null;
+  laDonViCoSo: boolean;
+  choPhepBan: boolean;
+  choPhepNhap: boolean;
+}
 
+export interface QuyDoiDonViTaoMoiRequest {
+  maDonViTinhNguon: number;
+  soLuongNguon: number;
+  maDonViTinhDich: number;
+  soLuongDich: number;
+}
+
+export interface SanPhamTaoDayDuRequest {
+  thongTinSanPham: SanPhamRequest;
+  danhSachDonVi: DonViSanPhamTaoMoiRequest[];
+  danhSachQuyDoi: QuyDoiDonViTaoMoiRequest[];
 }
 export const layDanhSachSanPhamPhanTrang  = (
     thamSo: ThamSoLocSanPham
@@ -89,4 +115,19 @@ export const hienQuyDoiDonVi = (ma:number) =>{
     return axiosClient.put<QuyDoiDonVi>(
         `/quy-doi-don-vi/${ma}/hien`
     );
+};
+
+export const layDanhSachDonViTinh = () => {
+  return axiosClient.get<DonViTinhOption[]>(
+    "/don-vi-tinh"
+  );
+};
+
+export const taoSanPhamDayDu = (
+  duLieu: SanPhamTaoDayDuRequest
+) => {
+  return axiosClient.post<SanPham>(
+    "/san-pham/tao-day-du",
+    duLieu
+  );
 };

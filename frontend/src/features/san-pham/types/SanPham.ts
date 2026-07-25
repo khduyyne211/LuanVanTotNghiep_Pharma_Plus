@@ -63,3 +63,10 @@ export interface NhaSanXuatOption {
   tenNhaSanXuat: string;
   trangThai: boolean;
 }
+
+export interface DonViTinhOption {
+  maDonViTinh: number;
+  tenDonViTinh: string;
+  kyHieu: string | null;
+  trangThai: boolean;
+}
