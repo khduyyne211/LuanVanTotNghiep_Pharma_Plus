@@ -2,10 +2,12 @@ package com.pharma.backend.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +17,6 @@ import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamResponse;
 import com.pharma.backend.service.DanhMucSanPhamService;
 
 import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/api/danh-muc-san-pham")
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class DanhMucSanPhamController {
 
     @PostMapping
     public DanhMucSanPhamResponse themDanhMucSanPham(
-            @RequestBody DanhMucSanPhamRequest request
+            @Valid @RequestBody DanhMucSanPhamRequest request
     ) {
         return danhMucSanPhamService.themDanhMucSanPham(request);
     }
@@ -43,7 +44,7 @@ public class DanhMucSanPhamController {
     @PutMapping("/{maDanhMuc}")
     public DanhMucSanPhamResponse capNhatDanhMucSanPham(
             @PathVariable Long maDanhMuc,
-            @RequestBody DanhMucSanPhamRequest request
+            @Valid @RequestBody DanhMucSanPhamRequest request
     ) {
         return danhMucSanPhamService.capNhatDanhMucSanPham(maDanhMuc, request);
     }
