@@ -1,10 +1,9 @@
 import { useState } from "react";
 import "./App.css";
 import QuanLySanPhamPage from "./features/san-pham/pages/QuanLySanPhamPage";
-import QuanLyDonThuocPage from "./features/don-thuoc/pages/QuanLyDonThuocPage";
 import QuanLyYeuCau from "./pages/QuanLyYeuCau";
 import QuanLyDonHangPage from "./features/don-hang/pages/QuanLyDonHangPage";
-
+import QuanLyDanhMucSanPhamPage from "./features/danh-muc-san-pham/pages/QuanLyDanhMucSanPhamPage";
 function App() {
   const [trangDangChon, setTrangDangChon] = useState("san-pham");
 
@@ -27,7 +26,16 @@ function App() {
           >
             Quản lý sản phẩm
           </button>
-
+          <button
+              className={
+                trangDangChon === "danh-muc-san-pham"
+                  ? "menu-item active"
+                  : "menu-item"
+              }
+              onClick={() => setTrangDangChon("danh-muc-san-pham")}
+            >
+              Quản lý danh mục
+            </button>
           <button
             className={
               trangDangChon === "don-thuoc"
@@ -72,8 +80,8 @@ function App() {
           <QuanLySanPhamPage />
         )}
 
-        {trangDangChon === "don-thuoc" && (
-          <QuanLyDonThuocPage />
+        {trangDangChon === "danh-muc-san-pham" && (
+          <QuanLyDanhMucSanPhamPage/>
         )}
 
         {trangDangChon === "yeu-cau" && (
