@@ -1,4 +1,13 @@
+import NhaSanXuatTable from "../components/NhaSanXuatTable";
+import useDanhSachNhaSanXuat from "../hooks/useDanhSachNhaSanXuat";
+
 function QuanLyNhaSanXuatPage() {
+  const {
+    danhSachNhaSanXuat,
+    loading,
+    loi,
+  } = useDanhSachNhaSanXuat();
+
   return (
     <div>
       <div className="page-header">
@@ -11,6 +20,12 @@ function QuanLyNhaSanXuatPage() {
           </p>
         </div>
       </div>
+
+      <NhaSanXuatTable
+        danhSachNhaSanXuat={danhSachNhaSanXuat}
+        loading={loading}
+        loi={loi}
+      />
     </div>
   );
 }
