@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 import { layDanhSachDanhMucSanPham } from "../api/danhMucSanPhamApi";
 import type { DanhMucSanPham } from "../types/DanhMucSanPham";
@@ -6,9 +10,17 @@ import type { DanhMucSanPham } from "../types/DanhMucSanPham";
 function useDanhSachDanhMucSanPham() {
   const [danhSachDanhMuc, setDanhSachDanhMuc] =
     useState<DanhMucSanPham[]>([]);
-
   const [loading, setLoading] = useState(true);
   const [loi, setLoi] = useState<string | null>(null);
+  const [lanTaiDanhSach, setLanTaiDanhSach] =
+    useState(0);
+
+  const taiLaiDanhSach = useCallback(() => {
+    setLoading(true);
+    setLoi(null);
+
+    setLanTaiDanhSach((giaTriCu) => giaTriCu + 1);
+  }, []);
 
   useEffect(() => {
     let daHuy = false;
@@ -47,12 +59,13 @@ function useDanhSachDanhMucSanPham() {
     return () => {
       daHuy = true;
     };
-  }, []);
+  }, [lanTaiDanhSach]);
 
   return {
     danhSachDanhMuc,
     loading,
     loi,
+    taiLaiDanhSach,
   };
 }
 

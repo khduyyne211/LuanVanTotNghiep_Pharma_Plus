@@ -4,12 +4,14 @@ type DanhMucSanPhamTableProps = {
   danhSachDanhMuc: DanhMucSanPham[];
   loading: boolean;
   loi: string | null;
+  onSua: (danhMuc: DanhMucSanPham) => void;
 };
 
 function DanhMucSanPhamTable({
   danhSachDanhMuc,
   loading,
   loi,
+  onSua,
 }: DanhMucSanPhamTableProps) {
   return (
     <div className="table-card">
@@ -18,9 +20,7 @@ function DanhMucSanPhamTable({
           Đang tải danh sách danh mục sản phẩm...
         </p>
       ) : loi ? (
-        <p style={{ padding: "16px" }}>
-          {loi}
-        </p>
+        <p style={{ padding: "16px" }}>{loi}</p>
       ) : (
         <>
           <table className="data-table">
@@ -32,6 +32,7 @@ function DanhMucSanPhamTable({
                 <th>Mô tả</th>
                 <th>Thứ tự</th>
                 <th>Trạng thái</th>
+                <th>Thao tác</th>
               </tr>
             </thead>
 
@@ -41,9 +42,7 @@ function DanhMucSanPhamTable({
                   <td>{danhMuc.maDanhMuc}</td>
 
                   <td>
-                    <strong>
-                      {danhMuc.tenDanhMuc}
-                    </strong>
+                    <strong>{danhMuc.tenDanhMuc}</strong>
                   </td>
 
                   <td>
@@ -53,8 +52,7 @@ function DanhMucSanPhamTable({
 
                   <td>
                     <div className="muted-text">
-                      {danhMuc.moTa ||
-                        "Chưa có mô tả"}
+                      {danhMuc.moTa || "Chưa có mô tả"}
                     </div>
                   </td>
 
@@ -75,15 +73,24 @@ function DanhMucSanPhamTable({
                         : "Ẩn"}
                     </span>
                   </td>
+
+                  <td>
+                    <div className="action-buttons">
+                      <button
+                        type="button"
+                        className="small-button"
+                        onClick={() => onSua(danhMuc)}
+                      >
+                        Sửa
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
 
               {danhSachDanhMuc.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="empty-cell"
-                  >
+                  <td colSpan={7} className="empty-cell">
                     Chưa có danh mục sản phẩm.
                   </td>
                 </tr>
@@ -97,9 +104,7 @@ function DanhMucSanPhamTable({
           >
             <div>
               Tổng cộng{" "}
-              <strong>
-                {danhSachDanhMuc.length}
-              </strong>{" "}
+              <strong>{danhSachDanhMuc.length}</strong>{" "}
               danh mục
             </div>
           </div>
