@@ -4,14 +4,18 @@ type DanhMucSanPhamTableProps = {
   danhSachDanhMuc: DanhMucSanPham[];
   loading: boolean;
   loi: string | null;
+  maDanhMucDangXuLy: number | null;
   onSua: (danhMuc: DanhMucSanPham) => void;
+  onDoiTrangThai: (danhMuc: DanhMucSanPham) => void;
 };
 
 function DanhMucSanPhamTable({
   danhSachDanhMuc,
   loading,
   loi,
+  maDanhMucDangXuLy,
   onSua,
+  onDoiTrangThai,
 }: DanhMucSanPhamTableProps) {
   return (
     <div className="table-card">
@@ -37,56 +41,77 @@ function DanhMucSanPhamTable({
             </thead>
 
             <tbody>
-              {danhSachDanhMuc.map((danhMuc) => (
-                <tr key={danhMuc.maDanhMuc}>
-                  <td>{danhMuc.maDanhMuc}</td>
+              {danhSachDanhMuc.map((danhMuc) => {
+                const dangXuLy =
+                  maDanhMucDangXuLy === danhMuc.maDanhMuc;
 
-                  <td>
-                    <strong>{danhMuc.tenDanhMuc}</strong>
-                  </td>
+                return (
+                  <tr key={danhMuc.maDanhMuc}>
+                    <td>{danhMuc.maDanhMuc}</td>
 
-                  <td>
-                    {danhMuc.tenDanhMucCha ??
-                      "Danh mục cấp cao nhất"}
-                  </td>
+                    <td>
+                      <strong>{danhMuc.tenDanhMuc}</strong>
+                    </td>
 
-                  <td>
-                    <div className="muted-text">
-                      {danhMuc.moTa || "Chưa có mô tả"}
-                    </div>
-                  </td>
+                    <td>
+                      {danhMuc.tenDanhMucCha ??
+                        "Danh mục cấp cao nhất"}
+                    </td>
 
-                  <td>
-                    {danhMuc.thuTuHienThi ?? "—"}
-                  </td>
+                    <td>
+                      <div className="muted-text">
+                        {danhMuc.moTa || "Chưa có mô tả"}
+                      </div>
+                    </td>
 
-                  <td>
-                    <span
-                      className={
-                        danhMuc.trangThaiHienThi
-                          ? "status-active"
-                          : "status-inactive"
-                      }
-                    >
-                      {danhMuc.trangThaiHienThi
-                        ? "Hiện"
-                        : "Ẩn"}
-                    </span>
-                  </td>
+                    <td>
+                      {danhMuc.thuTuHienThi ?? "—"}
+                    </td>
 
-                  <td>
-                    <div className="action-buttons">
-                      <button
-                        type="button"
-                        className="small-button"
-                        onClick={() => onSua(danhMuc)}
+                    <td>
+                      <span
+                        className={
+                          danhMuc.trangThaiHienThi
+                            ? "status-active"
+                            : "status-inactive"
+                        }
                       >
-                        Sửa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {danhMuc.trangThaiHienThi
+                          ? "Hiện"
+                          : "Ẩn"}
+                      </span>
+                    </td>
+
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          type="button"
+                          className="small-button"
+                          onClick={() => onSua(danhMuc)}
+                          disabled={dangXuLy}
+                        >
+                          Sửa
+                        </button>
+
+                        <button
+                          type="button"
+                          className="small-button"
+                          onClick={() =>
+                            onDoiTrangThai(danhMuc)
+                          }
+                          disabled={dangXuLy}
+                        >
+                          {dangXuLy
+                            ? "Đang xử lý..."
+                            : danhMuc.trangThaiHienThi
+                              ? "Ẩn"
+                              : "Hiện"}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
 
               {danhSachDanhMuc.length === 0 && (
                 <tr>

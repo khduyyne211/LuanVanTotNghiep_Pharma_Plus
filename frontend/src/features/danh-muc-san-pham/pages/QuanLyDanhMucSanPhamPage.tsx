@@ -2,6 +2,7 @@ import DanhMucSanPhamFormModal from "../components/DanhMucSanPhamFormModal";
 import DanhMucSanPhamTable from "../components/DanhMucSanPhamTable";
 import useDanhSachDanhMucSanPham from "../hooks/useDanhSachDanhMucSanPham";
 import useFormDanhMucSanPham from "../hooks/useFormDanhMucSanPham";
+import useTrangThaiDanhMucSanPham from "../hooks/useTrangThaiDanhMucSanPham";
 
 function QuanLyDanhMucSanPhamPage() {
   const {
@@ -19,6 +20,13 @@ function QuanLyDanhMucSanPhamPage() {
     dongForm,
     xuLyLuuThanhCong,
   } = useFormDanhMucSanPham({
+    onTaiLaiDanhSach: taiLaiDanhSach,
+  });
+
+  const {
+    maDanhMucDangXuLy,
+    xuLyDoiTrangThai,
+  } = useTrangThaiDanhMucSanPham({
     onTaiLaiDanhSach: taiLaiDanhSach,
   });
 
@@ -57,7 +65,9 @@ function QuanLyDanhMucSanPhamPage() {
         danhSachDanhMuc={danhSachDanhMuc}
         loading={loading}
         loi={loi}
+        maDanhMucDangXuLy={maDanhMucDangXuLy}
         onSua={moFormSua}
+        onDoiTrangThai={xuLyDoiTrangThai}
       />
     </div>
   );
