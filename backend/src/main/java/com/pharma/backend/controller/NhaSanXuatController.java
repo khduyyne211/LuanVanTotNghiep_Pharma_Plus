@@ -1,7 +1,7 @@
 package com.pharma.backend.controller;
 
 import java.util.List;
-
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,7 +37,7 @@ public class NhaSanXuatController {
 
     @PostMapping
     public NhaSanXuatResponse themNhaSanXuat(
-            @RequestBody NhaSanXuatRequest request
+            @Valid @RequestBody NhaSanXuatRequest request
     ) {
         return nhaSanXuatService.themNhaSanXuat(request);
     }
@@ -45,7 +45,7 @@ public class NhaSanXuatController {
     @PutMapping("/{maNhaSanXuat}")
     public NhaSanXuatResponse capNhatNhaSanXuat(
             @PathVariable Long maNhaSanXuat,
-            @RequestBody NhaSanXuatRequest request
+            @Valid @RequestBody NhaSanXuatRequest request
     ) {
         return nhaSanXuatService.capNhatNhaSanXuat(maNhaSanXuat, request);
     }
