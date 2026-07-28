@@ -1,51 +1,55 @@
 import axiosClient from "../../../api/axiosClient";
-import type { 
-    DanhMucSanPham, 
-    DanhMucSanPhamRequest } from "../types/DanhMucSanPham";
+
+import type {
+  DanhMucSanPham,
+  DanhMucSanPhamRequest,
+} from "../types/DanhMucSanPham";
 
 export const layDanhSachDanhMucSanPham = () => {
-    return axiosClient.get<DanhMucSanPham[]>(
-        "/danh-muc-san-pham"
-    );
+  return axiosClient.get<DanhMucSanPham[]>(
+    "/danh-muc-san-pham"
+  );
 };
 
-export const layChiTietDanhMucSanPham = ( maDanhMuc: number) =>{
-    return axiosClient.get<DanhMucSanPham[]>(
-        `/dannh-muc-san-pham/${maDanhMuc}`
-    );
+export const layChiTietDanhMucSanPham = (
+  maDanhMuc: number
+) => {
+  return axiosClient.get<DanhMucSanPham>(
+    `/danh-muc-san-pham/${maDanhMuc}`
+  );
 };
 
 export const themDanhMucSanPham = (
-    request: DanhMucSanPhamRequest
+  request: DanhMucSanPhamRequest
 ) => {
-    return axiosClient.post<DanhMucSanPham>(
-        "/danh-muc-san-pham", request
-    );
+  return axiosClient.post<DanhMucSanPham>(
+    "/danh-muc-san-pham",
+    request
+  );
 };
 
-export const capNhatSanPham = (
-    ma: number, 
-    request:DanhMucSanPhamRequest
-) =>{
-    return axiosClient.put<DanhMucSanPham>(
-        `/danh-muc-san-pham/${ma}`, request
-    );
-};
-
-export const anDanhMucSanPham =(
-    ma: number
+export const capNhatDanhMucSanPham = (
+  maDanhMuc: number,
+  request: DanhMucSanPhamRequest
 ) => {
-    return axiosClient.put<DanhMucSanPham>(
-        `/danh-muc-san-pham/${ma}/an`
-    );
+  return axiosClient.put<DanhMucSanPham>(
+    `/danh-muc-san-pham/${maDanhMuc}`,
+    request
+  );
 };
 
-export const hienDanhMucSanPham =(
-    ma: number
+export const anDanhMucSanPham = (
+  maDanhMuc: number
 ) => {
-    return axiosClient.put<DanhMucSanPham>(
-        `/danh-muc-san-pham/${ma}/hien`
-    );
+  return axiosClient.put<DanhMucSanPham>(
+    `/danh-muc-san-pham/${maDanhMuc}/an`
+  );
 };
 
-
+export const hienDanhMucSanPham = (
+  maDanhMuc: number
+) => {
+  return axiosClient.put<DanhMucSanPham>(
+    `/danh-muc-san-pham/${maDanhMuc}/hien`
+  );
+};
