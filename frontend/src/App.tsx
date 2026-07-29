@@ -5,6 +5,7 @@ import QuanLyYeuCau from "./pages/QuanLyYeuCau";
 import QuanLyDonHangPage from "./features/don-hang/pages/QuanLyDonHangPage";
 import QuanLyDanhMucSanPhamPage from "./features/danh-muc-san-pham/pages/QuanLyDanhMucSanPhamPage";
 import QuanLyNhaSanXuatPage from "./features/nha-san-xuat/pages/QuanLyNhaSanXuatPage";
+import QuanLyDonViTinhPage from "./features/don-vi-tinh/pages/QuanLyDonViTinhPage";
 function App() {
   const [trangDangChon, setTrangDangChon] = useState("san-pham");
 
@@ -47,6 +48,16 @@ function App() {
             >
               Quản lý nhà sản xuất
             </button>
+              <button
+                className={
+                  trangDangChon === "don-vi-tinh"
+                    ? "menu-item active"
+                    : "menu-item"
+                }
+                onClick={() => setTrangDangChon("don-vi-tinh")}
+              >
+                Quản lý đơn vị tính
+              </button>
           <button
             className={
               trangDangChon === "don-thuoc"
@@ -96,6 +107,9 @@ function App() {
         )}
         {trangDangChon === "nha-san-xuat" && (
           <QuanLyNhaSanXuatPage />
+        )}
+        {trangDangChon === "don-vi-tinh" && (
+          <QuanLyDonViTinhPage />
         )}
         {trangDangChon === "yeu-cau" && (
           <QuanLyYeuCau />
