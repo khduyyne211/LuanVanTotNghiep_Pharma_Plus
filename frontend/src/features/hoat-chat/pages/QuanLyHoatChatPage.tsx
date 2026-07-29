@@ -1,4 +1,13 @@
+import HoatChatTable from "../components/HoatChatTable";
+import useDanhSachHoatChat from "../hooks/useDanhSachHoatChat";
+
 function QuanLyHoatChatPage() {
+  const {
+    danhSachHoatChat,
+    loading,
+    loi,
+  } = useDanhSachHoatChat();
+
   return (
     <div>
       <div className="page-header">
@@ -11,6 +20,12 @@ function QuanLyHoatChatPage() {
           </p>
         </div>
       </div>
+
+      <HoatChatTable
+        danhSachHoatChat={danhSachHoatChat}
+        loading={loading}
+        loi={loi}
+      />
     </div>
   );
 }
