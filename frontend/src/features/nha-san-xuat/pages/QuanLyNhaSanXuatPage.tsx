@@ -2,6 +2,7 @@ import NhaSanXuatFormModal from "../components/NhaSanXuatFormModal";
 import NhaSanXuatTable from "../components/NhaSanXuatTable";
 import useDanhSachNhaSanXuat from "../hooks/useDanhSachNhaSanXuat";
 import useFormNhaSanXuat from "../hooks/useFormNhaSanXuat";
+import useTrangThaiNhaSanXuat from "../hooks/useTrangThaiNhaSanXuat";
 
 function QuanLyNhaSanXuatPage() {
   const {
@@ -22,6 +23,13 @@ function QuanLyNhaSanXuatPage() {
     onTaiLaiDanhSach: taiLaiDanhSach,
   });
 
+  const {
+    maNhaSanXuatDangXuLy,
+    xuLyDoiTrangThai,
+  } = useTrangThaiNhaSanXuat({
+    onTaiLaiDanhSach: taiLaiDanhSach,
+  });
+
   return (
     <div>
       <div className="page-header">
@@ -29,8 +37,8 @@ function QuanLyNhaSanXuatPage() {
           <h1>Quản lý nhà sản xuất</h1>
 
           <p>
-            Quản trị viên theo dõi thông tin, quốc gia, địa chỉ và trạng thái
-            của nhà sản xuất.
+            Quản trị viên theo dõi thông tin, quốc gia,
+            địa chỉ và trạng thái của nhà sản xuất.
           </p>
         </div>
 
@@ -55,7 +63,11 @@ function QuanLyNhaSanXuatPage() {
         danhSachNhaSanXuat={danhSachNhaSanXuat}
         loading={loading}
         loi={loi}
+        maNhaSanXuatDangXuLy={
+          maNhaSanXuatDangXuLy
+        }
         onSua={moFormSua}
+        onDoiTrangThai={xuLyDoiTrangThai}
       />
     </div>
   );
