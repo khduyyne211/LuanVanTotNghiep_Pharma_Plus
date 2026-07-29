@@ -32,6 +32,7 @@
             Máy có thể cài Java mới hơn nhưng Maven vẫn tạo code tương thích Java 21.
         -->
         <java.version>21</java.version>
+        <lombok.version>1.18.46</lombok.version>
     </properties>
 
     <dependencies>
@@ -82,7 +83,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--
@@ -134,20 +136,19 @@
 
             <!-- Plugin để build và chạy ứng dụng Spring Boot -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-
-                <!--
-                    Không đóng gói Lombok vào file jar cuối cùng
-                    vì Lombok chỉ phục vụ lúc biên dịch.
-                -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>
+                    <release>${java.version}</release>
+                    <proc>full</proc>
+
+                    <annotationProcessorPaths>
+                        <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
