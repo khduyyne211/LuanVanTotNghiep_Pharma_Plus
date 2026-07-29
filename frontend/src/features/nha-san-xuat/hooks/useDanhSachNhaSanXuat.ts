@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 import { layDanhSachNhaSanXuat } from "../api/nhaSanXuatApi";
 import type { NhaSanXuat } from "../types/NhaSanXuat";
@@ -8,6 +12,14 @@ function useDanhSachNhaSanXuat() {
     useState<NhaSanXuat[]>([]);
   const [loading, setLoading] = useState(true);
   const [loi, setLoi] = useState<string | null>(null);
+  const [lanTaiDanhSach, setLanTaiDanhSach] =
+    useState(0);
+
+  const taiLaiDanhSach = useCallback(() => {
+    setLoading(true);
+    setLoi(null);
+    setLanTaiDanhSach((giaTriCu) => giaTriCu + 1);
+  }, []);
 
   useEffect(() => {
     let daHuy = false;
@@ -45,12 +57,13 @@ function useDanhSachNhaSanXuat() {
     return () => {
       daHuy = true;
     };
-  }, []);
+  }, [lanTaiDanhSach]);
 
   return {
     danhSachNhaSanXuat,
     loading,
     loi,
+    taiLaiDanhSach,
   };
 }
 
