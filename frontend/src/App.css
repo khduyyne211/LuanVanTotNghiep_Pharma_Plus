@@ -638,3 +638,13 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
+.status-pending {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background-color: #fef3c7;
+  color: #92400e;
+  font-size: 13px;
+  white-space: nowrap;
+}
