@@ -3,13 +3,14 @@ package com.pharma.backend.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pharma.backend.dto.donvitinh.DonViTinhRequest;
 import com.pharma.backend.dto.donvitinh.DonViTinhResponse;
 import com.pharma.backend.entity.DonViTinh;
 import com.pharma.backend.repository.DonViTinhRepository;
 
-import lombok.*;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -17,20 +18,21 @@ public class DonViTinhService {
 
     private final DonViTinhRepository donViTinhRepository;
 
+    @Transactional(readOnly = true)
     public List<DonViTinhResponse> layDanhSachDonViTinh() {
-        return donViTinhRepository.findAll()
+        return donViTinhRepository.findAllOrderByTenDonViTinhAsc()
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public DonViTinhResponse layChiTietDonViTinh(long maDonViTinh) {
-        DonViTinh donViTinh = donViTinhRepository.findById(maDonViTinh)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính"));
-
+        DonViTinh donViTinh = timDonViTinhTheoMa(maDonViTinh);
         return toResponse(donViTinh);
     }
 
+    @Transactional
     public DonViTinhResponse themDonViTinh(DonViTinhRequest request) {
         if (donViTinhRepository.existsByTenDonViTinh(request.getTenDonViTinh())) {
             throw new IllegalArgumentException("Tên đơn vị tính đã tồn tại");
@@ -42,19 +44,21 @@ public class DonViTinhService {
         donViTinh.setMoTa(request.getMoTa());
         donViTinh.setTrangThai(true);
 
-        DonViTinh saved = donViTinhRepository.save(donViTinh);
-
-        return toResponse(saved);
+        return toResponse(donViTinhRepository.save(donViTinh));
     }
 
-    public DonViTinhResponse capNhatDonViTinh(long maDonViTinh, DonViTinhRequest request) {
-        DonViTinh donViTinh = donViTinhRepository.findById(maDonViTinh)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính"));
+    @Transactional
+    public DonViTinhResponse capNhatDonViTinh(
+            long maDonViTinh,
+            DonViTinhRequest request
+    ) {
+        DonViTinh donViTinh = timDonViTinhTheoMa(maDonViTinh);
 
-        boolean biTrungTen = donViTinhRepository.existsByTenDonViTinhAndMaDonViTinhNot(
-                request.getTenDonViTinh(),
-                maDonViTinh
-        );
+        boolean biTrungTen =
+                donViTinhRepository.existsByTenDonViTinhAndMaDonViTinhNot(
+                        request.getTenDonViTinh(),
+                        maDonViTinh
+                );
 
         if (biTrungTen) {
             throw new IllegalArgumentException("Tên đơn vị tính đã tồn tại");
@@ -64,31 +68,32 @@ public class DonViTinhService {
         donViTinh.setKyHieu(request.getKyHieu());
         donViTinh.setMoTa(request.getMoTa());
 
-        DonViTinh updated = donViTinhRepository.save(donViTinh);
-
-        return toResponse(updated);
+        return toResponse(donViTinhRepository.save(donViTinh));
     }
 
+    @Transactional
     public DonViTinhResponse anDonViTinh(long maDonViTinh) {
-        DonViTinh donViTinh = donViTinhRepository.findById(maDonViTinh)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính"));
-
+        DonViTinh donViTinh = timDonViTinhTheoMa(maDonViTinh);
         donViTinh.setTrangThai(false);
 
-        DonViTinh updated = donViTinhRepository.save(donViTinh);
-
-        return toResponse(updated);
+        return toResponse(donViTinhRepository.save(donViTinh));
     }
 
+    @Transactional
     public DonViTinhResponse hienDonViTinh(long maDonViTinh) {
-        DonViTinh donViTinh = donViTinhRepository.findById(maDonViTinh)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị tính"));
-
+        DonViTinh donViTinh = timDonViTinhTheoMa(maDonViTinh);
         donViTinh.setTrangThai(true);
 
-        DonViTinh updated = donViTinhRepository.save(donViTinh);
+        return toResponse(donViTinhRepository.save(donViTinh));
+    }
 
-        return toResponse(updated);
+    private DonViTinh timDonViTinhTheoMa(long maDonViTinh) {
+        return donViTinhRepository.findById(maDonViTinh)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Không tìm thấy đơn vị tính"
+                        )
+                );
     }
 
     private DonViTinhResponse toResponse(DonViTinh donViTinh) {
