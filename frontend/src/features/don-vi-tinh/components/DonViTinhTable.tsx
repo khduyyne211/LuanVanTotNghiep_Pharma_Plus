@@ -1,0 +1,102 @@
+import type { DonViTinh } from "../types/DonViTinh";
+
+type DonViTinhTableProps = {
+  danhSachDonViTinh: DonViTinh[];
+  loading: boolean;
+  loi: string | null;
+};
+
+function DonViTinhTable({
+  danhSachDonViTinh,
+  loading,
+  loi,
+}: DonViTinhTableProps) {
+  return (
+    <div className="table-card">
+      {loading ? (
+        <p style={{ padding: "16px" }}>
+          Đang tải danh sách đơn vị tính...
+        </p>
+      ) : loi ? (
+        <p style={{ padding: "16px" }}>{loi}</p>
+      ) : (
+        <>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Mã</th>
+                <th>Tên đơn vị tính</th>
+                <th>Ký hiệu</th>
+                <th>Mô tả</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {danhSachDonViTinh.map((donViTinh) => (
+                <tr key={donViTinh.maDonViTinh}>
+                  <td>{donViTinh.maDonViTinh}</td>
+
+                  <td>
+                    <strong>
+                      {donViTinh.tenDonViTinh}
+                    </strong>
+                  </td>
+
+                  <td>
+                    {donViTinh.kyHieu ||
+                      "Chưa cập nhật"}
+                  </td>
+
+                  <td>
+                    <div className="muted-text">
+                      {donViTinh.moTa ||
+                        "Chưa có mô tả"}
+                    </div>
+                  </td>
+
+                  <td>
+                    <span
+                      className={
+                        donViTinh.trangThai
+                          ? "status-active"
+                          : "status-inactive"
+                      }
+                    >
+                      {donViTinh.trangThai
+                        ? "Hiện"
+                        : "Ẩn"}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+
+              {danhSachDonViTinh.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="empty-cell">
+                    Chưa có đơn vị tính.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          <div
+            className="pagination-row"
+            style={{ padding: "0 16px 16px" }}
+          >
+            <div>
+              Tổng cộng{" "}
+              <strong>
+                {danhSachDonViTinh.length}
+              </strong>{" "}
+              đơn vị tính
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+export default DonViTinhTable;

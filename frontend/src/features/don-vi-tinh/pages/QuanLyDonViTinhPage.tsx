@@ -1,4 +1,13 @@
+import DonViTinhTable from "../components/DonViTinhTable";
+import useDanhSachDonViTinh from "../hooks/useDanhSachDonViTinh";
+
 function QuanLyDonViTinhPage() {
+  const {
+    danhSachDonViTinh,
+    loading,
+    loi,
+  } = useDanhSachDonViTinh();
+
   return (
     <div>
       <div className="page-header">
@@ -12,6 +21,12 @@ function QuanLyDonViTinhPage() {
           </p>
         </div>
       </div>
+
+      <DonViTinhTable
+        danhSachDonViTinh={danhSachDonViTinh}
+        loading={loading}
+        loi={loi}
+      />
     </div>
   );
 }
