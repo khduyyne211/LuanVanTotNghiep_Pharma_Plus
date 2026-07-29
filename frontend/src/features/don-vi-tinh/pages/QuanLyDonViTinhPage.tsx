@@ -2,6 +2,7 @@ import DonViTinhFormModal from "../components/DonViTinhFormModal";
 import DonViTinhTable from "../components/DonViTinhTable";
 import useDanhSachDonViTinh from "../hooks/useDanhSachDonViTinh";
 import useFormDonViTinh from "../hooks/useFormDonViTinh";
+import useTrangThaiDonViTinh from "../hooks/useTrangThaiDonViTinh";
 
 function QuanLyDonViTinhPage() {
   const {
@@ -19,6 +20,13 @@ function QuanLyDonViTinhPage() {
     dongForm,
     xuLyLuuThanhCong,
   } = useFormDonViTinh({
+    onTaiLaiDanhSach: taiLaiDanhSach,
+  });
+
+  const {
+    maDonViTinhDangXuLy,
+    xuLyDoiTrangThai,
+  } = useTrangThaiDonViTinh({
     onTaiLaiDanhSach: taiLaiDanhSach,
   });
 
@@ -55,7 +63,9 @@ function QuanLyDonViTinhPage() {
         danhSachDonViTinh={danhSachDonViTinh}
         loading={loading}
         loi={loi}
+        maDonViTinhDangXuLy={maDonViTinhDangXuLy}
         onSua={moFormSua}
+        onDoiTrangThai={xuLyDoiTrangThai}
       />
     </div>
   );

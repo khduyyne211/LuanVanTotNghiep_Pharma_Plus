@@ -4,14 +4,18 @@ type DonViTinhTableProps = {
   danhSachDonViTinh: DonViTinh[];
   loading: boolean;
   loi: string | null;
+  maDonViTinhDangXuLy: number | null;
   onSua: (donViTinh: DonViTinh) => void;
+  onDoiTrangThai: (donViTinh: DonViTinh) => void;
 };
 
 function DonViTinhTable({
   danhSachDonViTinh,
   loading,
   loi,
+  maDonViTinhDangXuLy,
   onSua,
+  onDoiTrangThai,
 }: DonViTinhTableProps) {
   return (
     <div className="table-card">
@@ -34,47 +38,66 @@ function DonViTinhTable({
             </thead>
 
             <tbody>
-              {danhSachDonViTinh.map((donViTinh) => (
-                <tr key={donViTinh.maDonViTinh}>
-                  <td>{donViTinh.maDonViTinh}</td>
+              {danhSachDonViTinh.map((donViTinh) => {
+                const dangXuLy =
+                  maDonViTinhDangXuLy === donViTinh.maDonViTinh;
 
-                  <td>
-                    <strong>{donViTinh.tenDonViTinh}</strong>
-                  </td>
+                return (
+                  <tr key={donViTinh.maDonViTinh}>
+                    <td>{donViTinh.maDonViTinh}</td>
 
-                  <td>{donViTinh.kyHieu || "Chưa cập nhật"}</td>
+                    <td>
+                      <strong>{donViTinh.tenDonViTinh}</strong>
+                    </td>
 
-                  <td>
-                    <div className="muted-text">
-                      {donViTinh.moTa || "Chưa có mô tả"}
-                    </div>
-                  </td>
+                    <td>{donViTinh.kyHieu || "Chưa cập nhật"}</td>
 
-                  <td>
-                    <span
-                      className={
-                        donViTinh.trangThai
-                          ? "status-active"
-                          : "status-inactive"
-                      }
-                    >
-                      {donViTinh.trangThai ? "Hiện" : "Ẩn"}
-                    </span>
-                  </td>
+                    <td>
+                      <div className="muted-text">
+                        {donViTinh.moTa || "Chưa có mô tả"}
+                      </div>
+                    </td>
 
-                  <td>
-                    <div className="action-buttons">
-                      <button
-                        type="button"
-                        className="small-button"
-                        onClick={() => onSua(donViTinh)}
+                    <td>
+                      <span
+                        className={
+                          donViTinh.trangThai
+                            ? "status-active"
+                            : "status-inactive"
+                        }
                       >
-                        Sửa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {donViTinh.trangThai ? "Hiện" : "Ẩn"}
+                      </span>
+                    </td>
+
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          type="button"
+                          className="small-button"
+                          onClick={() => onSua(donViTinh)}
+                          disabled={dangXuLy}
+                        >
+                          Sửa
+                        </button>
+
+                        <button
+                          type="button"
+                          className="small-button"
+                          onClick={() => onDoiTrangThai(donViTinh)}
+                          disabled={dangXuLy}
+                        >
+                          {dangXuLy
+                            ? "Đang xử lý..."
+                            : donViTinh.trangThai
+                              ? "Ẩn"
+                              : "Hiện"}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
 
               {danhSachDonViTinh.length === 0 && (
                 <tr>
