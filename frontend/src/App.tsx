@@ -6,6 +6,7 @@ import QuanLyDonHangPage from "./features/don-hang/pages/QuanLyDonHangPage";
 import QuanLyDanhMucSanPhamPage from "./features/danh-muc-san-pham/pages/QuanLyDanhMucSanPhamPage";
 import QuanLyNhaSanXuatPage from "./features/nha-san-xuat/pages/QuanLyNhaSanXuatPage";
 import QuanLyDonViTinhPage from "./features/don-vi-tinh/pages/QuanLyDonViTinhPage";
+import QuanLyHoatChatPage from "./features/hoat-chat/pages/QuanLyHoatChatPage";
 function App() {
   const [trangDangChon, setTrangDangChon] = useState("san-pham");
 
@@ -58,7 +59,17 @@ function App() {
               >
                 Quản lý đơn vị tính
               </button>
-          <button
+            <button
+              className={
+                trangDangChon === "hoat-chat"
+                  ? "menu-item active"
+                  : "menu-item"
+              }
+              onClick={() => setTrangDangChon("hoat-chat")}
+            >
+              Quản lý hoạt chất
+            </button>
+          {/* <button
             className={
               trangDangChon === "don-thuoc"
                 ? "menu-item active"
@@ -67,7 +78,7 @@ function App() {
             onClick={() => setTrangDangChon("don-thuoc")}
           >
             Quản lý đơn thuốc
-          </button>
+          </button> */}
 
           {/* <button
             className={
@@ -110,6 +121,9 @@ function App() {
         )}
         {trangDangChon === "don-vi-tinh" && (
           <QuanLyDonViTinhPage />
+        )}
+        {trangDangChon === "hoat-chat" && (
+          <QuanLyHoatChatPage />
         )}
         {trangDangChon === "yeu-cau" && (
           <QuanLyYeuCau />
