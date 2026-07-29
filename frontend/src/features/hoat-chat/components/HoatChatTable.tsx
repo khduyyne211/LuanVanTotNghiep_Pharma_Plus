@@ -9,7 +9,7 @@ type HoatChatTableProps = {
   onDoiTrangThai: (nhaSanXuat: HoatChat) => void;
 };
 
-function NhaSanXuatTable({
+function HoatChatTable({
   danhSachHoatChat,
   loading,
   loi,
@@ -119,7 +119,7 @@ function NhaSanXuatTable({
                     colSpan={6}
                     className="empty-cell"
                   >
-                    Chưa có nhà sản xuất.
+                    Chưa có hoạt chất.
                   </td>
                 </tr>
               )}
@@ -135,7 +135,7 @@ function NhaSanXuatTable({
               <strong>
                 {danhSachHoatChat.length}
               </strong>{" "}
-              nhà sản xuất
+              Hoạt chất
             </div>
           </div>
         </>
@@ -144,4 +144,4 @@ function NhaSanXuatTable({
   );
 }
 
-export default NhaSanXuatTable;
+export default HoatChatTable;
