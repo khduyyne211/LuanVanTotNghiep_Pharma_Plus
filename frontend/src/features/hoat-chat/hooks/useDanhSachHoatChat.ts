@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-
+import { useCallback, useEffect, useState } from "react";
 import { layDanhSachHoatChat } from "../api/hoatChatApi";
 import type { HoatChat } from "../types/HoatChat";
 
@@ -7,6 +6,13 @@ function useDanhSachHoatChat() {
   const [danhSachHoatChat, setDanhSachHoatChat] = useState<HoatChat[]>([]);
   const [loading, setLoading] = useState(true);
   const [loi, setLoi] = useState<string | null>(null);
+  const [lanTaiDanhSach, setLanTaiDanhSach] = useState(0);
+
+  const taiLaiDanhSach = useCallback(() => {
+    setLoading(true);
+    setLoi(null);
+    setLanTaiDanhSach((giaTriCu) => giaTriCu + 1);
+  }, []);
 
   useEffect(() => {
     let daHuy = false;
@@ -39,12 +45,13 @@ function useDanhSachHoatChat() {
     return () => {
       daHuy = true;
     };
-  }, []);
+  }, [lanTaiDanhSach]);
 
   return {
     danhSachHoatChat,
     loading,
     loi,
+    taiLaiDanhSach,
   };
 }
 
