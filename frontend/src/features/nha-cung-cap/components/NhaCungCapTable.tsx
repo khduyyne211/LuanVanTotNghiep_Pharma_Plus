@@ -1,27 +1,27 @@
-import type { HoatChat } from "../types/HoatChat";
+import type { NhaCungCap } from "../types/NhaCungCap";
 
-type HoatChatTableProps = {
-  danhSachHoatChat: HoatChat[];
+type NhaCungCapTableProps = {
+  danhSachNhaCungCap: NhaCungCap[];
   loading: boolean;
   loi: string | null;
-  maHoatChatDangXuLy: number | null;
-  onSua: (hoatChat: HoatChat) => void;
-  onDoiTrangThai: (nhaSanXuat: HoatChat) => void;
+  maNhaCungCapDangXuLy: number | null;
+  onSua: (NhaCungCap: NhaCungCap) => void;
+  onDoiTrangThai: (nhaSanXuat: NhaCungCap) => void;
 };
 
-function HoatChatTable({
-  danhSachHoatChat,
+function NhaCungCapTable({
+  danhSachNhaCungCap,
   loading,
   loi,
-  maHoatChatDangXuLy,
+  maNhaCungCapDangXuLy,
   onSua,
   onDoiTrangThai,
-}: HoatChatTableProps) {
+}: NhaCungCapTableProps) {
   return (
     <div className="table-card">
       {loading ? (
         <p style={{ padding: "16px" }}>
-          Đang tải danh sách hoạt chất...
+          Đang tải danh sách nhà cung cấp...
         </p>
       ) : loi ? (
         <p style={{ padding: "16px" }}>{loi}</p>
@@ -31,37 +31,43 @@ function HoatChatTable({
             <thead>
               <tr>
                 <th>Mã</th>
-                <th>Tên hoạt chất</th>
-                <th>Đơn vị</th>
-                <th>Mô tả</th>
+                <th>Tên nhà cung cấp</th>
+                <th>Số điện thoại</th>
+                <th>Địa chỉ</th>
+                <th>Email</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
               </tr>
             </thead>
 
             <tbody>
-              {danhSachHoatChat.map((hoatChat) => {
-                const dangXuLy =
-                  maHoatChatDangXuLy === hoatChat.maHoatChat;
-
+              {danhSachNhaCungCap.map((NhaCungCap) => {
+                const dangXuLy = maNhaCungCapDangXuLy === NhaCungCap.maNhaCungCap;
                 return (
-                  <tr key={hoatChat.maHoatChat}>
-                    <td>{hoatChat.maHoatChat}</td>
+                  <tr key={NhaCungCap.maNhaCungCap}>
+                    <td>{NhaCungCap.maNhaCungCap}</td>
 
                     <td>
                       <strong>
-                        {hoatChat.tenHoatChat}
+                        {NhaCungCap.tenNhaCungCap}
                       </strong>
                     </td>
 
                     <td>
-                      {hoatChat.donVi ||
+                      {NhaCungCap.soDienThoai ||
                         "Chưa cập nhật"}
                     </td>
 
                     <td>
                       <div className="muted-text">
-                        {hoatChat.moTa ||
+                        {NhaCungCap.diaChi ||
+                          "Chưa cập nhật"}
+                      </div>
+                    </td>
+
+                    <td>
+                      <div className="muted-text">
+                        {NhaCungCap.email ||
                           "Chưa cập nhật"}
                       </div>
                     </td>
@@ -69,12 +75,12 @@ function HoatChatTable({
                     <td>
                       <span
                         className={
-                          hoatChat.trangThai
+                          NhaCungCap.trangThaiHopTac
                             ? "status-active"
                             : "status-inactive"
                         }
                       >
-                        {hoatChat.trangThai
+                        {NhaCungCap.trangThaiHopTac
                           ? "Hiện"
                           : "Ẩn"}
                       </span>
@@ -86,7 +92,7 @@ function HoatChatTable({
                           type="button"
                           className="small-button"
                           onClick={() =>
-                            onSua(hoatChat)
+                            onSua(NhaCungCap)
                           }
                           disabled={dangXuLy}
                         >
@@ -97,13 +103,13 @@ function HoatChatTable({
                           type="button"
                           className="small-button"
                           onClick={() =>
-                            onDoiTrangThai(hoatChat)
+                            onDoiTrangThai(NhaCungCap)
                           }
                           disabled={dangXuLy}
                         >
                           {dangXuLy
                             ? "Đang xử lý..."
-                            : hoatChat.trangThai
+                            : NhaCungCap.trangThaiHopTac
                               ? "Ẩn"
                               : "Hiện"}
                         </button>
@@ -113,13 +119,13 @@ function HoatChatTable({
                 );
               })}
 
-              {danhSachHoatChat.length === 0 && (
+              {danhSachNhaCungCap.length === 0 && (
                 <tr>
                   <td
                     colSpan={6}
                     className="empty-cell"
                   >
-                    Chưa có hoạt chất.
+                    Chưa có nhà cung cấp.
                   </td>
                 </tr>
               )}
@@ -133,9 +139,9 @@ function HoatChatTable({
             <div>
               Tổng cộng{" "}
               <strong>
-                {danhSachHoatChat.length}
+                {danhSachNhaCungCap.length}
               </strong>{" "}
-              Hoạt chất
+              nhà cung cấp
             </div>
           </div>
         </>
@@ -144,4 +150,4 @@ function HoatChatTable({
   );
 }
 
-export default HoatChatTable;
+export default NhaCungCapTable;
