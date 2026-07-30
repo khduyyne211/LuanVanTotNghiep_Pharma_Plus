@@ -17,7 +17,7 @@ public class VaiTro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ma_san_pham")
+    @Column(name = "ma_vai_tro")
     private Long maVaiTro;
 
     @Column(name = "ten_vai_tro", nullable = false, length = 50)
@@ -27,5 +27,5 @@ public class VaiTro {
     private String moTa;
 
     @Column(name = "trang_thai", nullable = false)
-    private Integer trangThai;
+    private Boolean trangThai;
 }
