@@ -39,8 +39,8 @@ function PhuongThucThanhToan({
           <input
             type="radio"
             name="phuongThucThanhToan"
-            checked={phuongThucDangChon === "QR"}
-            onChange={() => thayDoiPhuongThuc("QR")}
+            checked={phuongThucDangChon === "ZALOPAY"}
+            onChange={() => thayDoiPhuongThuc("ZALOPAY")}
           />
 
           <span className="xac-nhan-thanh-toan-icon">

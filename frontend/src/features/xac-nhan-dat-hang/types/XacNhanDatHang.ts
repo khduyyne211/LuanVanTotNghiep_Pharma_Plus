@@ -1,1 +1,1 @@
-export type PhuongThucThanhToan = "COD" | "QR";
+export type PhuongThucThanhToan = "COD" | "ZALOPAY";

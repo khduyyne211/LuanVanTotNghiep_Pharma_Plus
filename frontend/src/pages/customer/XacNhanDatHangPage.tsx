@@ -59,7 +59,7 @@ function XacNhanDatHangPage() {
 
     const laThanhToanQr =
       xacNhanDatHang.phuongThucThanhToan ===
-      "QR";
+      "ZALOPAY";
 
     if (laThanhToanQr) {
       setDangMoThanhToanZaloPay(true);

@@ -16,7 +16,7 @@ function dinhDangNgay(ngay: string) {
 
 function hienThiPhuongThucThanhToan(phuongThuc: string | null) {
   if (phuongThuc === "COD") return "Thanh toán khi nhận hàng";
-  if (phuongThuc === "QR") return "Thanh toán QR ngân hàng";
+  if (phuongThuc === "ZALOPAY") return "Thanh toán ZaloPay (QR)";
   return phuongThuc || "Chưa cập nhật";
 }
 

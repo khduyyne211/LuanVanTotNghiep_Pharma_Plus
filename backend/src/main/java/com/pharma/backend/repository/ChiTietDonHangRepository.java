@@ -66,6 +66,37 @@ public interface ChiTietDonHangRepository
             Pageable pageable
     );
 
+
+    @Query("""
+            SELECT ctdh
+            FROM ChiTietDonHang ctdh
+            JOIN FETCH ctdh.donHang dh
+            JOIN FETCH ctdh.sanPham sp
+            JOIN FETCH ctdh.donViSanPham dvsp
+            JOIN FETCH dvsp.donViTinh dvt
+            WHERE dh.maDonHang IN :danhSachMaDonHang
+            ORDER BY dh.maDonHang DESC,
+                     ctdh.maChiTietDonHang ASC
+            """)
+    List<ChiTietDonHang> layChiTietTheoDanhSachDonHang(
+            @Param("danhSachMaDonHang")
+            List<Long> danhSachMaDonHang
+    );
+
+    @Query("""
+            SELECT ctdh
+            FROM ChiTietDonHang ctdh
+            JOIN FETCH ctdh.donHang dh
+            JOIN FETCH ctdh.sanPham sp
+            JOIN FETCH ctdh.donViSanPham dvsp
+            JOIN FETCH dvsp.donViTinh dvt
+            WHERE dh.maDonHang = :maDonHang
+            ORDER BY ctdh.maChiTietDonHang ASC
+            """)
+    List<ChiTietDonHang> layChiTietTheoMaDonHang(
+            @Param("maDonHang") Long maDonHang
+    );
+
     interface SanPhamBanChayProjection {
 
         Long getMaSanPham();

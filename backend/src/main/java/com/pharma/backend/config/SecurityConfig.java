@@ -100,6 +100,7 @@ public class SecurityConfig {
                     .requestMatchers(
                         "/api/gio-hang/**",
                         "/api/dia-chi-giao-hang/**",
+                        "/api/don-hang/khach-hang/**",
                         "/api/thanh-toan/zalopay/**"
                     )
                     .hasRole("KHACH_HANG")

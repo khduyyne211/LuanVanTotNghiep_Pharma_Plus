@@ -1,9 +1,8 @@
 export type TrangThaiDonHang =
-  | "CHO_THANH_TOAN"
   | "CHO_XU_LY"
   | "DANG_XU_LY"
   | "DANG_GIAO"
-  | "DA_GIAO"
+  | "HOAN_THANH"
   | "DA_HUY";
 
 export interface SanPhamDonHangTomTat {
@@ -25,14 +24,13 @@ export interface DonHangDanhSach {
   soSanPhamKhac: number;
 }
 
-export type PhuongThucThanhToan = "COD" | "QR";
+export type PhuongThucThanhToan = "COD" | "ZALOPAY";
 
 export type TrangThaiThanhToan =
-  | "CHUA_THANH_TOAN"
   | "CHO_THANH_TOAN"
   | "DA_THANH_TOAN"
   | "THANH_TOAN_THAT_BAI"
-  | "DA_HUY";
+  | "DA_HOAN_TIEN";
 
 export interface TaoDonHangRequest {
   maDiaChi: number;

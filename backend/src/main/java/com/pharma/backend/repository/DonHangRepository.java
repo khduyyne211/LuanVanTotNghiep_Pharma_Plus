@@ -1,5 +1,6 @@
 package com.pharma.backend.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -182,4 +183,22 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
     Optional<DonHangChiTietProjection> timChiTietDonHang(
             @Param("maDonHang") long maDonHang
     );
+
+    List<DonHang> findByKhachHang_MaKhachHangOrderByNgayDatHangDesc(
+            Long maKhachHang
+    );
+
+    @Query("""
+            SELECT dh
+            FROM DonHang dh
+            JOIN FETCH dh.khachHang kh
+            JOIN FETCH dh.diaChiGiaoHang dc
+            WHERE dh.maDonHang = :maDonHang
+              AND kh.maKhachHang = :maKhachHang
+            """)
+    Optional<DonHang> timChiTietDonHangCuaKhachHang(
+            @Param("maDonHang") Long maDonHang,
+            @Param("maKhachHang") Long maKhachHang
+    );
+
 }
