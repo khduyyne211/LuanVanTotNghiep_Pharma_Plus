@@ -3,7 +3,6 @@ import type { KhuyenMai } from "../types/KhuyenMai";
 type KhuyenMaiTableProps = {
   danhSachKhuyenMai: KhuyenMai[];
   loading: boolean;
-  loi: string;
   onSua: (khuyenMai: KhuyenMai) => void;
 };
 
@@ -50,128 +49,109 @@ const layThongTinTrangThai = (
   if (trangThai === "DANG_DIEN_RA") {
     return {
       tenTrangThai: "Đang diễn ra",
-      className: "status-active",
+      className: "ql-status ql-status-active",
     };
   }
 
   if (trangThai === "DA_KET_THUC") {
     return {
       tenTrangThai: "Đã kết thúc",
-      className: "status-inactive",
+      className: "ql-status ql-status-inactive",
     };
   }
 
   return {
     tenTrangThai: "Chưa bắt đầu",
-    className: "status-pending",
+    className: "ql-status ql-status-pending",
   };
 };
 
 function KhuyenMaiTable({
   danhSachKhuyenMai,
   loading,
-  loi,
   onSua,
 }: KhuyenMaiTableProps) {
   return (
-    <div className="table-card">
-      {loading ? (
-        <p style={{ padding: "16px" }}>
-          Đang tải danh sách khuyến mãi...
-        </p>
-      ) : loi ? (
-        <p style={{ padding: "16px" }}>{loi}</p>
-      ) : (
-        <>
-          <div style={{ overflowX: "auto" }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Mã</th>
-                  <th>Tên chương trình</th>
-                  <th>Loại khuyến mãi</th>
-                  <th>Giá trị giảm</th>
-                  <th>Thời gian bắt đầu</th>
-                  <th>Thời gian kết thúc</th>
-                  <th>Trạng thái</th>
-                  <th>Thao tác</th>
+    <div className="ql-table-wrapper">
+      <table className="ql-table">
+        <thead>
+          <tr>
+            <th>Mã</th>
+            <th>Tên chương trình</th>
+            <th>Loại khuyến mãi</th>
+            <th>Giá trị giảm</th>
+            <th>Thời gian bắt đầu</th>
+            <th>Thời gian kết thúc</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan={8} className="ql-table-message">
+                Đang tải danh sách khuyến mãi...
+              </td>
+            </tr>
+          ) : danhSachKhuyenMai.length === 0 ? (
+            <tr>
+              <td colSpan={8} className="ql-table-message">
+                Chưa có chương trình khuyến mãi
+              </td>
+            </tr>
+          ) : (
+            danhSachKhuyenMai.map((khuyenMai) => {
+              const thongTinTrangThai = layThongTinTrangThai(
+                khuyenMai.trangThaiKhuyenMai,
+              );
+
+              return (
+                <tr key={khuyenMai.maKhuyenMai}>
+                  <td>
+                    <strong>#{khuyenMai.maKhuyenMai}</strong>
+                  </td>
+
+                  <td>
+                    <strong>{khuyenMai.tenChuongTrinh}</strong>
+                  </td>
+
+                  <td>{layTenLoaiKhuyenMai(khuyenMai)}</td>
+
+                  <td>{layGiaTriKhuyenMai(khuyenMai)}</td>
+
+                  <td>
+                    {dinhDangThoiGian(khuyenMai.thoiGianBatDau)}
+                  </td>
+
+                  <td>
+                    {dinhDangThoiGian(khuyenMai.thoiGianKetThuc)}
+                  </td>
+
+                  <td>
+                    <span className={thongTinTrangThai.className}>
+                      {thongTinTrangThai.tenTrangThai}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div className="ql-action-group">
+                      <button
+                        type="button"
+                        className="ql-action-button"
+                        onClick={() => onSua(khuyenMai)}
+                      >
+                        <i className="bi bi-pencil-square" />
+                        Sửa
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-
-              <tbody>
-                {danhSachKhuyenMai.map((khuyenMai) => {
-                  const thongTinTrangThai = layThongTinTrangThai(
-                    khuyenMai.trangThaiKhuyenMai,
-                  );
-
-                  return (
-                    <tr key={khuyenMai.maKhuyenMai}>
-                      <td>{khuyenMai.maKhuyenMai}</td>
-
-                      <td>
-                        <strong>{khuyenMai.tenChuongTrinh}</strong>
-                      </td>
-
-                      <td>{layTenLoaiKhuyenMai(khuyenMai)}</td>
-
-                      <td>{layGiaTriKhuyenMai(khuyenMai)}</td>
-
-                      <td>
-                        {dinhDangThoiGian(
-                          khuyenMai.thoiGianBatDau,
-                        )}
-                      </td>
-
-                      <td>
-                        {dinhDangThoiGian(
-                          khuyenMai.thoiGianKetThuc,
-                        )}
-                      </td>
-
-                      <td>
-                        <span className={thongTinTrangThai.className}>
-                          {thongTinTrangThai.tenTrangThai}
-                        </span>
-                      </td>
-
-                      <td>
-                        <div className="action-buttons">
-                          <button
-                            type="button"
-                            className="small-button"
-                            onClick={() => onSua(khuyenMai)}
-                          >
-                            Sửa
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-
-                {danhSachKhuyenMai.length === 0 && (
-                  <tr>
-                    <td colSpan={8} className="empty-cell">
-                      Chưa có chương trình khuyến mãi.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          <div
-            className="pagination-row"
-            style={{ padding: "0 16px 16px" }}
-          >
-            <div>
-              Tổng cộng{" "}
-              <strong>{danhSachKhuyenMai.length}</strong>{" "}
-              chương trình khuyến mãi
-            </div>
-          </div>
-        </>
-      )}
+              );
+            })
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

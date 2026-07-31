@@ -3,7 +3,6 @@ import type { NhaSanXuat } from "../types/NhaSanXuat";
 type NhaSanXuatTableProps = {
   danhSachNhaSanXuat: NhaSanXuat[];
   loading: boolean;
-  loi: string | null;
   maNhaSanXuatDangXuLy: number | null;
   onSua: (nhaSanXuat: NhaSanXuat) => void;
   onDoiTrangThai: (nhaSanXuat: NhaSanXuat) => void;
@@ -12,135 +11,111 @@ type NhaSanXuatTableProps = {
 function NhaSanXuatTable({
   danhSachNhaSanXuat,
   loading,
-  loi,
   maNhaSanXuatDangXuLy,
   onSua,
   onDoiTrangThai,
 }: NhaSanXuatTableProps) {
   return (
-    <div className="table-card">
-      {loading ? (
-        <p style={{ padding: "16px" }}>
-          Đang tải danh sách nhà sản xuất...
-        </p>
-      ) : loi ? (
-        <p style={{ padding: "16px" }}>{loi}</p>
-      ) : (
-        <>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Mã</th>
-                <th>Tên nhà sản xuất</th>
-                <th>Quốc gia</th>
-                <th>Địa chỉ</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
-              </tr>
-            </thead>
+    <div className="ql-table-wrapper">
+      <table className="ql-table">
+        <thead>
+          <tr>
+            <th>Mã</th>
+            <th>Tên nhà sản xuất</th>
+            <th>Quốc gia</th>
+            <th>Địa chỉ</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
 
-            <tbody>
-              {danhSachNhaSanXuat.map((nhaSanXuat) => {
-                const dangXuLy =
-                  maNhaSanXuatDangXuLy ===
-                  nhaSanXuat.maNhaSanXuat;
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan={6} className="ql-table-message">
+                Đang tải danh sách nhà sản xuất...
+              </td>
+            </tr>
+          ) : danhSachNhaSanXuat.length === 0 ? (
+            <tr>
+              <td colSpan={6} className="ql-table-message">
+                Chưa có nhà sản xuất
+              </td>
+            </tr>
+          ) : (
+            danhSachNhaSanXuat.map((nhaSanXuat) => {
+              const dangXuLy =
+                maNhaSanXuatDangXuLy === nhaSanXuat.maNhaSanXuat;
 
-                return (
-                  <tr key={nhaSanXuat.maNhaSanXuat}>
-                    <td>{nhaSanXuat.maNhaSanXuat}</td>
+              return (
+                <tr key={nhaSanXuat.maNhaSanXuat}>
+                  <td>
+                    <strong>#{nhaSanXuat.maNhaSanXuat}</strong>
+                  </td>
 
-                    <td>
-                      <strong>
-                        {nhaSanXuat.tenNhaSanXuat}
-                      </strong>
-                    </td>
+                  <td>
+                    <strong>{nhaSanXuat.tenNhaSanXuat}</strong>
+                  </td>
 
-                    <td>
-                      {nhaSanXuat.quocGia ||
-                        "Chưa cập nhật"}
-                    </td>
+                  <td>{nhaSanXuat.quocGia || "Chưa cập nhật"}</td>
 
-                    <td>
-                      <div className="muted-text">
-                        {nhaSanXuat.diaChi ||
-                          "Chưa cập nhật"}
-                      </div>
-                    </td>
+                  <td>
+                    <span className="ql-muted-text">
+                      {nhaSanXuat.diaChi || "Chưa cập nhật"}
+                    </span>
+                  </td>
 
-                    <td>
-                      <span
-                        className={
-                          nhaSanXuat.trangThai
-                            ? "status-active"
-                            : "status-inactive"
-                        }
+                  <td>
+                    <span
+                      className={
+                        nhaSanXuat.trangThai
+                          ? "ql-status ql-status-active"
+                          : "ql-status ql-status-inactive"
+                      }
+                    >
+                      {nhaSanXuat.trangThai ? "Hiện" : "Ẩn"}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div className="ql-action-group">
+                      <button
+                        type="button"
+                        className="ql-action-button"
+                        onClick={() => onSua(nhaSanXuat)}
+                        disabled={dangXuLy}
                       >
-                        {nhaSanXuat.trangThai
-                          ? "Hiện"
-                          : "Ẩn"}
-                      </span>
-                    </td>
+                        <i className="bi bi-pencil-square" />
+                        Sửa
+                      </button>
 
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          type="button"
-                          className="small-button"
-                          onClick={() =>
-                            onSua(nhaSanXuat)
+                      <button
+                        type="button"
+                        className="ql-action-button"
+                        onClick={() => onDoiTrangThai(nhaSanXuat)}
+                        disabled={dangXuLy}
+                      >
+                        <i
+                          className={
+                            nhaSanXuat.trangThai
+                              ? "bi bi-eye-slash"
+                              : "bi bi-eye"
                           }
-                          disabled={dangXuLy}
-                        >
-                          Sửa
-                        </button>
-
-                        <button
-                          type="button"
-                          className="small-button"
-                          onClick={() =>
-                            onDoiTrangThai(nhaSanXuat)
-                          }
-                          disabled={dangXuLy}
-                        >
-                          {dangXuLy
-                            ? "Đang xử lý..."
-                            : nhaSanXuat.trangThai
-                              ? "Ẩn"
-                              : "Hiện"}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {danhSachNhaSanXuat.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="empty-cell"
-                  >
-                    Chưa có nhà sản xuất.
+                        />
+                        {dangXuLy
+                          ? "Đang xử lý..."
+                          : nhaSanXuat.trangThai
+                            ? "Ẩn"
+                            : "Hiện"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-
-          <div
-            className="pagination-row"
-            style={{ padding: "0 16px 16px" }}
-          >
-            <div>
-              Tổng cộng{" "}
-              <strong>
-                {danhSachNhaSanXuat.length}
-              </strong>{" "}
-              nhà sản xuất
-            </div>
-          </div>
-        </>
-      )}
+              );
+            })
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

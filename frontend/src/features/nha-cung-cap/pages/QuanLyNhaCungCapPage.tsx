@@ -3,6 +3,10 @@ import NhaCungCapTable from "../components/NhaCungCapTable";
 import useDanhSachNhaCungCap from "../hooks/useDanhSachNhaCungCap";
 import useFormNhaCungCap from "../hooks/useFormNhaCungCap";
 import useTrangThaiNhaCungCap from "../hooks/useTrangThaiNhaCungCap";
+import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyNhaCungCapPage() {
   const {
@@ -31,26 +35,16 @@ function QuanLyNhaCungCapPage() {
   });
 
   return (
-    <div>
-      <div className="page-header">
-        <div>
-          <h1>Quản lý nhà cung cấp</h1>
-
-          <p>
-            Quản trị viên quản lý tên, số điện thoại, địa chỉ,
-            email và trạng thái của nhà cung cấp.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="primary-button"
+    <div className="ql-page">
+      <TieuDeTrangQuanLy
+        tieuDe="Quản lý nhà cung cấp"
+        moTa="Theo dõi tên, số điện thoại, địa chỉ, email và trạng thái hợp tác của nhà cung cấp"
+      >
+        <NutThaoTacChinh
+          nhan="Thêm nhà cung cấp"
           onClick={moFormThem}
-        >
-          <i className="bi bi-plus-circle" />
-          Thêm nhà cung cấp
-        </button>
-      </div>
+        />
+      </TieuDeTrangQuanLy>
 
       <NhaCungCapFormModal
         isOpen={hienForm}
@@ -59,14 +53,26 @@ function QuanLyNhaCungCapPage() {
         onSuccess={xuLyLuuThanhCong}
       />
 
-      <NhaCungCapTable
-        danhSachNhaCungCap={danhSachNhaCungCap}
-        loading={loading}
-        loi={loi}
-        maNhaCungCapDangXuLy={maNhaCungCapDangXuLy}
-        onSua={moFormSua}
-        onDoiTrangThai={xuLyDoiTrangThai}
-      />
+      <KhungDanhSachQuanLy
+        thongBaoLoi={loi ?? undefined}
+        phanTrang={
+          <div className="ql-list-summary">
+            Tổng cộng{" "}
+            <strong>{danhSachNhaCungCap.length}</strong>{" "}
+            nhà cung cấp
+          </div>
+        }
+      >
+        {!loi && (
+          <NhaCungCapTable
+            danhSachNhaCungCap={danhSachNhaCungCap}
+            loading={loading}
+            maNhaCungCapDangXuLy={maNhaCungCapDangXuLy}
+            onSua={moFormSua}
+            onDoiTrangThai={xuLyDoiTrangThai}
+          />
+        )}
+      </KhungDanhSachQuanLy>
     </div>
   );
 }
