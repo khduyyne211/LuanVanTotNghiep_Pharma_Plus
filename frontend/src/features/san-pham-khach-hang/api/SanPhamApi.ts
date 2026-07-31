@@ -15,7 +15,7 @@ export interface LayDanhSachSanPhamParams {
 }
 
 export const layDanhSachSanPhamApi = (params: LayDanhSachSanPhamParams) => {
-  return apiClient.get<PageResponse<SanPham>>("/san-pham", { params });
+  return apiClient.get<PageResponse<SanPham>>("/san-pham/khach-hang", { params });
 };
 
 export async function laySanPhamBanChayApi(gioiHan = 12): Promise<SanPhamBanChay[]> {

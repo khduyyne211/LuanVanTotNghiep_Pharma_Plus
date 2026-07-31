@@ -17,7 +17,7 @@ export function useChiTietSanPham(maSanPham?: number) {
     setDangTaiDuLieu(true);
 
     apiClient
-      .get<SanPhamChiTiet>(`/san-pham/${maSanPham}`)
+      .get<SanPhamChiTiet>(`/san-pham/khach-hang/${maSanPham}`)
       .then((response) => {
         setSanPhamChiTiet(response.data);
       })

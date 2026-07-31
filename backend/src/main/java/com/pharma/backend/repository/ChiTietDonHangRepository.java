@@ -2,12 +2,14 @@ package com.pharma.backend.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.pharma.backend.dto.donhang.ChiTietDonHangProjection;
 import com.pharma.backend.entity.ChiTietDonHang;
+import com.pharma.backend.enums.donhang.TrangThaiDonHang;
 
 public interface ChiTietDonHangRepository
         extends JpaRepository<ChiTietDonHang, Long> {
@@ -45,4 +47,29 @@ public interface ChiTietDonHangRepository
     List<ChiTietDonHangProjection> timTheoMaDonHang(
             @Param("maDonHang") long maDonHang
     );
+
+    @Query("""
+            SELECT sp.maSanPham AS maSanPham,
+                   SUM(ctdh.soLuong) AS tongSoLuongDaBan
+            FROM ChiTietDonHang ctdh
+            JOIN ctdh.donHang dh
+            JOIN ctdh.sanPham sp
+            WHERE dh.trangThaiDonHang = :trangThaiDonHang
+              AND sp.trangThaiSanPham = true
+            GROUP BY sp.maSanPham
+            ORDER BY SUM(ctdh.soLuong) DESC,
+                     sp.maSanPham ASC
+            """)
+    List<SanPhamBanChayProjection> timSanPhamBanChay(
+            @Param("trangThaiDonHang")
+            TrangThaiDonHang trangThaiDonHang,
+            Pageable pageable
+    );
+
+    interface SanPhamBanChayProjection {
+
+        Long getMaSanPham();
+
+        Long getTongSoLuongDaBan();
+    }
 }

@@ -8,7 +8,7 @@ export interface SanPhamChiTiet {
   hinhAnh: string | null;
   giaBan: number;
   laThuocKeDon: boolean;
-  trangThaiSanPham: number;
+  trangThaiSanPham: boolean;
   moTaNgan: string | null;
   moTa: string | null;
   maDanhMuc: number | null;
