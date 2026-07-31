@@ -1,36 +1,22 @@
-// package com.pharma.backend.repository;
+package com.pharma.backend.repository;
 
-// import org.springframework.data.jpa.repository.JpaRepository;
-// import org.springframework.data.jpa.repository.Query;
-// import org.springframework.data.repository.query.Param;
+import java.util.Optional;
 
-// import com.pharma.backend.entity.HoatChat;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-// public interface VaiTroRepository extends JpaRepository<Object, Object>{
-//     @Query("""
-//             SELECT hc
-//             FROM HoatChat hc
-//             ORDER BY hc.tenHoatChat ASC
-//             """)
-//     List<HoatChat> findAllOrderByTenHoatChatAsc();
+import com.pharma.backend.entity.VaiTro;
 
-//     @Query("""
-//             SELECT CASE WHEN COUNT(hc) > 0 THEN true ELSE false END
-//             FROM HoatChat hc
-//             WHERE hc.tenHoatChat = :tenHoatChat
-//             """)
-//     boolean existsByTenHoatChat(
-//             @Param("tenHoatChat") String tenHoatChat
-//     );
+public interface VaiTroRepository extends JpaRepository<VaiTro, Long> {
 
-//     @Query("""
-//             SELECT CASE WHEN COUNT(hc) > 0 THEN true ELSE false END
-//             FROM HoatChat hc
-//             WHERE hc.tenHoatChat = :tenHoatChat
-//               AND hc.maHoatChat <> :maHoatChat
-//             """)
-//     boolean existsByTenHoatChatAndMaHoatChatNot(
-//             @Param("tenHoatChat") String tenHoatChat,
-//             @Param("maHoatChat") Long maHoatChat
-//     );
-// }
+    @Query("""
+        SELECT vt
+        FROM VaiTro vt
+        WHERE vt.tenVaiTro = :tenVaiTro
+          AND vt.trangThai = true
+    """)
+    Optional<VaiTro> timVaiTroDangHoatDongTheoTen(
+            @Param("tenVaiTro") String tenVaiTro
+    );
+}
