@@ -1,0 +1,100 @@
+.trang-thai-don-hang {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  width: fit-content;
+  padding: 6px 12px;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.trang-thai-don-hang-cham {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Chờ thanh toán */
+
+.trang-thai-don-hang--cho-thanh-toan {
+  color: #c2410c;
+  background-color: #fff7ed;
+  border-color: #fdba74;
+}
+
+.trang-thai-don-hang--cho-thanh-toan
+.trang-thai-don-hang-cham {
+  background-color: #f97316;
+}
+
+/* Chờ xử lý */
+
+.trang-thai-don-hang--cho-xu-ly {
+  color: #a16207;
+  background-color: #fefce8;
+  border-color: #fde047;
+}
+
+.trang-thai-don-hang--cho-xu-ly
+.trang-thai-don-hang-cham {
+  background-color: #eab308;
+}
+
+/* Đang xử lý */
+
+.trang-thai-don-hang--dang-xu-ly {
+  color: #1d4ed8;
+  background-color: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.trang-thai-don-hang--dang-xu-ly
+.trang-thai-don-hang-cham {
+  background-color: #2563eb;
+}
+
+/* Đang giao */
+
+.trang-thai-don-hang--dang-giao {
+  color: #0369a1;
+  background-color: #f0f9ff;
+  border-color: #7dd3fc;
+}
+
+.trang-thai-don-hang--dang-giao
+.trang-thai-don-hang-cham {
+  background-color: #0ea5e9;
+}
+
+/* Đã giao */
+
+.trang-thai-don-hang--da-giao {
+  color: #15803d;
+  background-color: #f0fdf4;
+  border-color: #86efac;
+}
+
+.trang-thai-don-hang--da-giao
+.trang-thai-don-hang-cham {
+  background-color: #16a34a;
+}
+
+/* Đã hủy */
+
+.trang-thai-don-hang--da-huy {
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.trang-thai-don-hang--da-huy
+.trang-thai-don-hang-cham {
+  background-color: #dc2626;
+}

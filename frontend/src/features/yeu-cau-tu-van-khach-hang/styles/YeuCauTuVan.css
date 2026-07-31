@@ -1,0 +1,380 @@
+.yeu-cau-tu-van-trang {
+  width: 100%;
+}
+
+.yeu-cau-tu-van-tieu-de-khu-vuc {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.yeu-cau-tu-van-tieu-de-khu-vuc h1 {
+  margin: 0;
+  color: #172033;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.yeu-cau-tu-van-tieu-de-ben-phai {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.yeu-cau-tu-van-tieu-de-ben-phai > span {
+  color: #64748b;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.yeu-cau-tu-van-nut-tao-moi {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: #075eea;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.yeu-cau-tu-van-nut-tao-moi:hover {
+  background: #064fc7;
+}
+
+.yeu-cau-tu-van-nut-tao-moi:active {
+  transform: scale(0.97);
+}
+
+.yeu-cau-tu-van-danh-sach {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.yeu-cau-tu-van-the {
+  overflow: hidden;
+  border: 1px solid #e5eaf1;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.yeu-cau-tu-van-the-dau {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+}
+
+.yeu-cau-tu-van-the-dau-ben-trai {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.yeu-cau-tu-van-the-dau-ben-trai strong {
+  white-space: nowrap;
+}
+
+.yeu-cau-tu-van-dau-ngan-cach {
+  color: #cbd5e1;
+}
+
+.yeu-cau-tu-van-gio {
+  color: #64748b;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.yeu-cau-tu-van-the-cuoi {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  margin: 0 18px;
+  padding: 13px 0;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.yeu-cau-tu-van-xem-chi-tiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #075eea;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.yeu-cau-tu-van-xem-chi-tiet:hover {
+  color: #064fc7;
+}
+
+.yeu-cau-tu-van-xem-chi-tiet i {
+  margin-top: 2px;
+}
+
+/* Trạng thái */
+
+.trang-thai-yeu-cau-tu-van {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  padding: 6px 12px;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.trang-thai-yeu-cau-tu-van-cham {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+/* Chờ tiếp nhận */
+
+.trang-thai-yeu-cau-tu-van--cho-tiep-nhan {
+  border-color: #fde047;
+  background-color: #fefce8;
+  color: #a16207;
+}
+
+.trang-thai-yeu-cau-tu-van--cho-tiep-nhan
+  .trang-thai-yeu-cau-tu-van-cham {
+  background-color: #eab308;
+}
+
+/* Đang xử lý */
+
+.trang-thai-yeu-cau-tu-van--dang-xu-ly {
+  border-color: #93c5fd;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}
+
+.trang-thai-yeu-cau-tu-van--dang-xu-ly
+  .trang-thai-yeu-cau-tu-van-cham {
+  background-color: #2563eb;
+}
+
+/* Đã tư vấn */
+
+.trang-thai-yeu-cau-tu-van--da-tu-van {
+  border-color: #86efac;
+  background-color: #f0fdf4;
+  color: #15803d;
+}
+
+.trang-thai-yeu-cau-tu-van--da-tu-van
+  .trang-thai-yeu-cau-tu-van-cham {
+  background-color: #16a34a;
+}
+
+/* Không liên hệ được */
+
+.trang-thai-yeu-cau-tu-van--khong-lien-he-duoc {
+  border-color: #fdba74;
+  background-color: #fff7ed;
+  color: #c2410c;
+}
+
+.trang-thai-yeu-cau-tu-van--khong-lien-he-duoc
+  .trang-thai-yeu-cau-tu-van-cham {
+  background-color: #f97316;
+}
+
+/* Đã hủy */
+
+.trang-thai-yeu-cau-tu-van--da-huy {
+  border-color: #fca5a5;
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.trang-thai-yeu-cau-tu-van--da-huy
+  .trang-thai-yeu-cau-tu-van-cham {
+  background-color: #dc2626;
+}
+
+/* Thông báo */
+
+.yeu-cau-tu-van-thong-bao {
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  padding: 32px;
+  border: 1px solid #e5eaf1;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #64748b;
+  text-align: center;
+}
+
+.yeu-cau-tu-van-thong-bao p {
+  margin: 0;
+}
+
+.yeu-cau-tu-van-thong-bao--loi {
+  color: #dc2626;
+}
+
+.yeu-cau-tu-van-dang-tai {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #dbeafe;
+  border-top-color: #075eea;
+  border-radius: 50%;
+  animation:
+    yeu-cau-tu-van-xoay
+    0.8s
+    linear
+    infinite;
+}
+
+.yeu-cau-tu-van-thu-lai {
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #075eea;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.yeu-cau-tu-van-thu-lai:hover {
+  background: #064fc7;
+}
+
+.yeu-cau-tu-van-rong-bieu-tuong {
+  color: #075eea;
+  font-size: 42px;
+}
+
+.yeu-cau-tu-van-rong-tieu-de {
+  color: #334155;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.yeu-cau-tu-van-rong-mo-ta {
+  max-width: 380px;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.yeu-cau-tu-van-tao-moi-rong {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: #075eea;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.yeu-cau-tu-van-so-luong {
+  margin: 22px 0 0;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
+}
+
+.yeu-cau-tu-van-xem-them-khu-vuc {
+  margin-top: 18px;
+  text-align: center;
+}
+
+.yeu-cau-tu-van-xem-them {
+  min-width: 150px;
+  min-height: 42px;
+  padding: 0 20px;
+  border: 1px solid #075eea;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #075eea;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.yeu-cau-tu-van-xem-them:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+.yeu-cau-tu-van-xem-them:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes yeu-cau-tu-van-xoay {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 760px) {
+  .yeu-cau-tu-van-tieu-de-khu-vuc {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .yeu-cau-tu-van-tieu-de-ben-phai {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 560px) {
+  .yeu-cau-tu-van-tieu-de-ben-phai {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .yeu-cau-tu-van-nut-tao-moi {
+    width: 100%;
+  }
+
+  .yeu-cau-tu-van-the-dau {
+    align-items: flex-start;
+  }
+
+  .yeu-cau-tu-van-the-dau-ben-trai {
+    flex-wrap: wrap;
+  }
+}

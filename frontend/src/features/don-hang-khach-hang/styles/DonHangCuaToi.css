@@ -1,0 +1,377 @@
+.don-hang-trang {
+  width: 100%;
+}
+
+.don-hang-tieu-de-khu-vuc {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.don-hang-tieu-de-khu-vuc h1 {
+  margin: 0;
+  color: #172033;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.don-hang-tieu-de-khu-vuc span {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.don-hang-bo-loc {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.don-hang-bo-loc-nut {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  padding: 15px 8px;
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.don-hang-bo-loc-nut:hover {
+  color: #075eea;
+}
+
+.don-hang-bo-loc-nut--dang-chon {
+  color: #075eea;
+  font-weight: 600;
+}
+
+.don-hang-bo-loc-nut--dang-chon::after {
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+  left: 12px;
+  height: 2px;
+  border-radius: 999px;
+  background: #075eea;
+  content: "";
+}
+
+.don-hang-danh-sach {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.don-hang-the {
+  overflow: hidden;
+  border: 1px solid #e5eaf1;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.don-hang-the-dau {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.don-hang-the-dau-ben-trai {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.don-hang-the-dau-ben-trai strong {
+  white-space: nowrap;
+}
+
+.don-hang-dau-ngan-cach {
+  color: #cbd5e1;
+}
+
+.don-hang-ngay {
+  margin: 0 0 5px;
+  color: #1e293b;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.don-hang-ma {
+  color: #64748b;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.don-hang-san-pham {
+  display: flex;
+  min-height: 104px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 18px;
+}
+
+.don-hang-san-pham-ben-trai {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 14px;
+}
+
+.don-hang-san-pham-anh {
+  display: flex;
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #94a3b8;
+  font-size: 11px;
+  text-align: center;
+}
+
+.don-hang-san-pham-anh img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.don-hang-san-pham-thong-tin {
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.don-hang-san-pham-ten {
+  margin: 0;
+  overflow: hidden;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.don-hang-san-pham-so-luong {
+  color: #475569;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.don-hang-san-pham-khac {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.don-hang-san-pham-ben-phai {
+  display: grid;
+  min-width: 190px;
+  grid-template-columns: minmax(100px, auto) minmax(70px, auto);
+  align-items: center;
+  gap: 26px;
+  text-align: right;
+}
+
+.don-hang-san-pham-gia {
+  margin: 0;
+  color: #334155;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.don-hang-san-pham-gia {
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.don-hang-the-cuoi {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0 18px;
+  padding: 13px 0;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.don-hang-xem-chi-tiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #075eea;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.don-hang-xem-chi-tiet i {
+    margin-top: 2px;
+}
+
+.don-hang-tong-tien {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.don-hang-tong-tien strong {
+  color: #075eea;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.don-hang-thong-bao {
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  padding: 32px;
+  border: 1px solid #e5eaf1;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #64748b;
+  text-align: center;
+}
+
+.don-hang-thong-bao p {
+  margin: 0;
+}
+
+.don-hang-thong-bao--loi {
+  color: #dc2626;
+}
+
+.don-hang-dang-tai {
+  width: 34px;
+  height: 34px;
+  border: 3px solid #dbeafe;
+  border-top-color: #075eea;
+  border-radius: 50%;
+  animation: don-hang-xoay 0.8s linear infinite;
+}
+
+.don-hang-thu-lai {
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #075eea;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.don-hang-thu-lai:hover {
+  background: #064fc7;
+}
+
+.don-hang-rong-bieu-tuong {
+  font-size: 42px;
+}
+
+.don-hang-rong-tieu-de {
+  color: #334155;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.don-hang-rong-mo-ta {
+  max-width: 380px;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+@keyframes don-hang-xoay {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 760px) {
+  .don-hang-bo-loc {
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .don-hang-bo-loc-nut {
+    min-width: 112px;
+  }
+
+  .don-hang-san-pham {
+    align-items: flex-start;
+  }
+
+  .don-hang-san-pham-ben-phai {
+    min-width: auto;
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+}
+
+@media (max-width: 560px) {
+  .don-hang-the-dau {
+    align-items: flex-start;
+  }
+
+  .don-hang-the-dau-ben-trai {
+    flex-wrap: wrap;
+  }
+
+  .don-hang-san-pham {
+    flex-direction: column;
+  }
+
+  .don-hang-san-pham-ben-phai {
+    width: 100%;
+    grid-template-columns: 1fr auto;
+  }
+
+  .don-hang-the-cuoi {
+    align-items: flex-end;
+  }
+
+  .don-hang-tong-tien {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+}

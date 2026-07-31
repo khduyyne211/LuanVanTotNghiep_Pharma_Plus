@@ -1,0 +1,634 @@
+.quet-ma-zalopay-trang {
+  min-height: calc(100vh - 120px);
+  padding: 42px 0 64px;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(37, 99, 235, 0.13),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      #f8fbff 0%,
+      #f1f5f9 100%
+    );
+}
+
+.quet-ma-zalopay-dau-trang {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 20px;
+}
+
+.quet-ma-zalopay-quay-lai {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+
+  color: #475569;
+
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.quet-ma-zalopay-quay-lai:hover {
+  color: #2563eb;
+
+  transform: translateX(-2px);
+}
+
+.quet-ma-zalopay-thuong-hieu {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+
+  padding: 8px 13px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+
+  background: #eff6ff;
+  color: #1d4ed8;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.quet-ma-zalopay-khung {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.15fr)
+    minmax(330px, 0.85fr);
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 26px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 28px 70px
+    rgba(15, 23, 42, 0.12);
+}
+
+.quet-ma-zalopay-ben-trai {
+  padding: 42px 48px;
+
+  border-right: 1px solid #e2e8f0;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff 0%,
+      #f8fbff 100%
+    );
+}
+
+.quet-ma-zalopay-tieu-de {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.quet-ma-zalopay-logo {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+
+  width: 58px;
+  height: 58px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+  color: #ffffff;
+
+  font-size: 27px;
+
+  box-shadow:
+    0 12px 26px
+    rgba(37, 99, 235, 0.27);
+}
+
+.quet-ma-zalopay-tieu-de span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #2563eb;
+
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.quet-ma-zalopay-tieu-de h1 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.quet-ma-zalopay-huong-dan-chinh {
+  margin: 20px 0 18px;
+
+  color: #64748b;
+
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.quet-ma-zalopay-trang-thai {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  margin-bottom: 22px;
+  padding: 13px 15px;
+
+  border: 1px solid transparent;
+  border-radius: 14px;
+}
+
+.quet-ma-zalopay-trang-thai > i {
+  flex: 0 0 auto;
+
+  font-size: 23px;
+}
+
+.quet-ma-zalopay-trang-thai div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quet-ma-zalopay-trang-thai strong {
+  font-size: 14px;
+}
+
+.quet-ma-zalopay-trang-thai span {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.quet-ma-zalopay-trang-thai--dang-cho {
+  border-color: #bfdbfe;
+
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.quet-ma-zalopay-trang-thai--da-thanh-toan {
+  border-color: #bbf7d0;
+
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.quet-ma-zalopay-trang-thai--da-huy,
+.quet-ma-zalopay-trang-thai--het-han {
+  border-color: #fed7aa;
+
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.quet-ma-zalopay-trang-thai--loi-ket-noi {
+  border-color: #fecaca;
+
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.quet-ma-zalopay-ma-qr {
+  display: flex;
+  justify-content: center;
+
+  transition:
+    opacity 0.25s ease,
+    filter 0.25s ease;
+}
+
+.quet-ma-zalopay-ma-qr-noi-dung {
+  position: relative;
+
+  padding: 18px;
+
+  border: 1px solid #dbeafe;
+  border-radius: 22px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 14px 35px
+    rgba(15, 23, 42, 0.1);
+}
+
+.quet-ma-zalopay-ma-qr-noi-dung::before,
+.quet-ma-zalopay-ma-qr-noi-dung::after {
+  position: absolute;
+
+  width: 36px;
+  height: 36px;
+
+  border-color: #2563eb;
+  border-style: solid;
+
+  content: "";
+}
+
+.quet-ma-zalopay-ma-qr-noi-dung::before {
+  top: 9px;
+  left: 9px;
+
+  border-width: 3px 0 0 3px;
+  border-radius: 10px 0 0;
+}
+
+.quet-ma-zalopay-ma-qr-noi-dung::after {
+  right: 9px;
+  bottom: 9px;
+
+  border-width: 0 3px 3px 0;
+  border-radius: 0 0 10px;
+}
+
+.quet-ma-zalopay-ma-qr--vo-hieu {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
+.quet-ma-zalopay-thoi-gian {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 18px;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+.quet-ma-zalopay-thoi-gian strong {
+  color: #0f172a;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.quet-ma-zalopay-ben-phai {
+  display: flex;
+  flex-direction: column;
+
+  padding: 38px 34px;
+
+  background: #ffffff;
+}
+
+.quet-ma-zalopay-tom-tat-dau {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 18px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.quet-ma-zalopay-tom-tat-dau span {
+  color: #64748b;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.quet-ma-zalopay-tom-tat-dau strong {
+  color: #0f172a;
+
+  font-size: 18px;
+}
+
+.quet-ma-zalopay-so-tien {
+  padding: 25px 0;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.quet-ma-zalopay-so-tien span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+.quet-ma-zalopay-so-tien strong {
+  color: #2563eb;
+
+  font-size: 31px;
+  line-height: 1;
+}
+
+.quet-ma-zalopay-thong-tin {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  padding: 22px 0;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.quet-ma-zalopay-thong-tin > div {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.quet-ma-zalopay-thong-tin span {
+  color: #64748b;
+
+  font-size: 14px;
+}
+
+.quet-ma-zalopay-thong-tin strong {
+  color: #0f172a;
+
+  font-size: 14px;
+  text-align: right;
+}
+
+.quet-ma-zalopay-ma-giao-dich {
+  max-width: 220px;
+
+  overflow-wrap: anywhere;
+}
+
+.quet-ma-zalopay-cac-buoc {
+  padding: 24px 0 8px;
+}
+
+.quet-ma-zalopay-cac-buoc h2 {
+  margin: 0 0 17px;
+
+  color: #0f172a;
+
+  font-size: 16px;
+}
+
+.quet-ma-zalopay-buoc {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  margin-bottom: 14px;
+}
+
+.quet-ma-zalopay-buoc > span {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+
+  width: 25px;
+  height: 25px;
+
+  border-radius: 50%;
+
+  background: #dbeafe;
+  color: #1d4ed8;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.quet-ma-zalopay-buoc p {
+  margin: 2px 0 0;
+
+  color: #475569;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.quet-ma-zalopay-luu-y {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+
+  margin-top: 8px;
+  padding: 13px 14px;
+
+  border-radius: 13px;
+
+  background: #f8fafc;
+  color: #475569;
+}
+
+.quet-ma-zalopay-luu-y i {
+  margin-top: 2px;
+
+  color: #2563eb;
+}
+
+.quet-ma-zalopay-luu-y p {
+  margin: 0;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.quet-ma-zalopay-nut-kiem-tra,
+.quet-ma-zalopay-nut-chinh,
+.quet-ma-zalopay-nut-phu {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 46px;
+  margin-top: 18px;
+  padding: 0 18px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.quet-ma-zalopay-nut-kiem-tra,
+.quet-ma-zalopay-nut-chinh {
+  border: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+  color: #ffffff;
+}
+
+.quet-ma-zalopay-nut-kiem-tra:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.quet-ma-zalopay-nut-phu {
+  border: 1px solid #cbd5e1;
+
+  background: #ffffff;
+  color: #334155;
+}
+
+.quet-ma-zalopay-nut-phu:hover {
+  border-color: #2563eb;
+
+  color: #2563eb;
+}
+
+.quet-ma-zalopay-khong-du-lieu {
+  max-width: 560px;
+  margin: 40px auto;
+  padding: 50px 38px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+
+  background: #ffffff;
+
+  text-align: center;
+
+  box-shadow:
+    0 25px 60px
+    rgba(15, 23, 42, 0.1);
+}
+
+.quet-ma-zalopay-khong-du-lieu-icon {
+  display: grid;
+  place-items: center;
+
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+
+  border-radius: 22px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  font-size: 32px;
+}
+
+.quet-ma-zalopay-khong-du-lieu h1 {
+  margin: 0 0 12px;
+
+  color: #0f172a;
+}
+
+.quet-ma-zalopay-khong-du-lieu p {
+  margin: 0 0 24px;
+
+  color: #64748b;
+
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .quet-ma-zalopay-khung {
+    grid-template-columns: 1fr;
+  }
+
+  .quet-ma-zalopay-ben-trai {
+    border-right: 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}
+
+@media (max-width: 600px) {
+  .quet-ma-zalopay-trang {
+    padding: 22px 0 40px;
+  }
+
+  .quet-ma-zalopay-dau-trang {
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .quet-ma-zalopay-thuong-hieu {
+    display: none;
+  }
+
+  .quet-ma-zalopay-ben-trai,
+  .quet-ma-zalopay-ben-phai {
+    padding: 26px 20px;
+  }
+
+  .quet-ma-zalopay-tieu-de {
+    align-items: flex-start;
+  }
+
+  .quet-ma-zalopay-logo {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 15px;
+
+    font-size: 23px;
+  }
+
+  .quet-ma-zalopay-tieu-de h1 {
+    font-size: 24px;
+  }
+
+  .quet-ma-zalopay-ma-qr-noi-dung {
+    padding: 12px;
+  }
+
+  .quet-ma-zalopay-ma-qr-noi-dung svg {
+    width: min(260px, 72vw);
+    height: auto;
+  }
+
+  .quet-ma-zalopay-so-tien strong {
+    font-size: 27px;
+  }
+
+  .quet-ma-zalopay-thong-tin > div {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .quet-ma-zalopay-thong-tin strong {
+    text-align: left;
+  }
+
+  .quet-ma-zalopay-ma-giao-dich {
+    max-width: 100%;
+  }
+}
