@@ -7,10 +7,10 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import com.pharma.backend.dto.sanpham.DonViSanPhamTaoMoiRequest;
+import com.pharma.backend.dto.sanpham.QuyDoiDonViTaoMoiRequest;
 import com.pharma.backend.dto.sanpham.SanPhamRequest;
-import com.pharma.backend.dto.sanpham.taomoi.DonViSanPhamTaoMoiRequest;
-import com.pharma.backend.dto.sanpham.taomoi.QuyDoiDonViTaoMoiRequest;
-import com.pharma.backend.dto.sanpham.taomoi.SanPhamTaoDayDuRequest;
+import com.pharma.backend.dto.sanpham.SanPhamTaoDayDuRequest;
 
 @Component
 public class SanPhamTaoDayDuValidator {

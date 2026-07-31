@@ -1,14 +1,20 @@
-import KhuyenMaiTable from "../components/KhuyenMaiTable";
 import KhuyenMaiFormModal from "../components/KhuyenMaiFormModal";
+import KhuyenMaiTable from "../components/KhuyenMaiTable";
 import { useDanhSachKhuyenMai } from "../hooks/useDanhSachKhuyenMai";
-import useFormKhuyenMai from "../hooks/useFormKhuyenMai"
+import useFormKhuyenMai from "../hooks/useFormKhuyenMai";
+import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../../shared/styles/quan-ly/QuanLyCommon.css";
+
 function QuanLyKhuyenMaiPage() {
   const {
     danhSachKhuyenMai,
     dangTai,
     loi,
-    taiDanhSachKhuyenMai
+    taiDanhSachKhuyenMai,
   } = useDanhSachKhuyenMai();
+
   const {
     hienForm,
     khuyenMaiCanSua,
@@ -16,40 +22,47 @@ function QuanLyKhuyenMaiPage() {
     moFormSua,
     dongForm,
     xuLyLuuThanhCong,
-  } = useFormKhuyenMai({onTaiLaiDanhSach:taiDanhSachKhuyenMai});
+  } = useFormKhuyenMai({
+    onTaiLaiDanhSach: taiDanhSachKhuyenMai,
+  });
+
   return (
-    <div>
-      <div className="page-header">
-        <div>
-          <h1>Quản lý khuyến mãi</h1>
-
-          <p>
-            Quản trị viên quản lý chương trình giảm giá theo phần trăm hoặc số
-            tiền trong từng khoảng thời gian.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="primary-button"
+    <div className="ql-page">
+      <TieuDeTrangQuanLy
+        tieuDe="Quản lý khuyến mãi"
+        moTa="Theo dõi các chương trình giảm giá theo phần trăm hoặc số tiền trong từng khoảng thời gian"
+      >
+        <NutThaoTacChinh
+          nhan="Thêm khuyến mãi"
           onClick={moFormThem}
-        >
-          <i className="bi bi-plus-circle" />
-          Thêm khuyến mãi
-        </button>
-      </div>
+        />
+      </TieuDeTrangQuanLy>
+
       <KhuyenMaiFormModal
         isOpen={hienForm}
         khuyenMaiCanSua={khuyenMaiCanSua}
         onClose={dongForm}
         onSuccess={xuLyLuuThanhCong}
       />
-      <KhuyenMaiTable
-        danhSachKhuyenMai={danhSachKhuyenMai}
-        loading={dangTai}
-        loi={loi}
-        onSua={moFormSua}
-      />
+
+      <KhungDanhSachQuanLy
+        thongBaoLoi={loi ?? undefined}
+        phanTrang={
+          <div className="ql-list-summary">
+            Tổng cộng{" "}
+            <strong>{danhSachKhuyenMai.length}</strong>{" "}
+            chương trình khuyến mãi
+          </div>
+        }
+      >
+        {!loi && (
+          <KhuyenMaiTable
+            danhSachKhuyenMai={danhSachKhuyenMai}
+            loading={dangTai}
+            onSua={moFormSua}
+          />
+        )}
+      </KhungDanhSachQuanLy>
     </div>
   );
 }

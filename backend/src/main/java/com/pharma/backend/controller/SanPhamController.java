@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pharma.backend.dto.common.PhanTrangResponse;
 import com.pharma.backend.dto.sanpham.SanPhamRequest;
 import com.pharma.backend.dto.sanpham.SanPhamResponse;
-import com.pharma.backend.dto.sanpham.taomoi.SanPhamTaoDayDuRequest;
+import com.pharma.backend.dto.sanpham.SanPhamTaoDayDuRequest;
 import com.pharma.backend.service.SanPhamService;
 import com.pharma.backend.service.SanPhamTaoDayDuService;
 

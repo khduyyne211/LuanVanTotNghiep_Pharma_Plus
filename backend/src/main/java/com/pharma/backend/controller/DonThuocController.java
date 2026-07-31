@@ -12,7 +12,7 @@ import com.pharma.backend.dto.common.PhanTrangResponse;
 import com.pharma.backend.dto.donthuoc.DonThuocKiemDuyetRequest;
 import com.pharma.backend.dto.donthuoc.DonThuocResponse;
 import com.pharma.backend.service.DonThuocService;
-
+import com.pharma.backend.enums.donthuoc.TrangThaiDonThuoc;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,7 +27,7 @@ public class DonThuocController {
             layDanhSachDonThuocPhanTrang(
                     @RequestParam(defaultValue = "0") int page,
                     @RequestParam(defaultValue = "10") int size,
-                    @RequestParam(required = false) String trangThai,
+                    @RequestParam(required = false) TrangThaiDonThuoc trangThai,
                     @RequestParam(required = false) String keyword
             ) {
         return donThuocService.layDanhSachDonThuocPhanTrang(

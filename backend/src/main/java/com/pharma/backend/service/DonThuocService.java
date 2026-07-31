@@ -11,61 +11,37 @@ import com.pharma.backend.dto.donthuoc.DonThuocDanhSachProjection;
 import com.pharma.backend.dto.donthuoc.DonThuocKiemDuyetRequest;
 import com.pharma.backend.dto.donthuoc.DonThuocResponse;
 import com.pharma.backend.entity.DonThuoc;
+import com.pharma.backend.enums.donthuoc.TrangThaiDonThuoc;
 import com.pharma.backend.repository.DonThuocRepository;
-
+import com.pharma.backend.entity.NhanVienNoiBo;
+import com.pharma.backend.repository.NhanVienNoiBoRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class DonThuocService {
 
-    private static final String TRANG_THAI_CHO_DUYET = "CHO_DUYET";
-    private static final String TRANG_THAI_DA_DUYET = "DA_DUYET";
-    private static final String TRANG_THAI_TU_CHOI = "TU_CHOI";
-
-    private static final String KET_QUA_HOP_LE = "HOP_LE";
-    private static final String KET_QUA_KHONG_HOP_LE = "KHONG_HOP_LE";
-
     private final DonThuocRepository donThuocRepository;
-
+    private final NhanVienNoiBoRepository nhanVienNoiBoRepository;
     @Transactional(readOnly = true)
     public PhanTrangResponse<DonThuocResponse> layDanhSachDonThuocPhanTrang(
             int page,
             int size,
-            String trangThai,
+            TrangThaiDonThuoc trangThai,
             String keyword
     ) {
-        if (page < 0) {
-            page = 0;
-        }
+        int pageHopLe = Math.max(page, 0);
+        int sizeHopLe = size <= 0 ? 10 : Math.min(size, 50);
+        Pageable pageable = PageRequest.of(pageHopLe, sizeHopLe);
 
-        if (size <= 0) {
-            size = 10;
-        }
-
-        if (size > 50) {
-            size = 50;
-        }
-
-        String trangThaiDaXuLy = xuLyChuoiLoc(trangThai);
-        String keywordDaXuLy = xuLyChuoiLoc(keyword);
-
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<DonThuocDanhSachProjection> donThuocPage =
-                donThuocRepository.timKiemDonThuoc(
-                        trangThaiDaXuLy,
-                        keywordDaXuLy,
-                        pageable
-                );
+        Page<DonThuocDanhSachProjection> donThuocPage = donThuocRepository.timKiemDonThuoc(
+                trangThai == null ? null : trangThai.name(),
+                xuLyChuoi(keyword),
+                pageable
+        );
 
         return PhanTrangResponse.<DonThuocResponse>builder()
-                .content(
-                        donThuocPage.getContent()
-                                .stream()
-                                .map(this::toResponse)
-                                .toList()
-                )
+                .content(donThuocPage.getContent().stream().map(this::toResponse).toList())
                 .page(donThuocPage.getNumber())
                 .size(donThuocPage.getSize())
                 .totalElements(donThuocPage.getTotalElements())
@@ -77,71 +53,43 @@ public class DonThuocService {
 
     @Transactional(readOnly = true)
     public DonThuocResponse layChiTietDonThuoc(long maDonThuoc) {
-        DonThuocDanhSachProjection donThuoc =
-                donThuocRepository.timChiTietDonThuoc(maDonThuoc)
-                        .orElseThrow(
-                                () -> new IllegalArgumentException(
-                                        "Không tìm thấy đơn thuốc"
-                                )
-                        );
+        DonThuocDanhSachProjection donThuoc = donThuocRepository.timChiTietDonThuoc(maDonThuoc)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn thuốc"));
 
         return toResponse(donThuoc);
     }
 
     @Transactional
-    public DonThuocResponse duyetDonThuoc(
-            long maDonThuoc,
-            DonThuocKiemDuyetRequest request
-    ) {
+    public DonThuocResponse duyetDonThuoc(long maDonThuoc, DonThuocKiemDuyetRequest request) {
         DonThuoc donThuoc = layDonThuocChoKiemDuyet(maDonThuoc);
-        long maNhanVienDuyet = layMaNhanVienDuyet(request);
 
-        donThuoc.setMaNhanVienDuyet(maNhanVienDuyet);
-        donThuoc.setTrangThaiDonThuoc(TRANG_THAI_DA_DUYET);
-        donThuoc.setKetQuaKiemDuyet(KET_QUA_HOP_LE);
-        donThuoc.setGhiChuDuocSi(
-                xuLyChuoiLuu(request.getGhiChuDuocSi())
-        );
+        donThuoc.setNhanVienDuyet(layNhanVienDuyet(request));
+        donThuoc.setTrangThaiDonThuoc(TrangThaiDonThuoc.DA_DUYET);
         donThuoc.setLyDoTuChoi(null);
+        donThuoc.setGhiChu(xuLyChuoi(request.getGhiChu()));
 
         donThuocRepository.save(donThuoc);
-
         return layChiTietDonThuoc(maDonThuoc);
     }
 
     @Transactional
-    public DonThuocResponse tuChoiDonThuoc(
-            long maDonThuoc,
-            DonThuocKiemDuyetRequest request
-    ) {
+    public DonThuocResponse tuChoiDonThuoc(long maDonThuoc, DonThuocKiemDuyetRequest request) {
         DonThuoc donThuoc = layDonThuocChoKiemDuyet(maDonThuoc);
-        long maNhanVienDuyet = layMaNhanVienDuyet(request);
-        String lyDoTuChoi = layLyDoTuChoi(request);
 
-        donThuoc.setMaNhanVienDuyet(maNhanVienDuyet);
-        donThuoc.setTrangThaiDonThuoc(TRANG_THAI_TU_CHOI);
-        donThuoc.setKetQuaKiemDuyet(KET_QUA_KHONG_HOP_LE);
-        donThuoc.setLyDoTuChoi(lyDoTuChoi);
-        donThuoc.setGhiChuDuocSi(
-                xuLyChuoiLuu(request.getGhiChuDuocSi())
-        );
+        donThuoc.setNhanVienDuyet(layNhanVienDuyet(request));
+        donThuoc.setTrangThaiDonThuoc(TrangThaiDonThuoc.TU_CHOI);
+        donThuoc.setLyDoTuChoi(layLyDoTuChoi(request));
+        donThuoc.setGhiChu(xuLyChuoi(request.getGhiChu()));
 
         donThuocRepository.save(donThuoc);
-
         return layChiTietDonThuoc(maDonThuoc);
     }
 
     private DonThuoc layDonThuocChoKiemDuyet(long maDonThuoc) {
         DonThuoc donThuoc = donThuocRepository.findById(maDonThuoc)
-                .orElseThrow(
-                        () -> new IllegalArgumentException(
-                                "Không tìm thấy đơn thuốc"
-                        )
-                );
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn thuốc"));
 
-        if (!TRANG_THAI_CHO_DUYET.equals(
-                donThuoc.getTrangThaiDonThuoc()
-        )) {
+        if (donThuoc.getTrangThaiDonThuoc() != TrangThaiDonThuoc.CHO_DUYET) {
             throw new IllegalArgumentException(
                     "Chỉ đơn thuốc đang chờ duyệt mới được kiểm duyệt"
             );
@@ -149,40 +97,36 @@ public class DonThuocService {
 
         return donThuoc;
     }
-
-    private long layMaNhanVienDuyet(
+    private NhanVienNoiBo layNhanVienDuyet(
             DonThuocKiemDuyetRequest request
     ) {
-        if (
-            request == null
-            || request.getMaNhanVienDuyet() == null
-            || request.getMaNhanVienDuyet() <= 0
-        ) {
+        if (request == null
+                || request.getMaNhanVienDuyet() == null
+                || request.getMaNhanVienDuyet() <= 0) {
             throw new IllegalArgumentException(
                     "Mã nhân viên duyệt không hợp lệ"
             );
         }
 
-        return request.getMaNhanVienDuyet();
+        return nhanVienNoiBoRepository
+                .findById(request.getMaNhanVienDuyet())
+                .orElseThrow(
+                        () -> new IllegalArgumentException(
+                                "Không tìm thấy nhân viên duyệt"
+                        )
+                );
     }
-
-    private String layLyDoTuChoi(
-            DonThuocKiemDuyetRequest request
-    ) {
-        String lyDoTuChoi = request != null
-                ? xuLyChuoiLuu(request.getLyDoTuChoi())
-                : null;
+    private String layLyDoTuChoi(DonThuocKiemDuyetRequest request) {
+        String lyDoTuChoi = request == null ? null : xuLyChuoi(request.getLyDoTuChoi());
 
         if (lyDoTuChoi == null) {
-            throw new IllegalArgumentException(
-                    "Lý do từ chối không được để trống"
-            );
+            throw new IllegalArgumentException("Lý do từ chối không được để trống");
         }
 
         return lyDoTuChoi;
     }
 
-    private String xuLyChuoiLoc(String giaTri) {
+    private String xuLyChuoi(String giaTri) {
         if (giaTri == null || giaTri.trim().isEmpty()) {
             return null;
         }
@@ -190,39 +134,34 @@ public class DonThuocService {
         return giaTri.trim();
     }
 
-    private String xuLyChuoiLuu(String giaTri) {
-        if (giaTri == null || giaTri.trim().isEmpty()) {
-            return null;
-        }
-
-        return giaTri.trim();
-    }
-
-    private DonThuocResponse toResponse(
-            DonThuocDanhSachProjection donThuoc
-    ) {
+    private DonThuocResponse toResponse(DonThuocDanhSachProjection donThuoc) {
         return DonThuocResponse.builder()
                 .maDonThuoc(donThuoc.getMaDonThuoc())
                 .maKhachHang(donThuoc.getMaKhachHang())
                 .tenKhachHang(donThuoc.getTenKhachHang())
-                .emailKhachHang(donThuoc.getEmailKhachHang())
-                .soDienThoaiKhachHang(
-                        donThuoc.getSoDienThoaiKhachHang()
-                )
+                .soDienThoaiKhachHang(donThuoc.getSoDienThoaiKhachHang())
                 .maNhanVienDuyet(donThuoc.getMaNhanVienDuyet())
-                .tenNhanVienDuyet(
-                        donThuoc.getTenNhanVienDuyet()
-                )
+                .tenNhanVienDuyet(donThuoc.getTenNhanVienDuyet())
                 .anhDonThuoc(donThuoc.getAnhDonThuoc())
                 .ngayUpload(donThuoc.getNgayUpload())
-                .trangThaiDonThuoc(
-                        donThuoc.getTrangThaiDonThuoc()
-                )
+                .trangThaiDonThuoc(chuyenTrangThai(donThuoc.getTrangThaiDonThuoc()))
                 .lyDoTuChoi(donThuoc.getLyDoTuChoi())
-                .ghiChuDuocSi(donThuoc.getGhiChuDuocSi())
-                .ketQuaKiemDuyet(
-                        donThuoc.getKetQuaKiemDuyet()
-                )
+                .ghiChu(donThuoc.getGhiChu())
                 .build();
+    }
+
+    private TrangThaiDonThuoc chuyenTrangThai(String giaTri) {
+        if (giaTri == null || giaTri.isBlank()) {
+            return null;
+        }
+
+        try {
+            return TrangThaiDonThuoc.valueOf(giaTri.trim());
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalStateException(
+                    "Giá trị không hợp lệ tại cột trang_thai_don_thuoc: " + giaTri,
+                    ex
+            );
+        }
     }
 }

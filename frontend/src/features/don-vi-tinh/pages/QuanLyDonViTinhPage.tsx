@@ -3,6 +3,10 @@ import DonViTinhTable from "../components/DonViTinhTable";
 import useDanhSachDonViTinh from "../hooks/useDanhSachDonViTinh";
 import useFormDonViTinh from "../hooks/useFormDonViTinh";
 import useTrangThaiDonViTinh from "../hooks/useTrangThaiDonViTinh";
+import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyDonViTinhPage() {
   const {
@@ -31,26 +35,16 @@ function QuanLyDonViTinhPage() {
   });
 
   return (
-    <div>
-      <div className="page-header">
-        <div>
-          <h1>Quản lý đơn vị tính</h1>
-
-          <p>
-            Quản trị viên quản lý tên, ký hiệu, mô tả và trạng thái của các
-            đơn vị tính được sử dụng cho sản phẩm.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="primary-button"
+    <div className="ql-page">
+      <TieuDeTrangQuanLy
+        tieuDe="Quản lý đơn vị tính"
+        moTa="Theo dõi tên, ký hiệu, mô tả và trạng thái của các đơn vị tính được sử dụng cho sản phẩm"
+      >
+        <NutThaoTacChinh
+          nhan="Thêm đơn vị tính"
           onClick={moFormThem}
-        >
-          <i className="bi bi-plus-circle" />
-          Thêm đơn vị tính
-        </button>
-      </div>
+        />
+      </TieuDeTrangQuanLy>
 
       <DonViTinhFormModal
         isOpen={hienForm}
@@ -59,14 +53,26 @@ function QuanLyDonViTinhPage() {
         onSuccess={xuLyLuuThanhCong}
       />
 
-      <DonViTinhTable
-        danhSachDonViTinh={danhSachDonViTinh}
-        loading={loading}
-        loi={loi}
-        maDonViTinhDangXuLy={maDonViTinhDangXuLy}
-        onSua={moFormSua}
-        onDoiTrangThai={xuLyDoiTrangThai}
-      />
+      <KhungDanhSachQuanLy
+        thongBaoLoi={loi ?? undefined}
+        phanTrang={
+          <div className="ql-list-summary">
+            Tổng cộng{" "}
+            <strong>{danhSachDonViTinh.length}</strong>{" "}
+            đơn vị tính
+          </div>
+        }
+      >
+        {!loi && (
+          <DonViTinhTable
+            danhSachDonViTinh={danhSachDonViTinh}
+            loading={loading}
+            maDonViTinhDangXuLy={maDonViTinhDangXuLy}
+            onSua={moFormSua}
+            onDoiTrangThai={xuLyDoiTrangThai}
+          />
+        )}
+      </KhungDanhSachQuanLy>
     </div>
   );
 }

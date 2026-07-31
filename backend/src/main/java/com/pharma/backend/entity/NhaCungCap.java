@@ -1,37 +1,40 @@
 package com.pharma.backend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "nha_cung_cap")
+/**
+ * Entity ánh xạ bảng nha_cung_cap.
+ */
 @Getter
 @Setter
+@Entity
+@Table(name = "nha_cung_cap")
 public class NhaCungCap {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ma_nha_cung_cap")
+    @Column(name = "ma_nha_cung_cap", nullable = false)
     private Long maNhaCungCap;
 
-    @Column(name = "ten_nha_cung_cap", nullable = false, length = 150)
+    @Column(name = "ten_nha_cung_cap", nullable = false, length = 200)
     private String tenNhaCungCap;
 
-    @Column(name = "so_dien_thoai", length = 20)
+    @Column(name = "so_dien_thoai", nullable = true, length = 20)
     private String soDienThoai;
 
-    @Column(name = "dia_chi", length = 255)
+    @Column(name = "dia_chi", nullable = true, length = 255)
     private String diaChi;
 
-    @Column(name = "email", length = 100)
+    @Column(name = "email", nullable = true, length = 255)
     private String email;
 
     @Column(name = "trang_thai_hop_tac", nullable = false)
-    private Boolean trangThaiHopTac;
+    private Boolean trangThaiHopTac = true;
+
+    @OneToMany(mappedBy = "nhaCungCap", fetch = FetchType.LAZY)
+    private List<PhieuNhapKho> danhSachPhieuNhapKho = new ArrayList<>();
 }
