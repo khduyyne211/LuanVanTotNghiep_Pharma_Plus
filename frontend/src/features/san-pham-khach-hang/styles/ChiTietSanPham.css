@@ -1,0 +1,326 @@
+.trang-chi-tiet-san-pham {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* =========================
+   PHẦN TỔNG QUAN SẢN PHẨM
+========================= */
+
+.chi-tiet-san-pham-tong-quan {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: flex-start;
+
+  background-color: #ffffff;
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 2px 10px rgba(7, 19, 51, 0.06);
+}
+
+.chi-tiet-san-pham-hinh-anh {
+  min-height: 520px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 32px;
+  background-color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chi-tiet-san-pham-hinh-anh img {
+  width: 100%;
+  max-width: 420px;
+  max-height: 460px;
+  object-fit: contain;
+}
+
+.chi-tiet-san-pham-thong-tin {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.chi-tiet-san-pham-thong-tin h1,
+.chi-tiet-san-pham-thong-tin h2,
+.chi-tiet-san-pham-thong-tin h3,
+.chi-tiet-san-pham-thong-tin p,
+.chi-tiet-san-pham-thong-tin span {
+  text-align: left;
+}
+
+.chi-tiet-san-pham-nha-san-xuat {
+  margin: 0;
+  color: #075eea;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.chi-tiet-san-pham-ten {
+  margin: 0;
+  color: #292b2e;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 600;
+}
+
+.chi-tiet-san-pham-ma-va-danh-gia {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.chi-tiet-san-pham-gia {
+  margin: 0;
+  color: #075eea;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.chi-tiet-san-pham-danh-sach-don-vi {
+  width: 100%;
+  max-width: 360px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 4px;
+
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.chi-tiet-san-pham-don-vi-nut {
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background-color: transparent;
+  color: #475569;
+
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.2s;
+}
+
+.chi-tiet-san-pham-don-vi-nut:hover {
+  color: #075eea;
+  background-color: #eaf1ff;
+}
+
+.chi-tiet-san-pham-don-vi-nut.dang-chon {
+  background-color: #ffffff;
+  color: #075eea;
+  border-color: #075eea;
+  box-shadow: 0 1px 4px rgba(7, 94, 234, 0.12);
+}
+
+.chi-tiet-san-pham-don-vi-gia {
+  color: #075eea;
+  border-color: #075eea;
+  box-shadow: 0 1px 4px rgba(7, 94, 234, 0.12);
+ font-size: 20px;
+  font-weight: 400;
+}
+
+.chi-tiet-san-pham-khong-co-anh {
+  color: #94a3b8;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* =========================
+   NÚT HÀNH ĐỘNG
+========================= */
+
+.chi-tiet-san-pham-nhom-nut {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 14px;
+  margin: 8px 0 4px;
+}
+
+.nut-them-gio-hang,
+.nut-tu-van,
+.nut-gui-don-thuoc {
+  min-width: 180px;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.nut-them-gio-hang,
+.nut-tu-van {
+  border: none;
+  background-color: #075eea;
+  color: #ffffff;
+}
+
+.nut-gui-don-thuoc {
+  background-color: #eff6ff;
+  color: #075eea;
+  border: 1px solid #bfdbfe;
+}
+
+.nut-them-gio-hang:hover,
+.nut-tu-van:hover {
+  background-color: #064fc4;
+}
+
+.nut-gui-don-thuoc:hover {
+  background-color: #dbeafe;
+  border-color: #075eea;
+}
+
+/* =========================
+   NHÓM DÒNG THÔNG TIN DÙNG CHUNG
+   Dùng cho cả tổng quan và chi tiết
+========================= */
+
+.nhom-thong-tin-san-pham {
+  display: flex;
+  flex-direction: column;
+}
+
+.dong-thong-tin {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 20px;
+  border-top: 1px solid #e2e8f0;
+  padding: 14px 0;
+  text-align: left;
+}
+
+.dong-thong-tin:first-child {
+  border-top: none;
+}
+
+.dong-thong-tin-ten {
+  color: #071333;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.dong-thong-tin-noi-dung {
+  color: #475569;
+  font-size: 15px;
+  line-height: 1.7;
+  text-align: left;
+  white-space: pre-line;
+}
+
+/* =========================
+   BẢNG THÀNH PHẦN HOẠT CHẤT
+========================= */
+
+.bang-thanh-phan-hoat-chat {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bang-thanh-phan-hoat-chat th,
+.bang-thanh-phan-hoat-chat td {
+  border: 1px solid #e2e8f0;
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.bang-thanh-phan-hoat-chat th {
+  background-color: #f8fafc;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.bang-thanh-phan-hoat-chat td {
+  color: #475569;
+  font-size: 14px;
+}
+
+/* =========================
+   LƯU Ý THUỐC KÊ ĐƠN
+========================= */
+
+.luu-y-thuoc-ke-don {
+  margin: 0;
+  padding: 14px 16px;
+  background-color: #fff7ed;
+  color: #c2410c;
+  border-radius: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* =========================
+   PHẦN THÔNG TIN CHI TIẾT
+========================= */
+
+.chi-tiet-san-pham-noi-dung {
+  background-color: #ffffff;
+  border-radius: 18px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 10px rgba(7, 19, 51, 0.06);
+}
+
+.chi-tiet-san-pham-noi-dung h2 {
+  margin: 0 0 22px;
+  color: #071333;
+  font-size: 24px;
+  font-weight: 750;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1000px) {
+  .chi-tiet-san-pham-tong-quan {
+    grid-template-columns: 1fr;
+  }
+
+  .chi-tiet-san-pham-hinh-anh {
+    min-height: 360px;
+  }
+
+  .chi-tiet-san-pham-nhom-nut {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 800px) {
+  .dong-thong-tin {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .chi-tiet-san-pham-nhom-nut {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nut-them-gio-hang,
+  .nut-tu-van,
+  .nut-gui-don-thuoc {
+    width: 100%;
+  }
+}

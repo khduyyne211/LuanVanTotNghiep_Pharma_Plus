@@ -1,0 +1,650 @@
+/* =========================
+   1. RESET CHUNG
+   Bỏ margin mặc định, dùng box-sizing để layout dễ kiểm soát
+========================= */
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f8;
+  color: #1f2937;
+}
+
+
+/* =========================
+   2. LAYOUT CHÍNH
+   Giao diện dược sĩ gồm sidebar bên trái và nội dung bên phải
+========================= */
+
+.admin-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 32px;
+  overflow-x: auto;
+}
+
+
+/* =========================
+   3. SIDEBAR
+   Thanh menu bên trái dành cho dược sĩ
+========================= */
+
+.sidebar {
+  width: 260px;
+  background-color: #0f172a;
+  color: white;
+  padding: 24px 16px;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  margin-bottom: 32px;
+  padding: 0 8px;
+}
+
+.sidebar-logo h2 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.sidebar-logo span {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-item {
+  border: none;
+  background: transparent;
+  color: #cbd5e1;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #1e293b;
+  color: white;
+}
+
+.menu-item.active {
+  background-color: #2563eb;
+  color: white;
+}
+
+
+/* =========================
+   4. HEADER CỦA TRANG
+   Phần tiêu đề từng màn hình và nút thao tác chính
+========================= */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.page-header p {
+  margin: 0;
+  color: #6b7280;
+}
+
+
+/* =========================
+   5. BUTTON
+   Các nút dùng chung trong hệ thống
+========================= */
+
+.primary-button {
+  border: none;
+  background-color: #2563eb;
+  color: white;
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background-color: #1d4ed8;
+}
+
+.secondary-button {
+  border: 1px solid #d1d5db;
+  background-color: white;
+  color: #374151;
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background-color: #f3f4f6;
+}
+
+.small-button {
+  border: none;
+  background-color: #e5e7eb;
+  color: #374151;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.small-button:hover {
+  background-color: #d1d5db;
+}
+
+.warning-button {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.warning-button:hover {
+  background-color: #fde68a;
+}
+
+.success-button {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.success-button:hover {
+  background-color: #bbf7d0;
+}
+
+.danger-button {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.danger-button:hover {
+  background-color: #fecaca;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* =========================
+   6. BỘ LỌC VÀ PHÂN TRANG
+   Dùng cho màn hình quản lý sản phẩm
+========================= */
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-left,
+.filter-right,
+.pagination-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.search-input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  width: 320px;
+  font-size: 14px;
+}
+
+.page-size-select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  font-size: 14px;
+}
+
+.pagination-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+
+/* =========================
+   7. BẢNG DỮ LIỆU
+   Dùng cho danh sách sản phẩm, đơn vị sản phẩm, quy đổi đơn vị
+========================= */
+
+.table-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+  padding: 0;
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  background-color: #f9fafb;
+  text-align: left;
+  font-size: 14px;
+  color: #374151;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+  font-size: 14px;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.muted-text {
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #6b7280;
+  padding: 24px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+
+/* =========================
+   8. TRẠNG THÁI
+   Badge hiển thị Đang bán / Ngừng bán
+========================= */
+
+.status-active {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background-color: #dcfce7;
+  color: #166534;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.status-inactive {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background-color: #fee2e2;
+  color: #991b1b;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+
+/* =========================
+   9. FORM INPUT
+   Dùng cho popup thêm/sửa sản phẩm
+========================= */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.checkbox-group label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+
+/* =========================
+   10. MODAL CHUNG
+   Dùng cho popup form và popup xem chi tiết sản phẩm
+========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.modal-card {
+  background-color: white;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.25);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #111827;
+}
+
+.modal-header p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.modal-close-button {
+  border: none;
+  background-color: #f1f5f9;
+  color: #6b7280;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.modal-close-button:hover {
+  color: #111827;
+  background-color: #e5e7eb;
+}
+
+
+/* =========================
+   11. MODAL FORM SẢN PHẨM
+   Popup thêm/sửa sản phẩm
+========================= */
+
+.product-form-modal {
+  width: min(640px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+
+/* =========================
+   12. MODAL CHI TIẾT SẢN PHẨM
+   Popup xem thông tin chung, đơn vị sản phẩm, quy đổi đơn vị
+========================= */
+
+.product-detail-modal {
+  width: min(1100px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.detail-section {
+  margin-top: 22px;
+}
+
+.detail-section h3 {
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.detail-grid div {
+  background-color: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.detail-grid span,
+.detail-description span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.detail-grid strong {
+  color: #0f172a;
+}
+
+.detail-description {
+  margin-top: 14px;
+  background-color: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.detail-description p {
+  margin: 0;
+  color: #0f172a;
+}
+
+
+/* =========================
+   13. RESPONSIVE NHẸ
+   Giúp màn hình nhỏ không bị vỡ layout quá nặng
+========================= */
+
+@media (max-width: 900px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .page-header {
+    flex-direction: column;
+  }
+
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-left,
+  .filter-right {
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .pagination-row {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================
+   MODAL ĐƠN VỊ SẢN PHẨM
+   Popup thêm/sửa đơn vị sản phẩm trong chi tiết sản phẩm
+========================= */
+
+.unit-form-modal {
+  width: min(560px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.detail-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.detail-section-header h3 {
+  margin: 0;
+}
+/* =========================
+   MODAL QUY ĐỔI ĐƠN VỊ
+   Popup thêm/sửa quy đổi đơn vị trong chi tiết sản phẩm
+========================= */
+
+.conversion-form-modal {
+  width: min(560px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.conversion-preview {
+  background-color: #f8fafc;
+  border: 1px solid #e5e7eb;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  color: #334155;
+}
+/* =========================
+   BỘ LỌC NÂNG CAO SẢN PHẨM
+========================= */
+
+.advanced-filter-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
+.filter-select {
+  height: 38px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 10px;
+  background-color: #ffffff;
+  font-size: 14px;
+  color: #111827;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+@media (max-width: 1100px) {
+  .advanced-filter-row {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .advanced-filter-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.status-pending {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background-color: #fef3c7;
+  color: #92400e;
+  font-size: 13px;
+  white-space: nowrap;
+}

@@ -1,0 +1,68 @@
+/* Nút giỏ hàng trên header */
+
+.nut-gio-hang-header {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  min-height: 46px;
+  padding: 0 22px;
+
+  background-color: #075eea;
+  color: #ffffff;
+  border-radius: 999px;
+
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 800;
+
+  box-shadow: 0 4px 12px rgba(7, 94, 234, 0.25);
+}
+
+.nut-gio-hang-header:hover {
+  background-color: #064fc4;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.nut-gio-hang-bieu-tuong {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #ffffff;
+  font-size: 20px;
+}
+
+.nut-gio-hang-header i {
+  color: #ffffff;
+}
+
+.nut-gio-hang-so-luong {
+  position: absolute;
+  top: -13px;
+  right: -12px;
+
+  min-width: 21px;
+  height: 21px;
+  padding: 0 5px;
+
+  background-color: #ff8a00;
+  color: #ffffff;
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+
+  border: 2px solid #075eea;
+}

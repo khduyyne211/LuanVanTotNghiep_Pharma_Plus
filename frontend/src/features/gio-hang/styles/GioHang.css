@@ -1,0 +1,581 @@
+.trang-gio-hang {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.trang-gio-hang h1 {
+  margin: 0;
+  color: #071333;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.gio-hang-bo-cuc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.gio-hang-ben-trai,
+.gio-hang-ben-phai {
+  min-width: 0;
+}
+
+.gio-hang-bang {
+  background-color: #ffffff;
+  border-radius: 18px 18px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(7, 19, 51, 0.06);
+}
+
+.gio-hang-bang-tieu-de {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.8fr) 180px 180px 180px 48px;
+  gap: 20px;
+  padding: 18px 26px;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #071333;
+  font-size: 16px;
+  font-weight: 800;
+  border-radius: 18px 18px 0px 0px;
+}
+
+.gio-hang-cot-tieu-de {
+  text-align: left;
+}
+
+.gio-hang-cot-tieu-de.gia-thanh{
+  margin-left: 5px;
+}
+
+.gio-hang-cot-tieu-de.so-luong{
+  margin-left: 30px;
+}
+
+.gio-hang-cot-tieu-de.don-vi{
+  margin-left: 40px;
+}
+
+.gio-hang-bang-noi-dung {
+  display: flex;
+  flex-direction: column;
+}
+
+.gio-hang-dong {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.8fr) 180px 180px 180px 48px;
+  gap: 20px;
+  align-items: center;
+  padding: 26px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.gio-hang-dong:last-child {
+  border-bottom: none;
+}
+
+.gio-hang-cot {
+  min-width: 0;
+}
+
+.gio-hang-cot-san-pham {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+
+.gio-hang-anh-san-pham {
+  width: 92px;
+  height: 92px;
+  border: 1px solid #dbe3ef;
+  border-radius: 14px;
+  background-color: #ffffff;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.gio-hang-anh-san-pham img {
+  max-width: 82px;
+  max-height: 82px;
+  object-fit: contain;
+}
+
+.gio-hang-khong-co-anh {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.gio-hang-thong-tin-san-pham {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gio-hang-thong-tin-san-pham h3 {
+  margin: 0;
+  text-align: left;
+  color: #071333;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.gio-hang-cot-gia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.gio-hang-cot-gia strong {
+  color: #075eea;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.gio-hang-cot-gia span {
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.gio-hang-cot-so-luong {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.gio-hang-bo-dem-so-luong {
+  width: 128px;
+  height: 33px;
+
+  display: grid;
+  grid-template-columns: 40px 43px 40px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.gio-hang-bo-dem-so-luong button {
+  border: none;
+  background-color: #ffffff;
+  color: #071333;
+  font-size: 25px;
+  font-weight: 500;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -5px;
+}
+
+.gio-hang-bo-dem-so-luong button:disabled {
+  cursor: not-allowed;
+  color: #cbd5e1;
+}
+
+.gio-hang-bo-dem-so-luong input {
+  width: 100%;
+  height: 100%;
+
+  border: none;
+  border-left: 1px solid #cbd5e1;
+  border-right: 1px solid #cbd5e1;
+  outline: none;
+
+  text-align: center;
+  color: #071333;
+  background-color: #ffffff;
+
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+.gio-hang-bo-dem-so-luong input:disabled {
+  background-color: #ffffff;
+  opacity: 1;
+}
+
+.gio-hang-bo-dem-so-luong input::-webkit-outer-spin-button,
+.gio-hang-bo-dem-so-luong input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.gio-hang-bo-dem-so-luong input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+
+.gio-hang-don-vi-dang-cap-nhat {
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.gio-hang-khu-vuc-xoa {
+  margin-top: 16px;
+}
+
+.gio-hang-nut-xoa-tat-ca {
+  border: none;
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.gio-hang-nut-xoa-tat-ca:hover {
+  background-color: #1d4ed8;
+}
+
+.gio-hang-nut-xoa-tat-ca:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.gio-hang-tom-tat {
+  position: sticky;
+  top: 170px;
+  background-color: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 2px 10px rgba(7, 19, 51, 0.06);
+}
+
+.gio-hang-tom-tat h2 {
+  margin: 0 0 18px;
+  color: #071333;
+  font-size: 23px;
+  font-weight: 600;
+}
+
+.gio-hang-tom-tat-dong {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 15px;
+}
+
+.gio-hang-tom-tat-dong strong {
+  color: #071333;
+}
+
+.gio-hang-thanh-tien {
+  border-bottom: none;
+  padding-top: 18px;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.gio-hang-thanh-tien strong {
+  color: #2563eb;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.gio-hang-nut-mua-hang {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  margin-top: 16px;
+  padding: 15px 121px;
+  background-color: #2563eb;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.gio-hang-nut-mua-hang:hover {
+  background-color: #1d4ed8;
+  text-decoration: none;
+}
+
+.gio-hang-nut-mua-hang:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.gio-hang-tiep-tuc-mua-sam {
+  align-self: flex-start;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gio-hang-tiep-tuc-mua-sam:hover {
+  text-decoration: underline;
+}
+
+.gio-hang-rong {
+  min-height: 360px;
+  padding: 40px 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  background-color: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.gio-hang-rong-bieu-tuong {
+  width: 150px;
+  height: 110px;
+  margin-bottom: 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #cbd5e1;
+}
+
+.gio-hang-rong-bieu-tuong i {
+  font-size: 86px;
+}
+
+.gio-hang-rong h2 {
+  margin: 0 0 10px;
+  color: #334155;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.gio-hang-rong p {
+  margin: 0;
+  color: #64748b;
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+.gio-hang-dang-tai {
+  background-color: #ffffff;
+  border-radius: 18px;
+  padding: 56px 24px;
+  text-align: center;
+  color: #64748b;
+  box-shadow: 0 2px 10px rgba(7, 19, 51, 0.06);
+}
+
+.gio-hang-cot-don-vi {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.gio-hang-bang,
+.gio-hang-bang-noi-dung {
+  overflow: visible;
+}
+
+.gio-hang-don-vi-dropdown {
+  position: relative;
+  width: 132px;
+}
+
+.gio-hang-don-vi-nut-chon {
+  width: 132px;
+  height: 34px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background-color: #ffffff;
+  color: #071333;
+
+  padding: 0 14px 0 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.gio-hang-don-vi-nut-chon i {
+  font-size: 14px;
+  color: #071333;
+  margin-right: 2px;
+}
+
+.gio-hang-don-vi-nut-chon:hover {
+  border-color: #075eea;
+}
+
+.gio-hang-don-vi-nut-chon.dang-mo {
+  border-color: #075eea;
+  box-shadow: 0 0 0 3px rgba(7, 94, 234, 0.1);
+}
+
+.gio-hang-don-vi-nut-chon:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.gio-hang-don-vi-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+
+  width: 250px;
+  background-color: #ffffff;
+  border: 1px solid #dbe3ef;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+
+  overflow: hidden;
+  z-index: 30;
+}
+
+.gio-hang-don-vi-lua-chon {
+  width: 100%;
+  min-height: 52px;
+
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #071333;
+
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  column-gap: 12px;
+
+  padding: 0 16px;
+  cursor: pointer;
+
+  font-size: 16px;
+  text-align: left;
+}
+
+.gio-hang-don-vi-lua-chon:last-child {
+  border-bottom: none;
+}
+
+.gio-hang-don-vi-lua-chon:hover {
+  background-color: #f8fafc;
+}
+
+.gio-hang-don-vi-lua-chon.dang-chon {
+  background-color: #f8fbff;
+}
+
+.gio-hang-don-vi-radio {
+  width: 20px;
+  height: 20px;
+
+  border: 2px solid #64748b;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gio-hang-don-vi-lua-chon.dang-chon .gio-hang-don-vi-radio {
+  border-color: #2563eb;
+  background-color: #2563eb;
+}
+
+.gio-hang-don-vi-radio-cham {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+}
+
+.gio-hang-don-vi-ten {
+  color: #071333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.gio-hang-don-vi-gia {
+  color: #071333;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.gio-hang-cot-xoa {
+  display: flex;
+  justify-content: center;
+}
+
+.gio-hang-nut-xoa-icon {
+  width: 38px;
+  height: 38px;
+
+  border: none;
+  background-color: transparent;
+  color: #64748b;
+
+  font-size: 20px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gio-hang-nut-xoa-icon:hover {
+  color: #334155;
+  background-color: #f1f5f9;
+  border-radius: 50%;
+}
+
+.gio-hang-nut-xoa-icon:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (max-width: 1200px) {
+  .gio-hang-bo-cuc {
+    grid-template-columns: 1fr;
+  }
+
+  .gio-hang-tom-tat {
+    position: static;
+  }
+}
+
+@media (max-width: 900px) {
+  .gio-hang-bang-tieu-de {
+    display: none;
+  }
+
+  .gio-hang-dong {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}

@@ -1,0 +1,82 @@
+.thong-bao-he-thong-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.thong-bao-he-thong-hop {
+  position: relative;
+  width: min(410px, 100%);
+  padding: 34px 28px 30px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+  text-align: center;
+}
+
+.thong-bao-he-thong-nut-dong {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.thong-bao-he-thong-nut-dong:hover {
+  color: #0f172a;
+}
+
+.thong-bao-he-thong-icon {
+  display: flex;
+  width: 62px;
+  height: 62px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  font-size: 30px;
+}
+
+.thong-bao-he-thong-icon--thanh-cong {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.thong-bao-he-thong-icon--loi {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.thong-bao-he-thong-icon--canh-bao {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.thong-bao-he-thong-icon--thong-tin {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.thong-bao-he-thong-hop h2 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.thong-bao-he-thong-hop p {
+  margin: 0;
+  color: #475569;
+  font-size: 15px;
+  line-height: 1.6;
+}
