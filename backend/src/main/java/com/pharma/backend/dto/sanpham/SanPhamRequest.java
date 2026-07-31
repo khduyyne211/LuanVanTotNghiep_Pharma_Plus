@@ -14,7 +14,7 @@ public class SanPhamRequest {
 
     private String tenSanPham;
     private String hinhAnh;
-    private BigDecimal giaBan;
     private Boolean laThuocKeDon;
     private String moTaNgan;
+    private String moTa;
 }

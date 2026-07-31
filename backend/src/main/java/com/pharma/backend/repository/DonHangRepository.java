@@ -1,4 +1,4 @@
-package com.pharma.backend.repository.donhang;
+package com.pharma.backend.repository;
 
 import java.util.Optional;
 
@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.pharma.backend.dto.donhang.DonHangChiTietProjection;
 import com.pharma.backend.dto.donhang.DonHangDanhSachProjection;
-import com.pharma.backend.entity.donhang.DonHang;
+import com.pharma.backend.entity.DonHang;
 
 public interface DonHangRepository extends JpaRepository<DonHang, Long> {
 
@@ -20,7 +20,6 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                 dh.ma_don_hang AS maDonHang,
                 dh.ma_khach_hang AS maKhachHang,
                 kh.ho_ten AS tenKhachHang,
-                tk.email AS emailKhachHang,
                 tk.so_dien_thoai AS soDienThoaiKhachHang,
                 dh.ma_don_thuoc AS maDonThuoc,
                 dh.ma_nhan_vien_xu_ly AS maNhanVienXuLy,
@@ -42,7 +41,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                         JOIN san_pham sp
                             ON sp.ma_san_pham = ctdh.ma_san_pham
                         WHERE ctdh.ma_don_hang = dh.ma_don_hang
-                          AND sp.la_thuoc_ke_don = b'1'
+                          AND sp.la_thuoc_ke_don = 1
                     )
                     THEN 1
                     ELSE 0
@@ -124,21 +123,17 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                 dh.ma_don_hang AS maDonHang,
                 dh.ma_khach_hang AS maKhachHang,
                 kh.ho_ten AS tenKhachHang,
-                tk.email AS emailKhachHang,
                 tk.so_dien_thoai AS soDienThoaiKhachHang,
                 dh.ma_dia_chi AS maDiaChi,
                 dc.ten_nguoi_nhan AS tenNguoiNhan,
                 dc.so_dien_thoai_nhan AS soDienThoaiNhan,
-                dc.tinh_thanh AS tinhThanh,
-                dc.quan_huyen AS quanHuyen,
-                dc.phuong_xa AS phuongXa,
+                dc.thanh_pho AS thanhPho,
+                dc.phuong_khu_vuc AS phuongKhuVuc,
                 dc.dia_chi_chi_tiet AS diaChiChiTiet,
                 dh.ma_voucher AS maVoucher,
                 dh.ma_don_thuoc AS maDonThuoc,
                 dh.ma_nhan_vien_xu_ly AS maNhanVienXuLy,
                 nv.ho_ten AS tenNhanVienXuLy,
-                dh.ma_duoc_si_duyet AS maDuocSiDuyet,
-                ds.ho_ten AS tenDuocSiDuyet,
                 dh.ngay_dat_hang AS ngayDatHang,
                 dh.loai_khach AS loaiKhach,
                 dh.tong_tien_hang AS tongTienHang,
@@ -155,7 +150,8 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                 dh.ghi_chu AS ghiChu,
                 dt.anh_don_thuoc AS anhDonThuoc,
                 dt.trang_thai_don_thuoc AS trangThaiDonThuoc,
-                dt.ket_qua_kiem_duyet AS ketQuaKiemDuyetDonThuoc,
+                dt.ly_do_tu_choi AS lyDoTuChoiDonThuoc,
+                dt.ghi_chu AS ghiChuDonThuoc,
                 CASE
                     WHEN EXISTS (
                         SELECT 1
@@ -163,7 +159,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                         JOIN san_pham sp
                             ON sp.ma_san_pham = ctdh.ma_san_pham
                         WHERE ctdh.ma_don_hang = dh.ma_don_hang
-                          AND sp.la_thuoc_ke_don = b'1'
+                          AND sp.la_thuoc_ke_don = 1
                     )
                     THEN 1
                     ELSE 0
@@ -177,8 +173,6 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                 ON dc.ma_dia_chi = dh.ma_dia_chi
             LEFT JOIN nhan_vien_noi_bo nv
                 ON nv.ma_nhan_vien = dh.ma_nhan_vien_xu_ly
-            LEFT JOIN nhan_vien_noi_bo ds
-                ON ds.ma_nhan_vien = dh.ma_duoc_si_duyet
             LEFT JOIN don_thuoc dt
                 ON dt.ma_don_thuoc = dh.ma_don_thuoc
             WHERE dh.ma_don_hang = :maDonHang
@@ -187,20 +181,5 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
     )
     Optional<DonHangChiTietProjection> timChiTietDonHang(
             @Param("maDonHang") long maDonHang
-    );
-
-
-    @Query(
-        value = """
-            SELECT COUNT(*)
-            FROM nhan_vien_noi_bo
-            WHERE ma_nhan_vien = :maDuocSi
-              AND chuc_vu = 'Dược sĩ'
-              AND trang_thai_lam_viec = 1
-            """,
-        nativeQuery = true
-    )
-    long demDuocSiDangLamViec(
-            @Param("maDuocSi") long maDuocSi
     );
 }

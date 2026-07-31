@@ -1,23 +1,20 @@
 package com.pharma.backend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "vai_tro")
 @Getter
 @Setter
+@Entity
+@Table(name = "vai_tro")
 public class VaiTro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ma_san_pham")
+    @Column(name = "ma_vai_tro", nullable = false)
     private Long maVaiTro;
 
     @Column(name = "ten_vai_tro", nullable = false, length = 50)
@@ -27,5 +24,8 @@ public class VaiTro {
     private String moTa;
 
     @Column(name = "trang_thai", nullable = false)
-    private Integer trangThai;
+    private Boolean trangThai = true;
+
+    @ManyToMany(mappedBy = "danhSachVaiTro", fetch = FetchType.LAZY)
+    private Set<TaiKhoan> danhSachTaiKhoan = new HashSet<>();
 }

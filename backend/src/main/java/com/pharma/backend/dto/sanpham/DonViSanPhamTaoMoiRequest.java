@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.sanpham.taomoi;
+package com.pharma.backend.dto.sanpham;
 
 import java.math.BigDecimal;
 

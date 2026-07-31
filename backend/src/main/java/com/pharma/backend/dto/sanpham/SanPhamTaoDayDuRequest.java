@@ -1,8 +1,6 @@
-package com.pharma.backend.dto.sanpham.taomoi;
+package com.pharma.backend.dto.sanpham;
 
 import java.util.List;
-
-import com.pharma.backend.dto.sanpham.SanPhamRequest;
 
 import lombok.Getter;
 import lombok.Setter;

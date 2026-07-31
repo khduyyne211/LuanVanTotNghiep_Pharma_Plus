@@ -2,6 +2,8 @@ package com.pharma.backend.dto.donthuoc;
 
 import java.time.LocalDateTime;
 
+import com.pharma.backend.enums.donthuoc.TrangThaiDonThuoc;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,7 +15,6 @@ public class DonThuocResponse {
 
     private Long maKhachHang;
     private String tenKhachHang;
-    private String emailKhachHang;
     private String soDienThoaiKhachHang;
 
     private Long maNhanVienDuyet;
@@ -21,9 +22,8 @@ public class DonThuocResponse {
 
     private String anhDonThuoc;
     private LocalDateTime ngayUpload;
-    private String trangThaiDonThuoc;
+    private TrangThaiDonThuoc trangThaiDonThuoc;
 
     private String lyDoTuChoi;
-    private String ghiChuDuocSi;
-    private String ketQuaKiemDuyet;
+    private String ghiChu;
 }

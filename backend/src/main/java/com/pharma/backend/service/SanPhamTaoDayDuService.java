@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.pharma.backend.dto.donvisanpham.DonViSanPhamRequest;
 import com.pharma.backend.dto.donvisanpham.DonViSanPhamResponse;
 import com.pharma.backend.dto.quydoidonvi.QuyDoiDonViRequest;
+import com.pharma.backend.dto.sanpham.DonViSanPhamTaoMoiRequest;
+import com.pharma.backend.dto.sanpham.QuyDoiDonViTaoMoiRequest;
 import com.pharma.backend.dto.sanpham.SanPhamResponse;
-import com.pharma.backend.dto.sanpham.taomoi.DonViSanPhamTaoMoiRequest;
-import com.pharma.backend.dto.sanpham.taomoi.QuyDoiDonViTaoMoiRequest;
-import com.pharma.backend.dto.sanpham.taomoi.SanPhamTaoDayDuRequest;
+import com.pharma.backend.dto.sanpham.SanPhamTaoDayDuRequest;
 
 import lombok.RequiredArgsConstructor;
 
