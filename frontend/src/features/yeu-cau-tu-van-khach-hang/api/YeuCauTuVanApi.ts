@@ -13,7 +13,7 @@ export const layDanhSachYeuCauTuVanApi = (
 ) => {
   return apiClient.get<
     PageResponse<YeuCauTuVanDanhSach>
-  >("/yeu-cau-tu-van/cua-toi", {
+  >("/yeu-cau-tu-van/khach-hang/cua-toi", {
     params: {
       page,
       size,
@@ -25,13 +25,13 @@ export const layChiTietYeuCauTuVanApi = (
   maYeuCauTuVan: number
 ) => {
   return apiClient.get<YeuCauTuVanChiTiet>(
-    `/yeu-cau-tu-van/cua-toi/${maYeuCauTuVan}`
+    `/yeu-cau-tu-van/khach-hang/cua-toi/${maYeuCauTuVan}`
   );
 };
 
 export const layThongTinTaoYeuCauTuVanApi = () => {
   return apiClient.get<ThongTinTaoYeuCauTuVan>(
-    "/yeu-cau-tu-van/thong-tin-tao-moi"
+    "/yeu-cau-tu-van/khach-hang/thong-tin-tao-moi"
   );
 };
 
@@ -39,7 +39,7 @@ export const taoYeuCauTuVanApi = (
   request: TaoYeuCauTuVanRequest
 ) => {
   return apiClient.post<YeuCauTuVanDanhSach>(
-    "/yeu-cau-tu-van",
+    "/yeu-cau-tu-van/khach-hang",
     request
   );
 };

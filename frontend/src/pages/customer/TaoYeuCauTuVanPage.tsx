@@ -153,7 +153,7 @@ export default function TaoYeuCauTuVanPage() {
             <label
               className={
                 duLieuForm.hinhThucLienHe ===
-                "DIEN_THOAI"
+                "GOI_DIEN"
                   ? "tao-yeu-cau-lua-chon-muc tao-yeu-cau-lua-chon-muc--dang-chon"
                   : "tao-yeu-cau-lua-chon-muc"
               }
@@ -161,16 +161,16 @@ export default function TaoYeuCauTuVanPage() {
               <input
                 type="radio"
                 name="hinhThucLienHe"
-                value="DIEN_THOAI"
+                value="GOI_DIEN"
                 checked={
                   duLieuForm.hinhThucLienHe ===
-                  "DIEN_THOAI"
+                  "GOI_DIEN"
                 }
                 disabled={dangGuiYeuCau}
                 onChange={() =>
                   capNhatTruong(
                     "hinhThucLienHe",
-                    "DIEN_THOAI"
+                    "GOI_DIEN"
                   )
                 }
               />

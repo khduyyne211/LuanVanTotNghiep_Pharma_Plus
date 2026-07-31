@@ -24,5 +24,5 @@ export interface TaoYeuCauTuVanRequest {
   tenKhachHang: string;
   soDienThoai: string;
   noiDungCanTuVan: string;
-  hinhThucLienHe: "DIEN_THOAI" | "ZALO";
+  hinhThucLienHe: "GOI_DIEN" | "ZALO";
 }

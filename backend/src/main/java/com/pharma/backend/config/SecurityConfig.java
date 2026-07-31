@@ -101,6 +101,7 @@ public class SecurityConfig {
                         "/api/gio-hang/**",
                         "/api/dia-chi-giao-hang/**",
                         "/api/don-hang/khach-hang/**",
+                        "/api/yeu-cau-tu-van/khach-hang/**",
                         "/api/thanh-toan/zalopay/**"
                     )
                     .hasRole("KHACH_HANG")

@@ -23,7 +23,7 @@ const DU_LIEU_FORM_MAC_DINH: TaoYeuCauTuVanRequest = {
   tenKhachHang: "",
   soDienThoai: "",
   noiDungCanTuVan: "",
-  hinhThucLienHe: "DIEN_THOAI",
+  hinhThucLienHe: "GOI_DIEN",
 };
 
 function layThongBaoLoi(
