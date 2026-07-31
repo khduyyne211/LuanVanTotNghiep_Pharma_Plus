@@ -210,3 +210,120 @@
     justify-content: space-between;
   }
 }
+.ql-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ql-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.ql-table th {
+  color: #68748a;
+  background: #fafbfc;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.ql-table th,
+.ql-table td {
+  padding: 14px 15px;
+  text-align: left;
+  border-bottom: 1px solid #edf0f4;
+  vertical-align: middle;
+}
+
+.ql-table td {
+  color: #344158;
+  font-size: 14px;
+}
+
+.ql-table tbody tr:hover {
+  background: #fbfdfc;
+}
+
+.ql-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ql-table-message {
+  height: 150px;
+  text-align: center !important;
+  color: #7b8699 !important;
+}
+
+.ql-muted-text {
+  color: #7c8799;
+}
+
+.ql-status {
+  display: inline-flex;
+  min-height: 27px;
+  padding: 4px 10px;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ql-status-active {
+  color: #087457;
+  background: #e5f8f1;
+}
+
+.ql-status-inactive {
+  color: #5e6675;
+  background: #eef0f3;
+}
+
+.ql-action-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ql-action-button {
+  min-height: 34px;
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #52617a;
+  background: #fff;
+  border: 1px solid #dfe4ec;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ql-action-button:hover:not(:disabled) {
+  color: #078c67;
+  border-color: #79cdb3;
+  background: #f2fbf8;
+}
+
+.ql-action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ql-list-summary {
+  color: #68748a;
+  font-size: 13px;
+}
+
+.ql-list-summary strong {
+  color: #172033;
+}
+.ql-status-pending {
+  color: #8a5a00;
+  background: #fff4d6;
+}
