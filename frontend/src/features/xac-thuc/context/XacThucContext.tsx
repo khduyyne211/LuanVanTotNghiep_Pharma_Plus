@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { dangNhapApi } from "../api/XacThucApi";
 import HopThoaiDangNhap from "../components/HopThoaiDangNhap";
@@ -18,6 +19,7 @@ import "../styles/XacThuc.css";
 
 interface MoHopThoaiDangNhapOptions {
   soDienThoaiMacDinh?: string;
+  duongDanSauDangNhap?: string;
 }
 
 interface XacThucContextValue {
@@ -44,7 +46,6 @@ function layNguoiDungDaLuu(): NguoiDungDangNhap | null {
   const accessToken = localStorage.getItem(
     "pharma_access_token",
   );
-
   const nguoiDungJson = localStorage.getItem(
     "pharma_nguoi_dung",
   );
@@ -54,18 +55,39 @@ function layNguoiDungDaLuu(): NguoiDungDangNhap | null {
   }
 
   try {
-    return JSON.parse(
+    const nguoiDungDaLuu = JSON.parse(
       nguoiDungJson,
-    ) as NguoiDungDangNhap;
+    ) as Partial<NguoiDungDangNhap>;
+
+    if (
+      nguoiDungDaLuu.maTaiKhoan == null ||
+      !nguoiDungDaLuu.vaiTro
+    ) {
+      throw new Error(
+        "Dữ liệu người dùng đã lưu không hợp lệ.",
+      );
+    }
+
+    return {
+      maTaiKhoan: nguoiDungDaLuu.maTaiKhoan,
+      maKhachHang:
+        nguoiDungDaLuu.maKhachHang ?? null,
+      maNhanVien:
+        nguoiDungDaLuu.maNhanVien ?? null,
+      hoTen: nguoiDungDaLuu.hoTen ?? "",
+      soDienThoai:
+        nguoiDungDaLuu.soDienThoai ?? "",
+      vaiTro: nguoiDungDaLuu.vaiTro
+        .trim()
+        .toUpperCase(),
+    };
   } catch {
     localStorage.removeItem(
       "pharma_access_token",
     );
-
     localStorage.removeItem(
       "pharma_nguoi_dung",
     );
-
     return null;
   }
 }
@@ -76,15 +98,20 @@ function chuyenSangNguoiDungDangNhap(
   return {
     maTaiKhoan: response.maTaiKhoan,
     maKhachHang: response.maKhachHang,
+    maNhanVien: response.maNhanVien,
     hoTen: response.hoTen,
     soDienThoai: response.soDienThoai,
-    vaiTro: response.vaiTro,
+    vaiTro: response.vaiTro
+      .trim()
+      .toUpperCase(),
   };
 }
 
 export function XacThucProvider({
   children,
 }: XacThucProviderProps) {
+  const navigate = useNavigate();
+
   const [
     nguoiDungDangNhap,
     setNguoiDungDangNhap,
@@ -102,16 +129,24 @@ export function XacThucProvider({
     setSoDienThoaiMacDinh,
   ] = useState("");
 
-  const daDangNhap =
+  const [
+    duongDanSauDangNhap,
+    setDuongDanSauDangNhap,
+  ] = useState<string | null>(null);
+const daDangNhap =
     nguoiDungDangNhap !== null;
 
   const xoaDuLieuMoHopThoai = () => {
     setSoDienThoaiMacDinh("");
+    setDuongDanSauDangNhap(null);
   };
 
   const dangNhap = async (
     request: DangNhapRequest,
   ) => {
+    const duongDanCanChuyen =
+      duongDanSauDangNhap;
+
     const duLieuDangNhap =
       await dangNhapApi(request);
 
@@ -139,6 +174,23 @@ export function XacThucProvider({
     );
 
     xoaDuLieuMoHopThoai();
+
+    if (nguoiDungMoi.vaiTro === "ADMIN") {
+      navigate("/admin", {
+        replace: true,
+      });
+      return;
+    }
+
+    if (
+      nguoiDungMoi.vaiTro === "KHACH_HANG" &&
+      duongDanCanChuyen &&
+      !duongDanCanChuyen.startsWith("/admin")
+    ) {
+      navigate(duongDanCanChuyen, {
+        replace: true,
+      });
+    }
   };
 
   const dangXuat = () => {
@@ -162,6 +214,10 @@ export function XacThucProvider({
       options?.soDienThoaiMacDinh ?? "",
     );
 
+    setDuongDanSauDangNhap(
+      options?.duongDanSauDangNhap ?? null,
+    );
+
     setDangHienHopThoaiDangNhap(
       true,
     );
@@ -179,6 +235,7 @@ export function XacThucProvider({
     const xuLyTokenKhongHopLe = () => {
       setNguoiDungDangNhap(null);
       setSoDienThoaiMacDinh("");
+      setDuongDanSauDangNhap(null);
       setDangHienHopThoaiDangNhap(true);
     };
 
@@ -212,7 +269,9 @@ export function XacThucProvider({
         dangHien={dangHienHopThoaiDangNhap}
         dongHopThoai={dongHopThoaiDangNhap}
         dangNhap={dangNhap}
-        soDienThoaiMacDinh={soDienThoaiMacDinh}
+        soDienThoaiMacDinh={
+          soDienThoaiMacDinh
+        }
       />
     </XacThucContext.Provider>
   );
@@ -229,6 +288,5 @@ export function useXacThucContext() {
       "useXacThucContext phải được dùng trong XacThucProvider",
     );
   }
-
-  return context;
+return context;
 }

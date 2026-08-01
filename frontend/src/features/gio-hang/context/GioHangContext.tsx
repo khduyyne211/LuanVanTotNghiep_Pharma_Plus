@@ -38,7 +38,7 @@ export function GioHangProvider({ children }: GioHangProviderProps) {
   useEffect(() => {
     setDaTaiGioHangLocal(false);
 
-    if (!daDangNhap || maKhachHang === undefined) {
+    if (!daDangNhap || maKhachHang == null) {
       setDanhSachChiTietGioHangLocal([]);
       return;
     }
@@ -48,7 +48,7 @@ export function GioHangProvider({ children }: GioHangProviderProps) {
   }, [daDangNhap, maKhachHang]);
 
   useEffect(() => {
-    if (!daTaiGioHangLocal || maKhachHang === undefined) return;
+    if (!daTaiGioHangLocal || maKhachHang == null) return;
 
     if (danhSachChiTietGioHangLocal.length === 0) {
       xoaGioHangLocal(maKhachHang);
@@ -59,7 +59,7 @@ export function GioHangProvider({ children }: GioHangProviderProps) {
   }, [daTaiGioHangLocal, danhSachChiTietGioHangLocal, maKhachHang]);
 
   const themSanPhamLocal = (chiTietMoi: ChiTietGioHangLocal) => {
-    if (maKhachHang === undefined) return;
+    if (maKhachHang == null) return;
 
     setDanhSachChiTietGioHangLocal((danhSachCu) => {
       const chiTietDaCo = danhSachCu.find(
@@ -131,7 +131,7 @@ export function GioHangProvider({ children }: GioHangProviderProps) {
   };
 
   const xoaToanBoGioHangLocal = () => {
-    if (maKhachHang !== undefined) {
+    if (maKhachHang != null) {
       xoaGioHangLocal(maKhachHang);
     }
 

@@ -1,17 +1,42 @@
 package com.pharma.backend.security;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class NguoiDungDangNhap {
 
-    private Long maTaiKhoan;
+    private final Long maTaiKhoan;
+    private final Long maKhachHang;
+    private final Long maNhanVien;
+    private final String soDienThoai;
+    private final String vaiTro;
 
-    private Long maKhachHang;
+    public NguoiDungDangNhap(
+            Long maTaiKhoan,
+            Long maKhachHang,
+            Long maNhanVien,
+            String soDienThoai,
+            String vaiTro
+    ) {
+        this.maTaiKhoan = maTaiKhoan;
+        this.maKhachHang = maKhachHang;
+        this.maNhanVien = maNhanVien;
+        this.soDienThoai = soDienThoai;
+        this.vaiTro = vaiTro;
+    }
 
-    private String soDienThoai;
-
-    private String vaiTro;
+    public NguoiDungDangNhap(
+            Long maTaiKhoan,
+            Long maKhachHang,
+            String soDienThoai,
+            String vaiTro
+    ) {
+        this(
+                maTaiKhoan,
+                maKhachHang,
+                null,
+                soDienThoai,
+                vaiTro
+        );
+    }
 }

@@ -5,7 +5,8 @@ export interface DangNhapRequest {
 
 export interface NguoiDungDangNhap {
   maTaiKhoan: number;
-  maKhachHang: number;
+  maKhachHang: number | null;
+  maNhanVien: number | null;
   hoTen: string;
   soDienThoai: string;
   vaiTro: string;

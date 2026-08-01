@@ -6,11 +6,14 @@ import "./index.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 import App from "./App";
+import { XacThucProvider } from "./features/xac-thuc/context/XacThucContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <XacThucProvider>
+        <App />
+      </XacThucProvider>
     </BrowserRouter>
   </StrictMode>,
 );

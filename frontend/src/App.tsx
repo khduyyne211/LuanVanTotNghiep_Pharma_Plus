@@ -26,7 +26,14 @@ import TaoYeuCauTuVanPage from "./pages/customer/TaoYeuCauTuVanPage";
 function App() {
   return (
     <Routes>
-      <Route path="/admin/*" element={<AdminLayout />} />
+      <Route
+        path="/admin/*"
+        element={
+          <BatBuocDangNhap vaiTroBatBuoc="ADMIN">
+            <AdminLayout />
+          </BatBuocDangNhap>
+        }
+      />
 
       <Route
         element={
@@ -43,7 +50,7 @@ function App() {
 
         <Route
           element={
-            <BatBuocDangNhap>
+            <BatBuocDangNhap vaiTroBatBuoc="KHACH_HANG">
               <Outlet />
             </BatBuocDangNhap>
           }

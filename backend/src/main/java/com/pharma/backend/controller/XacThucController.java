@@ -15,12 +15,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/xac-thuc")
 @RequiredArgsConstructor
 public class XacThucController {
+
     private final XacThucService xacThucService;
 
     @PostMapping("/dang-nhap")
-    public DangNhapResponseDto dangNhapKhachHang(
-        @RequestBody DangNhapRequestDto request
+    public DangNhapResponseDto dangNhap(
+            @RequestBody DangNhapRequestDto request
     ) {
-        return xacThucService.dangNhapKhachHang(request);
+        return xacThucService.dangNhap(request);
     }
 }

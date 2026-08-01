@@ -2,6 +2,7 @@ package com.pharma.backend.security;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,51 +26,37 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String TIEN_TO_BEARER = "Bearer ";
+    private static final String VAI_TRO_KHACH_HANG = "KHACH_HANG";
+    private static final String VAI_TRO_ADMIN = "ADMIN";
+    private static final String VAI_TRO_DUOC_SI = "DUOC_SI";
 
     private final JwtService jwtService;
 
     @Override
     protected void doFilterInternal(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
     ) throws ServletException, IOException {
 
         String authorizationHeader = request.getHeader(
-            HttpHeaders.AUTHORIZATION
+                HttpHeaders.AUTHORIZATION
         );
 
-        /*
-         * Không có Authorization hoặc không bắt đầu bằng Bearer:
-         * chưa xác thực người dùng, tiếp tục chuyển request đi.
-         *
-         * Nếu endpoint là public thì request vẫn được xử lý.
-         * Nếu endpoint yêu cầu đăng nhập thì SecurityConfig sẽ trả 401.
-         */
-        if (
-            authorizationHeader == null ||
-            !authorizationHeader.startsWith(TIEN_TO_BEARER)
-        ) {
+        if (authorizationHeader == null
+                || !authorizationHeader.startsWith(TIEN_TO_BEARER)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        /*
-         * Nếu request đã được xác thực ở filter trước đó thì không cần
-         * đọc token lại.
-         */
-        if (
-            SecurityContextHolder
-                .getContext()
-                .getAuthentication() != null
-        ) {
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authorizationHeader
-            .substring(TIEN_TO_BEARER.length())
-            .trim();
+                .substring(TIEN_TO_BEARER.length())
+                .trim();
 
         if (token.isEmpty()) {
             filterChain.doFilter(request, response);
@@ -80,79 +67,102 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Claims claims = jwtService.docClaims(token);
 
             Long maTaiKhoan = layGiaTriLong(
-                claims,
-                "maTaiKhoan"
+                    claims,
+                    "maTaiKhoan"
             );
 
             Long maKhachHang = layGiaTriLong(
-                claims,
-                "maKhachHang"
+                    claims,
+                    "maKhachHang"
+            );
+
+            Long maNhanVien = layGiaTriLong(
+                    claims,
+                    "maNhanVien"
             );
 
             String soDienThoai = claims.get(
-                "soDienThoai",
-                String.class
+                    "soDienThoai",
+                    String.class
             );
 
             String vaiTro = claims.get(
-                "vaiTro",
-                String.class
+                    "vaiTro",
+String.class
             );
 
-            if (
-                maTaiKhoan != null &&
-                maKhachHang != null &&
-                vaiTro != null &&
-                !vaiTro.isBlank()
-            ) {
+            if (vaiTro != null) {
+                vaiTro = vaiTro
+                        .trim()
+                        .toUpperCase(Locale.ROOT);
+            }
+
+            if (maTaiKhoan != null
+                    && vaiTro != null
+                    && !vaiTro.isBlank()
+                    && danhTinhPhuHopVaiTro(
+                            vaiTro,
+                            maKhachHang,
+                            maNhanVien
+                    )) {
                 NguoiDungDangNhap nguoiDungDangNhap =
-                    new NguoiDungDangNhap(
-                        maTaiKhoan,
-                        maKhachHang,
-                        soDienThoai,
-                        vaiTro
-                    );
+                        new NguoiDungDangNhap(
+                                maTaiKhoan,
+                                maKhachHang,
+                                maNhanVien,
+                                soDienThoai,
+                                vaiTro
+                        );
 
                 SimpleGrantedAuthority quyenHan =
-                    new SimpleGrantedAuthority(
-                        "ROLE_" + vaiTro
-                    );
+                        new SimpleGrantedAuthority(
+                                "ROLE_" + vaiTro
+                        );
 
                 UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                        nguoiDungDangNhap,
-                        null,
-                        List.of(quyenHan)
-                    );
+                        new UsernamePasswordAuthenticationToken(
+                                nguoiDungDangNhap,
+                                null,
+                                List.of(quyenHan)
+                        );
 
                 authentication.setDetails(
-                    new WebAuthenticationDetailsSource()
-                        .buildDetails(request)
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request)
                 );
 
                 SecurityContext securityContext =
-                    SecurityContextHolder.createEmptyContext();
+                        SecurityContextHolder.createEmptyContext();
 
                 securityContext.setAuthentication(authentication);
-
                 SecurityContextHolder.setContext(securityContext);
             }
-
         } catch (JwtException | IllegalArgumentException exception) {
-            /*
-             * Token sai chữ ký, hết hạn hoặc sai định dạng:
-             * xóa xác thực và để SecurityConfig trả 401 nếu endpoint
-             * yêu cầu đăng nhập.
-             */
             SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
     }
 
+    private boolean danhTinhPhuHopVaiTro(
+            String vaiTro,
+            Long maKhachHang,
+            Long maNhanVien
+    ) {
+        return switch (vaiTro) {
+            case VAI_TRO_KHACH_HANG ->
+                    maKhachHang != null && maNhanVien == null;
+
+            case VAI_TRO_ADMIN, VAI_TRO_DUOC_SI ->
+                    maNhanVien != null && maKhachHang == null;
+
+            default -> false;
+        };
+    }
+
     private Long layGiaTriLong(
-        Claims claims,
-        String tenClaim
+            Claims claims,
+            String tenClaim
     ) {
         Object giaTri = claims.get(tenClaim);
 
