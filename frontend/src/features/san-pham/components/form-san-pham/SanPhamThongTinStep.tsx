@@ -13,7 +13,6 @@ export type SanPhamThongTinFormData = {
   tenSanPham: string;
   hinhAnh: string;
   moTaNgan: string;
-  giaBan: string;
   laThuocKeDon: boolean;
 };
 
@@ -119,20 +118,6 @@ function SanPhamThongTinStep({
             value={formData.tenSanPham}
             onChange={onInputChange}
             placeholder="Nhập tên sản phẩm"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Giá bán mặc định</label>
-
-          <input
-            type="number"
-            name="giaBan"
-            value={formData.giaBan}
-            onChange={onInputChange}
-            placeholder="Nhập giá bán"
-            min={1}
             required
           />
         </div>

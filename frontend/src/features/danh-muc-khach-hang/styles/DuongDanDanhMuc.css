@@ -1,0 +1,38 @@
+.duong-dan-danh-muc {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+
+.duong-dan-danh-muc button {
+  border: none;
+  background-color: transparent;
+  color: #075eea;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.duong-dan-danh-muc button:hover {
+  text-decoration: underline;
+}
+
+.duong-dan-muc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.duong-dan-phan-cach {
+  color: #94a3b8;
+}
+
+.duong-dan-hien-tai {
+  color: #071333;
+  font-size: 15px;
+  font-weight: 600;
+}

@@ -87,6 +87,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Spring Security: xác thực JWT và phân quyền API -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
         <!--
             JWT API:
             Cung cấp các interface và class để tạo, đọc JWT.

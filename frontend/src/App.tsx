@@ -1,158 +1,77 @@
-import { useState } from "react";
-import "./App.css";
-import QuanLySanPhamPage from "./features/san-pham/pages/QuanLySanPhamPage";
-import QuanLyYeuCau from "./pages/QuanLyYeuCau";
-import QuanLyDonHangPage from "./features/don-hang/pages/QuanLyDonHangPage";
-import QuanLyDanhMucSanPhamPage from "./features/danh-muc-san-pham/pages/QuanLyDanhMucSanPhamPage";
-import QuanLyNhaSanXuatPage from "./features/nha-san-xuat/pages/QuanLyNhaSanXuatPage";
-import QuanLyDonViTinhPage from "./features/don-vi-tinh/pages/QuanLyDonViTinhPage";
-import QuanLyHoatChatPage from "./features/hoat-chat/pages/QuanLyHoatChatPage";
-import QuanLyKhuyenMaiPage from "./features/khuyen-mai/pages/QuanLyKhuyenMaiPage";
-import QuanLyNhaCungCapPage from "./features/nha-cung-cap/pages/QuanLyNhaCungCapPage";
+import { Outlet, Route, Routes } from "react-router-dom";
+
+import AdminLayout from "./layouts/admin/AdminLayout";
+import CustomerLayout from "./layouts/customer/CustomerLayout";
+import CustomerProviders from "./shared/providers/CustomerProviders";
+
+import BatBuocDangNhap from "./features/xac-thuc/components/BatBuocDangNhap";
+import KhungTaiKhoan from "./features/tai-khoan-khach-hang/components/KhungTaiKhoan";
+
+import TrangChuPage from "./pages/customer/TrangChuPage";
+import DanhSachSanPhamPage from "./pages/customer/DanhSachSanPhamPage";
+import ChiTietSanPhamPage from "./pages/customer/ChiTietSanPhamPage";
+import DangKyTaiKhoanPage from "./pages/customer/DangKyTaiKhoanPage";
+import GioHangPage from "./pages/customer/GioHangPage";
+import XacNhanDatHangPage from "./pages/customer/XacNhanDatHangPage";
+import QuetMaThanhToanZaloPayPage from "./pages/customer/QuetMaThanhToanZaloPayPage";
+import KetQuaThanhToanZaloPayPage from "./pages/customer/KetQuaThanhToanZaloPayPage";
+import ThongTinCaNhanPage from "./pages/customer/ThongTinCaNhanPage";
+import SoDiaChiNhanHangPage from "./pages/customer/SoDiaChiNhanHangPage";
+import DonHangCuaToiPage from "./pages/customer/DonHangCuaToiPage";
+import ChiTietDonHangPage from "./pages/customer/ChiTietDonHangPage";
+import DanhSachYeuCauTuVanPage from "./pages/customer/DanhSachYeuCauTuVanPage";
+import ChiTietYeuCauTuVanPage from "./pages/customer/ChiTietYeuCauTuVanPage";
+import TaoYeuCauTuVanPage from "./pages/customer/TaoYeuCauTuVanPage";
+
 function App() {
-  const [trangDangChon, setTrangDangChon] = useState("san-pham");
-
   return (
-    <div className="admin-layout">
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <h2>Pharma</h2>
-          <span >Quản trị viên</span>
-        </div>
+    <Routes>
+      <Route
+        path="/admin/*"
+        element={
+          <BatBuocDangNhap vaiTroBatBuoc="ADMIN">
+            <AdminLayout />
+          </BatBuocDangNhap>
+        }
+      />
 
-        <nav className="sidebar-menu">
-          <button
-            className={
-              trangDangChon === "san-pham"
-                ? "menu-item active"
-                : "menu-item"
-            }
-            onClick={() => setTrangDangChon("san-pham")}
-          >
-            Quản lý sản phẩm
-          </button>
-          <button
-              className={
-                trangDangChon === "danh-muc-san-pham"
-                  ? "menu-item active"
-                  : "menu-item"
-              }
-              onClick={() => setTrangDangChon("danh-muc-san-pham")}
-            >
-              Quản lý danh mục
-            </button>
-            <button
-              className={
-                trangDangChon === "nha-san-xuat"
-                  ? "menu-item active"
-                  : "menu-item"
-              }
-              onClick={() => setTrangDangChon("nha-san-xuat")}
-            >
-              Quản lý nhà sản xuất
-            </button>
-              <button
-                className={
-                  trangDangChon === "don-vi-tinh"
-                    ? "menu-item active"
-                    : "menu-item"
-                }
-                onClick={() => setTrangDangChon("don-vi-tinh")}
-              >
-                Quản lý đơn vị tính
-              </button>
-            <button
-              className={
-                trangDangChon === "hoat-chat"
-                  ? "menu-item active"
-                  : "menu-item"
-              }
-              onClick={() => setTrangDangChon("hoat-chat")}
-            >
-              Quản lý hoạt chất
-            </button>
-          <button
-            className={
-              trangDangChon === "khuyen-mai"
-                ? "menu-item active"
-                : "menu-item"
-            }
-            onClick={() => setTrangDangChon("khuyen-mai")}
-          >
-            Quản lý khuyến mãi
-          </button>
+      <Route
+        element={
+          <CustomerProviders>
+            <CustomerLayout />
+          </CustomerProviders>
+        }
+      >
+        <Route index element={<TrangChuPage />} />
+        <Route path="san-pham" element={<DanhSachSanPhamPage />} />
+        <Route path="danh-muc/:maDanhMuc/:slug" element={<DanhSachSanPhamPage />} />
+        <Route path="san-pham/:maSanPham/:slug" element={<ChiTietSanPhamPage />} />
+        <Route path="dang-ky" element={<DangKyTaiKhoanPage />} />
 
-          {/* <button
-            className={
-              trangDangChon === "yeu-cau"
-                ? "menu-item active"
-                : "menu-item"
-            }
-            onClick={() => setTrangDangChon("yeu-cau")}
-          >
-            Quản lý yêu cầu tư vấn
-          </button> */}
+        <Route
+          element={
+            <BatBuocDangNhap vaiTroBatBuoc="KHACH_HANG">
+              <Outlet />
+            </BatBuocDangNhap>
+          }
+        >
+          <Route path="gio-hang" element={<GioHangPage />} />
+          <Route path="xac-nhan-dat-hang" element={<XacNhanDatHangPage />} />
+          <Route path="thanh-toan/zalopay/quet-ma" element={<QuetMaThanhToanZaloPayPage />} />
+          <Route path="thanh-toan/zalopay/ket-qua" element={<KetQuaThanhToanZaloPayPage />} />
 
-          <button
-            className={
-              trangDangChon === "don-hang"
-                ? "menu-item active"
-                : "menu-item"
-            }
-            onClick={() => setTrangDangChon("don-hang")}
-          >
-            Quản lý đơn hàng
-          </button>
-
-          {/* <button className="menu-item">
-            Đơn hàng cần duyệt
-          </button> */}
-
-          <button
-              className={
-                trangDangChon === "nha-cung-cap"
-                  ? "menu-item active"
-                  : "menu-item"
-              }
-              onClick={() => setTrangDangChon("nha-cung-cap")}
-            >
-              Quản lý nhà cung cấp
-            </button>
-        </nav>
-      </aside>
-
-      <main className="main-content">
-        {trangDangChon === "san-pham" && (
-          <QuanLySanPhamPage />
-        )}
-
-        {trangDangChon === "danh-muc-san-pham" && (
-          <QuanLyDanhMucSanPhamPage/>
-        )}
-        {trangDangChon === "nha-san-xuat" && (
-          <QuanLyNhaSanXuatPage />
-        )}
-        {trangDangChon === "don-vi-tinh" && (
-          <QuanLyDonViTinhPage />
-        )}
-        {trangDangChon === "hoat-chat" && (
-          <QuanLyHoatChatPage />
-        )}
-        {trangDangChon === "khuyen-mai" && (
-          <QuanLyKhuyenMaiPage />
-        )}
-        {trangDangChon === "yeu-cau" && (
-          <QuanLyYeuCau />
-        )}
-
-        {trangDangChon === "don-hang" && (
-          <QuanLyDonHangPage />
-        )}
-        {trangDangChon === "nha-cung-cap" && (
-          <QuanLyNhaCungCapPage />
-        )}
-      </main>
-    </div>
+          <Route path="tai-khoan" element={<KhungTaiKhoan />}>
+            <Route index element={<ThongTinCaNhanPage />} />
+            <Route path="so-dia-chi" element={<SoDiaChiNhanHangPage />} />
+            <Route path="don-hang" element={<DonHangCuaToiPage />} />
+            <Route path="don-hang/:maDonHang" element={<ChiTietDonHangPage />} />
+            <Route path="yeu-cau-tu-van" element={<DanhSachYeuCauTuVanPage />} />
+            <Route path="yeu-cau-tu-van/tao-moi" element={<TaoYeuCauTuVanPage />} />
+            <Route path="yeu-cau-tu-van/:maYeuCauTuVan" element={<ChiTietYeuCauTuVanPage />} />
+          </Route>
+        </Route>
+      </Route>
+    </Routes>
   );
 }
 

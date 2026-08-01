@@ -14,6 +14,7 @@ const dinhDangTien = (giaTri: number | null | undefined) =>
 
 const dinhDangNgay = (giaTri: string | null | undefined) => {
   if (!giaTri) return "—";
+
   return new Intl.DateTimeFormat("vi-VN", {
     dateStyle: "short",
     timeStyle: "short",
@@ -32,13 +33,22 @@ export default function DonHangChiTietModal({
 
   return (
     <div className="dh-modal-overlay" onMouseDown={onDong}>
-      <div className="dh-modal dh-modal-large" onMouseDown={(e) => e.stopPropagation()}>
+      <div
+        className="dh-modal dh-modal-large"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
         <div className="dh-modal-header">
           <div>
             <p className="dh-eyebrow">Chi tiết đơn hàng</p>
             <h2>{donHang ? `Đơn #${donHang.maDonHang}` : "Đang tải..."}</h2>
           </div>
-          <button className="dh-icon-button" onClick={onDong} aria-label="Đóng">
+
+          <button
+            type="button"
+            className="dh-icon-button"
+            onClick={onDong}
+            aria-label="Đóng"
+          >
             <i className="bi bi-x-lg" />
           </button>
         </div>
@@ -50,68 +60,97 @@ export default function DonHangChiTietModal({
             <div className="dh-detail-grid">
               <section className="dh-detail-card">
                 <h3>Thông tin chung</h3>
+
                 <div className="dh-info-row">
                   <span>Ngày tạo</span>
                   <strong>{dinhDangNgay(donHang.ngayDatHang)}</strong>
                 </div>
+
                 <div className="dh-info-row">
                   <span>Loại khách</span>
                   <strong>{hienThiTrangThai(donHang.loaiKhach)}</strong>
                 </div>
+
                 <div className="dh-info-row">
-                  <span>Dược sĩ xử lý</span>
+                  <span>Nhân viên xử lý</span>
                   <strong>{donHang.tenNhanVienXuLy || "Chưa phân công"}</strong>
                 </div>
+
                 <div className="dh-info-row">
                   <span>Phương thức thanh toán</span>
-                  <strong>{hienThiTrangThai(donHang.phuongThucThanhToan)}</strong>
+                  <strong>
+                    {hienThiTrangThai(donHang.phuongThucThanhToan)}
+                  </strong>
                 </div>
               </section>
 
               <section className="dh-detail-card">
-                <h3>Khách hàng</h3>
+                <h3>Khách hàng và giao nhận</h3>
+
                 <div className="dh-info-row">
-                  <span>Họ tên</span>
+                  <span>Khách hàng</span>
                   <strong>{donHang.tenKhachHang || "Khách vãng lai"}</strong>
                 </div>
+
                 <div className="dh-info-row">
                   <span>Số điện thoại</span>
                   <strong>{donHang.soDienThoaiKhachHang || "—"}</strong>
                 </div>
+
                 <div className="dh-info-row">
-                  <span>Email</span>
-                  <strong>{donHang.emailKhachHang || "—"}</strong>
+                  <span>Người nhận</span>
+                  <strong>{donHang.tenNguoiNhan || "—"}</strong>
                 </div>
+
+                <div className="dh-info-row">
+                  <span>SĐT người nhận</span>
+                  <strong>{donHang.soDienThoaiNhan || "—"}</strong>
+                </div>
+
                 <div className="dh-info-row">
                   <span>Địa chỉ</span>
                   <strong>
-                    {[donHang.diaChiChiTiet, donHang.phuongXa, donHang.quanHuyen, donHang.tinhThanh]
+                    {[
+                      donHang.diaChiChiTiet,
+                      donHang.phuongKhuVuc,
+                      donHang.thanhPho,
+                    ]
                       .filter(Boolean)
-                      .join(", ") || "Mua trực tiếp tại quầy"}
+                      .join(", ") || "Nhận tại nhà thuốc"}
                   </strong>
                 </div>
               </section>
 
               <section className="dh-detail-card">
                 <h3>Trạng thái</h3>
+
                 <div className="dh-info-row">
                   <span>Đơn hàng</span>
-                  <span className={`dh-badge dh-badge-${donHang.trangThaiDonHang.toLowerCase()}`}>
+                  <span
+                    className={`dh-badge dh-badge-${donHang.trangThaiDonHang.toLowerCase()}`}
+                  >
                     {hienThiTrangThai(donHang.trangThaiDonHang)}
                   </span>
                 </div>
+
                 <div className="dh-info-row">
                   <span>Thanh toán</span>
-                  <span className={`dh-badge dh-badge-${(donHang.trangThaiThanhToan || "").toLowerCase()}`}>
+                  <span
+                    className={`dh-badge dh-badge-${donHang.trangThaiThanhToan.toLowerCase()}`}
+                  >
                     {hienThiTrangThai(donHang.trangThaiThanhToan)}
                   </span>
                 </div>
+
                 <div className="dh-info-row">
                   <span>Kiểm duyệt</span>
-                  <span className={`dh-badge dh-badge-${donHang.trangThaiKiemDuyet.toLowerCase()}`}>
+                  <span
+                    className={`dh-badge dh-badge-${donHang.trangThaiKiemDuyet.toLowerCase()}`}
+                  >
                     {hienThiTrangThai(donHang.trangThaiKiemDuyet)}
                   </span>
                 </div>
+
                 <div className="dh-info-row">
                   <span>Thuốc kê đơn</span>
                   <strong>{donHang.coThuocKeDon ? "Có" : "Không"}</strong>
@@ -120,18 +159,22 @@ export default function DonHangChiTietModal({
 
               <section className="dh-detail-card">
                 <h3>Thanh toán</h3>
+
                 <div className="dh-info-row">
                   <span>Tiền hàng</span>
                   <strong>{dinhDangTien(donHang.tongTienHang)}</strong>
                 </div>
+
                 <div className="dh-info-row">
                   <span>Phí giao hàng</span>
                   <strong>{dinhDangTien(donHang.phiGiaoHang)}</strong>
                 </div>
+
                 <div className="dh-info-row">
                   <span>Giảm giá</span>
                   <strong>{dinhDangTien(donHang.giamGia)}</strong>
                 </div>
+
                 <div className="dh-info-row dh-info-total">
                   <span>Tổng thanh toán</span>
                   <strong>{dinhDangTien(donHang.tongThanhToan)}</strong>
@@ -141,24 +184,37 @@ export default function DonHangChiTietModal({
 
             <section className="dh-detail-card dh-products-card">
               <h3>Sản phẩm trong đơn</h3>
+
               <div className="dh-detail-products">
                 {donHang.danhSachChiTiet.map((chiTiet) => (
-                  <div className="dh-detail-product" key={chiTiet.maChiTietDonHang}>
+                  <div
+                    className="dh-detail-product"
+                    key={chiTiet.maChiTietDonHang}
+                  >
                     <img
-                      src={(chiTiet.hinhAnh || "").trim() || "https://placehold.co/72x72?text=SP"}
+                      src={
+                        (chiTiet.hinhAnh || "").trim()
+                        || "https://placehold.co/72x72?text=SP"
+                      }
                       alt={chiTiet.tenSanPham}
                     />
+
                     <div className="dh-detail-product-main">
                       <div className="dh-product-title-row">
                         <strong>{chiTiet.tenSanPham}</strong>
+
                         {chiTiet.laThuocKeDon && (
-                          <span className="dh-prescription-tag">Thuốc kê đơn</span>
+                          <span className="dh-prescription-tag">
+                            Thuốc kê đơn
+                          </span>
                         )}
                       </div>
+
                       <span>
                         {chiTiet.tenDonViTinh} × {chiTiet.soLuong}
                       </span>
                     </div>
+
                     <div className="dh-detail-product-price">
                       <span>{dinhDangTien(chiTiet.donGia)}</span>
                       <strong>{dinhDangTien(chiTiet.thanhTien)}</strong>
@@ -168,12 +224,75 @@ export default function DonHangChiTietModal({
               </div>
             </section>
 
-            {(donHang.ghiChu || donHang.ghiChuKiemDuyet) && (
+            {donHang.maDonThuoc && (
               <section className="dh-detail-card dh-note-card">
-                <h3>Ghi chú</h3>
-                {donHang.ghiChu && <p><strong>Đơn hàng:</strong> {donHang.ghiChu}</p>}
+                <h3>Thông tin đơn thuốc</h3>
+
+                <div className="dh-info-row">
+                  <span>Mã đơn thuốc</span>
+                  <strong>#{donHang.maDonThuoc}</strong>
+                </div>
+
+                <div className="dh-info-row">
+                  <span>Trạng thái</span>
+                  <strong>
+                    {hienThiTrangThai(donHang.trangThaiDonThuoc)}
+                  </strong>
+                </div>
+
+                {donHang.anhDonThuoc && (
+                  <div className="dh-info-row">
+                    <span>Ảnh đơn thuốc</span>
+                    <a
+                      href={donHang.anhDonThuoc}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Xem ảnh
+                    </a>
+                  </div>
+                )}
+
+                {donHang.lyDoTuChoiDonThuoc && (
+                  <p>
+                    <strong>Lý do từ chối:</strong>{" "}
+                    {donHang.lyDoTuChoiDonThuoc}
+                  </p>
+                )}
+
+                {donHang.ghiChuDonThuoc && (
+                  <p>
+                    <strong>Ghi chú đơn thuốc:</strong>{" "}
+                    {donHang.ghiChuDonThuoc}
+                  </p>
+                )}
+              </section>
+            )}
+
+            {(donHang.ghiChu
+              || donHang.ghiChuKiemDuyet
+              || donHang.lyDoTuChoiDuyet) && (
+              <section className="dh-detail-card dh-note-card">
+                <h3>Ghi chú xử lý</h3>
+
+                {donHang.ghiChu && (
+                  <p>
+                    <strong>Đơn hàng:</strong> {donHang.ghiChu}
+                  </p>
+                )}
+
                 {donHang.ghiChuKiemDuyet && (
-                  <p><strong>Kiểm duyệt:</strong> {donHang.ghiChuKiemDuyet}</p>
+                  <p>
+                    <strong>Kiểm duyệt:</strong>{" "}
+                    {donHang.ghiChuKiemDuyet}
+                  </p>
+                )}
+
+                {donHang.lyDoTuChoiDuyet && (
+                  <p>
+                    <strong>Lý do từ chối duyệt:</strong>{" "}
+                    {donHang.lyDoTuChoiDuyet}
+                  </p>
                 )}
               </section>
             )}
@@ -181,7 +300,11 @@ export default function DonHangChiTietModal({
         )}
 
         <div className="dh-modal-footer">
-          <button className="dh-button dh-button-secondary" onClick={onDong}>
+          <button
+            type="button"
+            className="dh-button dh-button-secondary"
+            onClick={onDong}
+          >
             Đóng
           </button>
         </div>

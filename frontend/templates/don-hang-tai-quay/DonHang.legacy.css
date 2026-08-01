@@ -1,0 +1,963 @@
+.dh-page {
+  min-height: 100%;
+  padding: 28px;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+.dh-page *,
+.dh-modal-overlay * {
+  box-sizing: border-box;
+}
+
+.dh-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.dh-page-header h1,
+.dh-modal-header h2 {
+  margin: 3px 0 7px;
+  color: #152238;
+}
+
+.dh-page-header h1 {
+  font-size: 28px;
+}
+
+.dh-page-header > div > span {
+  color: #657087;
+}
+
+.dh-eyebrow {
+  margin: 0;
+  color: #0a8f68;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dh-button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 10px;
+  padding: 0 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.dh-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.dh-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.dh-button-primary {
+  color: #fff;
+  background: #078c67;
+  box-shadow: 0 8px 20px rgba(7, 140, 103, 0.22);
+}
+
+.dh-button-secondary {
+  color: #33415c;
+  background: #eef1f6;
+}
+
+.dh-button-ghost {
+  color: #52617a;
+  background: #fff;
+  border: 1px solid #dfe4ec;
+}
+
+.dh-success-message,
+.dh-error-message {
+  border-radius: 10px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.dh-success-message {
+  color: #087457;
+  background: #e9fbf5;
+  border: 1px solid #bcebdc;
+}
+
+.dh-error-message {
+  color: #b42318;
+  background: #fff0ee;
+  border: 1px solid #f5c1bb;
+}
+
+.dh-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.dh-summary-card {
+  min-height: 112px;
+  padding: 18px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #e6eaf0;
+  box-shadow: 0 7px 24px rgba(31, 44, 69, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.dh-summary-card span {
+  display: block;
+  color: #6a758a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dh-summary-card strong {
+  display: block;
+  margin-top: 12px;
+  font-size: 27px;
+}
+
+.dh-summary-card > i {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  font-size: 38px;
+  color: rgba(7, 140, 103, 0.13);
+}
+
+.dh-panel {
+  background: #fff;
+  border: 1px solid #e3e8ef;
+  border-radius: 15px;
+  box-shadow: 0 9px 28px rgba(31, 44, 69, 0.06);
+  overflow: hidden;
+}
+
+.dh-filter-row {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: minmax(250px, 1.5fr) repeat(3, minmax(155px, 0.65fr)) auto;
+  gap: 10px;
+  border-bottom: 1px solid #e8ebf0;
+}
+
+.dh-filter-row select,
+.dh-form-row select,
+.dh-pagination select,
+.dh-full-field textarea {
+  width: 100%;
+  font: inherit;
+  color: #26334c;
+  background: #fff;
+  border: 1px solid #dce2ea;
+  border-radius: 9px;
+  outline: none;
+}
+
+.dh-filter-row select,
+.dh-form-row select {
+  min-height: 42px;
+  padding: 0 11px;
+}
+
+.dh-filter-row select:focus,
+.dh-form-row select:focus,
+.dh-full-field textarea:focus,
+.dh-search-box:focus-within {
+  border-color: #11a57b;
+  box-shadow: 0 0 0 3px rgba(17, 165, 123, 0.12);
+}
+
+.dh-search-box {
+  min-height: 42px;
+  border: 1px solid #dce2ea;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-left: 12px;
+}
+
+.dh-search-box > i {
+  color: #8691a4;
+}
+
+.dh-search-box input {
+  min-width: 0;
+  flex: 1;
+  height: 40px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+}
+
+.dh-list-search button {
+  height: 34px;
+  margin-right: 4px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: #078c67;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.dh-table-wrapper {
+  overflow-x: auto;
+}
+
+.dh-table {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+}
+
+.dh-table th {
+  color: #68748a;
+  background: #fafbfc;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.dh-table th,
+.dh-table td {
+  padding: 14px 15px;
+  text-align: left;
+  border-bottom: 1px solid #edf0f4;
+  vertical-align: middle;
+}
+
+.dh-table td {
+  color: #344158;
+  font-size: 14px;
+}
+
+.dh-table td strong,
+.dh-table td small {
+  display: block;
+}
+
+.dh-table td small {
+  margin-top: 4px;
+  color: #7c8799;
+}
+
+.dh-table tbody tr:hover {
+  background: #fbfdfc;
+}
+
+.dh-table-message {
+  height: 150px;
+  text-align: center !important;
+  color: #7b8699 !important;
+}
+
+.dh-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  color: #475467;
+  background: #f1f3f6;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.dh-badge-cho_xu_ly,
+.dh-badge-cho_thanh_toan,
+.dh-badge-cho_duyet {
+  color: #985b00;
+  background: #fff4dc;
+}
+
+.dh-badge-dang_xu_ly,
+.dh-badge-dang_giao,
+.dh-badge-dang_tu_van {
+  color: #1552a3;
+  background: #e8f1ff;
+}
+
+.dh-badge-da_thanh_toan,
+.dh-badge-hoan_thanh,
+.dh-badge-da_duyet,
+.dh-badge-khong_can_duyet {
+  color: #087457;
+  background: #e5f8f1;
+}
+
+.dh-badge-da_huy,
+.dh-badge-tu_choi {
+  color: #b42318;
+  background: #ffebe8;
+}
+
+.dh-badge-chua_thanh_toan {
+  color: #5e6675;
+  background: #eef0f3;
+}
+
+.dh-prescription-text {
+  color: #a34019 !important;
+  font-weight: 700;
+}
+
+.dh-table-action,
+.dh-icon-button,
+.dh-remove-button,
+.dh-pagination-actions button {
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dh-table-action {
+  width: 35px;
+  height: 35px;
+  border-radius: 9px;
+  color: #078c67;
+  background: #e9f8f3;
+}
+
+.dh-pagination {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #68748a;
+  font-size: 13px;
+}
+
+.dh-pagination > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dh-pagination select {
+  width: auto;
+  padding: 5px 8px;
+}
+
+.dh-pagination-actions button {
+  width: 33px;
+  height: 33px;
+  border-radius: 8px;
+  color: #41506a;
+  background: #eef1f5;
+}
+
+.dh-pagination-actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dh-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  padding: 22px;
+  background: rgba(12, 19, 31, 0.58);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+
+.dh-modal {
+  width: min(720px, 100%);
+  max-height: calc(100vh - 44px);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dh-modal-large {
+  width: min(1050px, 100%);
+}
+
+.dh-create-modal {
+  width: min(1240px, 100%);
+  height: min(790px, calc(100vh - 44px));
+}
+
+.dh-modal-header,
+.dh-modal-footer {
+  padding: 17px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dh-modal-header {
+  border-bottom: 1px solid #e8ebef;
+}
+
+.dh-modal-header h2 {
+  font-size: 21px;
+}
+
+.dh-icon-button {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  color: #566178;
+  background: #f0f2f5;
+}
+
+.dh-modal-footer {
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #e8ebef;
+}
+
+.dh-create-layout {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 0.95fr 1.25fr;
+}
+
+.dh-product-picker,
+.dh-cart-panel {
+  min-height: 0;
+  padding: 17px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dh-product-picker {
+  background: #f7f9fb;
+  border-right: 1px solid #e6e9ee;
+}
+
+.dh-picker-header {
+  margin: 14px 2px 8px;
+  display: flex;
+  justify-content: space-between;
+  color: #657188;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dh-product-list,
+.dh-cart-items,
+.dh-modal-body {
+  overflow-y: auto;
+}
+
+.dh-product-list {
+  flex: 1;
+  padding-right: 4px;
+}
+
+.dh-product-option {
+  width: 100%;
+  min-height: 74px;
+  padding: 9px;
+  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: 55px minmax(0, 1fr) auto 21px;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  color: #29364d;
+  background: #fff;
+  border: 1px solid #e1e6ed;
+  border-radius: 11px;
+  cursor: pointer;
+}
+
+.dh-product-option:hover {
+  border-color: #79cdb3;
+  box-shadow: 0 5px 16px rgba(23, 69, 55, 0.08);
+}
+
+.dh-product-option img,
+.dh-detail-product img {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f2f4f7;
+}
+
+.dh-product-option-main {
+  min-width: 0;
+}
+
+.dh-product-option-main strong,
+.dh-product-option-main small {
+  display: block;
+}
+
+.dh-product-option-main strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dh-product-option-main small {
+  margin-top: 5px;
+  color: #7a8699;
+}
+
+.dh-product-option-price {
+  color: #078c67;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.dh-product-option > i {
+  color: #0b9c73;
+  font-size: 18px;
+}
+
+.dh-empty-state,
+.dh-empty-cart,
+.dh-loading-block {
+  min-height: 150px;
+  color: #8490a3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dh-cart-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 11px;
+}
+
+.dh-cart-heading h3 {
+  margin: 0;
+}
+
+.dh-cart-heading span {
+  color: #758095;
+  font-size: 12px;
+}
+
+.dh-customer-chip {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  color: #087457 !important;
+  background: #e8f7f2;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.dh-cart-items {
+  min-height: 130px;
+  flex: 1;
+  padding-right: 4px;
+  border-top: 1px solid #edf0f4;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.dh-empty-cart {
+  min-height: 200px;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.dh-empty-cart i {
+  font-size: 35px;
+  color: #b0bac8;
+}
+
+.dh-cart-item {
+  padding: 12px 2px;
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) 106px 112px 34px;
+  align-items: center;
+  gap: 11px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.dh-cart-item-info {
+  min-width: 0;
+}
+
+.dh-cart-item-info strong,
+.dh-cart-item-info span,
+.dh-cart-item-info small {
+  display: block;
+}
+
+.dh-cart-item-info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dh-cart-item-info span {
+  margin-top: 4px;
+  color: #788398;
+  font-size: 12px;
+}
+
+.dh-quantity-control {
+  height: 34px;
+  display: grid;
+  grid-template-columns: 32px 42px 32px;
+  border: 1px solid #dce2e9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dh-quantity-control button,
+.dh-quantity-control input {
+  border: 0;
+  background: #fff;
+  text-align: center;
+}
+
+.dh-quantity-control button {
+  cursor: pointer;
+  color: #536077;
+}
+
+.dh-quantity-control input {
+  width: 42px;
+  outline: none;
+  font-weight: 700;
+  border-left: 1px solid #e2e6eb;
+  border-right: 1px solid #e2e6eb;
+}
+
+.dh-cart-line-total {
+  text-align: right;
+  color: #17243a;
+}
+
+.dh-remove-button {
+  width: 32px;
+  height: 32px;
+  color: #c3392d;
+  background: #ffefed;
+  border-radius: 8px;
+}
+
+.dh-form-row {
+  margin-top: 13px;
+}
+
+.dh-form-row label,
+.dh-full-field {
+  color: #556178;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dh-form-row select,
+.dh-full-field textarea {
+  display: block;
+  margin-top: 6px;
+}
+
+.dh-full-field {
+  display: block;
+  margin-top: 12px;
+}
+
+.dh-full-field textarea {
+  min-height: 58px;
+  padding: 9px 11px;
+  resize: vertical;
+}
+
+.dh-prescription-box {
+  margin-top: 12px;
+  padding: 12px;
+  color: #6f321a;
+  background: #fff8ef;
+  border: 1px solid #f4d7b6;
+  border-radius: 11px;
+}
+
+.dh-prescription-box-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dh-prescription-box-title > i {
+  font-size: 22px;
+}
+
+.dh-prescription-box-title strong,
+.dh-prescription-box-title span {
+  display: block;
+}
+
+.dh-prescription-box-title span {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.dh-checkbox-row {
+  margin-top: 11px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dh-checkbox-row input {
+  margin-top: 2px;
+}
+
+.dh-total-box {
+  margin-top: 13px;
+  padding-top: 13px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-top: 1px dashed #cdd4de;
+}
+
+.dh-total-box span {
+  color: #5f6b80;
+  font-weight: 700;
+}
+
+.dh-total-box strong {
+  color: #078c67;
+  font-size: 24px;
+}
+
+.dh-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: dh-spin 0.7s linear infinite;
+}
+
+@keyframes dh-spin {
+  to { transform: rotate(360deg); }
+}
+
+.dh-modal-body {
+  padding: 18px;
+}
+
+.dh-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dh-detail-card {
+  padding: 15px;
+  border: 1px solid #e4e8ee;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.dh-detail-card h3 {
+  margin: 0 0 13px;
+  font-size: 15px;
+}
+
+.dh-info-row {
+  margin-top: 9px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  color: #69758a;
+  font-size: 13px;
+}
+
+.dh-info-row strong {
+  max-width: 65%;
+  color: #27344c;
+  text-align: right;
+}
+
+.dh-info-total {
+  padding-top: 9px;
+  border-top: 1px dashed #d8dde5;
+}
+
+.dh-info-total strong {
+  color: #078c67;
+  font-size: 17px;
+}
+
+.dh-products-card,
+.dh-note-card {
+  margin-top: 12px;
+}
+
+.dh-detail-product {
+  padding: 10px 0;
+  display: grid;
+  grid-template-columns: 55px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  border-top: 1px solid #edf0f4;
+}
+
+.dh-detail-product:first-child {
+  border-top: 0;
+}
+
+.dh-detail-product-main span {
+  display: block;
+  margin-top: 5px;
+  color: #778397;
+  font-size: 12px;
+}
+
+.dh-product-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dh-prescription-tag {
+  padding: 3px 7px;
+  color: #a34019;
+  background: #fff0e8;
+  border-radius: 999px;
+  font-size: 10px !important;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.dh-detail-product-price {
+  text-align: right;
+}
+
+.dh-detail-product-price span,
+.dh-detail-product-price strong {
+  display: block;
+}
+
+.dh-detail-product-price span {
+  color: #7c8798;
+  font-size: 12px;
+}
+
+.dh-detail-product-price strong {
+  margin-top: 5px;
+}
+
+.dh-note-card p {
+  margin: 7px 0 0;
+  color: #59667b;
+  font-size: 13px;
+}
+
+@media (max-width: 1100px) {
+  .dh-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dh-filter-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dh-list-search {
+    grid-column: 1 / -1;
+  }
+
+  .dh-create-layout {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .dh-product-picker,
+  .dh-cart-panel {
+    min-height: 480px;
+  }
+
+  .dh-product-picker {
+    border-right: 0;
+    border-bottom: 1px solid #e6e9ee;
+  }
+}
+
+@media (max-width: 720px) {
+  .dh-page {
+    padding: 16px;
+  }
+
+  .dh-page-header {
+    flex-direction: column;
+  }
+
+  .dh-page-header .dh-button {
+    width: 100%;
+  }
+
+  .dh-summary-grid,
+  .dh-filter-row,
+  .dh-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dh-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .dh-modal-overlay {
+    padding: 0;
+  }
+
+  .dh-modal {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  .dh-cart-item {
+    grid-template-columns: 1fr auto;
+  }
+
+  .dh-quantity-control,
+  .dh-cart-line-total {
+    margin-top: 6px;
+  }
+}

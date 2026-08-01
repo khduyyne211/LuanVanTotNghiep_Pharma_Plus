@@ -9,6 +9,10 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
+    rules: {
+      "react-hooks/set-state-in-effect": "warn",
+      "react-refresh/only-export-components": "warn",
+    },
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,

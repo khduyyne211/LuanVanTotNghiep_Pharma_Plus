@@ -4,11 +4,14 @@ import {
   layDanhSachDonHang,
 } from "../api/donHangApi";
 import DonHangChiTietModal from "../components/DonHangChiTietModal";
-import TaoDonTaiQuayModal from "../components/TaoDonTaiQuayModal";
 import type {
   DonHangChiTiet,
   DonHangDanhSach,
 } from "../types/DonHang";
+import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import PhanTrangQuanLy from "../../../shared/components/quan-ly/PhanTrangQuanLy";
+import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../../shared/styles/quan-ly/QuanLyCommon.css";
 import "../styles/DonHang.css";
 
 const dinhDangTien = (giaTri: number | null | undefined) =>
@@ -44,10 +47,8 @@ export default function QuanLyDonHangPage() {
   const [trangThaiThanhToan, setTrangThaiThanhToan] = useState("");
   const [trangThaiKiemDuyet, setTrangThaiKiemDuyet] = useState("");
 
-  const [hienFormTaiQuay, setHienFormTaiQuay] = useState(false);
   const [chiTiet, setChiTiet] = useState<DonHangChiTiet | null>(null);
   const [dangTaiChiTiet, setDangTaiChiTiet] = useState(false);
-  const [thongBao, setThongBao] = useState("");
 
   const taiDanhSach = useCallback(async () => {
     try {
@@ -84,7 +85,11 @@ export default function QuanLyDonHangPage() {
   ]);
 
   useEffect(() => {
-    void taiDanhSach();
+    const timeoutId = window.setTimeout(() => {
+      void taiDanhSach();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [taiDanhSach]);
 
   const timKiem = () => {
@@ -117,41 +122,83 @@ export default function QuanLyDonHangPage() {
     setDangTaiChiTiet(false);
   };
 
-  const taoThanhCong = (donHang: DonHangChiTiet) => {
-    setHienFormTaiQuay(false);
-    setThongBao(`Đã tạo thành công đơn hàng #${donHang.maDonHang}`);
-    setChiTiet(donHang);
-    setPage(0);
-    void taiDanhSach();
+  const thanhCongCu = (
+    <div className="dh-filter-row">
+      <div className="dh-search-box dh-list-search">
+        <i className="bi bi-search" />
+        <input
+          value={keywordInput}
+          onChange={(event) => setKeywordInput(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") timKiem();
+          }}
+          placeholder="Mã đơn, tên hoặc số điện thoại..."
+        />
+        <button type="button" onClick={timKiem}>
+          Tìm
+        </button>
+      </div>
 
-    window.setTimeout(() => setThongBao(""), 3500);
-  };
+      <select
+        value={trangThaiDonHang}
+        onChange={(event) => {
+          setTrangThaiDonHang(event.target.value);
+          setPage(0);
+        }}
+      >
+        <option value="">Tất cả trạng thái đơn</option>
+        <option value="CHO_XU_LY">Chờ xử lý</option>
+        <option value="DANG_XU_LY">Đang xử lý</option>
+        <option value="DANG_GIAO">Đang giao</option>
+        <option value="HOAN_THANH">Hoàn thành</option>
+        <option value="DA_HUY">Đã hủy</option>
+      </select>
+
+      <select
+        value={trangThaiThanhToan}
+        onChange={(event) => {
+          setTrangThaiThanhToan(event.target.value);
+          setPage(0);
+        }}
+      >
+        <option value="">Tất cả thanh toán</option>
+        <option value="CHUA_THANH_TOAN">Chưa thanh toán</option>
+        <option value="DA_THANH_TOAN">Đã thanh toán</option>
+        <option value="THANH_TOAN_THAT_BAI">Thanh toán thất bại</option>
+        <option value="DA_HOAN_TIEN">Đã hoàn tiền</option>
+      </select>
+
+      <select
+        value={trangThaiKiemDuyet}
+        onChange={(event) => {
+          setTrangThaiKiemDuyet(event.target.value);
+          setPage(0);
+        }}
+      >
+        <option value="">Tất cả kiểm duyệt</option>
+        <option value="KHONG_CAN_DUYET">Không cần duyệt</option>
+        <option value="CHO_DUYET">Chờ duyệt</option>
+        <option value="DA_DUYET">Đã duyệt</option>
+        <option value="TU_CHOI">Từ chối</option>
+      </select>
+
+      <button
+        type="button"
+        className="ql-button ql-button-ghost"
+        onClick={xoaBoLoc}
+      >
+        <i className="bi bi-arrow-counterclockwise" />
+        Xóa lọc
+      </button>
+    </div>
+  );
 
   return (
-    <div className="dh-page">
-      <header className="dh-page-header">
-        <div>
-          <h1>Quản lý đơn hàng</h1>
-          <span>
-            Theo dõi đơn online và tạo đơn trực tiếp cho khách tại quầy
-          </span>
-        </div>
-
-        <button
-          className="dh-button dh-button-primary"
-          onClick={() => setHienFormTaiQuay(true)}
-        >
-          <i className="bi bi-plus-lg" />
-          Tạo đơn tại quầy
-        </button>
-      </header>
-
-      {thongBao && (
-        <div className="dh-success-message">
-          <i className="bi bi-check-circle-fill" />
-          {thongBao}
-        </div>
-      )}
+    <div className="ql-page">
+      <TieuDeTrangQuanLy
+        tieuDe="Quản lý đơn hàng"
+        moTa="Theo dõi và quản lý các đơn hàng trong hệ thống"
+      />
 
       <section className="dh-summary-grid">
         <div className="dh-summary-card">
@@ -184,78 +231,26 @@ export default function QuanLyDonHangPage() {
         </div>
       </section>
 
-      <section className="dh-panel">
-        <div className="dh-filter-row">
-          <div className="dh-search-box dh-list-search">
-            <i className="bi bi-search" />
-            <input
-              value={keywordInput}
-              onChange={(event) => setKeywordInput(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") timKiem();
-              }}
-              placeholder="Mã đơn, tên hoặc số điện thoại..."
-            />
-            <button type="button" onClick={timKiem}>
-              Tìm
-            </button>
-          </div>
-
-          <select
-            value={trangThaiDonHang}
-            onChange={(event) => {
-              setTrangThaiDonHang(event.target.value);
+      <KhungDanhSachQuanLy
+        thanhCongCu={thanhCongCu}
+        thongBaoLoi={loi}
+        phanTrang={
+          <PhanTrangQuanLy
+            page={page}
+            size={size}
+            totalElements={totalElements}
+            totalPages={totalPages}
+            first={first}
+            last={last}
+            tenDonVi="đơn"
+            onDoiTrang={setPage}
+            onDoiKichThuoc={(kichThuocMoi) => {
+              setSize(kichThuocMoi);
               setPage(0);
             }}
-          >
-            <option value="">Tất cả trạng thái đơn</option>
-            <option value="CHO_XU_LY">Chờ xử lý</option>
-            <option value="DANG_XU_LY">Đang xử lý</option>
-            <option value="CHO_THANH_TOAN">Chờ thanh toán</option>
-            <option value="DANG_GIAO">Đang giao</option>
-            <option value="HOAN_THANH">Hoàn thành</option>
-            <option value="DA_HUY">Đã hủy</option>
-          </select>
-
-          <select
-            value={trangThaiThanhToan}
-            onChange={(event) => {
-              setTrangThaiThanhToan(event.target.value);
-              setPage(0);
-            }}
-          >
-            <option value="">Tất cả thanh toán</option>
-            <option value="CHUA_THANH_TOAN">Chưa thanh toán</option>
-            <option value="CHO_THANH_TOAN">Chờ thanh toán</option>
-            <option value="DA_THANH_TOAN">Đã thanh toán</option>
-          </select>
-
-          <select
-            value={trangThaiKiemDuyet}
-            onChange={(event) => {
-              setTrangThaiKiemDuyet(event.target.value);
-              setPage(0);
-            }}
-          >
-            <option value="">Tất cả kiểm duyệt</option>
-            <option value="KHONG_CAN_DUYET">Không cần duyệt</option>
-            <option value="CHO_DUYET">Chờ duyệt</option>
-            <option value="DANG_TU_VAN">Đang tư vấn</option>
-            <option value="DA_DUYET">Đã duyệt</option>
-            <option value="TU_CHOI">Từ chối</option>
-          </select>
-
-          <button
-            className="dh-button dh-button-ghost"
-            onClick={xoaBoLoc}
-          >
-            <i className="bi bi-arrow-counterclockwise" />
-            Xóa lọc
-          </button>
-        </div>
-
-        {loi && <div className="dh-error-message">{loi}</div>}
-
+          />
+        }
+      >
         <div className="dh-table-wrapper">
           <table className="dh-table">
             <thead>
@@ -313,31 +308,26 @@ export default function QuanLyDonHangPage() {
                           donHang.trangThaiThanhToan || ""
                         ).toLowerCase()}`}
                       >
-                        {hienThiTrangThai(
-                          donHang.trangThaiThanhToan
-                        )}
+                        {hienThiTrangThai(donHang.trangThaiThanhToan)}
                       </span>
                     </td>
                     <td>
                       <span
                         className={`dh-badge dh-badge-${donHang.trangThaiDonHang.toLowerCase()}`}
                       >
-                        {hienThiTrangThai(
-                          donHang.trangThaiDonHang
-                        )}
+                        {hienThiTrangThai(donHang.trangThaiDonHang)}
                       </span>
                     </td>
                     <td>
                       <span
                         className={`dh-badge dh-badge-${donHang.trangThaiKiemDuyet.toLowerCase()}`}
                       >
-                        {hienThiTrangThai(
-                          donHang.trangThaiKiemDuyet
-                        )}
+                        {hienThiTrangThai(donHang.trangThaiKiemDuyet)}
                       </span>
                     </td>
                     <td>
                       <button
+                        type="button"
                         className="dh-table-action"
                         onClick={() => void moChiTiet(donHang.maDonHang)}
                         title="Xem chi tiết"
@@ -351,50 +341,7 @@ export default function QuanLyDonHangPage() {
             </tbody>
           </table>
         </div>
-
-        <div className="dh-pagination">
-          <div>
-            <span>Hiển thị</span>
-            <select
-              value={size}
-              onChange={(event) => {
-                setSize(Number(event.target.value));
-                setPage(0);
-              }}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-            </select>
-            <span>trên {totalElements} đơn</span>
-          </div>
-
-          <div className="dh-pagination-actions">
-            <button
-              disabled={first}
-              onClick={() => setPage((giaTri) => Math.max(0, giaTri - 1))}
-            >
-              <i className="bi bi-chevron-left" />
-            </button>
-            <span>
-              Trang {totalPages === 0 ? 0 : page + 1}/{totalPages}
-            </span>
-            <button
-              disabled={last}
-              onClick={() => setPage((giaTri) => giaTri + 1)}
-            >
-              <i className="bi bi-chevron-right" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {hienFormTaiQuay && (
-        <TaoDonTaiQuayModal
-          onDong={() => setHienFormTaiQuay(false)}
-          onTaoThanhCong={taoThanhCong}
-        />
-      )}
+      </KhungDanhSachQuanLy>
 
       <DonHangChiTietModal
         donHang={chiTiet}

@@ -31,10 +31,6 @@ function SanPhamTable({
   onHien,
   onPageChange,
 }: SanPhamTableProps) {
-  const dinhDangTien = (giaTri: number) => {
-    return giaTri.toLocaleString("vi-VN") + " đ";
-  };
-
   const dinhDangNgay = (ngay: string) => {
     return new Date(ngay).toLocaleDateString("vi-VN");
   };
@@ -54,7 +50,6 @@ function SanPhamTable({
                 <th>Tên sản phẩm</th>
                 <th>Danh mục</th>
                 <th>Nhà sản xuất</th>
-                <th>Giá bán</th>
                 <th>Kê đơn</th>
                 <th>Trạng thái</th>
                 <th>Ngày tạo</th>
@@ -80,8 +75,6 @@ function SanPhamTable({
                   <td>
                     {sanPham.tenNhaSanXuat || "Chưa cập nhật"}
                   </td>
-
-                  <td>{dinhDangTien(sanPham.giaBan)}</td>
 
                   <td>
                     {sanPham.laThuocKeDon ? "Có" : "Không"}
@@ -147,7 +140,7 @@ function SanPhamTable({
 
               {danhSachSanPham.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="empty-cell">
+                  <td colSpan={8} className="empty-cell">
                     Không tìm thấy sản phẩm phù hợp.
                   </td>
                 </tr>

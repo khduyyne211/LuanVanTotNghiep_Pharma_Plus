@@ -3,7 +3,6 @@ import type { DonViTinh } from "../types/DonViTinh";
 type DonViTinhTableProps = {
   danhSachDonViTinh: DonViTinh[];
   loading: boolean;
-  loi: string | null;
   maDonViTinhDangXuLy: number | null;
   onSua: (donViTinh: DonViTinh) => void;
   onDoiTrangThai: (donViTinh: DonViTinh) => void;
@@ -12,113 +11,111 @@ type DonViTinhTableProps = {
 function DonViTinhTable({
   danhSachDonViTinh,
   loading,
-  loi,
   maDonViTinhDangXuLy,
   onSua,
   onDoiTrangThai,
 }: DonViTinhTableProps) {
   return (
-    <div className="table-card">
-      {loading ? (
-        <p style={{ padding: "16px" }}>Đang tải danh sách đơn vị tính...</p>
-      ) : loi ? (
-        <p style={{ padding: "16px" }}>{loi}</p>
-      ) : (
-        <>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Mã</th>
-                <th>Tên đơn vị tính</th>
-                <th>Ký hiệu</th>
-                <th>Mô tả</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
-              </tr>
-            </thead>
+    <div className="ql-table-wrapper">
+      <table className="ql-table">
+        <thead>
+          <tr>
+            <th>Mã</th>
+            <th>Tên đơn vị tính</th>
+            <th>Ký hiệu</th>
+            <th>Mô tả</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
 
-            <tbody>
-              {danhSachDonViTinh.map((donViTinh) => {
-                const dangXuLy =
-                  maDonViTinhDangXuLy === donViTinh.maDonViTinh;
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan={6} className="ql-table-message">
+                Đang tải danh sách đơn vị tính...
+              </td>
+            </tr>
+          ) : danhSachDonViTinh.length === 0 ? (
+            <tr>
+              <td colSpan={6} className="ql-table-message">
+                Chưa có đơn vị tính
+              </td>
+            </tr>
+          ) : (
+            danhSachDonViTinh.map((donViTinh) => {
+              const dangXuLy =
+                maDonViTinhDangXuLy === donViTinh.maDonViTinh;
 
-                return (
-                  <tr key={donViTinh.maDonViTinh}>
-                    <td>{donViTinh.maDonViTinh}</td>
+              return (
+                <tr key={donViTinh.maDonViTinh}>
+                  <td>
+                    <strong>#{donViTinh.maDonViTinh}</strong>
+                  </td>
 
-                    <td>
-                      <strong>{donViTinh.tenDonViTinh}</strong>
-                    </td>
+                  <td>
+                    <strong>{donViTinh.tenDonViTinh}</strong>
+                  </td>
 
-                    <td>{donViTinh.kyHieu || "Chưa cập nhật"}</td>
+                  <td>{donViTinh.kyHieu || "Chưa cập nhật"}</td>
 
-                    <td>
-                      <div className="muted-text">
-                        {donViTinh.moTa || "Chưa có mô tả"}
-                      </div>
-                    </td>
+                  <td>
+                    <span className="ql-muted-text">
+                      {donViTinh.moTa || "Chưa có mô tả"}
+                    </span>
+                  </td>
 
-                    <td>
-                      <span
-                        className={
-                          donViTinh.trangThai
-                            ? "status-active"
-                            : "status-inactive"
-                        }
+                  <td>
+                    <span
+                      className={
+                        donViTinh.trangThai
+                          ? "ql-status ql-status-active"
+                          : "ql-status ql-status-inactive"
+                      }
+                    >
+                      {donViTinh.trangThai ? "Hiện" : "Ẩn"}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div className="ql-action-group">
+                      <button
+                        type="button"
+                        className="ql-action-button"
+                        onClick={() => onSua(donViTinh)}
+                        disabled={dangXuLy}
                       >
-                        {donViTinh.trangThai ? "Hiện" : "Ẩn"}
-                      </span>
-                    </td>
+                        <i className="bi bi-pencil-square" />
+                        Sửa
+                      </button>
 
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          type="button"
-                          className="small-button"
-                          onClick={() => onSua(donViTinh)}
-                          disabled={dangXuLy}
-                        >
-                          Sửa
-                        </button>
-
-                        <button
-                          type="button"
-                          className="small-button"
-                          onClick={() => onDoiTrangThai(donViTinh)}
-                          disabled={dangXuLy}
-                        >
-                          {dangXuLy
-                            ? "Đang xử lý..."
-                            : donViTinh.trangThai
-                              ? "Ẩn"
-                              : "Hiện"}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {danhSachDonViTinh.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="empty-cell">
-                    Chưa có đơn vị tính.
+                      <button
+                        type="button"
+                        className="ql-action-button"
+                        onClick={() => onDoiTrangThai(donViTinh)}
+                        disabled={dangXuLy}
+                      >
+                        <i
+                          className={
+                            donViTinh.trangThai
+                              ? "bi bi-eye-slash"
+                              : "bi bi-eye"
+                          }
+                        />
+                        {dangXuLy
+                          ? "Đang xử lý..."
+                          : donViTinh.trangThai
+                            ? "Ẩn"
+                            : "Hiện"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-
-          <div
-            className="pagination-row"
-            style={{ padding: "0 16px 16px" }}
-          >
-            <div>
-              Tổng cộng <strong>{danhSachDonViTinh.length}</strong> đơn vị tính
-            </div>
-          </div>
-        </>
-      )}
+              );
+            })
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

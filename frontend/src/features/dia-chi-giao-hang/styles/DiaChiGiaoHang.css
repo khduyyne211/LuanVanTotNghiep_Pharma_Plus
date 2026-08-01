@@ -1,0 +1,303 @@
+.dia-chi-tieu-de-khu-vuc {
+  padding: 20px 24px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.dia-chi-tieu-de-noi-dung {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.dia-chi-tieu-de-khu-vuc h1 {
+  margin: 0 0 6px;
+
+  color: #0f172a;
+  font-size: 22px;
+  font-weight: 640;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.dia-chi-tieu-de-khu-vuc p {
+  margin: 0;
+
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.4;
+
+  text-align: left;
+}
+
+.dia-chi-nut-them-moi {
+  position: relative;
+
+  min-height: 40px;
+  padding: 0 15px;
+
+  border: none;
+  border-radius: 999px;
+
+  background-color: #075eea;
+  color: #ffffff;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  box-shadow: 0 4px 12px rgba(7, 94, 234, 0.25);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dia-chi-nut-them-moi i {
+  color: #ffffff;
+  font-size: 15px;
+}
+
+.dia-chi-nut-them-moi:hover {
+  background-color: #064fc4;
+  color: #ffffff;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 6px 15px rgba(7, 94, 234, 0.3);
+}
+
+.dia-chi-danh-sach {
+  padding: 22px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dia-chi-the {
+  border: 1px solid #dbe3ef;
+  border-radius: 13px;
+
+  background-color: #ffffff;
+
+  overflow: hidden;
+}
+
+.dia-chi-the-mac-dinh {
+  border-color: #75a5fa;
+  box-shadow: 0 0 0 2px rgba(7, 94, 234, 0.08);
+}
+
+.dia-chi-the-noi-dung {
+  min-height: 135px;
+  padding: 20px 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.dia-chi-thong-tin-chinh {
+  min-width: 0;
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 11px;
+
+  text-align: left;
+}
+
+.dia-chi-nguoi-nhan {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.dia-chi-nguoi-nhan strong {
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.dia-chi-nhan-mac-dinh{
+  min-height: 25px;
+  padding: 0 10px;
+
+  border-radius: 999px;
+  background-color: #e8f0ff;
+  color: #075eea;
+
+  display: inline-flex;
+  align-items: center;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dia-chi-so-dien-thoai,
+.dia-chi-day-du {
+  display: grid;
+  grid-template-columns: 21px minmax(0, 1fr);
+  align-items: start;
+  justify-items: start;
+  gap: 9px;
+
+  width: 100%;
+
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
+
+  text-align: left;
+}
+
+.dia-chi-so-dien-thoai i,
+.dia-chi-day-du i {
+  width: 21px;
+
+  color: #64748b;
+  text-align: center;
+}
+
+.dia-chi-so-dien-thoai span,
+.dia-chi-day-du span {
+  min-width: 0;
+  text-align: left;
+}
+
+.dia-chi-hanh-dong-phu {
+  flex-shrink: 0;
+  margin-left: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+
+  align-self: center;
+}
+
+.dia-chi-hanh-dong-phu button {
+  padding: 4px 0;
+
+  border: none;
+  background-color: transparent;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.dia-chi-nut-sua {
+  color: #075eea;
+}
+
+.dia-chi-nut-sua:hover {
+  color: #064fc4;
+  text-decoration: underline;
+}
+
+.dia-chi-hanh-dong-ngan-cach {
+  color: #cbd5e1;
+  font-size: 14px;
+  user-select: none;
+}
+
+.dia-chi-nut-xoa {
+  color: #dc2626;
+}
+
+.dia-chi-nut-xoa:hover {
+  color: #b91c1c;
+  text-decoration: underline;
+}
+
+.dia-chi-hanh-dong-phu button:hover {
+  text-decoration: underline;
+}
+
+
+.dia-chi-thong-bao,
+.dia-chi-danh-sach-rong {
+  min-height: 380px;
+  padding: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #64748b;
+  text-align: center;
+}
+
+.dia-chi-thong-bao-loi {
+  color: #dc2626;
+}
+
+.dia-chi-danh-sach-rong {
+  flex-direction: column;
+}
+
+.dia-chi-rong-icon {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 17px;
+
+  border-radius: 50%;
+  background-color: #edf4ff;
+  color: #075eea;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 31px;
+}
+
+.dia-chi-danh-sach-rong h2 {
+  margin: 0 0 8px;
+
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.dia-chi-danh-sach-rong p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .dia-chi-tieu-de-khu-vuc {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dia-chi-the-noi-dung {
+    flex-direction: column;
+  }
+
+  .dia-chi-hanh-dong-phu {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

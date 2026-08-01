@@ -43,7 +43,6 @@ export interface SanPham {
 
   tenSanPham: string;
   hinhAnh: string | null;
-  giaBan: number;
   laThuocKeDon: boolean;
   trangThaiSanPham: boolean;
   moTaNgan: string | null;

@@ -1,0 +1,37 @@
+.customer-layout {
+  --customer-header-height: 128px;
+  --customer-category-height: 48px;
+  --customer-sticky-height:
+    calc(
+      var(--customer-header-height) +
+      var(--customer-category-height)
+    );
+
+  min-height: 100vh;
+  background-color: #eef3f8;
+}
+
+.customer-layout-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+}
+
+.customer-layout-main {
+  min-height: 500px;
+}
+
+@media (max-width: 900px) {
+  .customer-layout {
+    /*
+     * Header chuyển sang dạng nhiều hàng ở màn hình nhỏ,
+     * nên không dùng offset cố định của desktop.
+     */
+    --customer-sticky-height: 0px;
+  }
+
+  .customer-layout-sticky-header {
+    position: relative;
+  }
+}

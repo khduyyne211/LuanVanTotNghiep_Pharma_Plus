@@ -1,0 +1,86 @@
+.trang-thai-thanh-toan {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  width: fit-content;
+  padding: 6px 12px;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.trang-thai-thanh-toan-cham {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Chưa thanh toán */
+
+.trang-thai-thanh-toan--chua-thanh-toan {
+  color: #475569;
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.trang-thai-thanh-toan--chua-thanh-toan
+.trang-thai-thanh-toan-cham {
+  background-color: #64748b;
+}
+
+/* Chờ thanh toán */
+
+.trang-thai-thanh-toan--cho-thanh-toan {
+  color: #c2410c;
+  background-color: #fff7ed;
+  border-color: #fdba74;
+}
+
+.trang-thai-thanh-toan--cho-thanh-toan
+.trang-thai-thanh-toan-cham {
+  background-color: #f97316;
+}
+
+/* Đã thanh toán */
+
+.trang-thai-thanh-toan--da-thanh-toan {
+  color: #15803d;
+  background-color: #f0fdf4;
+  border-color: #86efac;
+}
+
+.trang-thai-thanh-toan--da-thanh-toan
+.trang-thai-thanh-toan-cham {
+  background-color: #16a34a;
+}
+
+/* Thanh toán thất bại */
+
+.trang-thai-thanh-toan--thanh-toan-that-bai {
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.trang-thai-thanh-toan--thanh-toan-that-bai
+.trang-thai-thanh-toan-cham {
+  background-color: #dc2626;
+}
+
+/* Đã hủy thanh toán */
+
+.trang-thai-thanh-toan--da-huy {
+  color: #6b21a8;
+  background-color: #faf5ff;
+  border-color: #d8b4fe;
+}
+
+.trang-thai-thanh-toan--da-huy
+.trang-thai-thanh-toan-cham {
+  background-color: #9333ea;
+}

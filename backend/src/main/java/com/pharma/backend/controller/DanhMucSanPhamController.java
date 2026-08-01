@@ -10,13 +10,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamRequest;
 import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamResponse;
+import com.pharma.backend.dto.sanpham.DanhMucNoiBatResponseDto;
+import com.pharma.backend.dto.sanpham.DanhMucSanPhamResponseDto;
 import com.pharma.backend.service.DanhMucSanPhamService;
 
 import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/danh-muc-san-pham")
 @RequiredArgsConstructor
@@ -29,8 +33,22 @@ public class DanhMucSanPhamController {
         return danhMucSanPhamService.layDanhSachDanhMucSanPham();
     }
 
+    @GetMapping("/menu")
+    public List<DanhMucSanPhamResponseDto> layDanhMucMenuKhachHang() {
+        return danhMucSanPhamService.layDanhMucMenuKhachHang();
+    }
+
+    @GetMapping("/noi-bat")
+    public List<DanhMucNoiBatResponseDto> layDanhMucNoiBat(
+            @RequestParam(defaultValue = "12") int gioiHan
+    ) {
+        return danhMucSanPhamService.layDanhMucNoiBat(gioiHan);
+    }
+
     @GetMapping("/{maDanhMuc}")
-    public DanhMucSanPhamResponse layChiTietDanhMucSanPham(@PathVariable Long maDanhMuc) {
+    public DanhMucSanPhamResponse layChiTietDanhMucSanPham(
+            @PathVariable Long maDanhMuc
+    ) {
         return danhMucSanPhamService.layChiTietDanhMucSanPham(maDanhMuc);
     }
 
@@ -46,16 +64,23 @@ public class DanhMucSanPhamController {
             @PathVariable Long maDanhMuc,
             @Valid @RequestBody DanhMucSanPhamRequest request
     ) {
-        return danhMucSanPhamService.capNhatDanhMucSanPham(maDanhMuc, request);
+        return danhMucSanPhamService.capNhatDanhMucSanPham(
+                maDanhMuc,
+                request
+        );
     }
 
     @PutMapping("/{maDanhMuc}/an")
-    public DanhMucSanPhamResponse anDanhMucSanPham(@PathVariable Long maDanhMuc) {
+    public DanhMucSanPhamResponse anDanhMucSanPham(
+            @PathVariable Long maDanhMuc
+    ) {
         return danhMucSanPhamService.anDanhMucSanPham(maDanhMuc);
     }
 
     @PutMapping("/{maDanhMuc}/hien")
-    public DanhMucSanPhamResponse hienDanhMucSanPham(@PathVariable Long maDanhMuc) {
+    public DanhMucSanPhamResponse hienDanhMucSanPham(
+            @PathVariable Long maDanhMuc
+    ) {
         return danhMucSanPhamService.hienDanhMucSanPham(maDanhMuc);
     }
 }

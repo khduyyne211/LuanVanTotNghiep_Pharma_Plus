@@ -4,13 +4,17 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.pharma.backend.entity.SanPham;
 
-public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
+public interface SanPhamRepository
+        extends JpaRepository<SanPham, Long>, JpaSpecificationExecutor<SanPham> {
 
     List<SanPham> findAllByOrderByNgayTaoDesc();
 
@@ -41,5 +45,24 @@ public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
             @Param("maDanhMuc") Long maDanhMuc,
             @Param("maNhaSanXuat") Long maNhaSanXuat,
             Pageable pageable
+    );
+
+    @Override
+    @EntityGraph(attributePaths = {"nhaSanXuat", "danhMuc"})
+    Page<SanPham> findAll(
+            Specification<SanPham> specification,
+            Pageable pageable
+    );
+
+    @EntityGraph(attributePaths = {"nhaSanXuat", "danhMuc"})
+    @Query("""
+            SELECT sp
+            FROM SanPham sp
+            WHERE sp.maSanPham IN :danhSachMaSanPham
+              AND sp.trangThaiSanPham = :trangThaiSanPham
+            """)
+    List<SanPham> timSanPhamTheoDanhSachMa(
+            @Param("danhSachMaSanPham") List<Long> danhSachMaSanPham,
+            @Param("trangThaiSanPham") Boolean trangThaiSanPham
     );
 }

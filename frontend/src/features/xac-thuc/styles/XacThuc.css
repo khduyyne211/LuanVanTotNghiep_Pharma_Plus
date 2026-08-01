@@ -1,0 +1,421 @@
+/* Nút tài khoản trong Header */
+
+.nut-tai-khoan-khu-vuc {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-actions .nut-tai-khoan-header {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  min-width: 140px;
+  max-width: 190px;
+  min-height: 46px;
+  padding: 0 22px;
+
+  border: none;
+  border-radius: 999px;
+
+  background-color: #075eea;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+
+  box-shadow: 0 4px 12px rgba(7, 94, 234, 0.25);
+
+  cursor: pointer;
+}
+
+.header-actions .nut-tai-khoan-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: #ffffff;
+  font-size: 20px;
+}
+
+.header-actions .nut-tai-khoan-icon i {
+  color: #ffffff;
+}
+
+
+.header-actions .nut-tai-khoan-noi-dung {
+  min-width: 0;
+  max-width: 125px;
+
+  color: #ffffff;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-actions .nut-tai-khoan-header:hover {
+  background-color: #064fc4;
+  color: #ffffff;
+}
+
+/* Khu vực menu hover */
+
+.nut-tai-khoan-menu-khu-vuc {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 3000;
+
+  width: 265px;
+  padding-top: 12px;
+
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0.18s ease;
+}
+
+/* Hover vào cả nút hoặc menu đều giữ menu mở */
+.nut-tai-khoan-khu-vuc:hover
+  .nut-tai-khoan-menu-khu-vuc {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.nut-tai-khoan-menu {
+  position: relative;
+
+  width: 100%;
+  padding: 8px 0;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  background-color: #ffffff;
+
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.2);
+
+  overflow: visible;
+}
+
+/* Tam giác nhỏ phía trên giống ảnh mẫu */
+.nut-tai-khoan-menu-mui-ten {
+  position: absolute;
+  top: -8px;
+  right: 55px;
+
+  width: 16px;
+  height: 16px;
+
+  background-color: #ffffff;
+
+  transform: rotate(45deg);
+
+  border-top: 1px solid #e2e8f0;
+  border-left: 1px solid #e2e8f0;
+}
+
+.nut-tai-khoan-menu-muc {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  min-height: 56px;
+  padding: 0 20px;
+
+  border: none;
+  background-color: #ffffff;
+  color: #26324a;
+
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.nut-tai-khoan-menu-muc i {
+  width: 22px;
+
+  color: #26324a;
+  font-size: 20px;
+  text-align: center;
+}
+
+.nut-tai-khoan-menu-muc:hover {
+  background-color: #f1f6ff;
+  color: #075eea;
+}
+
+.nut-tai-khoan-menu-muc:hover i {
+  color: #075eea;
+}
+
+.nut-tai-khoan-menu-dang-xuat {
+  border-top: 1px solid #eef2f7;
+}
+
+.nut-tai-khoan-menu-dang-xuat:hover {
+  background-color: #f8fafc;
+  color: #075eea;
+}
+
+.nut-tai-khoan-menu-dang-xuat:hover i {
+  color: #334155;
+}
+
+/* Hộp thoại đăng nhập */
+
+.xac-thuc-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+
+  padding: 20px;
+
+  background-color: rgba(15, 23, 42, 0.65);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.xac-thuc-hop-thoai {
+  position: relative;
+
+  width: 420px;
+  max-width: 100%;
+
+  padding: 34px 34px 30px;
+
+  border-radius: 18px;
+  background-color: #ffffff;
+
+  box-shadow: 0 24px 60px
+    rgba(15, 23, 42, 0.28);
+
+  text-align: center;
+}
+
+.xac-thuc-nut-dong {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: #64748b;
+
+  font-size: 27px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.xac-thuc-nut-dong:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.xac-thuc-bieu-tuong {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 14px;
+
+  border-radius: 50%;
+  background-color: #e8f0ff;
+  color: #2563eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 28px;
+}
+
+.xac-thuc-hop-thoai h2 {
+  margin: 0 0 8px;
+
+  color: #0f172a;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.xac-thuc-mo-ta {
+  margin: 0 0 24px;
+
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.xac-thuc-form {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.xac-thuc-form label {
+  margin-bottom: 7px;
+
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.xac-thuc-form input {
+  width: 100%;
+  height: 46px;
+  margin-bottom: 17px;
+  padding: 0 14px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+
+  color: #0f172a;
+  background-color: #ffffff;
+
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+}
+
+.xac-thuc-form input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px
+    rgba(37, 99, 235, 0.12);
+}
+
+.xac-thuc-thong-bao-loi {
+  margin: -4px 0 14px;
+
+  color: #dc2626;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.xac-thuc-nut-dang-nhap {
+  width: 100%;
+  height: 48px;
+
+  border: none;
+  border-radius: 999px;
+
+  background-color: #2563eb;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.xac-thuc-nut-dang-nhap:hover {
+  background-color: #1d4ed8;
+}
+
+.xac-thuc-nut-dang-nhap:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* Hành động phụ trong hộp thoại đăng nhập */
+
+.xac-thuc-hanh-dong-phu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-top: 16px;
+}
+
+.xac-thuc-nut-phu,
+.xac-thuc-nut-dang-ky {
+  min-height: 42px;
+  padding: 0 18px;
+
+  border-radius: 999px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.xac-thuc-nut-phu {
+  border: none;
+
+  background-color: transparent;
+  color: #64748b;
+}
+
+.xac-thuc-nut-phu:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.xac-thuc-nut-dang-ky {
+  border: 1px solid #2563eb;
+
+  background-color: #ffffff;
+  color: #2563eb;
+
+  cursor: pointer;
+}
+
+.xac-thuc-nut-dang-ky:hover:not(:disabled) {
+  background-color: #eff6ff;
+  border-color: #1d4ed8;
+  color: #1d4ed8;
+}
+
+.xac-thuc-nut-dang-ky:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (max-width: 480px) {
+  .xac-thuc-hanh-dong-phu {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .xac-thuc-nut-phu,
+  .xac-thuc-nut-dang-ky {
+    width: 100%;
+  }
+}

@@ -25,7 +25,6 @@ export interface SanPhamRequest{
     maNhaSanXuat: number | null;
     tenSanPham:string;
     hinhAnh:string|null;
-    giaBan:number;
     laThuocKeDon:boolean;
     moTaNgan:string|null;
 }

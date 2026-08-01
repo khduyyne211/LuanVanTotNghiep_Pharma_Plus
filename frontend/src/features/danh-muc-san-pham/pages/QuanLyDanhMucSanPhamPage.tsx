@@ -3,6 +3,10 @@ import DanhMucSanPhamTable from "../components/DanhMucSanPhamTable";
 import useDanhSachDanhMucSanPham from "../hooks/useDanhSachDanhMucSanPham";
 import useFormDanhMucSanPham from "../hooks/useFormDanhMucSanPham";
 import useTrangThaiDanhMucSanPham from "../hooks/useTrangThaiDanhMucSanPham";
+import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyDanhMucSanPhamPage() {
   const {
@@ -31,27 +35,16 @@ function QuanLyDanhMucSanPhamPage() {
   });
 
   return (
-    <div>
-      <div className="page-header">
-        <div>
-          <h1>Quản lý danh mục sản phẩm</h1>
-
-          <p>
-            Quản trị viên theo dõi danh mục cha,
-            danh mục con, thứ tự hiển thị và trạng thái
-            của danh mục sản phẩm.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="primary-button"
+    <div className="ql-page">
+      <TieuDeTrangQuanLy
+        tieuDe="Quản lý danh mục sản phẩm"
+        moTa="Theo dõi danh mục cha, danh mục con, thứ tự hiển thị và trạng thái của danh mục sản phẩm"
+      >
+        <NutThaoTacChinh
+          nhan="Thêm danh mục"
           onClick={moFormThem}
-        >
-          <i className="bi bi-plus-circle" />
-          Thêm danh mục
-        </button>
-      </div>
+        />
+      </TieuDeTrangQuanLy>
 
       <DanhMucSanPhamFormModal
         isOpen={hienForm}
@@ -61,14 +54,26 @@ function QuanLyDanhMucSanPhamPage() {
         onSuccess={xuLyLuuThanhCong}
       />
 
-      <DanhMucSanPhamTable
-        danhSachDanhMuc={danhSachDanhMuc}
-        loading={loading}
-        loi={loi}
-        maDanhMucDangXuLy={maDanhMucDangXuLy}
-        onSua={moFormSua}
-        onDoiTrangThai={xuLyDoiTrangThai}
-      />
+      <KhungDanhSachQuanLy
+        thongBaoLoi={loi ?? undefined}
+        phanTrang={
+          <div className="ql-list-summary">
+            Tổng cộng{" "}
+            <strong>{danhSachDanhMuc.length}</strong>{" "}
+            danh mục
+          </div>
+        }
+      >
+        {!loi && (
+          <DanhMucSanPhamTable
+            danhSachDanhMuc={danhSachDanhMuc}
+            loading={loading}
+            maDanhMucDangXuLy={maDanhMucDangXuLy}
+            onSua={moFormSua}
+            onDoiTrangThai={xuLyDoiTrangThai}
+          />
+        )}
+      </KhungDanhSachQuanLy>
     </div>
   );
 }
