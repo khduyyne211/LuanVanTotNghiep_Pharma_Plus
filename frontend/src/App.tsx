@@ -1,6 +1,6 @@
+import { lazy, Suspense } from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 
-import AdminLayout from "./layouts/admin/AdminLayout";
 import CustomerLayout from "./layouts/customer/CustomerLayout";
 import CustomerProviders from "./shared/providers/CustomerProviders";
 
@@ -23,6 +23,8 @@ import DanhSachYeuCauTuVanPage from "./pages/customer/DanhSachYeuCauTuVanPage";
 import ChiTietYeuCauTuVanPage from "./pages/customer/ChiTietYeuCauTuVanPage";
 import TaoYeuCauTuVanPage from "./pages/customer/TaoYeuCauTuVanPage";
 
+const AdminLayout = lazy(() => import("./layouts/admin/AdminLayout"));
+
 function App() {
   return (
     <Routes>
@@ -30,7 +32,9 @@ function App() {
         path="/admin/*"
         element={
           <BatBuocDangNhap vaiTroBatBuoc="ADMIN">
-            <AdminLayout />
+            <Suspense fallback={<div>Đang tải trang quản trị...</div>}>
+              <AdminLayout />
+            </Suspense>
           </BatBuocDangNhap>
         }
       />

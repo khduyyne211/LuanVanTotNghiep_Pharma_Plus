@@ -4,6 +4,7 @@ import ThanhDanhMucSanPham from "../../features/danh-muc-khach-hang/components/T
 import Footer from "../../shared/components/footer/Footer";
 import Header from "../../shared/components/header/Header";
 
+import "../../shared/styles/customer/CustomerCommon.css";
 import "./CustomerLayout.css";
 
 function CustomerLayout() {

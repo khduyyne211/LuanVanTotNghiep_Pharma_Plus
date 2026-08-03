@@ -1,0 +1,35 @@
+/* =========================
+   BIẾN GIAO DIỆN KHÁCH HÀNG
+========================= */
+
+.customer-layout {
+  --customer-color-primary: #075eea;
+  --customer-color-primary-hover: #064fc4;
+  --customer-color-text: #071333;
+  --customer-color-text-secondary: #64748b;
+  --customer-color-border: #dbe5f2;
+  --customer-color-background: #eef3f8;
+  --customer-color-surface: #ffffff;
+  --customer-page-padding: 42px;
+
+  color: var(--customer-color-text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* =========================
+   KHUNG NỘI DUNG DÙNG CHUNG
+========================= */
+
+.customer-layout .page-container {
+  width: 100%;
+  margin: 0 auto;
+  padding-right: var(--customer-page-padding);
+  padding-left: var(--customer-page-padding);
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .customer-layout {
+    --customer-page-padding: 24px;
+  }
+}

@@ -5,7 +5,7 @@
 }
 
 .footer-content {
-  padding: 36px 40px;
+  padding: 36px var(--customer-page-padding);
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr 1.3fr 1fr;
   gap: 28px;
@@ -31,7 +31,7 @@
 }
 
 .footer-bottom {
-  padding: 16px 40px;
+  padding: 16px var(--customer-page-padding);
   border-top: 1px solid #e2e8f0;
   color: #64748b;
   font-size: 14px;
@@ -47,10 +47,10 @@
 @media (max-width: 600px) {
   .footer-content {
     grid-template-columns: 1fr;
-    padding: 28px 24px;
+    padding: 28px var(--customer-page-padding);
   }
 
   .footer-bottom {
-    padding: 16px 24px;
+    padding: 16px var(--customer-page-padding);
   }
 }

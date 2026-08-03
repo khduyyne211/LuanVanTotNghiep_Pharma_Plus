@@ -7,7 +7,7 @@
 
 .header-top {
   height: 28px;
-  padding: 0 40px;
+  padding: 0 var(--customer-page-padding);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -28,7 +28,7 @@
 
 .header-main {
   height: 100px;
-  padding: 0 40px;
+  padding: 0 var(--customer-page-padding);
   display: flex;
   align-items: center;
   gap: 28px;
@@ -135,13 +135,13 @@
 @media (max-width: 900px) {
   .header-main {
     height: auto;
-    padding: 16px 24px;
+    padding: 16px var(--customer-page-padding);
     flex-direction: column;
     align-items: stretch;
   }
 
   .header-top {
-    padding: 0 24px;
+    padding: 0 var(--customer-page-padding);
   }
 
   .header-logo-image-wrap {

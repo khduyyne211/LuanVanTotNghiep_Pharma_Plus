@@ -12,7 +12,13 @@ body,
 }
 
 body {
-  font-family: Arial, sans-serif;
+  min-width: 320px;
   background-color: #f4f6f8;
-  color: #1f2937;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
