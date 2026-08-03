@@ -99,6 +99,7 @@ public class SecurityConfig {
                      */
                     .requestMatchers(
                         "/api/gio-hang/**",
+                        "/api/thong-tin-ca-nhan/**",
                         "/api/dia-chi-giao-hang/**",
                         "/api/don-hang/khach-hang/**",
                         "/api/yeu-cau-tu-van/khach-hang/**",
