@@ -39,7 +39,7 @@
   background-color: #ffffff;
   color: #071333;
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 700;
   border-radius: 18px 18px 0px 0px;
 }
 
@@ -128,7 +128,7 @@
   text-align: left;
   color: #071333;
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.4;
 }
 
@@ -142,7 +142,7 @@
 .gio-hang-cot-gia strong {
   color: #075eea;
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .gio-hang-cot-gia span {
@@ -172,15 +172,14 @@
 .gio-hang-bo-dem-so-luong button {
   border: none;
   background-color: #ffffff;
-  color: #071333;
+  color: #364563;
   font-size: 25px;
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: -5px;
 }
 
 .gio-hang-bo-dem-so-luong button:disabled {
@@ -239,7 +238,7 @@
   padding: 12px 18px;
   border-radius: 999px;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -264,7 +263,7 @@
 .gio-hang-tom-tat h2 {
   margin: 0 0 18px;
   color: #071333;
-  font-size: 23px;
+  font-size: 22px;
   font-weight: 600;
 }
 
@@ -286,26 +285,25 @@
   border-bottom: none;
   padding-top: 18px;
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 700;
   margin-bottom: 15px;
 }
 
 .gio-hang-thanh-tien strong {
   color: #2563eb;
-  font-size: 26px;
-  font-weight: 900;
+  font-size: 23px;
+  font-weight: 700;
 }
 
 .gio-hang-nut-mua-hang {
   width: 100%;
   border: none;
   border-radius: 999px;
-  margin-top: 16px;
-  padding: 15px 121px;
+  padding: 15px 0px;
   background-color: #2563eb;
   color: #ffffff;
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 17px;
+  font-weight: 700;
   cursor: pointer;
   text-decoration: none;
 }
@@ -326,6 +324,7 @@
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
+  margin-top: 20px;
 }
 
 .gio-hang-tiep-tuc-mua-sam:hover {
@@ -530,6 +529,7 @@
 .gio-hang-cot-xoa {
   display: flex;
   justify-content: center;
+  margin-right: 20px;
 }
 
 .gio-hang-nut-xoa-icon {

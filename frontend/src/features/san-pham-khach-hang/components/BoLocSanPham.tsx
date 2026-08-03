@@ -47,10 +47,10 @@ function BoLocSanPham({
           <button
             className="bo-loc-nut"
             onClick={() =>
-              chonNhaSanXuat(1, "Abbott")
+              chonNhaSanXuat(1, "DHG Pharma")
             }
           >
-            Abbott
+            DHG Pharma
           </button>
 
           <button
@@ -69,9 +69,9 @@ function BoLocSanPham({
 
           <button
             className="bo-loc-nut"
-            onClick={() => chonNhaSanXuat(15, "CVI Pharma")}
+            onClick={() => chonNhaSanXuat(9, "L'Oréal")}
           >
-            CVI Pharma
+            L'Oréal
           </button>
         </div>
       </div>

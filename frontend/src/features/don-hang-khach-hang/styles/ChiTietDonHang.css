@@ -57,7 +57,7 @@
 }
 
 .chi-tiet-don-hang-gia-tri-chinh {
-  margin: 0;
+  margin: 0px;
   font-size: 18px;
   font-weight: 600;
   color: #0f172a;
@@ -94,6 +94,7 @@
 .chi-tiet-don-hang-dong span {
   font-size: 17px;
   color: #475569;
+  margin: 5px;
 }
 
 .chi-tiet-don-hang-dong strong {
@@ -105,6 +106,10 @@
 .chi-tiet-don-hang-dong-thanh-tien strong {
   font-size: 22px;
   color: #2563eb;
+}
+
+.chi-tiet-thanh-toan{
+  margin-bottom: 10px;
 }
 
 .chi-tiet-don-hang-ghi-chu {

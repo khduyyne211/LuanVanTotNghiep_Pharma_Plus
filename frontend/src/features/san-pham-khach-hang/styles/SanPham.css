@@ -231,9 +231,10 @@
   background-color: #ffffff;
   border-radius: 14px;
   padding: 14px;
-  min-height: 560px;
+  min-height: 495px;
   height: 100%;
   box-sizing: border-box;
+  gap: 5px;
 
   display: flex;
   flex-direction: column;
@@ -285,8 +286,8 @@
 }
 
 .the-san-pham-ten {
-  min-height: 70px;
-  margin: 0 0 10px;
+  min-height: 40px;
+  margin: 0 0 0px;
   color: #071333;
   font-size: 17px;
   line-height: 1.35;
@@ -301,8 +302,7 @@
 
 .the-san-pham-gia {
   width: 100%;
-  min-height: 30px;
-  margin: 0 0 10px;
+  margin: 5px 0 5px;
 
   color: #075eea;
   font-size: 18px;
@@ -320,8 +320,7 @@
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-
-  min-height: 34px;
+  margin-bottom: 10px;
   max-width: 100%;
   box-sizing: border-box;
 
@@ -346,7 +345,7 @@
 .the-san-pham-nut,
 .the-san-pham-nut-xem-chi-tiet {
   width: 100%;
-  min-height: 52px;
+  min-height: 45px;
   border-radius: 999px;
   padding: 13px 16px;
   font-size: 15px;
@@ -388,7 +387,6 @@
   background-color: #f1f5f9;
   border-radius: 10px;
   padding: 4px;
-  margin: 0 0 10px;
   box-sizing: border-box;
 }
 
