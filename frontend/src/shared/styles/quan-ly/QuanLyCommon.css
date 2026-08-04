@@ -327,3 +327,90 @@
   color: #8a5a00;
   background: #fff4d6;
 }
+/* Bộ lọc danh sách quản lý */
+.ql-filter-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(360px, 1.7fr)
+    minmax(190px, 1fr)
+    minmax(190px, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.ql-filter-search {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.ql-filter-search .ql-button {
+  min-width: 105px;
+}
+
+.ql-filter-control {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 0 13px;
+  color: #344158;
+  background: #fff;
+  border: 1px solid #dfe4ec;
+  border-radius: 10px;
+  outline: none;
+  font: inherit;
+}
+
+.ql-filter-control::placeholder {
+  color: #8a94a6;
+}
+
+.ql-filter-control:focus {
+  border-color: #11a57b;
+  box-shadow: 0 0 0 3px rgba(17, 165, 123, 0.12);
+}
+
+.ql-filter-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ql-filter-actions .ql-button {
+  min-width: 120px;
+}
+
+@media (max-width: 1100px) {
+  .ql-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ql-filter-search {
+    grid-column: 1 / -1;
+  }
+
+  .ql-filter-actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 650px) {
+  .ql-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ql-filter-search {
+    grid-template-columns: 1fr;
+  }
+
+  .ql-filter-search,
+  .ql-filter-actions {
+    grid-column: 1;
+  }
+
+  .ql-filter-search .ql-button,
+  .ql-filter-actions .ql-button {
+    width: 100%;
+  }
+}
