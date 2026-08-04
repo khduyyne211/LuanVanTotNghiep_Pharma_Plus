@@ -1,28 +1,22 @@
-export type LoaiKhuyenMai =
-  | "PHAN_TRAM"
-  | "SO_TIEN";
-
-export type TrangThaiKhuyenMai =
-  | "CHUA_BAT_DAU"
-  | "DANG_DIEN_RA"
-  | "DA_KET_THUC";
+export type KieuGiamGia = "PHAN_TRAM" | "SO_TIEN";
 
 export interface KhuyenMai {
   maKhuyenMai: number;
   tenChuongTrinh: string;
-  loaiKhuyenMai: LoaiKhuyenMai;
-  giamGia: number | null;
-  giaTriGiam: number | null;
+  loaiKhuyenMai: string;
+  kieuGiamGia: KieuGiamGia;
+  giaTriGiam: number;
   thoiGianBatDau: string;
   thoiGianKetThuc: string;
-  trangThaiKhuyenMai: TrangThaiKhuyenMai;
+  trangThai: boolean;
 }
 
 export interface KhuyenMaiRequest {
+  maNhanVienTao: number;
   tenChuongTrinh: string;
-  loaiKhuyenMai: LoaiKhuyenMai;
-  giamGia: number | null;
-  giaTriGiam: number | null;
+  loaiKhuyenMai: string;
+  kieuGiamGia: KieuGiamGia;
+  giaTriGiam: number;
   thoiGianBatDau: string;
   thoiGianKetThuc: string;
 }

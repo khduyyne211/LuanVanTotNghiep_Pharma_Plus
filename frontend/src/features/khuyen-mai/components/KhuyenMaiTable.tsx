@@ -25,44 +25,31 @@ const dinhDangThoiGian = (thoiGian: string) => {
   }).format(new Date(thoiGian));
 };
 
-const layTenLoaiKhuyenMai = (khuyenMai: KhuyenMai) => {
-  return khuyenMai.loaiKhuyenMai === "PHAN_TRAM"
+const layTenKieuGiamGia = (khuyenMai: KhuyenMai) => {
+  return khuyenMai.kieuGiamGia === "PHAN_TRAM"
     ? "Giảm theo phần trăm"
     : "Giảm theo số tiền";
 };
 
 const layGiaTriKhuyenMai = (khuyenMai: KhuyenMai) => {
-  if (khuyenMai.loaiKhuyenMai === "PHAN_TRAM") {
-    return khuyenMai.giamGia !== null
-      ? `${khuyenMai.giamGia}%`
-      : "Chưa cập nhật";
+  if (khuyenMai.kieuGiamGia === "PHAN_TRAM") {
+    return `${khuyenMai.giaTriGiam}%`;
   }
 
-  return khuyenMai.giaTriGiam !== null
-    ? dinhDangTien(khuyenMai.giaTriGiam)
-    : "Chưa cập nhật";
+  return dinhDangTien(khuyenMai.giaTriGiam);
 };
 
-const layThongTinTrangThai = (
-  trangThai: KhuyenMai["trangThaiKhuyenMai"],
-) => {
-  if (trangThai === "DANG_DIEN_RA") {
+const layThongTinTrangThai = (trangThai: boolean) => {
+  if (trangThai) {
     return {
-      tenTrangThai: "Đang diễn ra",
+      tenTrangThai: "Đang hoạt động",
       className: "ql-status ql-status-active",
     };
   }
 
-  if (trangThai === "DA_KET_THUC") {
-    return {
-      tenTrangThai: "Đã kết thúc",
-      className: "ql-status ql-status-inactive",
-    };
-  }
-
   return {
-    tenTrangThai: "Chưa bắt đầu",
-    className: "ql-status ql-status-pending",
+    tenTrangThai: "Ngừng hoạt động",
+    className: "ql-status ql-status-inactive",
   };
 };
 
@@ -78,7 +65,7 @@ function KhuyenMaiTable({
           <tr>
             <th>Mã</th>
             <th>Tên chương trình</th>
-            <th>Loại khuyến mãi</th>
+            <th>Kiểu giảm giá</th>
             <th>Giá trị giảm</th>
             <th>Thời gian bắt đầu</th>
             <th>Thời gian kết thúc</th>
@@ -103,7 +90,7 @@ function KhuyenMaiTable({
           ) : (
             danhSachKhuyenMai.map((khuyenMai) => {
               const thongTinTrangThai = layThongTinTrangThai(
-                khuyenMai.trangThaiKhuyenMai,
+                khuyenMai.trangThai,
               );
 
               return (
@@ -116,7 +103,7 @@ function KhuyenMaiTable({
                     <strong>{khuyenMai.tenChuongTrinh}</strong>
                   </td>
 
-                  <td>{layTenLoaiKhuyenMai(khuyenMai)}</td>
+                  <td>{layTenKieuGiamGia(khuyenMai)}</td>
 
                   <td>{layGiaTriKhuyenMai(khuyenMai)}</td>
 
