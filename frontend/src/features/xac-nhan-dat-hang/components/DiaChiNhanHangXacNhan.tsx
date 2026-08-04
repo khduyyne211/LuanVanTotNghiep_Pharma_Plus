@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import type { DiaChiGiaoHang } from "../../dia-chi-giao-hang/types/DiaChiGiaoHang";
 
 interface DiaChiNhanHangXacNhanProps {
@@ -8,25 +7,18 @@ interface DiaChiNhanHangXacNhanProps {
   ghiChu: string;
   moDanhSachDiaChi: () => void;
   dongDanhSachDiaChi: () => void;
+  themDiaChiMoi: () => void;
+  suaDiaChi: (diaChi: DiaChiGiaoHang) => void;
   chonDiaChi: (maDiaChi: number) => void;
   thayDoiGhiChu: (ghiChu: string) => void;
 }
 
-function taoDiaChiKhuVuc(diaChi: DiaChiGiaoHang) {
-  return [
-    diaChi.phuongKhuVuc,
-    diaChi.thanhPho,
-  ]
-    .filter(Boolean)
-    .join(", ");
+function taoDiaChiKhuVuc(diaChi: DiaChiGiaoHang): string {
+  return [diaChi.phuongKhuVuc, diaChi.thanhPho].filter(Boolean).join(", ");
 }
 
-function taoDiaChiDayDu(diaChi: DiaChiGiaoHang) {
-  return [
-    diaChi.diaChiChiTiet,
-    diaChi.phuongKhuVuc,
-    diaChi.thanhPho,
-  ]
+function taoDiaChiDayDu(diaChi: DiaChiGiaoHang): string {
+  return [diaChi.diaChiChiTiet, diaChi.phuongKhuVuc, diaChi.thanhPho]
     .filter(Boolean)
     .join(", ");
 }
@@ -38,6 +30,8 @@ function DiaChiNhanHangXacNhan({
   ghiChu,
   moDanhSachDiaChi,
   dongDanhSachDiaChi,
+  themDiaChiMoi,
+  suaDiaChi,
   chonDiaChi,
   thayDoiGhiChu,
 }: DiaChiNhanHangXacNhanProps) {
@@ -50,10 +44,7 @@ function DiaChiNhanHangXacNhan({
         </div>
 
         {danhSachDiaChi.length > 0 && (
-          <button
-            type="button"
-            onClick={moDanhSachDiaChi}
-          >
+          <button type="button" onClick={moDanhSachDiaChi}>
             {diaChiDangChon ? "Thay đổi" : "Chọn địa chỉ"}
           </button>
         )}
@@ -64,14 +55,12 @@ function DiaChiNhanHangXacNhan({
           <div>
             <strong>Bạn chưa có địa chỉ nhận hàng</strong>
 
-            <p>
-              Vui lòng thêm địa chỉ trước khi hoàn tất mua hàng.
-            </p>
+            <p>Vui lòng thêm địa chỉ trước khi hoàn tất mua hàng.</p>
           </div>
 
-          <Link to="/tai-khoan/so-dia-chi">
+          <button type="button" onClick={themDiaChiMoi}>
             Thêm địa chỉ
-          </Link>
+          </button>
         </div>
       )}
 
@@ -80,15 +69,10 @@ function DiaChiNhanHangXacNhan({
           <div>
             <strong>Chưa chọn địa chỉ nhận hàng</strong>
 
-            <p>
-              Vui lòng chọn địa chỉ sẽ sử dụng cho đơn hàng.
-            </p>
+            <p>Vui lòng chọn địa chỉ sẽ sử dụng cho đơn hàng.</p>
           </div>
 
-          <button
-            type="button"
-            onClick={moDanhSachDiaChi}
-          >
+          <button type="button" onClick={moDanhSachDiaChi}>
             Chọn địa chỉ
           </button>
         </div>
@@ -99,8 +83,7 @@ function DiaChiNhanHangXacNhan({
           <div className="xac-nhan-dia-chi-thong-tin">
             <div className="xac-nhan-dia-chi-noi-dung">
               <strong className="xac-nhan-dia-chi-chi-tiet">
-                {diaChiDangChon.diaChiChiTiet ||
-                  "Chưa có địa chỉ chi tiết"}
+                {diaChiDangChon.diaChiChiTiet || "Chưa có địa chỉ chi tiết"}
               </strong>
 
               <p className="xac-nhan-dia-chi-khu-vuc">
@@ -111,15 +94,11 @@ function DiaChiNhanHangXacNhan({
             <div className="xac-nhan-dia-chi-nguoi-nhan">
               <i className="bi bi-person-fill"></i>
 
-              <strong>
-                {diaChiDangChon.tenNguoiNhan}
-              </strong>
+              <strong>{diaChiDangChon.tenNguoiNhan}</strong>
 
               <span>•</span>
 
-              <span>
-                {diaChiDangChon.soDienThoaiNhan}
-              </span>
+              <span>{diaChiDangChon.soDienThoaiNhan}</span>
             </div>
           </div>
 
@@ -127,9 +106,7 @@ function DiaChiNhanHangXacNhan({
             className="xac-nhan-dia-chi-ghi-chu"
             value={ghiChu}
             maxLength={255}
-            onChange={(event) =>
-              thayDoiGhiChu(event.target.value)
-            }
+            onChange={(event) => thayDoiGhiChu(event.target.value)}
             placeholder={
               "Ghi chú (không bắt buộc)\nVí dụ: Hãy gọi cho tôi 15 phút trước khi giao"
             }
@@ -144,62 +121,81 @@ function DiaChiNhanHangXacNhan({
         >
           <div
             className="xac-nhan-dia-chi-hop-thoai"
-            onMouseDown={(event) =>
-              event.stopPropagation()
-            }
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tieuDeChonDiaChi"
+            onMouseDown={(event) => event.stopPropagation()}
           >
             <button
               type="button"
               className="xac-nhan-dia-chi-nut-dong"
+              aria-label="Đóng danh sách địa chỉ"
               onClick={dongDanhSachDiaChi}
             >
               ×
             </button>
 
-            <h2>Chọn địa chỉ nhận hàng</h2>
+            <h2 id="tieuDeChonDiaChi">Chọn địa chỉ nhận hàng</h2>
 
             <div className="xac-nhan-dia-chi-lua-chon">
-              {danhSachDiaChi.map((diaChi) => (
-                <label
-                  key={diaChi.maDiaChi}
-                  className={
-                    diaChi.maDiaChi ===
-                    diaChiDangChon?.maDiaChi
-                      ? "xac-nhan-dia-chi-lua-chon-muc dang-chon"
-                      : "xac-nhan-dia-chi-lua-chon-muc"
-                  }
-                >
-                  <input
-                    type="radio"
-                    name="diaChiNhanHang"
-                    checked={
-                      diaChi.maDiaChi ===
-                      diaChiDangChon?.maDiaChi
+              {danhSachDiaChi.map((diaChi) => {
+                const dangChon = diaChi.maDiaChi === diaChiDangChon?.maDiaChi;
+
+                const idRadio = `diaChiNhanHang-${diaChi.maDiaChi}`;
+
+                return (
+                  <div
+                    key={diaChi.maDiaChi}
+                    className={
+                      dangChon
+                        ? "xac-nhan-dia-chi-lua-chon-muc dang-chon"
+                        : "xac-nhan-dia-chi-lua-chon-muc"
                     }
-                    onChange={() =>
-                      chonDiaChi(diaChi.maDiaChi)
-                    }
-                  />
+                  >
+                    <input
+                      id={idRadio}
+                      type="radio"
+                      name="diaChiNhanHang"
+                      checked={dangChon}
+                      onChange={() => chonDiaChi(diaChi.maDiaChi)}
+                    />
 
-                  <div>
-                    <div className="xac-nhan-dia-chi-lua-chon-nguoi">
-                      <strong>
-                        {diaChi.tenNguoiNhan}
-                      </strong>
+                    <label
+                      htmlFor={idRadio}
+                      className="xac-nhan-dia-chi-lua-chon-noi-dung"
+                    >
+                      <div className="xac-nhan-dia-chi-lua-chon-nguoi">
+                        <strong>{diaChi.tenNguoiNhan}</strong>
 
-                      <span>
-                        {diaChi.soDienThoaiNhan}
-                      </span>
+                        <span>{diaChi.soDienThoaiNhan}</span>
 
-                      {diaChi.laMacDinh && (
-                        <small>Mặc định</small>
-                      )}
-                    </div>
+                        {diaChi.laMacDinh && <small>Mặc định</small>}
+                      </div>
 
-                    <p>{taoDiaChiDayDu(diaChi)}</p>
+                      <p>{taoDiaChiDayDu(diaChi)}</p>
+                    </label>
+
+                    <button
+                      type="button"
+                      className="xac-nhan-dia-chi-nut-sua"
+                      onClick={() => suaDiaChi(diaChi)}
+                    >
+                      Sửa
+                    </button>
                   </div>
-                </label>
-              ))}
+                );
+              })}
+            </div>
+
+            <div className="xac-nhan-dia-chi-hop-thoai-hanh-dong">
+              <button
+                type="button"
+                className="xac-nhan-dia-chi-nut-them"
+                onClick={themDiaChiMoi}
+              >
+                <i className="bi bi-plus-lg"></i>
+                Thêm địa chỉ mới
+              </button>
             </div>
           </div>
         </div>

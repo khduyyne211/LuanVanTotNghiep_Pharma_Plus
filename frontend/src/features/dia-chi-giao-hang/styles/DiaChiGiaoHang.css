@@ -286,6 +286,336 @@
   font-size: 14px;
 }
 
+/* Form thêm và chỉnh sửa địa chỉ */
+
+.dia-chi-form-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  background-color: rgba(15, 23, 42, 0.45);
+
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dia-chi-form-khung {
+  width: min(100%, 480px);
+  height: 100vh;
+
+  background-color: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: -4px 0 18px rgba(15, 23, 42, 0.15);
+}
+
+.dia-chi-form-tieu-de {
+  min-height: 70px;
+  padding: 16px 22px;
+
+  border-bottom: 1px solid #e2e8f0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.dia-chi-form-tieu-de h2 {
+  margin: 0;
+
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.dia-chi-form-tieu-de button {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  background-color: transparent;
+  color: #64748b;
+
+  font-size: 28px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.dia-chi-form-tieu-de button:hover {
+  color: #0f172a;
+}
+
+.dia-chi-form {
+  min-height: 0;
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.dia-chi-form-noi-dung {
+  min-height: 0;
+  padding: 22px;
+
+  flex: 1;
+  overflow-y: auto;
+}
+
+.dia-chi-form-truong {
+  margin-bottom: 18px;
+}
+
+.dia-chi-form-truong label {
+  display: block;
+  margin-bottom: 7px;
+
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dia-chi-form-truong input,
+.dia-chi-form-truong textarea {
+  box-sizing: border-box;
+
+  width: 100%;
+  padding: 11px 12px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+
+  background-color: #ffffff;
+  color: #0f172a;
+
+  font-family: inherit;
+  font-size: 15px;
+
+  outline: none;
+}
+
+.dia-chi-form-truong input {
+  height: 44px;
+}
+
+.dia-chi-form-truong textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+
+.dia-chi-form-truong input:focus,
+.dia-chi-form-truong textarea:focus {
+  border-color: #075eea;
+}
+
+.dia-chi-form-truong input[aria-invalid="true"],
+.dia-chi-form-truong textarea[aria-invalid="true"] {
+  border-color: #dc2626;
+}
+
+.dia-chi-form-truong input:disabled,
+.dia-chi-form-truong textarea:disabled {
+  background-color: #f1f5f9;
+  cursor: not-allowed;
+}
+
+.dia-chi-form-loi {
+  margin: 6px 0 0;
+
+  color: #dc2626;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.dia-chi-form-ngan-cach {
+  height: 1px;
+  margin: 4px 0 20px;
+
+  background-color: #e2e8f0;
+}
+
+/* Công tắc địa chỉ mặc định */
+
+.dia-chi-form-mac-dinh {
+  position: relative;
+
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.dia-chi-form-mac-dinh input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dia-chi-form-cong-tac {
+  position: relative;
+
+  width: 46px;
+  height: 25px;
+  flex-shrink: 0;
+
+  border-radius: 999px;
+  background-color: #cbd5e1;
+
+  transition: background-color 0.2s ease;
+}
+
+.dia-chi-form-cong-tac::after {
+  content: "";
+
+  position: absolute;
+  top: 3px;
+  left: 3px;
+
+  width: 19px;
+  height: 19px;
+
+  border-radius: 50%;
+  background-color: #ffffff;
+
+  transition: transform 0.2s ease;
+}
+
+.dia-chi-form-mac-dinh input:checked
+  + .dia-chi-form-cong-tac {
+  background-color: #075eea;
+}
+
+.dia-chi-form-mac-dinh input:checked
+  + .dia-chi-form-cong-tac::after {
+  transform: translateX(21px);
+}
+
+.dia-chi-form-mac-dinh input:focus-visible
+  + .dia-chi-form-cong-tac {
+  outline: 2px solid #075eea;
+  outline-offset: 2px;
+}
+
+/* Nút thao tác */
+
+.dia-chi-form-hanh-dong {
+  padding: 16px 22px;
+
+  border-top: 1px solid #e2e8f0;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.dia-chi-form-nut-huy,
+.dia-chi-form-nut-luu {
+  min-width: 120px;
+  min-height: 42px;
+  padding: 9px 18px;
+
+  border-radius: 999px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.dia-chi-form-nut-huy {
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #334155;
+}
+
+.dia-chi-form-nut-luu {
+  border: 1px solid #075eea;
+  background-color: #075eea;
+  color: #ffffff;
+}
+
+.dia-chi-form-nut-huy:hover:not(:disabled) {
+  border-color: #075eea;
+  color: #075eea;
+}
+
+.dia-chi-form-nut-luu:hover:not(:disabled) {
+  background-color: #064fc4;
+}
+
+.dia-chi-form-nut-huy:disabled,
+.dia-chi-form-nut-luu:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Trạng thái danh sách */
+
+.dia-chi-thong-bao-loi {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dia-chi-thong-bao-loi p {
+  margin: 0;
+}
+
+.dia-chi-thong-bao-loi button {
+  min-height: 38px;
+  padding: 8px 18px;
+
+  border: none;
+  border-radius: 999px;
+
+  background-color: #075eea;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.dia-chi-hanh-dong-phu button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .dia-chi-form-khung {
+    width: 100%;
+  }
+
+  .dia-chi-form-tieu-de,
+  .dia-chi-form-noi-dung,
+  .dia-chi-form-hanh-dong {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .dia-chi-form-hanh-dong {
+    flex-direction: column-reverse;
+  }
+
+  .dia-chi-form-nut-huy,
+  .dia-chi-form-nut-luu {
+    width: 100%;
+  }
+}
+
 @media (max-width: 700px) {
   .dia-chi-tieu-de-khu-vuc {
     align-items: flex-start;

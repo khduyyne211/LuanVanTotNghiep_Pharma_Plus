@@ -417,7 +417,7 @@
   border-radius: 12px;
 
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
+  grid-template-columns: 22px minmax(0, 1fr) auto;
   gap: 12px;
 
   cursor: pointer;
@@ -427,6 +427,32 @@
 .xac-nhan-dia-chi-lua-chon-muc.dang-chon {
   border-color: #075eea;
   background-color: #f3f7ff;
+}
+
+.xac-nhan-dia-chi-lua-chon-noi-dung {
+  min-width: 0;
+  cursor: pointer;
+}
+
+.xac-nhan-dia-chi-nut-sua {
+  align-self: start;
+
+  padding: 4px 6px;
+
+  border: none;
+  background-color: transparent;
+  color: #075eea;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.xac-nhan-dia-chi-nut-sua:hover {
+  color: #064fc4;
+  text-decoration: underline;
 }
 
 .xac-nhan-dia-chi-lua-chon-nguoi {
@@ -452,6 +478,47 @@
   color: #64748b;
   font-size: 14px;
   line-height: 1.5;
+}
+
+.xac-nhan-dia-chi-hop-thoai-hanh-dong {
+  margin-top: 20px;
+  padding-top: 18px;
+
+  border-top: 1px solid #e2e8f0;
+
+  display: flex;
+  justify-content: flex-end;
+}
+
+.xac-nhan-dia-chi-nut-them {
+  min-height: 42px;
+  padding: 0 18px;
+
+  border: 1px solid #075eea;
+  border-radius: 999px;
+
+  background-color: #ffffff;
+  color: #075eea;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.xac-nhan-dia-chi-nut-them i {
+  font-size: 14px;
+}
+
+.xac-nhan-dia-chi-nut-them:hover {
+  background-color: #f3f7ff;
+  color: #064fc4;
 }
 
 /* =========================
@@ -781,5 +848,15 @@
   .xac-nhan-thanh-toan-muc {
     grid-template-columns: 26px 46px minmax(0, 1fr);
     padding: 12px 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .xac-nhan-dia-chi-hop-thoai-hanh-dong {
+    justify-content: stretch;
+  }
+
+  .xac-nhan-dia-chi-nut-them {
+    width: 100%;
   }
 }

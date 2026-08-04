@@ -1,7 +1,19 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { layDanhSachDiaChiGiaoHangApi } from "../../dia-chi-giao-hang/api/DiaChiGiaoHangApi";
-import type { DiaChiGiaoHang } from "../../dia-chi-giao-hang/types/DiaChiGiaoHang";
+
+import {
+  capNhatDiaChiGiaoHangApi,
+  layDanhSachDiaChiGiaoHangApi,
+  themDiaChiGiaoHangApi,
+} from "../../dia-chi-giao-hang/api/DiaChiGiaoHangApi";
+
+import type {
+  DiaChiGiaoHang,
+  LoiApiDiaChiGiaoHang,
+  LoiTruongDiaChiGiaoHang,
+  LuuDiaChiGiaoHangRequest,
+} from "../../dia-chi-giao-hang/types/DiaChiGiaoHang";
+
 import { taoDonHangApi } from "../../don-hang-khach-hang/api/DonHangApi";
 import type { DonHangResponse } from "../../don-hang-khach-hang/types/DonHang";
 import { layGioHangApi } from "../../gio-hang/api/GioHangApi";
@@ -13,17 +25,103 @@ interface DuLieuLoiApi {
   message?: string;
 }
 
+const DU_LIEU_DIA_CHI_BAN_DAU: LuuDiaChiGiaoHangRequest = {
+  tenNguoiNhan: "",
+  soDienThoaiNhan: "",
+  thanhPho: "",
+  phuongKhuVuc: "",
+  diaChiChiTiet: "",
+  laMacDinh: false,
+};
+
+function kiemTraDuLieuDiaChi(
+  duLieu: LuuDiaChiGiaoHangRequest,
+): LoiTruongDiaChiGiaoHang {
+  const loiMoi: LoiTruongDiaChiGiaoHang = {};
+
+  const tenNguoiNhan = duLieu.tenNguoiNhan.trim();
+  const soDienThoaiNhan = duLieu.soDienThoaiNhan.trim();
+  const thanhPho = duLieu.thanhPho.trim();
+  const phuongKhuVuc = duLieu.phuongKhuVuc.trim();
+  const diaChiChiTiet = duLieu.diaChiChiTiet.trim();
+
+  if (!tenNguoiNhan) {
+    loiMoi.tenNguoiNhan = "Họ tên người nhận không được để trống.";
+  } else if (tenNguoiNhan.length > 100) {
+    loiMoi.tenNguoiNhan = "Họ tên người nhận không được vượt quá 100 ký tự.";
+  }
+
+  if (!soDienThoaiNhan) {
+    loiMoi.soDienThoaiNhan = "Số điện thoại người nhận không được để trống.";
+  } else if (!/^0\d{9}$/.test(soDienThoaiNhan)) {
+    loiMoi.soDienThoaiNhan =
+      "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0.";
+  }
+
+  if (!thanhPho) {
+    loiMoi.thanhPho = "Thành phố không được để trống.";
+  } else if (thanhPho.length > 100) {
+    loiMoi.thanhPho = "Thành phố không được vượt quá 100 ký tự.";
+  }
+
+  if (!phuongKhuVuc) {
+    loiMoi.phuongKhuVuc = "Phường hoặc khu vực không được để trống.";
+  } else if (phuongKhuVuc.length > 150) {
+    loiMoi.phuongKhuVuc = "Phường hoặc khu vực không được vượt quá 150 ký tự.";
+  }
+
+  if (!diaChiChiTiet) {
+    loiMoi.diaChiChiTiet = "Địa chỉ chi tiết không được để trống.";
+  } else if (diaChiChiTiet.length > 255) {
+    loiMoi.diaChiChiTiet = "Địa chỉ chi tiết không được vượt quá 255 ký tự.";
+  }
+
+  return loiMoi;
+}
+
 export function useXacNhanDatHang() {
   const [gioHang, setGioHang] = useState<GioHang | undefined>(undefined);
+
   const [danhSachDiaChi, setDanhSachDiaChi] = useState<DiaChiGiaoHang[]>([]);
-  const [maDiaChiDangChon, setMaDiaChiDangChon] = useState<number | undefined>(undefined);
-  const [phuongThucThanhToan, setPhuongThucThanhToan] = useState<PhuongThucThanhToan>("COD");
+
+  const [maDiaChiDangChon, setMaDiaChiDangChon] = useState<number | undefined>(
+    undefined,
+  );
+
+  const [phuongThucThanhToan, setPhuongThucThanhToan] =
+    useState<PhuongThucThanhToan>("COD");
+
   const [ghiChu, setGhiChu] = useState("");
   const [dangTaiDuLieu, setDangTaiDuLieu] = useState(true);
+
   const [thongBaoLoi, setThongBaoLoi] = useState("");
+
   const [dangMoDanhSachDiaChi, setDangMoDanhSachDiaChi] = useState(false);
+
   const [dangTaoDonHang, setDangTaoDonHang] = useState(false);
+
   const [loiTaoDonHang, setLoiTaoDonHang] = useState("");
+
+  const [dangMoFormThemDiaChi, setDangMoFormThemDiaChi] = useState(false);
+
+  const [diaChiDangSua, setDiaChiDangSua] = useState<DiaChiGiaoHang | null>(
+    null,
+  );
+
+  const [duLieuFormDiaChi, setDuLieuFormDiaChi] =
+    useState<LuuDiaChiGiaoHangRequest>({
+      ...DU_LIEU_DIA_CHI_BAN_DAU,
+    });
+
+  const [loiTruongDiaChi, setLoiTruongDiaChi] =
+    useState<LoiTruongDiaChiGiaoHang>({});
+
+  const [dangLuuDiaChi, setDangLuuDiaChi] = useState(false);
+
+  const [loiThemDiaChi, setLoiThemDiaChi] = useState("");
+
+  const [thongBaoThemDiaChiThanhCong, setThongBaoThemDiaChiThanhCong] =
+    useState("");
 
   const taiDuLieuXacNhanDatHang = useCallback(async () => {
     setDangTaiDuLieu(true);
@@ -47,6 +145,7 @@ export function useXacNhanDatHang() {
       setGioHang(undefined);
       setDanhSachDiaChi([]);
       setMaDiaChiDangChon(undefined);
+
       setThongBaoLoi("Không thể tải thông tin xác nhận đặt hàng.");
     } finally {
       setDangTaiDuLieu(false);
@@ -56,14 +155,14 @@ export function useXacNhanDatHang() {
   useEffect(() => {
     let daHuyYeuCau = false;
 
-    Promise.all([
-      layGioHangApi(),
-      layDanhSachDiaChiGiaoHangApi(),
-    ])
+    Promise.all([layGioHangApi(), layDanhSachDiaChiGiaoHangApi()])
       .then(([gioHangResponse, danhSachDiaChiMoi]) => {
-        if (daHuyYeuCau) return;
+        if (daHuyYeuCau) {
+          return;
+        }
 
         setGioHang(gioHangResponse.data);
+
         setDanhSachDiaChi(danhSachDiaChiMoi);
 
         const diaChiMacDinh = danhSachDiaChiMoi.find(
@@ -73,11 +172,14 @@ export function useXacNhanDatHang() {
         setMaDiaChiDangChon(diaChiMacDinh?.maDiaChi);
       })
       .catch(() => {
-        if (daHuyYeuCau) return;
+        if (daHuyYeuCau) {
+          return;
+        }
 
         setGioHang(undefined);
         setDanhSachDiaChi([]);
         setMaDiaChiDangChon(undefined);
+
         setThongBaoLoi("Không thể tải thông tin xác nhận đặt hàng.");
       })
       .finally(() => {
@@ -97,22 +199,172 @@ export function useXacNhanDatHang() {
     );
   }, [danhSachDiaChi, maDiaChiDangChon]);
 
-  const gioHangRong =
-    !gioHang || gioHang.danhSachChiTietGioHang.length === 0;
+  const gioHangRong = !gioHang || gioHang.danhSachChiTietGioHang.length === 0;
 
-  const coTheHoanTat =
-    !gioHangRong && diaChiDangChon !== undefined;
+  const coTheHoanTat = !gioHangRong && diaChiDangChon !== undefined;
 
   const chonDiaChi = (maDiaChi: number) => {
     setMaDiaChiDangChon(maDiaChi);
     setDangMoDanhSachDiaChi(false);
   };
 
+  const moFormThemDiaChi = () => {
+    setDangMoDanhSachDiaChi(false);
+    setDiaChiDangSua(null);
+
+    setDuLieuFormDiaChi({
+      ...DU_LIEU_DIA_CHI_BAN_DAU,
+    });
+
+    setLoiTruongDiaChi({});
+    setLoiThemDiaChi("");
+    setThongBaoThemDiaChiThanhCong("");
+    setDangMoFormThemDiaChi(true);
+  };
+
+  const moFormSuaDiaChi = (diaChi: DiaChiGiaoHang) => {
+    setDangMoDanhSachDiaChi(false);
+    setDiaChiDangSua(diaChi);
+
+    setDuLieuFormDiaChi({
+      tenNguoiNhan: diaChi.tenNguoiNhan,
+      soDienThoaiNhan: diaChi.soDienThoaiNhan,
+      thanhPho: diaChi.thanhPho,
+      phuongKhuVuc: diaChi.phuongKhuVuc,
+      diaChiChiTiet: diaChi.diaChiChiTiet,
+      laMacDinh: diaChi.laMacDinh,
+    });
+
+    setLoiTruongDiaChi({});
+    setLoiThemDiaChi("");
+    setThongBaoThemDiaChiThanhCong("");
+    setDangMoFormThemDiaChi(true);
+  };
+
+  const dongFormThemDiaChi = () => {
+    if (dangLuuDiaChi) {
+      return;
+    }
+
+    setDangMoFormThemDiaChi(false);
+    setDiaChiDangSua(null);
+    setLoiTruongDiaChi({});
+    setLoiThemDiaChi("");
+  };
+
+  const thayDoiDuLieuFormDiaChi = <K extends keyof LuuDiaChiGiaoHangRequest>(
+    tenTruong: K,
+    giaTri: LuuDiaChiGiaoHangRequest[K],
+  ) => {
+    setDuLieuFormDiaChi((duLieuHienTai) => ({
+      ...duLieuHienTai,
+      [tenTruong]: giaTri,
+    }));
+
+    setLoiTruongDiaChi((loiHienTai) => ({
+      ...loiHienTai,
+      [tenTruong]: undefined,
+    }));
+  };
+
+  const luuDiaChiMoi = async (): Promise<boolean> => {
+    const loiMoi = kiemTraDuLieuDiaChi(duLieuFormDiaChi);
+
+    setLoiTruongDiaChi(loiMoi);
+
+    if (Object.keys(loiMoi).length > 0) {
+      return false;
+    }
+
+    const request: LuuDiaChiGiaoHangRequest = {
+      tenNguoiNhan: duLieuFormDiaChi.tenNguoiNhan.trim(),
+
+      soDienThoaiNhan: duLieuFormDiaChi.soDienThoaiNhan.trim(),
+
+      thanhPho: duLieuFormDiaChi.thanhPho.trim(),
+
+      phuongKhuVuc: duLieuFormDiaChi.phuongKhuVuc.trim(),
+
+      diaChiChiTiet: duLieuFormDiaChi.diaChiChiTiet.trim(),
+
+      laMacDinh: duLieuFormDiaChi.laMacDinh,
+    };
+
+    const dangCapNhat = diaChiDangSua !== null;
+
+    try {
+      setDangLuuDiaChi(true);
+      setLoiThemDiaChi("");
+      setThongBaoThemDiaChiThanhCong("");
+
+      const diaChiDaLuu = diaChiDangSua
+        ? await capNhatDiaChiGiaoHangApi(diaChiDangSua.maDiaChi, request)
+        : await themDiaChiGiaoHangApi(request);
+
+      const danhSachDiaChiMoi = await layDanhSachDiaChiGiaoHangApi();
+
+      setDanhSachDiaChi(danhSachDiaChiMoi);
+
+      setMaDiaChiDangChon(diaChiDaLuu.maDiaChi);
+
+      setDangMoFormThemDiaChi(false);
+      setDiaChiDangSua(null);
+      setLoiTruongDiaChi({});
+
+      setThongBaoThemDiaChiThanhCong(
+        dangCapNhat
+          ? "Cập nhật địa chỉ nhận hàng thành công."
+          : "Thêm địa chỉ nhận hàng thành công.",
+      );
+
+      return true;
+    } catch (error) {
+      if (axios.isAxiosError<LoiApiDiaChiGiaoHang>(error)) {
+        const loiTruongBackend = error.response?.data?.fieldErrors;
+
+        if (loiTruongBackend && Object.keys(loiTruongBackend).length > 0) {
+          setLoiTruongDiaChi(loiTruongBackend);
+
+          return false;
+        }
+
+        setLoiThemDiaChi(
+          error.response?.data?.detail ||
+            error.response?.data?.message ||
+            (dangCapNhat
+              ? "Không thể cập nhật địa chỉ nhận hàng."
+              : "Không thể thêm địa chỉ nhận hàng."),
+        );
+
+        return false;
+      }
+
+      setLoiThemDiaChi(
+        dangCapNhat
+          ? "Không thể cập nhật địa chỉ nhận hàng."
+          : "Không thể thêm địa chỉ nhận hàng.",
+      );
+
+      return false;
+    } finally {
+      setDangLuuDiaChi(false);
+    }
+  };
+
+  const xoaThongBaoThemDiaChi = useCallback(() => {
+    setLoiThemDiaChi("");
+
+    setThongBaoThemDiaChiThanhCong("");
+  }, []);
+
   async function hoanTatDatHang(): Promise<DonHangResponse | null> {
-    if (dangTaoDonHang) return null;
+    if (dangTaoDonHang) {
+      return null;
+    }
 
     if (maDiaChiDangChon === undefined) {
       setLoiTaoDonHang("Vui lòng chọn địa chỉ nhận hàng.");
+
       return null;
     }
 
@@ -133,10 +385,12 @@ export function useXacNhanDatHang() {
           "Không thể tạo đơn hàng. Vui lòng thử lại.";
 
         setLoiTaoDonHang(noiDungLoi);
+
         return null;
       }
 
       setLoiTaoDonHang("Không thể tạo đơn hàng. Vui lòng thử lại.");
+
       return null;
     } finally {
       setDangTaoDonHang(false);
@@ -156,10 +410,27 @@ export function useXacNhanDatHang() {
     coTheHoanTat,
     dangTaoDonHang,
     loiTaoDonHang,
+
+    dangMoFormThemDiaChi,
+    diaChiDangSua,
+    duLieuFormDiaChi,
+    loiTruongDiaChi,
+    dangLuuDiaChi,
+    loiThemDiaChi,
+    thongBaoThemDiaChiThanhCong,
+
     setPhuongThucThanhToan,
     setGhiChu,
     setDangMoDanhSachDiaChi,
     chonDiaChi,
+
+    moFormThemDiaChi,
+    moFormSuaDiaChi,
+    dongFormThemDiaChi,
+    thayDoiDuLieuFormDiaChi,
+    luuDiaChiMoi,
+    xoaThongBaoThemDiaChi,
+
     taiDuLieuXacNhanDatHang,
     hoanTatDatHang,
   };

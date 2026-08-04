@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Link, useNavigate,} from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import DanhSachSanPhamXacNhan from "../../features/xac-nhan-dat-hang/components/DanhSachSanPhamXacNhan";
 import DiaChiNhanHangXacNhan from "../../features/xac-nhan-dat-hang/components/DiaChiNhanHangXacNhan";
+import FormDiaChiGiaoHang from "../../features/dia-chi-giao-hang/components/FormDiaChiGiaoHang";
 import PhuongThucThanhToan from "../../features/xac-nhan-dat-hang/components/PhuongThucThanhToan";
 import TongKetXacNhanDatHang from "../../features/xac-nhan-dat-hang/components/TongKetXacNhanDatHang";
 import { useXacNhanDatHang } from "../../features/xac-nhan-dat-hang/hooks/useXacNhanDatHang";
@@ -17,24 +18,56 @@ import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
 import "../../features/xac-nhan-dat-hang/styles/XacNhanDatHang.css";
 
 function XacNhanDatHangPage() {
-  const KHOA_THANH_TOAN_ZALOPAY =
-  "pharma_thanh_toan_zalopay_dang_cho";
+  const KHOA_THANH_TOAN_ZALOPAY = "pharma_thanh_toan_zalopay_dang_cho";
 
   const navigate = useNavigate();
 
   const xacNhanDatHang = useXacNhanDatHang();
 
-  const thongBao =
-    useThongBaoHeThong();
+  const thongBao = useThongBaoHeThong();
 
-  const {
-    xoaToanBoGioHangLocal,
-  } = useGioHangContext();
+  const { xoaToanBoGioHangLocal } = useGioHangContext();
 
-  const [
-    dangMoThanhToanZaloPay,
-    setDangMoThanhToanZaloPay,
-  ] = useState(false);
+  const [dangMoThanhToanZaloPay, setDangMoThanhToanZaloPay] = useState(false);
+
+  const chuyenSangDanhSachDonHangSauThongBaoRef = useRef(false);
+
+  const moDanhSachDiaChiSauThongBaoRef = useRef(false);
+
+  useEffect(() => {
+    if (xacNhanDatHang.thongBaoThemDiaChiThanhCong) {
+      chuyenSangDanhSachDonHangSauThongBaoRef.current = false;
+
+      moDanhSachDiaChiSauThongBaoRef.current = true;
+
+      thongBao.hienThongBao(
+        xacNhanDatHang.thongBaoThemDiaChiThanhCong,
+        "THANH_CONG",
+        "Thao tác địa chỉ thành công",
+      );
+
+      xacNhanDatHang.xoaThongBaoThemDiaChi();
+
+      return;
+    }
+
+    if (xacNhanDatHang.loiThemDiaChi) {
+      chuyenSangDanhSachDonHangSauThongBaoRef.current = false;
+
+      thongBao.hienThongBao(
+        xacNhanDatHang.loiThemDiaChi,
+        "LOI",
+        "Không thể xử lý địa chỉ",
+      );
+
+      xacNhanDatHang.xoaThongBaoThemDiaChi();
+    }
+  }, [
+    xacNhanDatHang.thongBaoThemDiaChiThanhCong,
+    xacNhanDatHang.loiThemDiaChi,
+    xacNhanDatHang.xoaThongBaoThemDiaChi,
+    thongBao.hienThongBao,
+  ]);
 
   /*
    * Luồng COD:
@@ -57,16 +90,13 @@ function XacNhanDatHangPage() {
       return;
     }
 
-    const laThanhToanQr =
-      xacNhanDatHang.phuongThucThanhToan ===
-      "ZALOPAY";
+    const laThanhToanQr = xacNhanDatHang.phuongThucThanhToan === "ZALOPAY";
 
     if (laThanhToanQr) {
       setDangMoThanhToanZaloPay(true);
     }
 
-    const donHangDaTao =
-      await xacNhanDatHang.hoanTatDatHang();
+    const donHangDaTao = await xacNhanDatHang.hoanTatDatHang();
 
     if (!donHangDaTao) {
       if (laThanhToanQr) {
@@ -85,92 +115,93 @@ function XacNhanDatHangPage() {
      */
     xoaToanBoGioHangLocal();
 
-    if (
-      donHangDaTao.phuongThucThanhToan ===
-      "COD"
-    ) {
+    if (donHangDaTao.phuongThucThanhToan === "COD") {
+      moDanhSachDiaChiSauThongBaoRef.current = false;
+
+      chuyenSangDanhSachDonHangSauThongBaoRef.current = true;
+
       thongBao.hienThongBao(
         "Đơn hàng đã được tạo thành công.",
         "THANH_CONG",
-        "Đặt hàng thành công"
+        "Đặt hàng thành công",
       );
 
       return;
     }
 
     try {
-      const thanhToanZaloPay =
-        await taoThanhToanZaloPayApi(
-          donHangDaTao.maDonHang
-        );
+      const thanhToanZaloPay = await taoThanhToanZaloPayApi(
+        donHangDaTao.maDonHang,
+      );
 
-      const orderUrl =
-        thanhToanZaloPay.orderUrl?.trim();
+      const orderUrl = thanhToanZaloPay.orderUrl?.trim();
 
       if (!orderUrl) {
-        throw new Error(
-          "ZaloPay không trả về đường dẫn thanh toán."
-        );
+        throw new Error("ZaloPay không trả về đường dẫn thanh toán.");
       }
 
       /*
-      * Không chuyển trình duyệt sang
-      * ZaloPay Gateway.
-      *
-      * Lưu dữ liệu giao dịch tạm thời để
-      * trang Pharma+ tự hiển thị mã QR.
-      */
+       * Không chuyển trình duyệt sang
+       * ZaloPay Gateway.
+       *
+       * Lưu dữ liệu giao dịch tạm thời để
+       * trang Pharma+ tự hiển thị mã QR.
+       */
       sessionStorage.setItem(
         KHOA_THANH_TOAN_ZALOPAY,
         JSON.stringify({
-          maDonHang:
-            thanhToanZaloPay.maDonHang,
+          maDonHang: thanhToanZaloPay.maDonHang,
 
-          appTransId:
-            thanhToanZaloPay.appTransId,
+          appTransId: thanhToanZaloPay.appTransId,
 
-          soTien:
-            thanhToanZaloPay.soTien,
+          soTien: thanhToanZaloPay.soTien,
 
           orderUrl,
 
-          thoiDiemTao:
-            Date.now(),
-        })
+          thoiDiemTao: Date.now(),
+        }),
       );
 
-      navigate(
-        "/thanh-toan/zalopay/quet-ma",
-        {
-          replace: true,
-        }
-      );
+      navigate("/thanh-toan/zalopay/quet-ma", {
+        replace: true,
+      });
     } catch (error) {
-      console.error(
-        "Không thể mở thanh toán ZaloPay:",
-        error
-      );
+      console.error("Không thể mở thanh toán ZaloPay:", error);
 
       setDangMoThanhToanZaloPay(false);
 
       window.alert(
         `Đơn hàng mã ${donHangDaTao.maDonHang} đã được tạo, ` +
           "nhưng chưa thể mở trang thanh toán ZaloPay. " +
-          "Bạn có thể vào danh sách đơn hàng để thanh toán lại."
+          "Bạn có thể vào danh sách đơn hàng để thanh toán lại.",
       );
 
-      window.location.replace(
-        "/tai-khoan/don-hang"
-      );
+      window.location.replace("/tai-khoan/don-hang");
     }
   }
 
-  function dongThongBaoVaChuyenTrang() {
+  function dongThongBaoVaXuLyDieuHuong() {
+    const canMoDanhSachDiaChi = moDanhSachDiaChiSauThongBaoRef.current;
+
+    const canChuyenTrang = chuyenSangDanhSachDonHangSauThongBaoRef.current;
+
+    moDanhSachDiaChiSauThongBaoRef.current = false;
+
+    chuyenSangDanhSachDonHangSauThongBaoRef.current = false;
+
     thongBao.dongThongBao();
 
-    window.location.replace(
-      "/tai-khoan/don-hang"
-    );
+    if (canMoDanhSachDiaChi) {
+      xacNhanDatHang.setDangMoDanhSachDiaChi(true);
+
+      return;
+    }
+
+    if (canChuyenTrang) {
+      navigate("/tai-khoan/don-hang", {
+        replace: true,
+      });
+    }
   }
 
   if (xacNhanDatHang.dangTaiDuLieu) {
@@ -197,10 +228,7 @@ function XacNhanDatHangPage() {
     );
   }
 
-  if (
-    !xacNhanDatHang.gioHang ||
-    xacNhanDatHang.gioHangRong
-  ) {
+  if (!xacNhanDatHang.gioHang || xacNhanDatHang.gioHangRong) {
     return (
       <main className="xac-nhan-trang">
         <div className="page-container">
@@ -209,14 +237,9 @@ function XacNhanDatHangPage() {
 
             <h1>Giỏ hàng đang trống</h1>
 
-            <p>
-              Vui lòng thêm sản phẩm trước khi
-              tiến hành đặt hàng.
-            </p>
+            <p>Vui lòng thêm sản phẩm trước khi tiến hành đặt hàng.</p>
 
-            <Link to="/san-pham">
-              Tiếp tục mua sắm
-            </Link>
+            <Link to="/san-pham">Tiếp tục mua sắm</Link>
           </div>
         </div>
       </main>
@@ -226,10 +249,7 @@ function XacNhanDatHangPage() {
   return (
     <main className="xac-nhan-trang">
       <div className="page-container">
-        <Link
-          to="/gio-hang"
-          className="xac-nhan-quay-lai-gio-hang"
-        >
+        <Link to="/gio-hang" className="xac-nhan-quay-lai-gio-hang">
           ← Quay lại giỏ hàng
         </Link>
 
@@ -237,74 +257,41 @@ function XacNhanDatHangPage() {
           <div className="xac-nhan-ben-trai">
             <DanhSachSanPhamXacNhan
               danhSachChiTietGioHang={
-                xacNhanDatHang.gioHang
-                  .danhSachChiTietGioHang
+                xacNhanDatHang.gioHang.danhSachChiTietGioHang
               }
             />
 
             <DiaChiNhanHangXacNhan
-              danhSachDiaChi={
-                xacNhanDatHang.danhSachDiaChi
-              }
-              diaChiDangChon={
-                xacNhanDatHang.diaChiDangChon
-              }
-              dangMoDanhSachDiaChi={
-                xacNhanDatHang
-                  .dangMoDanhSachDiaChi
-              }
-              ghiChu={
-                xacNhanDatHang.ghiChu
-              }
+              danhSachDiaChi={xacNhanDatHang.danhSachDiaChi}
+              diaChiDangChon={xacNhanDatHang.diaChiDangChon}
+              dangMoDanhSachDiaChi={xacNhanDatHang.dangMoDanhSachDiaChi}
+              ghiChu={xacNhanDatHang.ghiChu}
               moDanhSachDiaChi={() =>
-                xacNhanDatHang
-                  .setDangMoDanhSachDiaChi(
-                    true
-                  )
+                xacNhanDatHang.setDangMoDanhSachDiaChi(true)
               }
               dongDanhSachDiaChi={() =>
-                xacNhanDatHang
-                  .setDangMoDanhSachDiaChi(
-                    false
-                  )
+                xacNhanDatHang.setDangMoDanhSachDiaChi(false)
               }
-              chonDiaChi={
-                xacNhanDatHang.chonDiaChi
-              }
-              thayDoiGhiChu={
-                xacNhanDatHang.setGhiChu
-              }
+              themDiaChiMoi={xacNhanDatHang.moFormThemDiaChi}
+              suaDiaChi={xacNhanDatHang.moFormSuaDiaChi}
+              chonDiaChi={xacNhanDatHang.chonDiaChi}
+              thayDoiGhiChu={xacNhanDatHang.setGhiChu}
             />
 
             <PhuongThucThanhToan
-              phuongThucDangChon={
-                xacNhanDatHang
-                  .phuongThucThanhToan
-              }
-              thayDoiPhuongThuc={
-                xacNhanDatHang
-                  .setPhuongThucThanhToan
-              }
+              phuongThucDangChon={xacNhanDatHang.phuongThucThanhToan}
+              thayDoiPhuongThuc={xacNhanDatHang.setPhuongThucThanhToan}
             />
           </div>
 
           <TongKetXacNhanDatHang
-            tongTienHang={
-              xacNhanDatHang.gioHang.tongTien
-            }
-            coTheHoanTat={
-              xacNhanDatHang.coTheHoanTat
-            }
+            tongTienHang={xacNhanDatHang.gioHang.tongTien}
+            coTheHoanTat={xacNhanDatHang.coTheHoanTat}
             dangTaoDonHang={
-              xacNhanDatHang.dangTaoDonHang ||
-              dangMoThanhToanZaloPay
+              xacNhanDatHang.dangTaoDonHang || dangMoThanhToanZaloPay
             }
-            loiTaoDonHang={
-              xacNhanDatHang.loiTaoDonHang
-            }
-            hoanTatMuaHang={() =>
-              void xuLyHoanTatMuaHang()
-            }
+            loiTaoDonHang={xacNhanDatHang.loiTaoDonHang}
+            hoanTatMuaHang={() => void xuLyHoanTatMuaHang()}
           />
 
           <ThongBaoHeThong
@@ -312,12 +299,22 @@ function XacNhanDatHangPage() {
             tieuDe={thongBao.tieuDe}
             noiDung={thongBao.noiDung}
             loai={thongBao.loai}
-            dongThongBao={
-              dongThongBaoVaChuyenTrang
-            }
+            dongThongBao={dongThongBaoVaXuLyDieuHuong}
           />
         </div>
       </div>
+      <FormDiaChiGiaoHang
+        dangMoForm={xacNhanDatHang.dangMoFormThemDiaChi}
+        diaChiDangSua={xacNhanDatHang.diaChiDangSua}
+        duLieuForm={xacNhanDatHang.duLieuFormDiaChi}
+        loiTruong={xacNhanDatHang.loiTruongDiaChi}
+        dangLuu={xacNhanDatHang.dangLuuDiaChi}
+        thayDoiDuLieuForm={xacNhanDatHang.thayDoiDuLieuFormDiaChi}
+        dongForm={xacNhanDatHang.dongFormThemDiaChi}
+        luuDiaChi={() => {
+          void xacNhanDatHang.luuDiaChiMoi();
+        }}
+      />
     </main>
   );
 }
