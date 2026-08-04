@@ -53,7 +53,6 @@ const taoDuLieuFormSanPham = (
       tenSanPham: sanPhamCanSua.tenSanPham,
       hinhAnh: sanPhamCanSua.hinhAnh || "",
       moTaNgan: sanPhamCanSua.moTaNgan || "",
-      giaBan: String(sanPhamCanSua.giaBan),
       laThuocKeDon: sanPhamCanSua.laThuocKeDon,
     };
   }
@@ -64,7 +63,6 @@ const taoDuLieuFormSanPham = (
     tenSanPham: "",
     hinhAnh: "",
     moTaNgan: "",
-    giaBan: "",
     laThuocKeDon: false,
   };
 };
@@ -337,15 +335,6 @@ function SanPhamFormNoiDung({
       alert("Vui lòng nhập tên sản phẩm");
       return false;
     }
-
-    if (
-      !formData.giaBan ||
-      Number(formData.giaBan) <= 0
-    ) {
-      alert("Giá bán mặc định phải lớn hơn 0");
-      return false;
-    }
-
     return true;
   };
 
@@ -499,7 +488,6 @@ function SanPhamFormNoiDung({
       : null,
     tenSanPham: formData.tenSanPham.trim(),
     hinhAnh: formData.hinhAnh.trim() || null,
-    giaBan: Number(formData.giaBan),
     laThuocKeDon: formData.laThuocKeDon,
     moTaNgan: formData.moTaNgan.trim() || null,
   });
