@@ -257,6 +257,70 @@ public class SanPhamService {
     }
 
     @Transactional
+    public SanPhamResponse capNhatThanhPhanHoatChat(
+            long maSanPham,
+            List<ThanhPhanHoatChatTaoMoiRequest> danhSachThanhPhan) {
+        kiemTraDanhSachThanhPhanHoatChat(
+                danhSachThanhPhan);
+
+        SanPham sanPham = sanPhamRepository.findById(maSanPham)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy sản phẩm"));
+
+        List<ThanhPhanHoatChat> danhSachCu = thanhPhanHoatChatRepository
+                .findByMaSanPham(maSanPham);
+
+        thanhPhanHoatChatRepository.deleteAll(
+                danhSachCu);
+
+        thanhPhanHoatChatRepository.flush();
+
+        luuDanhSachThanhPhanHoatChat(
+                sanPham,
+                danhSachThanhPhan);
+
+        return layChiTietSanPhamDayDu(maSanPham);
+    }
+
+    @Transactional
+    public SanPhamResponse capNhatDuLieuChuyenMonThuoc(
+            long maSanPham,
+            DuLieuChuyenMonThuocRequest request) {
+        kiemTraDuLieuChuyenMonThuoc(request);
+
+        SanPham sanPham = sanPhamRepository.findById(maSanPham)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy sản phẩm"));
+
+        DuLieuChuyenMonThuoc duLieu = duLieuChuyenMonThuocRepository
+                .findByMaSanPham(maSanPham)
+                .orElseGet(
+                        DuLieuChuyenMonThuoc::new);
+
+        duLieu.setSanPham(sanPham);
+        duLieu.setDangBaoChe(
+                request.getDangBaoChe().trim());
+        duLieu.setPhanLoaiThuoc(
+                request.getPhanLoaiThuoc().trim());
+        duLieu.setCongDungThamKhao(
+                request.getCongDungThamKhao().trim());
+        duLieu.setCachDungThamKhao(
+                request.getCachDungThamKhao().trim());
+        duLieu.setCanhBaoAnToan(
+                request.getCanhBaoAnToan().trim());
+
+        /*
+         * Admin thay đổi dữ liệu chuyên môn thì
+         * Dược sĩ phải xác nhận lại.
+         */
+        duLieu.setTrangThaiXacNhan(false);
+
+        duLieuChuyenMonThuocRepository.save(duLieu);
+
+        return layChiTietSanPhamDayDu(maSanPham);
+    }
+
+    @Transactional
     public SanPhamResponse anSanPham(long maSanPham) {
         SanPham sanPham = sanPhamRepository.findById(maSanPham)
                 .orElseThrow(() -> new IllegalArgumentException(

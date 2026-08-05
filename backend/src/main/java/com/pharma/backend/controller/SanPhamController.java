@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pharma.backend.dto.sanpham.DuLieuChuyenMonThuocRequest;
+import com.pharma.backend.dto.sanpham.ThanhPhanHoatChatTaoMoiRequest;
 import com.pharma.backend.dto.common.PhanTrangResponse;
 import com.pharma.backend.dto.sanpham.SanPhamRequest;
 import com.pharma.backend.dto.sanpham.SanPhamResponse;
@@ -78,6 +80,24 @@ public class SanPhamController {
                                 request);
         }
 
+        @PutMapping("/{maSanPham}/thanh-phan-hoat-chat")
+        public SanPhamResponse capNhatThanhPhanHoatChat(
+                        @PathVariable Long maSanPham,
+                        @RequestBody List<ThanhPhanHoatChatTaoMoiRequest> request) {
+                return sanPhamService.capNhatThanhPhanHoatChat(
+                                maSanPham,
+                                request);
+        }
+
+        @PutMapping("/{maSanPham}/du-lieu-chuyen-mon")
+        public SanPhamResponse capNhatDuLieuChuyenMonThuoc(
+                        @PathVariable Long maSanPham,
+                        @RequestBody DuLieuChuyenMonThuocRequest request) {
+                return sanPhamService.capNhatDuLieuChuyenMonThuoc(
+                                maSanPham,
+                                request);
+        }
+
         @PutMapping("/{maSanPham}/an")
         public SanPhamResponse anSanPham(
                         @PathVariable Long maSanPham) {
@@ -89,4 +109,5 @@ public class SanPhamController {
                         @PathVariable Long maSanPham) {
                 return sanPhamService.hienSanPham(maSanPham);
         }
+
 }
