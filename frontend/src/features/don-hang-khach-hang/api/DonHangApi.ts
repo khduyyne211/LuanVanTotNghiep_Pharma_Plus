@@ -26,3 +26,11 @@ export async function layChiTietDonHangApi(
 
   return response.data;
 }
+
+export async function huyDonHangApi(
+  maDonHang: number,
+): Promise<void> {
+  await apiClient.patch(
+    `/don-hang/khach-hang/${maDonHang}/huy`,
+  );
+}

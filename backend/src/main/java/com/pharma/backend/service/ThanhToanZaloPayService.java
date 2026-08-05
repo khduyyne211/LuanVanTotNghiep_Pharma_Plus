@@ -126,6 +126,7 @@ public class ThanhToanZaloPayService {
                 appTransId,
                 soTien,
                 responseZaloPay.getOrderUrl(),
+                duLieu.getThoiGianHieuLucGiay(),
                 TrangThaiThanhToan
                         .CHO_THANH_TOAN
                         .name()

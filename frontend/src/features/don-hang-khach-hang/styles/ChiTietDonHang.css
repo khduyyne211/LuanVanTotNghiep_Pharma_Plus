@@ -108,7 +108,7 @@
   color: #2563eb;
 }
 
-.chi-tiet-thanh-toan{
+.chi-tiet-thanh-toan {
   margin-bottom: 10px;
 }
 
@@ -252,6 +252,59 @@
   color: #b91c1c;
   background: #fef2f2;
   border-color: #fecaca;
+}
+
+.chi-tiet-don-hang-thao-tac {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.chi-tiet-don-hang-nut {
+  min-width: 150px;
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chi-tiet-don-hang-nut:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.chi-tiet-don-hang-nut--thanh-toan {
+  border: 1px solid #146c43;
+  background: #146c43;
+  color: #fff;
+}
+
+.chi-tiet-don-hang-nut--thanh-toan:hover:not(:disabled) {
+  background: #0f5132;
+}
+
+.chi-tiet-don-hang-nut--huy {
+  border: 1px solid #dc3545;
+  background: #fff;
+  color: #dc3545;
+}
+
+.chi-tiet-don-hang-nut--huy:hover:not(:disabled) {
+  background: #fff5f5;
+}
+
+@media (max-width: 576px) {
+  .chi-tiet-don-hang-thao-tac {
+    flex-direction: column;
+  }
+
+  .chi-tiet-don-hang-nut {
+    width: 100%;
+  }
 }
 
 @media (max-width: 992px) {

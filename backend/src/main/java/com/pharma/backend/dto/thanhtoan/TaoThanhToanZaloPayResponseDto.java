@@ -11,5 +11,6 @@ public class TaoThanhToanZaloPayResponseDto {
     private String appTransId;
     private Long soTien;
     private String orderUrl;
+    private Long thoiGianHieuLucGiay;
     private String trangThaiThanhToan;
 }

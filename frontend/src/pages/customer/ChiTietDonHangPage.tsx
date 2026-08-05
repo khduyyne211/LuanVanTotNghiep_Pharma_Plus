@@ -1,10 +1,15 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { TEN_TRANG_THAI_DON_HANG } from "../../features/don-hang-khach-hang/constants/TrangThaiDonHang";
 import { TEN_TRANG_THAI_THANH_TOAN } from "../../features/don-hang-khach-hang/constants/TrangThaiThanhToan";
 import { useChiTietDonHang } from "../../features/don-hang-khach-hang/hooks/useChiTietDonHang";
+import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
+import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
 import "../../features/don-hang-khach-hang/styles/ChiTietDonHang.css";
 import "../../features/don-hang-khach-hang/styles/TrangThaiDonHang.css";
 import "../../features/don-hang-khach-hang/styles/TrangThaiThanhToan.css";
+
+const KHOA_THANH_TOAN_ZALOPAY = "pharma_thanh_toan_zalopay_dang_cho";
 
 function dinhDangTien(soTien: number) {
   return soTien.toLocaleString("vi-VN") + "đ";
@@ -21,7 +26,96 @@ function hienThiPhuongThucThanhToan(phuongThuc: string | null) {
 }
 
 function ChiTietDonHangPage() {
-  const { chiTietDonHang: donHang, dangTai, loi } = useChiTietDonHang();
+  const navigate = useNavigate();
+  const thongBao = useThongBaoHeThong();
+
+  const {
+    chiTietDonHang: donHang,
+    dangTai,
+    loi,
+    coTheHuyDonHang,
+    coTheThanhToanLai,
+    dangHuyDonHang,
+    dangTaoThanhToanLai,
+    dangXuLyThaoTac,
+    loiThaoTac,
+    huyDonHang,
+    taoThanhToanLai,
+    xoaLoiThaoTac,
+  } = useChiTietDonHang();
+
+  useEffect(() => {
+    if (!loiThaoTac) {
+      return;
+    }
+
+    thongBao.hienThongBao(loiThaoTac, "LOI", "Không thể thực hiện thao tác");
+
+    xoaLoiThaoTac();
+  }, [loiThaoTac, thongBao.hienThongBao, xoaLoiThaoTac]);
+
+  async function xuLyHuyDonHang() {
+    const daXacNhan = window.confirm(
+      "Bạn có chắc chắn muốn hủy đơn hàng này không?",
+    );
+
+    if (!daXacNhan) {
+      return;
+    }
+
+    const daHuyThanhCong = await huyDonHang();
+
+    if (!daHuyThanhCong) {
+      return;
+    }
+
+    thongBao.hienThongBao(
+      "Đơn hàng đã được hủy thành công.",
+      "THANH_CONG",
+      "Hủy đơn thành công",
+    );
+  }
+
+  async function xuLyThanhToanLai() {
+    const duLieuThanhToan = await taoThanhToanLai();
+
+    if (!duLieuThanhToan) {
+      return;
+    }
+
+    const orderUrl = duLieuThanhToan.orderUrl?.trim();
+
+    if (!orderUrl) {
+      thongBao.hienThongBao(
+        "ZaloPay không trả về đường dẫn thanh toán.",
+        "LOI",
+        "Không thể tạo mã thanh toán",
+      );
+      return;
+    }
+
+    try {
+      sessionStorage.setItem(
+        KHOA_THANH_TOAN_ZALOPAY,
+        JSON.stringify({
+          maDonHang: duLieuThanhToan.maDonHang,
+          appTransId: duLieuThanhToan.appTransId,
+          soTien: duLieuThanhToan.soTien,
+          orderUrl,
+          thoiGianHieuLucGiay: duLieuThanhToan.thoiGianHieuLucGiay,
+          thoiDiemTao: Date.now(),
+        }),
+      );
+
+      navigate("/thanh-toan/zalopay/quet-ma");
+    } catch {
+      thongBao.hienThongBao(
+        "Không thể lưu thông tin thanh toán ZaloPay.",
+        "LOI",
+        "Không thể mở mã thanh toán",
+      );
+    }
+  }
 
   if (dangTai) {
     return (
@@ -54,9 +148,15 @@ function ChiTietDonHangPage() {
   }
 
   const maDonHangHienThi = `#${String(donHang.maDonHang).padStart(6, "0")}`;
-  const tenPhuongThucThanhToan = hienThiPhuongThucThanhToan(donHang.phuongThucThanhToan);
-  const classTrangThai = donHang.trangThaiDonHang.toLowerCase().replaceAll("_", "-");
-  const classTrangThaiThanhToan = donHang.trangThaiThanhToan.toLowerCase().replaceAll("_", "-");
+  const tenPhuongThucThanhToan = hienThiPhuongThucThanhToan(
+    donHang.phuongThucThanhToan,
+  );
+  const classTrangThai = donHang.trangThaiDonHang
+    .toLowerCase()
+    .replaceAll("_", "-");
+  const classTrangThaiThanhToan = donHang.trangThaiThanhToan
+    .toLowerCase()
+    .replaceAll("_", "-");
 
   const diaChiNhanHang = [
     donHang.diaChiChiTiet,
@@ -106,12 +206,38 @@ function ChiTietDonHangPage() {
             </div>
           </div>
         </div>
+
+        {(coTheThanhToanLai || coTheHuyDonHang) && (
+          <div className="chi-tiet-don-hang-thao-tac">
+            {coTheThanhToanLai && (
+              <button
+                type="button"
+                className="chi-tiet-don-hang-nut chi-tiet-don-hang-nut--thanh-toan"
+                disabled={dangXuLyThaoTac}
+                onClick={() => void xuLyThanhToanLai()}
+              >
+                {dangTaoThanhToanLai
+                  ? "Đang tạo mã thanh toán..."
+                  : "Thanh toán lại"}
+              </button>
+            )}
+
+            {coTheHuyDonHang && (
+              <button
+                type="button"
+                className="chi-tiet-don-hang-nut chi-tiet-don-hang-nut--huy"
+                disabled={dangXuLyThaoTac}
+                onClick={() => void xuLyHuyDonHang()}
+              >
+                {dangHuyDonHang ? "Đang hủy đơn..." : "Hủy đơn hàng"}
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="chi-tiet-don-hang-khoi">
-        <h2 className="chi-tiet-don-hang-khoi-tieu-de">
-          Thông tin thanh toán
-        </h2>
+        <h2 className="chi-tiet-don-hang-khoi-tieu-de">Thông tin thanh toán</h2>
 
         <div className="chi-tiet-don-hang-thanh-toan">
           <div className="chi-tiet-don-hang-dong">
@@ -171,16 +297,12 @@ function ChiTietDonHangPage() {
               {donHang.tenNguoiNhan || "Không có thông tin người nhận"}
             </p>
 
-            <p>
-              {donHang.soDienThoaiNhan || "Không có số điện thoại"}
-            </p>
+            <p>{donHang.soDienThoaiNhan || "Không có số điện thoại"}</p>
           </div>
         </div>
 
         <div className="chi-tiet-don-hang-khoi">
-          <h2 className="chi-tiet-don-hang-khoi-tieu-de">
-            Địa chỉ nhận hàng
-          </h2>
+          <h2 className="chi-tiet-don-hang-khoi-tieu-de">Địa chỉ nhận hàng</h2>
 
           <div className="chi-tiet-don-hang-noi-dung">
             <p>{diaChiNhanHang || "Không có thông tin địa chỉ."}</p>
@@ -189,9 +311,7 @@ function ChiTietDonHangPage() {
       </div>
 
       <div className="chi-tiet-don-hang-khoi">
-        <h2 className="chi-tiet-don-hang-khoi-tieu-de">
-          Danh sách sản phẩm
-        </h2>
+        <h2 className="chi-tiet-don-hang-khoi-tieu-de">Danh sách sản phẩm</h2>
 
         <div className="chi-tiet-don-hang-danh-sach-san-pham">
           {donHang.danhSachChiTietDonHang.map((chiTiet) => (
@@ -202,10 +322,7 @@ function ChiTietDonHangPage() {
               <div className="chi-tiet-don-hang-san-pham-ben-trai">
                 <div className="chi-tiet-don-hang-san-pham-anh">
                   {chiTiet.hinhAnh ? (
-                    <img
-                      src={chiTiet.hinhAnh}
-                      alt={chiTiet.tenSanPham}
-                    />
+                    <img src={chiTiet.hinhAnh} alt={chiTiet.tenSanPham} />
                   ) : (
                     <div className="chi-tiet-don-hang-san-pham-khong-anh">
                       Chưa có ảnh
@@ -237,6 +354,14 @@ function ChiTietDonHangPage() {
           ))}
         </div>
       </div>
+
+      <ThongBaoHeThong
+        dangHien={thongBao.dangHien}
+        tieuDe={thongBao.tieuDe}
+        noiDung={thongBao.noiDung}
+        loai={thongBao.loai}
+        dongThongBao={thongBao.dongThongBao}
+      />
     </section>
   );
 }

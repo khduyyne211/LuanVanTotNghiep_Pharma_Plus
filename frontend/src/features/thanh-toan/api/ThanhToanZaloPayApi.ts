@@ -1,18 +1,24 @@
 import apiClient from
   "../../../api/axiosClient";
 
+import type {
+  TrangThaiDonHang,
+  TrangThaiThanhToan,
+} from "../../don-hang-khach-hang/types/DonHang";
+
 export interface TaoThanhToanZaloPayResponse {
   maDonHang: number;
   appTransId: string;
   soTien: number;
   orderUrl: string;
-  trangThaiThanhToan: string;
+  thoiGianHieuLucGiay: number;
+  trangThaiThanhToan: TrangThaiThanhToan;
 }
 
 export interface TrangThaiThanhToanZaloPayResponse {
   maDonHang: number;
-  trangThaiThanhToan: string;
-  trangThaiDonHang: string;
+  trangThaiThanhToan: TrangThaiThanhToan;
+  trangThaiDonHang: TrangThaiDonHang;
 }
 
 export async function taoThanhToanZaloPayApi(

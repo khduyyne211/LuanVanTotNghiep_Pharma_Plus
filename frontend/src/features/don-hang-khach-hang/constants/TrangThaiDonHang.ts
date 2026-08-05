@@ -17,6 +17,7 @@ export const DANH_SACH_BO_LOC_DON_HANG: LuaChonTrangThaiDonHang[] = [
 ];
 
 export const TEN_TRANG_THAI_DON_HANG: Record<TrangThaiDonHang, string> = {
+  CHO_THANH_TOAN: "Chờ thanh toán",
   CHO_XU_LY: "Chờ xử lý",
   DANG_XU_LY: "Đang xử lý",
   DANG_GIAO: "Đang giao",

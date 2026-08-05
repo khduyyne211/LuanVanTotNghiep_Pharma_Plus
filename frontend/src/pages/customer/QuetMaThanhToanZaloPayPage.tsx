@@ -21,9 +21,6 @@ import "../../features/thanh-toan/styles/QuetMaThanhToanZaloPay.css";
 const KHOA_THANH_TOAN_ZALOPAY =
   "pharma_thanh_toan_zalopay_dang_cho";
 
-const THOI_GIAN_HET_HAN_MILI_GIAY =
-  15 * 60 * 1000;
-
 const CHU_KY_KIEM_TRA_MILI_GIAY =
   3000;
 
@@ -32,6 +29,7 @@ interface DuLieuThanhToanZaloPayTam {
   appTransId: string;
   soTien: number;
   orderUrl: string;
+  thoiGianHieuLucGiay: number;
   thoiDiemTao: number;
 }
 
@@ -69,6 +67,9 @@ function docDuLieuThanhToan():
       duLieu.soTien <= 0 ||
       typeof duLieu.orderUrl !== "string" ||
       !duLieu.orderUrl.trim() ||
+      typeof duLieu.thoiGianHieuLucGiay !== "number" ||
+      !Number.isInteger(duLieu.thoiGianHieuLucGiay) ||
+      duLieu.thoiGianHieuLucGiay <= 0 ||
       typeof duLieu.thoiDiemTao !== "number"
     ) {
       return null;
@@ -79,6 +80,7 @@ function docDuLieuThanhToan():
       appTransId: duLieu.appTransId,
       soTien: duLieu.soTien,
       orderUrl: duLieu.orderUrl,
+      thoiGianHieuLucGiay: duLieu.thoiGianHieuLucGiay,
       thoiDiemTao: duLieu.thoiDiemTao,
     };
   } catch {
@@ -113,11 +115,12 @@ function dinhDangThoiGian(
 }
 
 function tinhSoGiayConLai(
-  thoiDiemTao: number
+  thoiDiemTao: number,
+  thoiGianHieuLucGiay: number,
 ): number {
   const thoiDiemHetHan =
     thoiDiemTao +
-    THOI_GIAN_HET_HAN_MILI_GIAY;
+    thoiGianHieuLucGiay * 1000;
 
   return Math.max(
     0,
@@ -153,7 +156,8 @@ function QuetMaThanhToanZaloPayPage() {
   ] = useState(() =>
     duLieuThanhToan
       ? tinhSoGiayConLai(
-          duLieuThanhToan.thoiDiemTao
+          duLieuThanhToan.thoiDiemTao,
+          duLieuThanhToan.thoiGianHieuLucGiay,
         )
       : 0
   );
@@ -300,7 +304,8 @@ function QuetMaThanhToanZaloPayPage() {
     const capNhatBoDem = () => {
       const soGiayMoi =
         tinhSoGiayConLai(
-          duLieuThanhToan.thoiDiemTao
+          duLieuThanhToan.thoiDiemTao,
+          duLieuThanhToan.thoiGianHieuLucGiay
         );
 
       setSoGiayConLai(

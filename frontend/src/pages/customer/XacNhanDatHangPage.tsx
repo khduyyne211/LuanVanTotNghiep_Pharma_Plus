@@ -158,6 +158,8 @@ function XacNhanDatHangPage() {
 
           orderUrl,
 
+          thoiGianHieuLucGiay: thanhToanZaloPay.thoiGianHieuLucGiay,
+
           thoiDiemTao: Date.now(),
         }),
       );
