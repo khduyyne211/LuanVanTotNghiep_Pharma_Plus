@@ -1,21 +1,21 @@
 package com.pharma.backend.dto.voucherdonhang;
 
 import java.math.BigDecimal;
-
 import java.time.LocalDateTime;
+
+import com.pharma.backend.enums.khuyenmai.KieuGiamGia;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 public class VoucherDonHangResponse {
+
     private Long maVoucher;
     private String maGiamGia;
     private String tenVoucher;
-    private String loaiGiamGia;
+    private KieuGiamGia loaiGiamGia;
     private BigDecimal giaTriGiam;
     private BigDecimal soTienGiamToiDa;
     private BigDecimal donGiaToiThieu;

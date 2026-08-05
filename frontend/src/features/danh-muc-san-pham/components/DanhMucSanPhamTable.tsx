@@ -3,7 +3,6 @@ import type { DanhMucSanPham } from "../types/DanhMucSanPham";
 type DanhMucSanPhamTableProps = {
   danhSachDanhMuc: DanhMucSanPham[];
   loading: boolean;
-  loi: string | null;
   maDanhMucDangXuLy: number | null;
   onSua: (danhMuc: DanhMucSanPham) => void;
   onDoiTrangThai: (danhMuc: DanhMucSanPham) => void;
@@ -12,129 +11,117 @@ type DanhMucSanPhamTableProps = {
 function DanhMucSanPhamTable({
   danhSachDanhMuc,
   loading,
-  loi,
   maDanhMucDangXuLy,
   onSua,
   onDoiTrangThai,
 }: DanhMucSanPhamTableProps) {
   return (
-    <div className="table-card">
-      {loading ? (
-        <p style={{ padding: "16px" }}>
-          Đang tải danh sách danh mục sản phẩm...
-        </p>
-      ) : loi ? (
-        <p style={{ padding: "16px" }}>{loi}</p>
-      ) : (
-        <>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Mã</th>
-                <th>Tên danh mục</th>
-                <th>Danh mục cha</th>
-                <th>Mô tả</th>
-                <th>Thứ tự</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
-              </tr>
-            </thead>
+    <div className="ql-table-wrapper">
+      <table className="ql-table">
+        <thead>
+          <tr>
+            <th>Mã</th>
+            <th>Tên danh mục</th>
+            <th>Danh mục cha</th>
+            <th>Mô tả</th>
+            <th>Thứ tự</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
 
-            <tbody>
-              {danhSachDanhMuc.map((danhMuc) => {
-                const dangXuLy =
-                  maDanhMucDangXuLy === danhMuc.maDanhMuc;
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan={7} className="ql-table-message">
+                Đang tải danh sách danh mục sản phẩm...
+              </td>
+            </tr>
+          ) : danhSachDanhMuc.length === 0 ? (
+            <tr>
+              <td colSpan={7} className="ql-table-message">
+                Chưa có danh mục sản phẩm
+              </td>
+            </tr>
+          ) : (
+            danhSachDanhMuc.map((danhMuc) => {
+              const dangXuLy =
+                maDanhMucDangXuLy === danhMuc.maDanhMuc;
 
-                return (
-                  <tr key={danhMuc.maDanhMuc}>
-                    <td>{danhMuc.maDanhMuc}</td>
+              return (
+                <tr key={danhMuc.maDanhMuc}>
+                  <td>
+                    <strong>#{danhMuc.maDanhMuc}</strong>
+                  </td>
 
-                    <td>
-                      <strong>{danhMuc.tenDanhMuc}</strong>
-                    </td>
+                  <td>
+                    <strong>{danhMuc.tenDanhMuc}</strong>
+                  </td>
 
-                    <td>
-                      {danhMuc.tenDanhMucCha ??
-                        "Danh mục cấp cao nhất"}
-                    </td>
+                  <td>
+                    {danhMuc.tenDanhMucCha
+                      ?? "Danh mục cấp cao nhất"}
+                  </td>
 
-                    <td>
-                      <div className="muted-text">
-                        {danhMuc.moTa || "Chưa có mô tả"}
-                      </div>
-                    </td>
+                  <td>
+                    <span className="ql-muted-text">
+                      {danhMuc.moTa || "Chưa có mô tả"}
+                    </span>
+                  </td>
 
-                    <td>
-                      {danhMuc.thuTuHienThi ?? "—"}
-                    </td>
+                  <td>{danhMuc.thuTuHienThi ?? "—"}</td>
 
-                    <td>
-                      <span
-                        className={
-                          danhMuc.trangThaiHienThi
-                            ? "status-active"
-                            : "status-inactive"
-                        }
+                  <td>
+                    <span
+                      className={
+                        danhMuc.trangThaiHienThi
+                          ? "ql-status ql-status-active"
+                          : "ql-status ql-status-inactive"
+                      }
+                    >
+                      {danhMuc.trangThaiHienThi ? "Hiện" : "Ẩn"}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div className="ql-action-group">
+                      <button
+                        type="button"
+                        className="ql-action-button"
+                        onClick={() => onSua(danhMuc)}
+                        disabled={dangXuLy}
                       >
-                        {danhMuc.trangThaiHienThi
-                          ? "Hiện"
-                          : "Ẩn"}
-                      </span>
-                    </td>
+                        <i className="bi bi-pencil-square" />
+                        Sửa
+                      </button>
 
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          type="button"
-                          className="small-button"
-                          onClick={() => onSua(danhMuc)}
-                          disabled={dangXuLy}
-                        >
-                          Sửa
-                        </button>
-
-                        <button
-                          type="button"
-                          className="small-button"
-                          onClick={() =>
-                            onDoiTrangThai(danhMuc)
+                      <button
+                        type="button"
+                        className="ql-action-button"
+                        onClick={() => onDoiTrangThai(danhMuc)}
+                        disabled={dangXuLy}
+                      >
+                        <i
+                          className={
+                            danhMuc.trangThaiHienThi
+                              ? "bi bi-eye-slash"
+                              : "bi bi-eye"
                           }
-                          disabled={dangXuLy}
-                        >
-                          {dangXuLy
-                            ? "Đang xử lý..."
-                            : danhMuc.trangThaiHienThi
-                              ? "Ẩn"
-                              : "Hiện"}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {danhSachDanhMuc.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="empty-cell">
-                    Chưa có danh mục sản phẩm.
+                        />
+                        {dangXuLy
+                          ? "Đang xử lý..."
+                          : danhMuc.trangThaiHienThi
+                            ? "Ẩn"
+                            : "Hiện"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-
-          <div
-            className="pagination-row"
-            style={{ padding: "0 16px 16px" }}
-          >
-            <div>
-              Tổng cộng{" "}
-              <strong>{danhSachDanhMuc.length}</strong>{" "}
-              danh mục
-            </div>
-          </div>
-        </>
-      )}
+              );
+            })
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

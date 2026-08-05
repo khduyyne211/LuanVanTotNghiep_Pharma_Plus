@@ -8,15 +8,13 @@ public interface DonHangChiTietProjection {
     Long getMaDonHang();
     Long getMaKhachHang();
     String getTenKhachHang();
-    String getEmailKhachHang();
     String getSoDienThoaiKhachHang();
 
     Long getMaDiaChi();
     String getTenNguoiNhan();
     String getSoDienThoaiNhan();
-    String getTinhThanh();
-    String getQuanHuyen();
-    String getPhuongXa();
+    String getThanhPho();
+    String getPhuongKhuVuc();
     String getDiaChiChiTiet();
 
     Long getMaVoucher();
@@ -24,9 +22,6 @@ public interface DonHangChiTietProjection {
 
     Long getMaNhanVienXuLy();
     String getTenNhanVienXuLy();
-
-    Long getMaDuocSiDuyet();
-    String getTenDuocSiDuyet();
 
     LocalDateTime getNgayDatHang();
     String getLoaiKhach();
@@ -44,12 +39,12 @@ public interface DonHangChiTietProjection {
     LocalDateTime getNgayKiemDuyet();
     String getGhiChuKiemDuyet();
     String getLyDoTuChoiDuyet();
-
     String getGhiChu();
 
     String getAnhDonThuoc();
     String getTrangThaiDonThuoc();
-    String getKetQuaKiemDuyetDonThuoc();
+    String getLyDoTuChoiDonThuoc();
+    String getGhiChuDonThuoc();
 
     Integer getCoThuocKeDon();
 }

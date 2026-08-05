@@ -8,7 +8,6 @@ public interface DonHangDanhSachProjection {
     Long getMaDonHang();
     Long getMaKhachHang();
     String getTenKhachHang();
-    String getEmailKhachHang();
     String getSoDienThoaiKhachHang();
 
     Long getMaDonThuoc();

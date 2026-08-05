@@ -3,6 +3,10 @@ import NhaSanXuatTable from "../components/NhaSanXuatTable";
 import useDanhSachNhaSanXuat from "../hooks/useDanhSachNhaSanXuat";
 import useFormNhaSanXuat from "../hooks/useFormNhaSanXuat";
 import useTrangThaiNhaSanXuat from "../hooks/useTrangThaiNhaSanXuat";
+import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyNhaSanXuatPage() {
   const {
@@ -31,26 +35,16 @@ function QuanLyNhaSanXuatPage() {
   });
 
   return (
-    <div>
-      <div className="page-header">
-        <div>
-          <h1>Quản lý nhà sản xuất</h1>
-
-          <p>
-            Quản trị viên theo dõi thông tin, quốc gia,
-            địa chỉ và trạng thái của nhà sản xuất.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="primary-button"
+    <div className="ql-page">
+      <TieuDeTrangQuanLy
+        tieuDe="Quản lý nhà sản xuất"
+        moTa="Theo dõi thông tin, quốc gia, địa chỉ và trạng thái của nhà sản xuất"
+      >
+        <NutThaoTacChinh
+          nhan="Thêm nhà sản xuất"
           onClick={moFormThem}
-        >
-          <i className="bi bi-plus-circle" />
-          Thêm nhà sản xuất
-        </button>
-      </div>
+        />
+      </TieuDeTrangQuanLy>
 
       <NhaSanXuatFormModal
         isOpen={hienForm}
@@ -59,16 +53,26 @@ function QuanLyNhaSanXuatPage() {
         onSuccess={xuLyLuuThanhCong}
       />
 
-      <NhaSanXuatTable
-        danhSachNhaSanXuat={danhSachNhaSanXuat}
-        loading={loading}
-        loi={loi}
-        maNhaSanXuatDangXuLy={
-          maNhaSanXuatDangXuLy
+      <KhungDanhSachQuanLy
+        thongBaoLoi={loi ?? undefined}
+        phanTrang={
+          <div className="ql-list-summary">
+            Tổng cộng{" "}
+            <strong>{danhSachNhaSanXuat.length}</strong>{" "}
+            nhà sản xuất
+          </div>
         }
-        onSua={moFormSua}
-        onDoiTrangThai={xuLyDoiTrangThai}
-      />
+      >
+        {!loi && (
+          <NhaSanXuatTable
+            danhSachNhaSanXuat={danhSachNhaSanXuat}
+            loading={loading}
+            maNhaSanXuatDangXuLy={maNhaSanXuatDangXuLy}
+            onSua={moFormSua}
+            onDoiTrangThai={xuLyDoiTrangThai}
+          />
+        )}
+      </KhungDanhSachQuanLy>
     </div>
   );
 }

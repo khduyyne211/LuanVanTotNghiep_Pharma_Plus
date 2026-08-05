@@ -24,10 +24,10 @@ public class SanPhamResponse {
 
     private String tenSanPham;
     private String hinhAnh;
-    private BigDecimal giaBan;
     private Boolean laThuocKeDon;
     private Boolean trangThaiSanPham;
     private String moTaNgan;
+    private String moTa;
     private LocalDateTime ngayTao;
 
     private List<DonViSanPhamResponse> danhSachDonViSanPham;

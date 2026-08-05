@@ -3,6 +3,8 @@ package com.pharma.backend.dto.khuyenmai;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.pharma.backend.enums.khuyenmai.KieuGiamGia;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,9 +15,9 @@ public class KhuyenMaiResponse {
     private Long maKhuyenMai;
     private String tenChuongTrinh;
     private String loaiKhuyenMai;
-    private BigDecimal giamGia;
+    private KieuGiamGia kieuGiamGia;
     private BigDecimal giaTriGiam;
     private LocalDateTime thoiGianBatDau;
     private LocalDateTime thoiGianKetThuc;
-    private String trangThaiKhuyenMai;
+    private Boolean trangThai;
 }

@@ -120,10 +120,10 @@ public class SanPhamService {
                 .tenNhaSanXuat(sanPham.getNhaSanXuat() != null ? sanPham.getNhaSanXuat().getTenNhaSanXuat() : null)
                 .tenSanPham(sanPham.getTenSanPham())
                 .hinhAnh(sanPham.getHinhAnh())
-                .giaBan(sanPham.getGiaBan())
                 .laThuocKeDon(sanPham.getLaThuocKeDon())
                 .trangThaiSanPham(sanPham.getTrangThaiSanPham())
                 .moTaNgan(sanPham.getMoTaNgan())
+                .moTa(sanPham.getMoTa())
                 .ngayTao(sanPham.getNgayTao())
                 .danhSachDonViSanPham(
                         donViSanPhamService.layDanhSachDonViTheoSanPham(maSanPham)
@@ -148,9 +148,9 @@ public class SanPhamService {
         sanPham.setNhaSanXuat(nhaSanXuat);
         sanPham.setTenSanPham(request.getTenSanPham());
         sanPham.setHinhAnh(request.getHinhAnh());
-        sanPham.setGiaBan(request.getGiaBan() != null ? request.getGiaBan() : BigDecimal.ZERO);
         sanPham.setLaThuocKeDon(request.getLaThuocKeDon() != null ? request.getLaThuocKeDon() : false);
         sanPham.setMoTaNgan(request.getMoTaNgan());
+        sanPham.setMoTa(request.getMoTa());
         sanPham.setTrangThaiSanPham(true);
 
         SanPham saved = sanPhamRepository.save(sanPham);
@@ -179,10 +179,9 @@ public class SanPhamService {
         sanPham.setNhaSanXuat(nhaSanXuat);
         sanPham.setTenSanPham(request.getTenSanPham());
         sanPham.setHinhAnh(request.getHinhAnh());
-        sanPham.setGiaBan(request.getGiaBan() != null ? request.getGiaBan() : BigDecimal.ZERO);
         sanPham.setLaThuocKeDon(request.getLaThuocKeDon() != null ? request.getLaThuocKeDon() : false);
         sanPham.setMoTaNgan(request.getMoTaNgan());
-
+        sanPham.setMoTa(request.getMoTa());
         SanPham updated = sanPhamRepository.save(sanPham);
 
         return toResponse(updated);
@@ -242,10 +241,10 @@ public class SanPhamService {
                 .tenNhaSanXuat(nhaSanXuat != null ? nhaSanXuat.getTenNhaSanXuat() : null)
                 .tenSanPham(sanPham.getTenSanPham())
                 .hinhAnh(sanPham.getHinhAnh())
-                .giaBan(sanPham.getGiaBan())
                 .laThuocKeDon(sanPham.getLaThuocKeDon())
                 .trangThaiSanPham(sanPham.getTrangThaiSanPham())
                 .moTaNgan(sanPham.getMoTaNgan())
+                .moTa(sanPham.getMoTa())
                 .ngayTao(sanPham.getNgayTao())
                 .build();
     }

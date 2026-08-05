@@ -3,42 +3,42 @@ package com.pharma.backend.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.pharma.backend.dto.nhasanxuat.NhaSanXuatRequest;
-import com.pharma.backend.dto.nhasanxuat.NhaSanXuatResponse;
 import com.pharma.backend.dto.voucherdonhang.VoucherDonHangResponse;
-import com.pharma.backend.entity.NhaSanXuat;
 import com.pharma.backend.entity.VoucherDonHang;
 import com.pharma.backend.repository.VoucherDonHangRepository;
 
 import lombok.RequiredArgsConstructor;
 
-
 @Service
 @RequiredArgsConstructor
 public class VoucherDonHangService {
-    private final VoucherDonHangRepository repo;
 
-    public List<VoucherDonHangResponse> layDanhSachVoucher(){
-        return repo.findAll()
-                        .stream()
-                        .map(this::toResponse)
-                        .toList();
+    private final VoucherDonHangRepository voucherDonHangRepository;
+
+    @Transactional(readOnly = true)
+    public List<VoucherDonHangResponse> layDanhSachVoucher() {
+        return voucherDonHangRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
-    private VoucherDonHangResponse toResponse(VoucherDonHang v) {
+
+    private VoucherDonHangResponse toResponse(VoucherDonHang voucher) {
         return VoucherDonHangResponse.builder()
-                                    .maVoucher(v.getMaVoucher())
-                                    .maGiamGia(v.getMaGiamGia())
-                                    .tenVoucher(v.getTenVoucher())
-                                    .loaiGiamGia(v.getLoaiGiamGia())
-                                    .giaTriGiam(v.getGiaTriGiam())
-                                    .soTienGiamToiDa(v.getSoTienGiamToiDa())
-                                    .donGiaToiThieu(v.getDonGiaToiThieu())
-                                    .thoiGianBatDau(v.getThoiGianBatDau())
-                                    .thoiGianKetThuc(v.getThoiGianKetThuc())
-                                    .soLuongSuDung(v.getSoLuongSuDung())
-                                    .soLuongDaSuDung(v.getSoLuongDaSuDung())
-                                    .trangThai(v.getTrangThai())
-                                    .build();
+                .maVoucher(voucher.getMaVoucher())
+                .maGiamGia(voucher.getMaGiamGia())
+                .tenVoucher(voucher.getTenVoucher())
+                .loaiGiamGia(voucher.getLoaiGiamGia())
+                .giaTriGiam(voucher.getGiaTriGiam())
+                .soTienGiamToiDa(voucher.getSoTienGiamToiDa())
+                .donGiaToiThieu(voucher.getDonGiaToiThieu())
+                .thoiGianBatDau(voucher.getThoiGianBatDau())
+                .thoiGianKetThuc(voucher.getThoiGianKetThuc())
+                .soLuongSuDung(voucher.getSoLuongSuDung())
+                .soLuongDaSuDung(voucher.getSoLuongDaSuDung())
+                .trangThai(voucher.getTrangThai())
+                .build();
     }
 }
