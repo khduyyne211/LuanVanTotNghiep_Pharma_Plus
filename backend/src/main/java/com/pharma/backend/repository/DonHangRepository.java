@@ -1,7 +1,6 @@
 package com.pharma.backend.repository;
 
-import jakarta.persistence.LockModeType;
-
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +14,11 @@ import org.springframework.data.repository.query.Param;
 import com.pharma.backend.dto.donhang.DonHangChiTietProjection;
 import com.pharma.backend.dto.donhang.DonHangDanhSachProjection;
 import com.pharma.backend.entity.DonHang;
+import com.pharma.backend.enums.donhang.PhuongThucThanhToan;
+import com.pharma.backend.enums.donhang.TrangThaiDonHang;
+import com.pharma.backend.enums.donhang.TrangThaiThanhToan;
+
+import jakarta.persistence.LockModeType;
 
 public interface DonHangRepository extends JpaRepository<DonHang, Long> {
 
@@ -215,4 +219,27 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             @Param("maDonHang") Long maDonHang
     );
 
+    @Query("""
+            SELECT dh.maDonHang
+            FROM DonHang dh
+            WHERE dh.phuongThucThanhToan = :phuongThucThanhToan
+            AND dh.trangThaiDonHang = :trangThaiDonHang
+            AND dh.trangThaiThanhToan = :trangThaiThanhToan
+            AND dh.ngayDatHang IS NOT NULL
+            AND dh.ngayDatHang <= :thoiDiemGioiHan
+            ORDER BY dh.maDonHang ASC
+            """)
+    List<Long> timMaDonHangZaloPayChoThanhToanQuaHan(
+            @Param("phuongThucThanhToan")
+            PhuongThucThanhToan phuongThucThanhToan,
+
+            @Param("trangThaiDonHang")
+            TrangThaiDonHang trangThaiDonHang,
+
+            @Param("trangThaiThanhToan")
+            TrangThaiThanhToan trangThaiThanhToan,
+
+            @Param("thoiDiemGioiHan")
+            LocalDateTime thoiDiemGioiHan
+    );
 }
