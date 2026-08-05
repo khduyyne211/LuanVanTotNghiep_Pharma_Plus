@@ -64,9 +64,7 @@ export const layChiTietSanPhamDayDu = (maSanPham:number) =>{
     );
 };
 
-export const themSanPham = (duLieu:SanPhamRequest)=>{
-    return axiosClient.post<SanPham>("/san-pham", duLieu);
-};
+
 
 export const capNhatSanPham = (ma:number,data: SanPhamRequest)=>{
     return axiosClient.put<SanPham>(`/san-pham/${ma}`, data)
@@ -126,7 +124,7 @@ export const taoSanPhamDayDu = (
   duLieu: SanPhamTaoDayDuRequest
 ) => {
   return axiosClient.post<SanPham>(
-    "/san-pham/tao-day-du",
+    "/san-pham",
     duLieu
   );
 };
