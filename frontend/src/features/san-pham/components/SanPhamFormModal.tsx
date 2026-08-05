@@ -1,48 +1,84 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+
 import type {
   DanhMucSanPhamOption,
   DonViTinhOption,
   NhaSanXuatOption,
   SanPham,
 } from "../types/SanPham";
-import "../styles/SanPhamTaoDayDuModal.css";
+import type { SanPhamRequest, SanPhamTaoMoiRequest } from "../api/sanPhamApi";
+import type { HoatChat } from "../../hoat-chat/types/HoatChat";
+
 import {
   capNhatSanPham,
   layDanhSachDanhMucSanPham,
   layDanhSachDonViTinh,
   layDanhSachNhaSanXuat,
-  taoSanPhamDayDu,
+  themSanPham,
 } from "../api/sanPhamApi";
-import type {
-  SanPhamRequest,
-  SanPhamTaoDayDuRequest,
-} from "../api/sanPhamApi";
+import { layDanhSachHoatChat } from "../../hoat-chat/api/hoatChatApi";
+import SanPhamChinhSuaModal from "./SanPhamChinhSuaModal";
 import SanPhamThongTinStep from "./form-san-pham/SanPhamThongTinStep";
 import type { SanPhamThongTinFormData } from "./form-san-pham/SanPhamThongTinStep";
+
 import SanPhamDonViStep from "./form-san-pham/SanPhamDonViStep";
 import type { SanPhamDonViFormData } from "./form-san-pham/SanPhamDonViStep";
+
 import SanPhamQuyDoiStep from "./form-san-pham/SanPhamQuyDoiStep";
 import type { SanPhamQuyDoiFormData } from "./form-san-pham/SanPhamQuyDoiStep";
 
+import SanPhamThanhPhanHoatChatStep from "./form-san-pham/SanPhamThanhPhanHoatChatStep";
+import type { SanPhamThanhPhanHoatChatFormData } from "./form-san-pham/SanPhamThanhPhanHoatChatStep";
+
+import SanPhamDuLieuChuyenMonStep from "./form-san-pham/SanPhamDuLieuChuyenMonStep";
+import type { SanPhamDuLieuChuyenMonFormData } from "./form-san-pham/SanPhamDuLieuChuyenMonStep";
+
+import "../styles/SanPhamFormModal.css";
 
 type SanPhamForm = SanPhamThongTinFormData;
 type DonViTaoMoiForm = SanPhamDonViFormData;
 type QuyDoiTaoMoiForm = SanPhamQuyDoiFormData;
+type ThanhPhanHoatChatForm = SanPhamThanhPhanHoatChatFormData;
+type DuLieuChuyenMonForm = SanPhamDuLieuChuyenMonFormData;
 
 type SanPhamFormModalProps = {
   isOpen: boolean;
   sanPhamCanSua: SanPham | null;
   onClose: () => void;
-  onSuccess: (
-    sanPhamDaLuu: SanPham,
-    laThemMoi: boolean
-  ) => Promise<void>;
+  onSuccess: (sanPhamDaLuu: SanPham, laThemMoi: boolean) => Promise<void>;
 };
 
-const taoDuLieuFormSanPham = (
-  sanPhamCanSua: SanPham | null
-): SanPhamForm => {
+const taoYeuCauDuLieuDropdown = () =>
+  Promise.all([
+    layDanhSachDanhMucSanPham(),
+    layDanhSachNhaSanXuat(),
+    layDanhSachDonViTinh(),
+    layDanhSachHoatChat(),
+  ]);
+
+let yeuCauDuLieuDropdownDangChay: ReturnType<
+  typeof taoYeuCauDuLieuDropdown
+> | null = null;
+
+const layDuLieuDropdownKhongTrung = () => {
+  if (yeuCauDuLieuDropdownDangChay) {
+    return yeuCauDuLieuDropdownDangChay;
+  }
+
+  const yeuCauHienTai = taoYeuCauDuLieuDropdown();
+  yeuCauDuLieuDropdownDangChay = yeuCauHienTai;
+
+  yeuCauHienTai.finally(() => {
+    if (yeuCauDuLieuDropdownDangChay === yeuCauHienTai) {
+      yeuCauDuLieuDropdownDangChay = null;
+    }
+  });
+
+  return yeuCauHienTai;
+};
+
+const taoDuLieuFormSanPham = (sanPhamCanSua: SanPham | null): SanPhamForm => {
   if (sanPhamCanSua) {
     return {
       maDanhMuc: String(sanPhamCanSua.maDanhMuc),
@@ -53,7 +89,6 @@ const taoDuLieuFormSanPham = (
       tenSanPham: sanPhamCanSua.tenSanPham,
       hinhAnh: sanPhamCanSua.hinhAnh || "",
       moTaNgan: sanPhamCanSua.moTaNgan || "",
-      giaBan: String(sanPhamCanSua.giaBan),
       laThuocKeDon: sanPhamCanSua.laThuocKeDon,
     };
   }
@@ -64,7 +99,6 @@ const taoDuLieuFormSanPham = (
     tenSanPham: "",
     hinhAnh: "",
     moTaNgan: "",
-    giaBan: "",
     laThuocKeDon: false,
   };
 };
@@ -77,14 +111,43 @@ const taoDonViMacDinh = (): DonViTaoMoiForm => ({
   choPhepNhap: true,
 });
 
-function SanPhamFormModal(props: SanPhamFormModalProps) {
+const taoThanhPhanHoatChatMacDinh = (): ThanhPhanHoatChatForm => ({
+  maHoatChat: "",
+  hamLuong: "",
+  donViHamLuong: "",
+  vaiTroHoatChat: "",
+  ghiChu: "",
+});
+
+const taoDuLieuChuyenMonMacDinh = (): DuLieuChuyenMonForm => ({
+  dangBaoChe: "",
+  phanLoaiThuoc: "",
+  congDungThamKhao: "",
+  cachDungThamKhao: "",
+  canhBaoAnToan: "",
+});
+
+function SanPhamFormModal(
+  props: SanPhamFormModalProps,
+) {
   if (!props.isOpen) {
     return null;
   }
 
+  if (props.sanPhamCanSua) {
+    return (
+      <SanPhamChinhSuaModal
+        key={props.sanPhamCanSua.maSanPham}
+        sanPhamCanSua={props.sanPhamCanSua}
+        onClose={props.onClose}
+        onSuccess={props.onSuccess}
+      />
+    );
+  }
+
   return (
     <SanPhamFormNoiDung
-      key={props.sanPhamCanSua?.maSanPham ?? "them-moi"}
+      key="them-moi"
       {...props}
     />
   );
@@ -99,16 +162,22 @@ function SanPhamFormNoiDung({
 
   const [buocHienTai, setBuocHienTai] = useState(1);
   const [formData, setFormData] = useState<SanPhamForm>(() =>
-    taoDuLieuFormSanPham(sanPhamCanSua)
+    taoDuLieuFormSanPham(sanPhamCanSua),
   );
 
-  const [danhSachDonVi, setDanhSachDonVi] = useState<
-    DonViTaoMoiForm[]
-  >(() => [taoDonViMacDinh()]);
+  const [danhSachDonVi, setDanhSachDonVi] = useState<DonViTaoMoiForm[]>(() => [
+    taoDonViMacDinh(),
+  ]);
 
-  const [danhSachQuyDoi, setDanhSachQuyDoi] = useState<
-    QuyDoiTaoMoiForm[]
-  >([]);
+  const [danhSachQuyDoi, setDanhSachQuyDoi] = useState<QuyDoiTaoMoiForm[]>([]);
+
+  const [danhSachThanhPhanHoatChat, setDanhSachThanhPhanHoatChat] = useState<
+    ThanhPhanHoatChatForm[]
+  >(() => [taoThanhPhanHoatChatMacDinh()]);
+
+  const [duLieuChuyenMon, setDuLieuChuyenMon] = useState<DuLieuChuyenMonForm>(
+    taoDuLieuChuyenMonMacDinh,
+  );
 
   const [danhSachDanhMuc, setDanhSachDanhMuc] = useState<
     DanhMucSanPhamOption[]
@@ -118,9 +187,11 @@ function SanPhamFormNoiDung({
     NhaSanXuatOption[]
   >([]);
 
-  const [danhSachDonViTinh, setDanhSachDonViTinh] = useState<
-    DonViTinhOption[]
-  >([]);
+  const [danhSachDonViTinh, setDanhSachDonViTinh] = useState<DonViTinhOption[]>(
+    [],
+  );
+
+  const [danhSachHoatChat, setDanhSachHoatChat] = useState<HoatChat[]>([]);
 
   const [dangLuu, setDangLuu] = useState(false);
 
@@ -133,11 +204,9 @@ function SanPhamFormNoiDung({
           danhMucResponse,
           nhaSanXuatResponse,
           donViTinhResponse,
-        ] = await Promise.all([
-          layDanhSachDanhMucSanPham(),
-          layDanhSachNhaSanXuat(),
-          layDanhSachDonViTinh(),
-        ]);
+          hoatChatResponse,
+        ] = await layDuLieuDropdownKhongTrung();
+
         if (daHuy) {
           return;
         }
@@ -145,14 +214,16 @@ function SanPhamFormNoiDung({
         setDanhSachDanhMuc(danhMucResponse.data);
         setDanhSachNhaSanXuat(nhaSanXuatResponse.data);
         setDanhSachDonViTinh(donViTinhResponse.data);
+        setDanhSachHoatChat(hoatChatResponse.data);
       } catch (error) {
         if (daHuy) {
           return;
         }
 
         console.error("Lỗi khi tải dữ liệu form sản phẩm:", error);
+
         alert(
-          "Không thể tải danh mục, nhà sản xuất hoặc đơn vị tính"
+          "Không thể tải danh mục, nhà sản xuất, đơn vị tính hoặc hoạt chất",
         );
       }
     };
@@ -166,7 +237,7 @@ function SanPhamFormNoiDung({
 
   const donViTinhDangDung = useMemo(
     () => danhSachDonViTinh.filter((donVi) => donVi.trangThai),
-    [danhSachDonViTinh]
+    [danhSachDonViTinh],
   );
 
   const donViDaChon = useMemo(
@@ -177,18 +248,16 @@ function SanPhamFormNoiDung({
           maDonViTinh: donVi.maDonViTinh,
           tenDonViTinh:
             donViTinhDangDung.find(
-              (item) =>
-                String(item.maDonViTinh) ===
-                donVi.maDonViTinh
+              (item) => String(item.maDonViTinh) === donVi.maDonViTinh,
             )?.tenDonViTinh ?? "Đơn vị",
         })),
-    [danhSachDonVi, donViTinhDangDung]
+    [danhSachDonVi, donViTinhDangDung],
   );
 
   const xuLyThayDoiInput = (
     event: ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
 
@@ -198,9 +267,7 @@ function SanPhamFormNoiDung({
     }));
   };
 
-  const xuLyThayDoiCheckbox = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const xuLyThayDoiCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
 
     setFormData((duLieuCu) => ({
@@ -212,14 +279,12 @@ function SanPhamFormNoiDung({
   const capNhatDonVi = (
     index: number,
     field: keyof DonViTaoMoiForm,
-    value: string | boolean
+    value: string | boolean,
   ) => {
     setDanhSachDonVi((danhSachCu) =>
       danhSachCu.map((donVi, viTri) =>
-        viTri === index
-          ? { ...donVi, [field]: value }
-          : donVi
-      )
+        viTri === index ? { ...donVi, [field]: value } : donVi,
+      ),
     );
   };
 
@@ -228,7 +293,7 @@ function SanPhamFormNoiDung({
       danhSachCu.map((donVi, viTri) => ({
         ...donVi,
         laDonViCoSo: viTri === index,
-      }))
+      })),
     );
   };
 
@@ -252,18 +317,12 @@ function SanPhamFormNoiDung({
     }
 
     const maDonViBiXoa = danhSachDonVi[index].maDonViTinh;
-    const donViBiXoaLaCoSo =
-      danhSachDonVi[index].laDonViCoSo;
+    const donViBiXoaLaCoSo = danhSachDonVi[index].laDonViCoSo;
 
     setDanhSachDonVi((danhSachCu) => {
-      const danhSachMoi = danhSachCu.filter(
-        (_, viTri) => viTri !== index
-      );
+      const danhSachMoi = danhSachCu.filter((_, viTri) => viTri !== index);
 
-      if (
-        donViBiXoaLaCoSo &&
-        danhSachMoi.length > 0
-      ) {
+      if (donViBiXoaLaCoSo && danhSachMoi.length > 0) {
         danhSachMoi[0] = {
           ...danhSachMoi[0],
           laDonViCoSo: true,
@@ -278,8 +337,8 @@ function SanPhamFormNoiDung({
         danhSachCu.filter(
           (quyDoi) =>
             quyDoi.maDonViTinhNguon !== maDonViBiXoa &&
-            quyDoi.maDonViTinhDich !== maDonViBiXoa
-        )
+            quyDoi.maDonViTinhDich !== maDonViBiXoa,
+        ),
       );
     }
   };
@@ -287,27 +346,22 @@ function SanPhamFormNoiDung({
   const capNhatQuyDoi = (
     index: number,
     field: keyof QuyDoiTaoMoiForm,
-    value: string
+    value: string,
   ) => {
     setDanhSachQuyDoi((danhSachCu) =>
       danhSachCu.map((quyDoi, viTri) =>
-        viTri === index
-          ? { ...quyDoi, [field]: value }
-          : quyDoi
-      )
+        viTri === index ? { ...quyDoi, [field]: value } : quyDoi,
+      ),
     );
   };
 
   const themDongQuyDoi = () => {
     const maDonViCoSo =
-      danhSachDonVi.find((donVi) => donVi.laDonViCoSo)
-        ?.maDonViTinh ?? "";
+      danhSachDonVi.find((donVi) => donVi.laDonViCoSo)?.maDonViTinh ?? "";
 
     const maDonViNguon =
       danhSachDonVi.find(
-        (donVi) =>
-          donVi.maDonViTinh &&
-          donVi.maDonViTinh !== maDonViCoSo
+        (donVi) => donVi.maDonViTinh && donVi.maDonViTinh !== maDonViCoSo,
       )?.maDonViTinh ?? "";
 
     setDanhSachQuyDoi((danhSachCu) => [
@@ -323,8 +377,48 @@ function SanPhamFormNoiDung({
 
   const xoaDongQuyDoi = (index: number) => {
     setDanhSachQuyDoi((danhSachCu) =>
-      danhSachCu.filter((_, viTri) => viTri !== index)
+      danhSachCu.filter((_, viTri) => viTri !== index),
     );
+  };
+
+  const capNhatThanhPhanHoatChat = (
+    index: number,
+    field: keyof ThanhPhanHoatChatForm,
+    value: string,
+  ) => {
+    setDanhSachThanhPhanHoatChat((danhSachCu) =>
+      danhSachCu.map((thanhPhan, viTri) =>
+        viTri === index ? { ...thanhPhan, [field]: value } : thanhPhan,
+      ),
+    );
+  };
+
+  const themDongThanhPhanHoatChat = () => {
+    setDanhSachThanhPhanHoatChat((danhSachCu) => [
+      ...danhSachCu,
+      taoThanhPhanHoatChatMacDinh(),
+    ]);
+  };
+
+  const xoaDongThanhPhanHoatChat = (index: number) => {
+    if (danhSachThanhPhanHoatChat.length === 1) {
+      alert("Sản phẩm phải có ít nhất một thành phần hoạt chất");
+      return;
+    }
+
+    setDanhSachThanhPhanHoatChat((danhSachCu) =>
+      danhSachCu.filter((_, viTri) => viTri !== index),
+    );
+  };
+
+  const capNhatDuLieuChuyenMon = (
+    field: keyof DuLieuChuyenMonForm,
+    value: string,
+  ) => {
+    setDuLieuChuyenMon((duLieuCu) => ({
+      ...duLieuCu,
+      [field]: value,
+    }));
   };
 
   const kiemTraThongTinSanPham = () => {
@@ -335,14 +429,6 @@ function SanPhamFormNoiDung({
 
     if (!formData.tenSanPham.trim()) {
       alert("Vui lòng nhập tên sản phẩm");
-      return false;
-    }
-
-    if (
-      !formData.giaBan ||
-      Number(formData.giaBan) <= 0
-    ) {
-      alert("Giá bán mặc định phải lớn hơn 0");
       return false;
     }
 
@@ -377,12 +463,9 @@ function SanPhamFormNoiDung({
 
       if (
         donVi.choPhepBan &&
-        (!donVi.giaBanTheoDonVi ||
-          Number(donVi.giaBanTheoDonVi) <= 0)
+        (!donVi.giaBanTheoDonVi || Number(donVi.giaBanTheoDonVi) <= 0)
       ) {
-        alert(
-          "Đơn vị được phép bán phải có giá bán lớn hơn 0"
-        );
+        alert("Đơn vị được phép bán phải có giá bán lớn hơn 0");
         return false;
       }
     }
@@ -396,34 +479,21 @@ function SanPhamFormNoiDung({
   };
 
   const kiemTraDanhSachQuyDoi = () => {
-    if (
-      danhSachDonVi.length >= 2 &&
-      danhSachQuyDoi.length === 0
-    ) {
-      alert(
-        "Sản phẩm có từ hai đơn vị phải có ít nhất một quy đổi"
-      );
+    if (danhSachDonVi.length >= 2 && danhSachQuyDoi.length === 0) {
+      alert("Sản phẩm có từ hai đơn vị phải có ít nhất một quy đổi");
       return false;
     }
 
     const capQuyDoiDaChon = new Set<string>();
 
     for (const quyDoi of danhSachQuyDoi) {
-      if (
-        !quyDoi.maDonViTinhNguon ||
-        !quyDoi.maDonViTinhDich
-      ) {
+      if (!quyDoi.maDonViTinhNguon || !quyDoi.maDonViTinhDich) {
         alert("Vui lòng chọn đầy đủ đơn vị nguồn và đích");
         return false;
       }
 
-      if (
-        quyDoi.maDonViTinhNguon ===
-        quyDoi.maDonViTinhDich
-      ) {
-        alert(
-          "Đơn vị nguồn và đơn vị đích không được giống nhau"
-        );
+      if (quyDoi.maDonViTinhNguon === quyDoi.maDonViTinhDich) {
+        alert("Đơn vị nguồn và đơn vị đích không được giống nhau");
         return false;
       }
 
@@ -438,8 +508,7 @@ function SanPhamFormNoiDung({
       }
 
       const capQuyDoi =
-        `${quyDoi.maDonViTinhNguon}-` +
-        `${quyDoi.maDonViTinhDich}`;
+        `${quyDoi.maDonViTinhNguon}-` + `${quyDoi.maDonViTinhDich}`;
 
       if (capQuyDoiDaChon.has(capQuyDoi)) {
         alert("Không được khai báo trùng cùng một quy đổi");
@@ -447,6 +516,70 @@ function SanPhamFormNoiDung({
       }
 
       capQuyDoiDaChon.add(capQuyDoi);
+    }
+
+    return true;
+  };
+
+  const kiemTraDanhSachThanhPhanHoatChat = () => {
+    if (danhSachThanhPhanHoatChat.length === 0) {
+      alert("Sản phẩm phải có ít nhất một thành phần hoạt chất");
+      return false;
+    }
+
+    const maHoatChatDaChon = new Set<string>();
+
+    for (const thanhPhan of danhSachThanhPhanHoatChat) {
+      if (!thanhPhan.maHoatChat) {
+        alert("Vui lòng chọn hoạt chất cho tất cả các dòng");
+        return false;
+      }
+
+      if (maHoatChatDaChon.has(thanhPhan.maHoatChat)) {
+        alert("Không được chọn trùng hoạt chất");
+        return false;
+      }
+
+      maHoatChatDaChon.add(thanhPhan.maHoatChat);
+
+      if (!thanhPhan.hamLuong || Number(thanhPhan.hamLuong) <= 0) {
+        alert("Hàm lượng hoạt chất phải lớn hơn 0");
+        return false;
+      }
+
+      if (!thanhPhan.donViHamLuong.trim()) {
+        alert("Đơn vị hàm lượng không được để trống");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const kiemTraDuLieuChuyenMon = () => {
+    if (!duLieuChuyenMon.dangBaoChe.trim()) {
+      alert("Vui lòng nhập dạng bào chế");
+      return false;
+    }
+
+    if (!duLieuChuyenMon.phanLoaiThuoc.trim()) {
+      alert("Vui lòng nhập phân loại thuốc");
+      return false;
+    }
+
+    if (!duLieuChuyenMon.congDungThamKhao.trim()) {
+      alert("Vui lòng nhập công dụng tham khảo");
+      return false;
+    }
+
+    if (!duLieuChuyenMon.cachDungThamKhao.trim()) {
+      alert("Vui lòng nhập cách dùng tham khảo");
+      return false;
+    }
+
+    if (!duLieuChuyenMon.canhBaoAnToan.trim()) {
+      alert("Vui lòng nhập cảnh báo an toàn");
+      return false;
     }
 
     return true;
@@ -463,20 +596,13 @@ function SanPhamFormNoiDung({
       return;
     }
 
-    if (
-      danhSachDonVi.length >= 2 &&
-      danhSachQuyDoi.length === 0
-    ) {
+    if (danhSachDonVi.length >= 2 && danhSachQuyDoi.length === 0) {
       const maDonViCoSo =
-        danhSachDonVi.find(
-          (donVi) => donVi.laDonViCoSo
-        )?.maDonViTinh ?? "";
+        danhSachDonVi.find((donVi) => donVi.laDonViCoSo)?.maDonViTinh ?? "";
 
       const maDonViNguon =
         danhSachDonVi.find(
-          (donVi) =>
-            donVi.maDonViTinh &&
-            donVi.maDonViTinh !== maDonViCoSo
+          (donVi) => donVi.maDonViTinh && donVi.maDonViTinh !== maDonViCoSo,
         )?.maDonViTinh ?? "";
 
       setDanhSachQuyDoi([
@@ -492,21 +618,28 @@ function SanPhamFormNoiDung({
     setBuocHienTai(3);
   };
 
+  const sangBuoc4 = () => {
+    if (kiemTraDanhSachQuyDoi()) {
+      setBuocHienTai(4);
+    }
+  };
+
+  const sangBuoc5 = () => {
+    if (kiemTraDanhSachThanhPhanHoatChat()) {
+      setBuocHienTai(5);
+    }
+  };
+
   const taoThongTinSanPhamGuiLen = (): SanPhamRequest => ({
     maDanhMuc: Number(formData.maDanhMuc),
-    maNhaSanXuat: formData.maNhaSanXuat
-      ? Number(formData.maNhaSanXuat)
-      : null,
+    maNhaSanXuat: formData.maNhaSanXuat ? Number(formData.maNhaSanXuat) : null,
     tenSanPham: formData.tenSanPham.trim(),
     hinhAnh: formData.hinhAnh.trim() || null,
-    giaBan: Number(formData.giaBan),
     laThuocKeDon: formData.laThuocKeDon,
     moTaNgan: formData.moTaNgan.trim() || null,
   });
 
-  const xuLyCapNhatSanPham = async (
-    event: FormEvent<HTMLFormElement>
-  ) => {
+  const xuLyCapNhatSanPham = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!sanPhamCanSua || !kiemTraThongTinSanPham()) {
@@ -518,7 +651,7 @@ function SanPhamFormNoiDung({
 
       const response = await capNhatSanPham(
         sanPhamCanSua.maSanPham,
-        taoThongTinSanPhamGuiLen()
+        taoThongTinSanPhamGuiLen(),
       );
 
       await onSuccess(response.data, false);
@@ -532,17 +665,20 @@ function SanPhamFormNoiDung({
     }
   };
 
-  const xuLyTaoSanPhamDayDu = async () => {
+  const xuLyThemSanPham = async () => {
     if (
       !kiemTraThongTinSanPham() ||
       !kiemTraDanhSachDonVi() ||
-      !kiemTraDanhSachQuyDoi()
+      !kiemTraDanhSachQuyDoi() ||
+      !kiemTraDanhSachThanhPhanHoatChat() ||
+      !kiemTraDuLieuChuyenMon()
     ) {
       return;
     }
 
-    const duLieuGuiLen: SanPhamTaoDayDuRequest = {
+    const duLieuGuiLen: SanPhamTaoMoiRequest = {
       thongTinSanPham: taoThongTinSanPhamGuiLen(),
+
       danhSachDonVi: danhSachDonVi.map((donVi) => ({
         maDonViTinh: Number(donVi.maDonViTinh),
         giaBanTheoDonVi: donVi.giaBanTheoDonVi
@@ -552,32 +688,44 @@ function SanPhamFormNoiDung({
         choPhepBan: donVi.choPhepBan,
         choPhepNhap: donVi.choPhepNhap,
       })),
+
       danhSachQuyDoi: danhSachQuyDoi.map((quyDoi) => ({
-        maDonViTinhNguon: Number(
-          quyDoi.maDonViTinhNguon
-        ),
+        maDonViTinhNguon: Number(quyDoi.maDonViTinhNguon),
         soLuongNguon: Number(quyDoi.soLuongNguon),
-        maDonViTinhDich: Number(
-          quyDoi.maDonViTinhDich
-        ),
+        maDonViTinhDich: Number(quyDoi.maDonViTinhDich),
         soLuongDich: Number(quyDoi.soLuongDich),
       })),
+
+      danhSachThanhPhanHoatChat: danhSachThanhPhanHoatChat.map((thanhPhan) => ({
+        maHoatChat: Number(thanhPhan.maHoatChat),
+        hamLuong: Number(thanhPhan.hamLuong),
+        donViHamLuong: thanhPhan.donViHamLuong.trim(),
+        vaiTroHoatChat: thanhPhan.vaiTroHoatChat.trim() || null,
+        ghiChu: thanhPhan.ghiChu.trim() || null,
+      })),
+
+      duLieuChuyenMonThuoc: {
+        dangBaoChe: duLieuChuyenMon.dangBaoChe.trim(),
+        phanLoaiThuoc: duLieuChuyenMon.phanLoaiThuoc.trim(),
+        congDungThamKhao: duLieuChuyenMon.congDungThamKhao.trim(),
+        cachDungThamKhao: duLieuChuyenMon.cachDungThamKhao.trim(),
+        canhBaoAnToan: duLieuChuyenMon.canhBaoAnToan.trim(),
+      },
     };
 
     try {
       setDangLuu(true);
 
-      const response = await taoSanPhamDayDu(duLieuGuiLen);
+      const response = await themSanPham(duLieuGuiLen);
+
       await onSuccess(response.data, true);
       onClose();
-      alert(
-        "Đã tạo sản phẩm, đơn vị sản phẩm và quy đổi thành công"
-      );
+
+      alert("Tạo sản phẩm và dữ liệu chuyên môn thành công");
     } catch (error) {
-      console.error("Lỗi khi tạo sản phẩm đầy đủ:", error);
-      alert(
-        "Tạo sản phẩm thất bại. Toàn bộ dữ liệu đã được rollback."
-      );
+      console.error("Lỗi khi tạo sản phẩm:", error);
+
+      alert("Tạo sản phẩm thất bại. Toàn bộ dữ liệu đã được rollback.");
     } finally {
       setDangLuu(false);
     }
@@ -588,22 +736,19 @@ function SanPhamFormNoiDung({
       <div className="modal-card product-full-form-modal">
         <div className="modal-header">
           <div>
-            <h2>
-              {laThemMoi
-                ? "Thêm sản phẩm đầy đủ"
-                : "Cập nhật sản phẩm"}
-            </h2>
+            <h2>{laThemMoi ? "Thêm sản phẩm" : "Cập nhật sản phẩm"}</h2>
+
             <p>
               {laThemMoi
-                ? "Nhập thông tin, đơn vị và quy đổi trong cùng một lần tạo."
+                ? "Nhập đầy đủ thông tin sản phẩm và dữ liệu chuyên môn thuốc."
                 : "Cập nhật thông tin chung của sản phẩm."}
             </p>
           </div>
 
           <button
+            type="button"
             className="modal-close-button"
             onClick={onClose}
-            type="button"
             title="Đóng"
             aria-label="Đóng"
             disabled={dangLuu}
@@ -614,40 +759,24 @@ function SanPhamFormNoiDung({
 
         {laThemMoi && (
           <div className="product-stepper">
-            <div
-              className={
-                buocHienTai >= 1
-                  ? "product-step active"
-                  : "product-step"
-              }
-            >
-              <span>1</span>
-              Thông tin
-            </div>
-
-            <div
-              className={
-                buocHienTai >= 2
-                  ? "product-step active"
-                  : "product-step"
-              }
-            >
-              <span>2</span>
-              Đơn vị
-            </div>
-
-            <div
-              className={
-                buocHienTai >= 3
-                  ? "product-step active"
-                  : "product-step"
-              }
-            >
-              <span>3</span>
-              Quy đổi
-            </div>
+            {["Thông tin", "Đơn vị", "Quy đổi", "Hoạt chất", "Chuyên môn"].map(
+              (nhan, index) => (
+                <div
+                  key={nhan}
+                  className={
+                    buocHienTai >= index + 1
+                      ? "product-step active"
+                      : "product-step"
+                  }
+                >
+                  <span>{index + 1}</span>
+                  {nhan}
+                </div>
+              ),
+            )}
           </div>
         )}
+
         {buocHienTai === 1 && (
           <SanPhamThongTinStep
             formData={formData}
@@ -668,6 +797,7 @@ function SanPhamFormNoiDung({
             onClose={onClose}
           />
         )}
+
         {laThemMoi && buocHienTai === 2 && (
           <SanPhamDonViStep
             danhSachDonVi={danhSachDonVi}
@@ -690,9 +820,29 @@ function SanPhamFormNoiDung({
             onThemDongQuyDoi={themDongQuyDoi}
             onXoaDongQuyDoi={xoaDongQuyDoi}
             onQuayLai={() => setBuocHienTai(2)}
-            onHoanTat={() =>
-              void xuLyTaoSanPhamDayDu()
-            }
+            onHoanTat={sangBuoc4}
+          />
+        )}
+
+        {laThemMoi && buocHienTai === 4 && (
+          <SanPhamThanhPhanHoatChatStep
+            danhSachThanhPhan={danhSachThanhPhanHoatChat}
+            danhSachHoatChat={danhSachHoatChat}
+            onCapNhatThanhPhan={capNhatThanhPhanHoatChat}
+            onThemDong={themDongThanhPhanHoatChat}
+            onXoaDong={xoaDongThanhPhanHoatChat}
+            onQuayLai={() => setBuocHienTai(3)}
+            onTiepTuc={sangBuoc5}
+          />
+        )}
+
+        {laThemMoi && buocHienTai === 5 && (
+          <SanPhamDuLieuChuyenMonStep
+            formData={duLieuChuyenMon}
+            dangLuu={dangLuu}
+            onCapNhat={capNhatDuLieuChuyenMon}
+            onQuayLai={() => setBuocHienTai(4)}
+            onHoanTat={() => void xuLyThemSanPham()}
           />
         )}
       </div>

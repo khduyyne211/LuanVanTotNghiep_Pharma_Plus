@@ -1,6 +1,5 @@
 package com.pharma.backend.dto.sanpham;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,5 +30,10 @@ public class SanPhamResponse {
     private LocalDateTime ngayTao;
 
     private List<DonViSanPhamResponse> danhSachDonViSanPham;
+
     private List<QuyDoiDonViResponse> danhSachQuyDoiDonVi;
+
+    private List<ThanhPhanHoatChatResponse> danhSachThanhPhanHoatChat;
+
+    private DuLieuChuyenMonThuocResponse duLieuChuyenMonThuoc;
 }

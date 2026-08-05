@@ -1,164 +1,154 @@
 import type { KeyboardEvent } from "react";
-import type{
-    DanhMucSanPhamOption,
-    NhaSanXuatOption,
+import type {
+  DanhMucSanPhamOption,
+  NhaSanXuatOption,
 } from "../types/SanPham";
 
-type SanPhamBoLocProps ={
-    keyWordInput: string;
-    laThuocKeDonFilter: string;
-    trangThaiSanPhamFilter:string;
-    maDanhMucFilter: string;
-    maNhaSanXuatFilter:string;
-    size:number;
+type SanPhamBoLocProps = {
+  keyWordInput: string;
+  laThuocKeDonFilter: string;
+  trangThaiSanPhamFilter: string;
+  maDanhMucFilter: string;
+  maNhaSanXuatFilter: string;
 
-    dsDanhmuc: DanhMucSanPhamOption[];
-    dsNSX: NhaSanXuatOption[];
+  dsDanhmuc: DanhMucSanPhamOption[];
+  dsNSX: NhaSanXuatOption[];
 
-    onKeywordInputChange: (giatri:string) => void;
-    onTimKiem: ()=>void;
-    onXoaBoLoc: ()=>void;
+  onKeywordInputChange: (giaTri: string) => void;
+  onTimKiem: () => void;
+  onXoaBoLoc: () => void;
+  onLaThuocKeDonChange: (giaTri: string) => void;
+  onTrangThaiSanPhamChange: (giaTri: string) => void;
+  onMaDanhMucChange: (giaTri: string) => void;
+  onMaNhaSanXuatChange: (giaTri: string) => void;
+};
 
-    onLaThuocKeDonChange: (giaTri: string) => void;
-    onTrangThaiSanPhamChange: (giaTri: string) => void;
-    onMaDanhMucChange: (giaTri: string) => void;
-    onMaNhaSanXuatChange: (giaTri: string) => void;
-    onSizeChange: (giaTri: number) => void;
-}
 function SanPhamBoLoc({
-    keyWordInput,
-    laThuocKeDonFilter,
-    trangThaiSanPhamFilter,
-    maDanhMucFilter,
-    maNhaSanXuatFilter,
-    size,
-    dsDanhmuc,
-    dsNSX,
-    onKeywordInputChange,
-    onTimKiem,
-    onXoaBoLoc,
-    onLaThuocKeDonChange,
-    onTrangThaiSanPhamChange,
-    onMaDanhMucChange,
-    onMaNhaSanXuatChange,
-    onSizeChange,
-}: SanPhamBoLocProps){
-    const xuLyNhanEnter = (event: KeyboardEvent<HTMLInputElement>) =>{
-        if(event.key === "Enter"){
-            onTimKiem();
-        }
-    };
-     return (
-    <div className="table-card" style={{ marginBottom: "16px" }}>
-      <div className="filter-row">
-        <div className="filter-left">
-          <input
-            type="text"
-            value={keyWordInput}
-            onChange={(event) => onKeywordInputChange(event.target.value)}
-            onKeyDown={xuLyNhanEnter}
-            placeholder="Tìm theo tên sản phẩm..."
-            className="search-input"
-          />
+  keyWordInput,
+  laThuocKeDonFilter,
+  trangThaiSanPhamFilter,
+  maDanhMucFilter,
+  maNhaSanXuatFilter,
+  dsDanhmuc,
+  dsNSX,
+  onKeywordInputChange,
+  onTimKiem,
+  onXoaBoLoc,
+  onLaThuocKeDonChange,
+  onTrangThaiSanPhamChange,
+  onMaDanhMucChange,
+  onMaNhaSanXuatChange,
+}: SanPhamBoLocProps) {
+  const xuLyNhanEnter = (
+    event: KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      onTimKiem();
+    }
+  };
 
-          <button
-            type="button"
-            className="small-button"
-            onClick={onTimKiem}
-          >
-            Tìm kiếm
-          </button>
+  return (
+    <div className="ql-filter-grid">
+      <div className="ql-filter-search">
+        <input
+          type="text"
+          className="ql-filter-control"
+          value={keyWordInput}
+          onChange={(event) =>
+            onKeywordInputChange(event.target.value)
+          }
+          onKeyDown={xuLyNhanEnter}
+          placeholder="Tìm theo tên sản phẩm..."
+        />
 
-          <button
-            type="button"
-            className="small-button"
-            onClick={onXoaBoLoc}
-          >
-            Xóa lọc
-          </button>
-        </div>
-
-        <div className="filter-right">
-          <span>Số dòng:</span>
-
-          <select
-            value={size}
-            onChange={(event) => onSizeChange(Number(event.target.value))}
-            className="page-size-select"
-          >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-          </select>
-        </div>
+        <button
+          type="button"
+          className="ql-button ql-button-primary"
+          onClick={onTimKiem}
+        >
+          <i className="bi bi-search" />
+          <span>Tìm</span>
+        </button>
       </div>
 
-      <div className="advanced-filter-row">
-        <select
-          value={laThuocKeDonFilter}
-          onChange={(event) =>
-            onLaThuocKeDonChange(event.target.value)
-          }
-          className="filter-select"
+      <select
+        className="ql-filter-control"
+        value={laThuocKeDonFilter}
+        onChange={(event) =>
+          onLaThuocKeDonChange(event.target.value)
+        }
+      >
+        <option value="">Tất cả loại thuốc</option>
+        <option value="true">Thuốc kê đơn</option>
+        <option value="false">Không kê đơn</option>
+      </select>
+
+      <select
+        className="ql-filter-control"
+        value={trangThaiSanPhamFilter}
+        onChange={(event) =>
+          onTrangThaiSanPhamChange(event.target.value)
+        }
+      >
+        <option value="">Tất cả trạng thái</option>
+        <option value="true">Đang hiển thị</option>
+        <option value="false">Đã ẩn</option>
+      </select>
+
+      <select
+        className="ql-filter-control"
+        value={maDanhMucFilter}
+        onChange={(event) =>
+          onMaDanhMucChange(event.target.value)
+        }
+      >
+        <option value="">Tất cả danh mục</option>
+
+        {dsDanhmuc
+          .filter((danhMuc) => danhMuc.trangThaiHienThi)
+          .map((danhMuc) => (
+            <option
+              key={danhMuc.maDanhMuc}
+              value={danhMuc.maDanhMuc}
+            >
+              {danhMuc.tenDanhMuc}
+            </option>
+          ))}
+      </select>
+
+      <select
+        className="ql-filter-control"
+        value={maNhaSanXuatFilter}
+        onChange={(event) =>
+          onMaNhaSanXuatChange(event.target.value)
+        }
+      >
+        <option value="">Tất cả nhà sản xuất</option>
+
+        {dsNSX
+          .filter((nhaSanXuat) => nhaSanXuat.trangThai)
+          .map((nhaSanXuat) => (
+            <option
+              key={nhaSanXuat.maNhaSanXuat}
+              value={nhaSanXuat.maNhaSanXuat}
+            >
+              {nhaSanXuat.tenNhaSanXuat}
+            </option>
+          ))}
+      </select>
+
+      <div className="ql-filter-actions">
+        <button
+          type="button"
+          className="ql-button ql-button-ghost"
+          onClick={onXoaBoLoc}
         >
-          <option value="">Tất cả loại thuốc</option>
-          <option value="true">Thuốc kê đơn</option>
-          <option value="false">Không kê đơn</option>
-        </select>
-
-        <select
-          value={trangThaiSanPhamFilter}
-          onChange={(event) =>
-            onTrangThaiSanPhamChange(event.target.value)
-          }
-          className="filter-select"
-        >
-          <option value="">Tất cả trạng thái</option>
-          <option value="true">Đang bán</option>
-          <option value="false">Ngừng bán</option>
-        </select>
-
-        <select
-          value={maDanhMucFilter}
-          onChange={(event) => onMaDanhMucChange(event.target.value)}
-          className="filter-select"
-        >
-          <option value="">Tất cả danh mục</option>
-
-          {dsDanhmuc
-            .filter((danhMuc) => danhMuc.trangThaiHienThi)
-            .map((danhMuc) => (
-              <option
-                key={danhMuc.maDanhMuc}
-                value={danhMuc.maDanhMuc}
-              >
-                {danhMuc.tenDanhMuc}
-              </option>
-            ))}
-        </select>
-
-        <select
-          value={maNhaSanXuatFilter}
-          onChange={(event) =>
-            onMaNhaSanXuatChange(event.target.value)
-          }
-          className="filter-select"
-        >
-          <option value="">Tất cả nhà sản xuất</option>
-
-          {dsNSX
-            .filter((nhaSanXuat) => nhaSanXuat.trangThai)
-            .map((nhaSanXuat) => (
-              <option
-                key={nhaSanXuat.maNhaSanXuat}
-                value={nhaSanXuat.maNhaSanXuat}
-              >
-                {nhaSanXuat.tenNhaSanXuat}
-              </option>
-            ))}
-        </select>
+          <i className="bi bi-arrow-counterclockwise" />
+          <span>Xóa lọc</span>
+        </button>
       </div>
     </div>
   );
-};
+}
+
 export default SanPhamBoLoc;

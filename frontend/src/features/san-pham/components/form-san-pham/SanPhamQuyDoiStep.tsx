@@ -239,7 +239,7 @@ function SanPhamQuyDoiStep({
           <i className="bi bi-check-circle" />
           {dangLuu
             ? "Đang tạo..."
-            : "Hoàn tất tạo sản phẩm"}
+            : "Tiếp tục tạo sản phẩm"}
         </button>
       </div>
     </div>

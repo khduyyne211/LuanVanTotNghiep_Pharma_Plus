@@ -91,12 +91,6 @@ function SanPhamChiTietModal({
                 {sanPhamChiTiet.tenNhaSanXuat || "Chưa cập nhật"}
               </strong>
             </div>
-
-            <div>
-              <span>Giá bán mặc định</span>
-              <strong>{dinhDangTien(sanPhamChiTiet.giaBan)}</strong>
-            </div>
-
             <div>
               <span>Thuốc kê đơn</span>
               <strong>

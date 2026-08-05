@@ -1,13 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  layChiTietDonHang,
-  layDanhSachDonHang,
-} from "../api/donHangApi";
+import { layChiTietDonHang, layDanhSachDonHang } from "../api/donHangApi";
 import DonHangChiTietModal from "../components/DonHangChiTietModal";
-import type {
-  DonHangChiTiet,
-  DonHangDanhSach,
-} from "../types/DonHang";
+import type { DonHangChiTiet, DonHangDanhSach } from "../types/DonHang";
 import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
 import PhanTrangQuanLy from "../../../shared/components/quan-ly/PhanTrangQuanLy";
 import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
@@ -70,7 +64,12 @@ export default function QuanLyDonHangPage() {
       setFirst(data.first);
       setLast(data.last);
     } catch (error) {
-      console.error(error);
+      console.error("Không thể tải danh sách đơn hàng:", error);
+      setDanhSachDonHang([]);
+      setTotalElements(0);
+      setTotalPages(0);
+      setFirst(true);
+      setLast(true);
       setLoi("Không thể tải danh sách đơn hàng");
     } finally {
       setDangTai(false);
@@ -85,11 +84,7 @@ export default function QuanLyDonHangPage() {
   ]);
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      void taiDanhSach();
-    }, 0);
-
-    return () => window.clearTimeout(timeoutId);
+    void taiDanhSach();
   }, [taiDanhSach]);
 
   const timKiem = () => {
@@ -110,36 +105,41 @@ export default function QuanLyDonHangPage() {
     try {
       setDangTaiChiTiet(true);
       setChiTiet(null);
+
       const data = await layChiTietDonHang(maDonHang);
+
       setChiTiet(data);
     } catch (error) {
-      console.error(error);
+      console.error("Không thể tải chi tiết đơn hàng:", error);
       alert("Không thể tải chi tiết đơn hàng");
+    } finally {
       setDangTaiChiTiet(false);
-      return;
     }
-
-    setDangTaiChiTiet(false);
   };
 
   const thanhCongCu = (
     <div className="dh-filter-row">
       <div className="dh-search-box dh-list-search">
         <i className="bi bi-search" />
+
         <input
           value={keywordInput}
           onChange={(event) => setKeywordInput(event.target.value)}
           onKeyDown={(event) => {
-            if (event.key === "Enter") timKiem();
+            if (event.key === "Enter") {
+              timKiem();
+            }
           }}
           placeholder="Mã đơn, tên hoặc số điện thoại..."
         />
+
         <button type="button" onClick={timKiem}>
           Tìm
         </button>
       </div>
 
       <select
+        className="ql-filter-control"
         value={trangThaiDonHang}
         onChange={(event) => {
           setTrangThaiDonHang(event.target.value);
@@ -155,6 +155,7 @@ export default function QuanLyDonHangPage() {
       </select>
 
       <select
+        className="ql-filter-control"
         value={trangThaiThanhToan}
         onChange={(event) => {
           setTrangThaiThanhToan(event.target.value);
@@ -162,13 +163,14 @@ export default function QuanLyDonHangPage() {
         }}
       >
         <option value="">Tất cả thanh toán</option>
-        <option value="CHUA_THANH_TOAN">Chưa thanh toán</option>
+        <option value="CHO_THANH_TOAN">Chờ thanh toán</option>
         <option value="DA_THANH_TOAN">Đã thanh toán</option>
         <option value="THANH_TOAN_THAT_BAI">Thanh toán thất bại</option>
         <option value="DA_HOAN_TIEN">Đã hoàn tiền</option>
       </select>
 
       <select
+        className="ql-filter-control"
         value={trangThaiKiemDuyet}
         onChange={(event) => {
           setTrangThaiKiemDuyet(event.target.value);
@@ -206,24 +208,27 @@ export default function QuanLyDonHangPage() {
           <strong>{totalElements}</strong>
           <i className="bi bi-receipt-cutoff" />
         </div>
+
         <div className="dh-summary-card">
           <span>Đơn trên trang</span>
           <strong>{danhSachDonHang.length}</strong>
           <i className="bi bi-list-check" />
         </div>
+
         <div className="dh-summary-card">
           <span>Đơn kê đơn</span>
           <strong>
-            {danhSachDonHang.filter((don) => don.coThuocKeDon).length}
+            {danhSachDonHang.filter((donHang) => donHang.coThuocKeDon).length}
           </strong>
           <i className="bi bi-prescription2" />
         </div>
+
         <div className="dh-summary-card">
           <span>Khách vãng lai</span>
           <strong>
             {
               danhSachDonHang.filter(
-                (don) => don.loaiKhach === "VANG_LAI"
+                (donHang) => donHang.loaiKhach === "VANG_LAI",
               ).length
             }
           </strong>
@@ -265,6 +270,7 @@ export default function QuanLyDonHangPage() {
                 <th />
               </tr>
             </thead>
+
             <tbody>
               {dangTai ? (
                 <tr>
@@ -285,6 +291,7 @@ export default function QuanLyDonHangPage() {
                       <strong>#{donHang.maDonHang}</strong>
                       <small>{hienThiTrangThai(donHang.loaiKhach)}</small>
                     </td>
+
                     <td>
                       <strong>
                         {donHang.tenKhachHang || "Khách vãng lai"}
@@ -293,15 +300,19 @@ export default function QuanLyDonHangPage() {
                         {donHang.soDienThoaiKhachHang || "Không có SĐT"}
                       </small>
                     </td>
+
                     <td>{dinhDangNgay(donHang.ngayDatHang)}</td>
+
                     <td>
                       <strong>{dinhDangTien(donHang.tongThanhToan)}</strong>
+
                       {donHang.coThuocKeDon && (
                         <small className="dh-prescription-text">
                           Thuốc kê đơn
                         </small>
                       )}
                     </td>
+
                     <td>
                       <span
                         className={`dh-badge dh-badge-${(
@@ -311,6 +322,7 @@ export default function QuanLyDonHangPage() {
                         {hienThiTrangThai(donHang.trangThaiThanhToan)}
                       </span>
                     </td>
+
                     <td>
                       <span
                         className={`dh-badge dh-badge-${donHang.trangThaiDonHang.toLowerCase()}`}
@@ -318,6 +330,7 @@ export default function QuanLyDonHangPage() {
                         {hienThiTrangThai(donHang.trangThaiDonHang)}
                       </span>
                     </td>
+
                     <td>
                       <span
                         className={`dh-badge dh-badge-${donHang.trangThaiKiemDuyet.toLowerCase()}`}
@@ -325,6 +338,7 @@ export default function QuanLyDonHangPage() {
                         {hienThiTrangThai(donHang.trangThaiKiemDuyet)}
                       </span>
                     </td>
+
                     <td>
                       <button
                         type="button"
