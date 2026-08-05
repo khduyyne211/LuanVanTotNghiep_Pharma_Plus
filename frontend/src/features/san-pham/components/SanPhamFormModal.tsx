@@ -18,7 +18,7 @@ import {
   themSanPham,
 } from "../api/sanPhamApi";
 import { layDanhSachHoatChat } from "../../hoat-chat/api/hoatChatApi";
-
+import SanPhamChinhSuaModal from "./SanPhamChinhSuaModal";
 import SanPhamThongTinStep from "./form-san-pham/SanPhamThongTinStep";
 import type { SanPhamThongTinFormData } from "./form-san-pham/SanPhamThongTinStep";
 
@@ -127,14 +127,27 @@ const taoDuLieuChuyenMonMacDinh = (): DuLieuChuyenMonForm => ({
   canhBaoAnToan: "",
 });
 
-function SanPhamFormModal(props: SanPhamFormModalProps) {
+function SanPhamFormModal(
+  props: SanPhamFormModalProps,
+) {
   if (!props.isOpen) {
     return null;
   }
 
+  if (props.sanPhamCanSua) {
+    return (
+      <SanPhamChinhSuaModal
+        key={props.sanPhamCanSua.maSanPham}
+        sanPhamCanSua={props.sanPhamCanSua}
+        onClose={props.onClose}
+        onSuccess={props.onSuccess}
+      />
+    );
+  }
+
   return (
     <SanPhamFormNoiDung
-      key={props.sanPhamCanSua?.maSanPham ?? "them-moi"}
+      key="them-moi"
       {...props}
     />
   );

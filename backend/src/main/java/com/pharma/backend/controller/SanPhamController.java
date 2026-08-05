@@ -18,7 +18,10 @@ import com.pharma.backend.dto.sanpham.SanPhamRequest;
 import com.pharma.backend.dto.sanpham.SanPhamResponse;
 import com.pharma.backend.dto.sanpham.SanPhamTaoMoiRequest;
 import com.pharma.backend.service.SanPhamService;
+import com.pharma.backend.dto.sanpham.DonViSanPhamCapNhatRequest;
+import com.pharma.backend.dto.sanpham.QuyDoiDonViCapNhatRequest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -94,6 +97,24 @@ public class SanPhamController {
                         @PathVariable Long maSanPham,
                         @RequestBody DuLieuChuyenMonThuocRequest request) {
                 return sanPhamService.capNhatDuLieuChuyenMonThuoc(
+                                maSanPham,
+                                request);
+        }
+
+        @PutMapping("/{maSanPham}/don-vi")
+        public SanPhamResponse capNhatDanhSachDonViSanPham(
+                        @PathVariable Long maSanPham,
+                        @Valid @RequestBody List<DonViSanPhamCapNhatRequest> request) {
+                return sanPhamService.capNhatDanhSachDonViSanPham(
+                                maSanPham,
+                                request);
+        }
+
+        @PutMapping("/{maSanPham}/quy-doi")
+        public SanPhamResponse capNhatDanhSachQuyDoiDonVi(
+                        @PathVariable Long maSanPham,
+                        @Valid @RequestBody List<QuyDoiDonViCapNhatRequest> request) {
+                return sanPhamService.capNhatDanhSachQuyDoiDonVi(
                                 maSanPham,
                                 request);
         }

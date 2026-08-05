@@ -35,14 +35,48 @@ export interface DonViSanPhamTaoMoiRequest {
   choPhepBan: boolean;
   choPhepNhap: boolean;
 }
+export interface DonViSanPhamCapNhatRequest {
+  maDonViSanPham: number | null;
+  maDonViTinh: number;
+  giaBanTheoDonVi: number | null;
+  laDonViCoSo: boolean;
+  choPhepBan: boolean;
+  choPhepNhap: boolean;
+  trangThai: boolean;
+}
 
+export interface QuyDoiDonViCapNhatRequest {
+  maQuyDoi: number | null;
+  maDonViNguon: number;
+  soLuongNguon: number;
+  maDonViDich: number;
+  soLuongDich: number;
+  trangThai: boolean;
+}
 export interface QuyDoiDonViTaoMoiRequest {
   maDonViTinhNguon: number;
   soLuongNguon: number;
   maDonViTinhDich: number;
   soLuongDich: number;
 }
+export interface DonViSanPhamRequest {
+  maSanPham: number;
+  maDonViTinh: number;
+  giaBanTheoDonVi: number | null;
+  laDonViCoSo: boolean;
+  choPhepBan: boolean;
+  choPhepNhap: boolean;
+}
 
+export interface QuyDoiDonViRequest {
+  maSanPham: number;
+
+  maDonViNguon: number;
+  soLuongNguon: number;
+
+  maDonViDich: number;
+  soLuongDich: number;
+}
 export interface ThanhPhanHoatChatTaoMoiRequest {
   maHoatChat: number;
   hamLuong: number;
@@ -154,5 +188,81 @@ export const themSanPham = (
   return axiosClient.post<SanPham>(
     "/san-pham",
     duLieu,
+  );
+};
+export const themDonViSanPham = (
+  request: DonViSanPhamRequest,
+) => {
+  return axiosClient.post<DonViSanPham>(
+    "/don-vi-san-pham",
+    request,
+  );
+};
+
+export const capNhatDonViSanPham = (
+  maDonViSanPham: number,
+  request: DonViSanPhamRequest,
+) => {
+  return axiosClient.put<DonViSanPham>(
+    `/don-vi-san-pham/${maDonViSanPham}`,
+    request,
+  );
+};
+
+export const themQuyDoiDonVi = (
+  request: QuyDoiDonViRequest,
+) => {
+  return axiosClient.post<QuyDoiDonVi>(
+    "/quy-doi-don-vi",
+    request,
+  );
+};
+
+export const capNhatQuyDoiDonVi = (
+  maQuyDoi: number,
+  request: QuyDoiDonViRequest,
+) => {
+  return axiosClient.put<QuyDoiDonVi>(
+    `/quy-doi-don-vi/${maQuyDoi}`,
+    request,
+  );
+};
+
+export const capNhatThanhPhanHoatChat = (
+  maSanPham: number,
+  request: ThanhPhanHoatChatTaoMoiRequest[],
+) => {
+  return axiosClient.put<SanPham>(
+    `/san-pham/${maSanPham}/thanh-phan-hoat-chat`,
+    request,
+  );
+};
+
+export const capNhatDuLieuChuyenMonThuoc = (
+  maSanPham: number,
+  request: DuLieuChuyenMonThuocRequest,
+) => {
+  return axiosClient.put<SanPham>(
+    `/san-pham/${maSanPham}/du-lieu-chuyen-mon`,
+    request,
+  );
+};
+export const capNhatDanhSachDonViSanPham = (
+  maSanPham: number,
+  request: DonViSanPhamCapNhatRequest[],
+) => {
+  return axiosClient.put<SanPham>(
+    `/san-pham/${maSanPham}/don-vi`,
+    request,
+  );
+};
+
+export const capNhatDanhSachQuyDoiDonVi = (
+  maSanPham: number,
+  request: QuyDoiDonViCapNhatRequest[],
+) => {
+  return axiosClient.put<SanPham>(
+    `/san-pham/${maSanPham}/quy-doi`,
+    request,
   );
 };

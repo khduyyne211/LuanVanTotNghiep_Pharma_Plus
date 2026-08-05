@@ -1,6 +1,7 @@
 package com.pharma.backend.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,26 +19,34 @@ import com.pharma.backend.dto.common.PhanTrangResponse;
 import com.pharma.backend.dto.donvisanpham.DonViSanPhamRequest;
 import com.pharma.backend.dto.donvisanpham.DonViSanPhamResponse;
 import com.pharma.backend.dto.quydoidonvi.QuyDoiDonViRequest;
+import com.pharma.backend.dto.sanpham.DonViSanPhamCapNhatRequest;
 import com.pharma.backend.dto.sanpham.DonViSanPhamTaoMoiRequest;
+import com.pharma.backend.dto.sanpham.DuLieuChuyenMonThuocRequest;
+import com.pharma.backend.dto.sanpham.DuLieuChuyenMonThuocResponse;
+import com.pharma.backend.dto.sanpham.QuyDoiDonViCapNhatRequest;
 import com.pharma.backend.dto.sanpham.QuyDoiDonViTaoMoiRequest;
 import com.pharma.backend.dto.sanpham.SanPhamRequest;
 import com.pharma.backend.dto.sanpham.SanPhamResponse;
-import com.pharma.backend.dto.sanpham.DuLieuChuyenMonThuocResponse;
-import com.pharma.backend.dto.sanpham.ThanhPhanHoatChatResponse;
 import com.pharma.backend.dto.sanpham.SanPhamTaoMoiRequest;
-import com.pharma.backend.entity.DanhMucSanPham;
-import com.pharma.backend.entity.NhaSanXuat;
-import com.pharma.backend.entity.SanPham;
-import com.pharma.backend.repository.DanhMucSanPhamRepository;
-import com.pharma.backend.repository.NhaSanXuatRepository;
-import com.pharma.backend.repository.SanPhamRepository;
-import com.pharma.backend.dto.sanpham.DuLieuChuyenMonThuocRequest;
+import com.pharma.backend.dto.sanpham.ThanhPhanHoatChatResponse;
 import com.pharma.backend.dto.sanpham.ThanhPhanHoatChatTaoMoiRequest;
+import com.pharma.backend.entity.DanhMucSanPham;
+import com.pharma.backend.entity.DonViSanPham;
+import com.pharma.backend.entity.DonViTinh;
 import com.pharma.backend.entity.DuLieuChuyenMonThuoc;
 import com.pharma.backend.entity.HoatChat;
+import com.pharma.backend.entity.NhaSanXuat;
+import com.pharma.backend.entity.QuyDoiDonVi;
+import com.pharma.backend.entity.SanPham;
 import com.pharma.backend.entity.ThanhPhanHoatChat;
+import com.pharma.backend.repository.DanhMucSanPhamRepository;
+import com.pharma.backend.repository.DonViSanPhamRepository;
+import com.pharma.backend.repository.DonViTinhRepository;
 import com.pharma.backend.repository.DuLieuChuyenMonThuocRepository;
 import com.pharma.backend.repository.HoatChatRepository;
+import com.pharma.backend.repository.NhaSanXuatRepository;
+import com.pharma.backend.repository.QuyDoiDonViRepository;
+import com.pharma.backend.repository.SanPhamRepository;
 import com.pharma.backend.repository.ThanhPhanHoatChatRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -54,6 +63,9 @@ public class SanPhamService {
     private final HoatChatRepository hoatChatRepository;
     private final ThanhPhanHoatChatRepository thanhPhanHoatChatRepository;
     private final DuLieuChuyenMonThuocRepository duLieuChuyenMonThuocRepository;
+    private final DonViSanPhamRepository donViSanPhamRepository;
+    private final DonViTinhRepository donViTinhRepository;
+    private final QuyDoiDonViRepository quyDoiDonViRepository;
 
     @Transactional(readOnly = true)
     public List<SanPhamResponse> layDanhSachSanPham() {
@@ -254,6 +266,367 @@ public class SanPhamService {
         SanPham updated = sanPhamRepository.save(sanPham);
 
         return toResponse(updated);
+    }
+
+    @Transactional
+    public SanPhamResponse capNhatDanhSachDonViSanPham(
+            long maSanPham,
+            List<DonViSanPhamCapNhatRequest> danhSachRequest) {
+        if (danhSachRequest == null || danhSachRequest.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Sản phẩm phải có ít nhất một đơn vị");
+        }
+
+        SanPham sanPham = sanPhamRepository.findById(maSanPham)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy sản phẩm"));
+
+        List<DonViSanPham> danhSachHienTai = donViSanPhamRepository
+                .findBySanPham_MaSanPham(maSanPham);
+
+        Map<Long, DonViSanPham> donViHienTaiTheoMa = new LinkedHashMap<>();
+
+        for (DonViSanPham donVi : danhSachHienTai) {
+            donViHienTaiTheoMa.put(
+                    donVi.getMaDonViSanPham(),
+                    donVi);
+        }
+
+        Set<Long> maBanGhiCuTrongRequest = new HashSet<>();
+        Set<Long> maDonViTinhDaChon = new HashSet<>();
+        Map<Long, Boolean> trangThaiSauCapNhat = new LinkedHashMap<>();
+        Map<Long, DonViTinh> donViTinhTheoMa = new LinkedHashMap<>();
+
+        int soDonViCoSoDangHoatDong = 0;
+
+        for (DonViSanPhamCapNhatRequest request : danhSachRequest) {
+            if (request == null) {
+                throw new IllegalArgumentException(
+                        "Dữ liệu đơn vị không hợp lệ");
+            }
+
+            if (!maDonViTinhDaChon.add(
+                    request.getMaDonViTinh())) {
+                throw new IllegalArgumentException(
+                        "Không được chọn trùng đơn vị tính");
+            }
+
+            DonViTinh donViTinh = donViTinhRepository
+                    .findById(request.getMaDonViTinh())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Không tìm thấy đơn vị tính"));
+
+            if (request.getMaDonViSanPham() == null
+                    && !Boolean.TRUE.equals(
+                            donViTinh.getTrangThai())) {
+                throw new IllegalArgumentException(
+                        "Không thể thêm đơn vị tính đang bị ẩn");
+            }
+
+            donViTinhTheoMa.put(
+                    request.getMaDonViTinh(),
+                    donViTinh);
+
+            boolean dangHoatDong = Boolean.TRUE.equals(
+                    request.getTrangThai());
+
+            boolean laDonViCoSo = Boolean.TRUE.equals(
+                    request.getLaDonViCoSo());
+
+            if (laDonViCoSo && !dangHoatDong) {
+                throw new IllegalArgumentException(
+                        "Đơn vị cơ sở phải đang hoạt động");
+            }
+
+            if (laDonViCoSo) {
+                soDonViCoSoDangHoatDong++;
+            }
+
+            if (Boolean.TRUE.equals(
+                    request.getChoPhepBan())
+                    && (request.getGiaBanTheoDonVi() == null
+                            || request
+                                    .getGiaBanTheoDonVi()
+                                    .compareTo(BigDecimal.ZERO) <= 0)) {
+                throw new IllegalArgumentException(
+                        "Đơn vị cho phép bán phải có giá lớn hơn 0");
+            }
+
+            if (request.getMaDonViSanPham() != null) {
+                DonViSanPham donViHienTai = donViHienTaiTheoMa.get(
+                        request.getMaDonViSanPham());
+
+                if (donViHienTai == null) {
+                    throw new IllegalArgumentException(
+                            "Đơn vị sản phẩm không thuộc sản phẩm đang sửa");
+                }
+
+                if (!maBanGhiCuTrongRequest.add(
+                        request.getMaDonViSanPham())) {
+                    throw new IllegalArgumentException(
+                            "Không được gửi trùng đơn vị sản phẩm");
+                }
+
+                Long maDonViTinhHienTai = donViHienTai
+                        .getDonViTinh()
+                        .getMaDonViTinh();
+
+                if (!maDonViTinhHienTai.equals(
+                        request.getMaDonViTinh())) {
+                    throw new IllegalArgumentException(
+                            "Không được đổi đơn vị tính của đơn vị sản phẩm đã tồn tại. "
+                                    + "Hãy ẩn đơn vị cũ và thêm đơn vị mới");
+                }
+
+                trangThaiSauCapNhat.put(
+                        request.getMaDonViSanPham(),
+                        dangHoatDong);
+            }
+        }
+
+        if (soDonViCoSoDangHoatDong != 1) {
+            throw new IllegalArgumentException(
+                    "Sản phẩm phải có đúng một đơn vị cơ sở đang hoạt động");
+        }
+
+        if (!maBanGhiCuTrongRequest.containsAll(
+                donViHienTaiTheoMa.keySet())) {
+            throw new IllegalArgumentException(
+                    "Danh sách cập nhật phải chứa đầy đủ các đơn vị hiện tại");
+        }
+
+        List<QuyDoiDonVi> danhSachQuyDoiHienTai = quyDoiDonViRepository
+                .findBySanPham_MaSanPhamOrderByMaQuyDoiAsc(
+                        maSanPham);
+
+        for (QuyDoiDonVi quyDoi : danhSachQuyDoiHienTai) {
+            if (!Boolean.TRUE.equals(quyDoi.getTrangThai())) {
+                continue;
+            }
+
+            Long maDonViNguon = quyDoi.getDonViNguon()
+                    .getMaDonViSanPham();
+
+            Long maDonViDich = quyDoi.getDonViDich()
+                    .getMaDonViSanPham();
+
+            if (Boolean.FALSE.equals(
+                    trangThaiSauCapNhat.get(maDonViNguon))
+                    || Boolean.FALSE.equals(
+                            trangThaiSauCapNhat.get(maDonViDich))) {
+                throw new IllegalArgumentException(
+                        "Không thể ẩn đơn vị đang được dùng trong quy đổi hoạt động");
+            }
+        }
+
+        /*
+         * Hạ đơn vị cơ sở cũ trước để có thể đổi
+         * sang đơn vị cơ sở mới trong cùng transaction.
+         */
+        for (DonViSanPham donVi : danhSachHienTai) {
+            donVi.setLaDonViCoSo(false);
+        }
+
+        donViSanPhamRepository.saveAll(danhSachHienTai);
+        donViSanPhamRepository.flush();
+
+        List<DonViSanPham> danhSachCanLuu = new ArrayList<>();
+
+        for (DonViSanPhamCapNhatRequest request : danhSachRequest) {
+            DonViSanPham donVi;
+
+            if (request.getMaDonViSanPham() == null) {
+                donVi = new DonViSanPham();
+                donVi.setSanPham(sanPham);
+                donVi.setLaDonViBanMacDinh(false);
+            } else {
+                donVi = donViHienTaiTheoMa.get(
+                        request.getMaDonViSanPham());
+            }
+
+            donVi.setDonViTinh(
+                    donViTinhTheoMa.get(
+                            request.getMaDonViTinh()));
+            donVi.setGiaBanTheoDonVi(
+                    request.getGiaBanTheoDonVi());
+            donVi.setLaDonViCoSo(
+                    Boolean.TRUE.equals(
+                            request.getLaDonViCoSo()));
+            donVi.setChoPhepBan(
+                    Boolean.TRUE.equals(
+                            request.getChoPhepBan()));
+            donVi.setChoPhepNhap(
+                    Boolean.TRUE.equals(
+                            request.getChoPhepNhap()));
+            donVi.setTrangThai(
+                    Boolean.TRUE.equals(
+                            request.getTrangThai()));
+
+            danhSachCanLuu.add(donVi);
+        }
+
+        donViSanPhamRepository.saveAll(danhSachCanLuu);
+
+        return layChiTietSanPhamDayDu(maSanPham);
+    }
+
+    @Transactional
+    public SanPhamResponse capNhatDanhSachQuyDoiDonVi(
+            long maSanPham,
+            List<QuyDoiDonViCapNhatRequest> danhSachRequest) {
+        if (danhSachRequest == null) {
+            throw new IllegalArgumentException(
+                    "Danh sách quy đổi không được để trống");
+        }
+
+        SanPham sanPham = sanPhamRepository.findById(maSanPham)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Không tìm thấy sản phẩm"));
+
+        List<DonViSanPham> danhSachDonVi = donViSanPhamRepository
+                .findBySanPham_MaSanPham(maSanPham);
+
+        Map<Long, DonViSanPham> donViTheoMa = new LinkedHashMap<>();
+
+        int soDonViDangHoatDong = 0;
+
+        for (DonViSanPham donVi : danhSachDonVi) {
+            donViTheoMa.put(
+                    donVi.getMaDonViSanPham(),
+                    donVi);
+
+            if (Boolean.TRUE.equals(donVi.getTrangThai())) {
+                soDonViDangHoatDong++;
+            }
+        }
+
+        List<QuyDoiDonVi> danhSachHienTai = quyDoiDonViRepository
+                .findBySanPham_MaSanPhamOrderByMaQuyDoiAsc(
+                        maSanPham);
+
+        Map<Long, QuyDoiDonVi> quyDoiHienTaiTheoMa = new LinkedHashMap<>();
+
+        for (QuyDoiDonVi quyDoi : danhSachHienTai) {
+            quyDoiHienTaiTheoMa.put(
+                    quyDoi.getMaQuyDoi(),
+                    quyDoi);
+        }
+
+        Set<Long> maBanGhiCuTrongRequest = new HashSet<>();
+        Set<String> capQuyDoiDaChon = new HashSet<>();
+
+        int soQuyDoiDangHoatDong = 0;
+
+        for (QuyDoiDonViCapNhatRequest request : danhSachRequest) {
+            if (request == null) {
+                throw new IllegalArgumentException(
+                        "Dữ liệu quy đổi không hợp lệ");
+            }
+
+            if (request.getMaDonViNguon()
+                    .equals(request.getMaDonViDich())) {
+                throw new IllegalArgumentException(
+                        "Đơn vị nguồn và đơn vị đích không được giống nhau");
+            }
+
+            DonViSanPham donViNguon = donViTheoMa.get(
+                    request.getMaDonViNguon());
+
+            DonViSanPham donViDich = donViTheoMa.get(
+                    request.getMaDonViDich());
+
+            if (donViNguon == null || donViDich == null) {
+                throw new IllegalArgumentException(
+                        "Đơn vị quy đổi không thuộc sản phẩm đang sửa");
+            }
+
+            boolean dangHoatDong = Boolean.TRUE.equals(
+                    request.getTrangThai());
+
+            if (dangHoatDong
+                    && (!Boolean.TRUE.equals(
+                            donViNguon.getTrangThai())
+                            || !Boolean.TRUE.equals(
+                                    donViDich.getTrangThai()))) {
+                throw new IllegalArgumentException(
+                        "Quy đổi đang hoạt động phải sử dụng đơn vị đang hoạt động");
+            }
+
+            String khoaCapQuyDoi = request.getMaDonViNguon()
+                    + "-"
+                    + request.getMaDonViDich();
+
+            if (!capQuyDoiDaChon.add(khoaCapQuyDoi)) {
+                throw new IllegalArgumentException(
+                        "Không được khai báo trùng quy đổi");
+            }
+
+            if (dangHoatDong) {
+                soQuyDoiDangHoatDong++;
+            }
+
+            if (request.getMaQuyDoi() != null) {
+                QuyDoiDonVi quyDoiHienTai = quyDoiHienTaiTheoMa.get(
+                        request.getMaQuyDoi());
+
+                if (quyDoiHienTai == null) {
+                    throw new IllegalArgumentException(
+                            "Quy đổi không thuộc sản phẩm đang sửa");
+                }
+
+                if (!maBanGhiCuTrongRequest.add(
+                        request.getMaQuyDoi())) {
+                    throw new IllegalArgumentException(
+                            "Không được gửi trùng mã quy đổi");
+                }
+            }
+        }
+
+        if (!maBanGhiCuTrongRequest.containsAll(
+                quyDoiHienTaiTheoMa.keySet())) {
+            throw new IllegalArgumentException(
+                    "Danh sách cập nhật phải chứa đầy đủ các quy đổi hiện tại");
+        }
+
+        if (soDonViDangHoatDong >= 2
+                && soQuyDoiDangHoatDong == 0) {
+            throw new IllegalArgumentException(
+                    "Sản phẩm có từ hai đơn vị hoạt động phải có quy đổi hoạt động");
+        }
+
+        List<QuyDoiDonVi> danhSachCanLuu = new ArrayList<>();
+
+        for (QuyDoiDonViCapNhatRequest request : danhSachRequest) {
+            QuyDoiDonVi quyDoi;
+
+            if (request.getMaQuyDoi() == null) {
+                quyDoi = new QuyDoiDonVi();
+                quyDoi.setSanPham(sanPham);
+            } else {
+                quyDoi = quyDoiHienTaiTheoMa.get(
+                        request.getMaQuyDoi());
+            }
+
+            quyDoi.setDonViNguon(
+                    donViTheoMa.get(
+                            request.getMaDonViNguon()));
+            quyDoi.setSoLuongNguon(
+                    request.getSoLuongNguon());
+            quyDoi.setDonViDich(
+                    donViTheoMa.get(
+                            request.getMaDonViDich()));
+            quyDoi.setSoLuongDich(
+                    request.getSoLuongDich());
+            quyDoi.setTrangThai(
+                    Boolean.TRUE.equals(
+                            request.getTrangThai()));
+
+            danhSachCanLuu.add(quyDoi);
+        }
+
+        quyDoiDonViRepository.saveAll(danhSachCanLuu);
+
+        return layChiTietSanPhamDayDu(maSanPham);
     }
 
     @Transactional
