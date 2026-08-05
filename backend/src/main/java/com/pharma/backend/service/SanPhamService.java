@@ -22,6 +22,8 @@ import com.pharma.backend.dto.sanpham.DonViSanPhamTaoMoiRequest;
 import com.pharma.backend.dto.sanpham.QuyDoiDonViTaoMoiRequest;
 import com.pharma.backend.dto.sanpham.SanPhamRequest;
 import com.pharma.backend.dto.sanpham.SanPhamResponse;
+import com.pharma.backend.dto.sanpham.DuLieuChuyenMonThuocResponse;
+import com.pharma.backend.dto.sanpham.ThanhPhanHoatChatResponse;
 import com.pharma.backend.dto.sanpham.SanPhamTaoMoiRequest;
 import com.pharma.backend.entity.DanhMucSanPham;
 import com.pharma.backend.entity.NhaSanXuat;
@@ -164,6 +166,17 @@ public class SanPhamService {
                         quyDoiDonViService
                                 .layDanhSachQuyDoiTheoSanPham(
                                         maSanPham))
+                .danhSachThanhPhanHoatChat(
+                        thanhPhanHoatChatRepository
+                                .findByMaSanPham(maSanPham)
+                                .stream()
+                                .map(this::toThanhPhanHoatChatResponse)
+                                .toList())
+                .duLieuChuyenMonThuoc(
+                        duLieuChuyenMonThuocRepository
+                                .findByMaSanPham(maSanPham)
+                                .map(this::toDuLieuChuyenMonThuocResponse)
+                                .orElse(null))
                 .build();
     }
 
@@ -712,6 +725,52 @@ public class SanPhamService {
         }
 
         return giaTri.trim();
+    }
+
+    private ThanhPhanHoatChatResponse toThanhPhanHoatChatResponse(
+            ThanhPhanHoatChat thanhPhan) {
+        HoatChat hoatChat = thanhPhan.getHoatChat();
+
+        return ThanhPhanHoatChatResponse.builder()
+                .maThanhPhan(
+                        thanhPhan.getMaThanhPhan())
+                .maHoatChat(
+                        hoatChat != null
+                                ? hoatChat.getMaHoatChat()
+                                : null)
+                .tenHoatChat(
+                        hoatChat != null
+                                ? hoatChat.getTenHoatChat()
+                                : null)
+                .hamLuong(
+                        thanhPhan.getHamLuong())
+                .donViHamLuong(
+                        thanhPhan.getDonViHamLuong())
+                .vaiTroHoatChat(
+                        thanhPhan.getVaiTroHoatChat())
+                .ghiChu(
+                        thanhPhan.getGhiChu())
+                .build();
+    }
+
+    private DuLieuChuyenMonThuocResponse toDuLieuChuyenMonThuocResponse(
+            DuLieuChuyenMonThuoc duLieu) {
+        return DuLieuChuyenMonThuocResponse.builder()
+                .maDuLieuChuyenMon(
+                        duLieu.getMaDuLieuChuyenMon())
+                .dangBaoChe(
+                        duLieu.getDangBaoChe())
+                .phanLoaiThuoc(
+                        duLieu.getPhanLoaiThuoc())
+                .congDungThamKhao(
+                        duLieu.getCongDungThamKhao())
+                .cachDungThamKhao(
+                        duLieu.getCachDungThamKhao())
+                .canhBaoAnToan(
+                        duLieu.getCanhBaoAnToan())
+                .trangThaiXacNhan(
+                        duLieu.getTrangThaiXacNhan())
+                .build();
     }
 
     private SanPhamResponse toResponse(
