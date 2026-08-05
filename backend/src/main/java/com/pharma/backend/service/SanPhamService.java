@@ -48,8 +48,12 @@ import com.pharma.backend.repository.NhaSanXuatRepository;
 import com.pharma.backend.repository.QuyDoiDonViRepository;
 import com.pharma.backend.repository.SanPhamRepository;
 import com.pharma.backend.repository.ThanhPhanHoatChatRepository;
-
+import com.pharma.backend.dto.sanpham.DonViNhapKhoResponse;
+import com.pharma.backend.dto.sanpham.SanPhamNhapKhoOptionResponse;
 import lombok.RequiredArgsConstructor;
+import java.util.Comparator;
+
+import com.pharma.backend.repository.projection.TuyChonNhapKhoProjection;
 
 @Service
 @RequiredArgsConstructor
@@ -137,6 +141,84 @@ public class SanPhamService {
                         "Không tìm thấy sản phẩm"));
 
         return toResponse(sanPham);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SanPhamNhapKhoOptionResponse> layTuyChonNhapKho() {
+
+        long batDauTruyVan = System.nanoTime();
+
+        List<TuyChonNhapKhoProjection> danhSachDong = donViSanPhamRepository
+                .findAllTuyChonNhapKho();
+
+        long ketThucTruyVan = System.nanoTime();
+
+        Map<Long, List<TuyChonNhapKhoProjection>> danhSachDonViTheoSanPham = danhSachDong.stream()
+                .collect(
+                        java.util.stream.Collectors.groupingBy(
+                                TuyChonNhapKhoProjection::getMaSanPham,
+                                LinkedHashMap::new,
+                                java.util.stream.Collectors
+                                        .toList()));
+
+        List<SanPhamNhapKhoOptionResponse> ketQua = danhSachDonViTheoSanPham
+                .values()
+                .stream()
+                .map(danhSachDonVi -> {
+                    TuyChonNhapKhoProjection sanPhamDauTien = danhSachDonVi.get(0);
+
+                    List<DonViNhapKhoResponse> danhSachDonViNhap = danhSachDonVi
+                            .stream()
+                            .map(donVi -> DonViNhapKhoResponse
+                                    .builder()
+                                    .maDonViSanPham(
+                                            donVi.getMaDonViSanPham())
+                                    .maDonViTinh(
+                                            donVi.getMaDonViTinh())
+                                    .tenDonViTinh(
+                                            donVi.getTenDonViTinh())
+                                    .kyHieu(
+                                            donVi.getKyHieu())
+                                    .build())
+                            .sorted(
+                                    Comparator.comparing(
+                                            DonViNhapKhoResponse::getTenDonViTinh,
+                                            String.CASE_INSENSITIVE_ORDER))
+                            .toList();
+
+                    return SanPhamNhapKhoOptionResponse
+                            .builder()
+                            .maSanPham(
+                                    sanPhamDauTien
+                                            .getMaSanPham())
+                            .tenSanPham(
+                                    sanPhamDauTien
+                                            .getTenSanPham())
+                            .danhSachDonViNhap(
+                                    danhSachDonViNhap)
+                            .build();
+                })
+                .sorted(
+                        Comparator.comparing(
+                                SanPhamNhapKhoOptionResponse::getTenSanPham,
+                                String.CASE_INSENSITIVE_ORDER))
+                .toList();
+
+        long ketThucXuLy = System.nanoTime();
+
+        double thoiGianTruyVanMs = (ketThucTruyVan - batDauTruyVan)
+                / 1_000_000.0;
+
+        double thoiGianXuLyMs = (ketThucXuLy - ketThucTruyVan)
+                / 1_000_000.0;
+
+        System.out.printf(
+                "Tuy chon nhap kho projection - Query: %.2f ms | Map DTO: %.2f ms | So dong: %d%n",
+                thoiGianTruyVanMs,
+                thoiGianXuLyMs,
+                danhSachDong.size());
+
+        return ketQua;
     }
 
     @Transactional(readOnly = true)

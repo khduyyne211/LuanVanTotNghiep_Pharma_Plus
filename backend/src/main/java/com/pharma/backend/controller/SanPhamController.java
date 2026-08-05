@@ -20,6 +20,7 @@ import com.pharma.backend.dto.sanpham.SanPhamTaoMoiRequest;
 import com.pharma.backend.service.SanPhamService;
 import com.pharma.backend.dto.sanpham.DonViSanPhamCapNhatRequest;
 import com.pharma.backend.dto.sanpham.QuyDoiDonViCapNhatRequest;
+import com.pharma.backend.dto.sanpham.SanPhamNhapKhoOptionResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -131,4 +132,9 @@ public class SanPhamController {
                 return sanPhamService.hienSanPham(maSanPham);
         }
 
+        @GetMapping("/tuy-chon-nhap-kho")
+        public List<SanPhamNhapKhoOptionResponse> layTuyChonNhapKho() {
+
+                return sanPhamService.layTuyChonNhapKho();
+        }
 }

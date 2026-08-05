@@ -9,6 +9,7 @@ import QuanLyDonViTinhPage from "./features/don-vi-tinh/pages/QuanLyDonViTinhPag
 import QuanLyHoatChatPage from "./features/hoat-chat/pages/QuanLyHoatChatPage";
 import QuanLyKhuyenMaiPage from "./features/khuyen-mai/pages/QuanLyKhuyenMaiPage";
 import QuanLyNhaCungCapPage from "./features/nha-cung-cap/pages/QuanLyNhaCungCapPage";
+import QuanLyPhieuNhapPage from "./features/phieu-nhap/pages/QuanLyPhieuNhapPage";
 function App() {
   const [trangDangChon, setTrangDangChon] = useState("san-pham");
 
@@ -17,87 +18,65 @@ function App() {
       <aside className="sidebar">
         <div className="sidebar-logo">
           <h2>Pharma</h2>
-          <span >Quản trị viên</span>
+          <span>Quản trị viên</span>
         </div>
 
         <nav className="sidebar-menu">
           <button
             className={
-              trangDangChon === "san-pham"
-                ? "menu-item active"
-                : "menu-item"
+              trangDangChon === "san-pham" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("san-pham")}
           >
             Quản lý sản phẩm
           </button>
           <button
-              className={
-                trangDangChon === "danh-muc-san-pham"
-                  ? "menu-item active"
-                  : "menu-item"
-              }
-              onClick={() => setTrangDangChon("danh-muc-san-pham")}
-            >
-              Quản lý danh mục
-            </button>
-            <button
-              className={
-                trangDangChon === "nha-san-xuat"
-                  ? "menu-item active"
-                  : "menu-item"
-              }
-              onClick={() => setTrangDangChon("nha-san-xuat")}
-            >
-              Quản lý nhà sản xuất
-            </button>
-              <button
-                className={
-                  trangDangChon === "don-vi-tinh"
-                    ? "menu-item active"
-                    : "menu-item"
-                }
-                onClick={() => setTrangDangChon("don-vi-tinh")}
-              >
-                Quản lý đơn vị tính
-              </button>
-            <button
-              className={
-                trangDangChon === "hoat-chat"
-                  ? "menu-item active"
-                  : "menu-item"
-              }
-              onClick={() => setTrangDangChon("hoat-chat")}
-            >
-              Quản lý hoạt chất
-            </button>
-          <button
             className={
-              trangDangChon === "khuyen-mai"
+              trangDangChon === "danh-muc-san-pham"
                 ? "menu-item active"
                 : "menu-item"
+            }
+            onClick={() => setTrangDangChon("danh-muc-san-pham")}
+          >
+            Quản lý danh mục
+          </button>
+          <button
+            className={
+              trangDangChon === "nha-san-xuat"
+                ? "menu-item active"
+                : "menu-item"
+            }
+            onClick={() => setTrangDangChon("nha-san-xuat")}
+          >
+            Quản lý nhà sản xuất
+          </button>
+          <button
+            className={
+              trangDangChon === "don-vi-tinh" ? "menu-item active" : "menu-item"
+            }
+            onClick={() => setTrangDangChon("don-vi-tinh")}
+          >
+            Quản lý đơn vị tính
+          </button>
+          <button
+            className={
+              trangDangChon === "hoat-chat" ? "menu-item active" : "menu-item"
+            }
+            onClick={() => setTrangDangChon("hoat-chat")}
+          >
+            Quản lý hoạt chất
+          </button>
+          <button
+            className={
+              trangDangChon === "khuyen-mai" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("khuyen-mai")}
           >
             Quản lý khuyến mãi
           </button>
-
-          {/* <button
-            className={
-              trangDangChon === "yeu-cau"
-                ? "menu-item active"
-                : "menu-item"
-            }
-            onClick={() => setTrangDangChon("yeu-cau")}
-          >
-            Quản lý yêu cầu tư vấn
-          </button> */}
-
           <button
             className={
-              trangDangChon === "don-hang"
-                ? "menu-item active"
-                : "menu-item"
+              trangDangChon === "don-hang" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("don-hang")}
           >
@@ -109,48 +88,38 @@ function App() {
           </button> */}
 
           <button
-              className={
-                trangDangChon === "nha-cung-cap"
-                  ? "menu-item active"
-                  : "menu-item"
-              }
-              onClick={() => setTrangDangChon("nha-cung-cap")}
-            >
-              Quản lý nhà cung cấp
-            </button>
+            className={
+              trangDangChon === "nha-cung-cap"
+                ? "menu-item active"
+                : "menu-item"
+            }
+            onClick={() => setTrangDangChon("nha-cung-cap")}
+          >
+            Quản lý nhà cung cấp
+          </button>
+          <button
+            className={
+              trangDangChon === "phieu-nhap" ? "menu-item active" : "menu-item"
+            }
+            onClick={() => setTrangDangChon("phieu-nhap")}
+          >
+            Quản lý phiếu nhập
+          </button>
         </nav>
       </aside>
 
       <main className="main-content">
-        {trangDangChon === "san-pham" && (
-          <QuanLySanPhamPage />
-        )}
+        {trangDangChon === "san-pham" && <QuanLySanPhamPage />}
 
-        {trangDangChon === "danh-muc-san-pham" && (
-          <QuanLyDanhMucSanPhamPage/>
-        )}
-        {trangDangChon === "nha-san-xuat" && (
-          <QuanLyNhaSanXuatPage />
-        )}
-        {trangDangChon === "don-vi-tinh" && (
-          <QuanLyDonViTinhPage />
-        )}
-        {trangDangChon === "hoat-chat" && (
-          <QuanLyHoatChatPage />
-        )}
-        {trangDangChon === "khuyen-mai" && (
-          <QuanLyKhuyenMaiPage />
-        )}
-        {trangDangChon === "yeu-cau" && (
-          <QuanLyYeuCau />
-        )}
-
-        {trangDangChon === "don-hang" && (
-          <QuanLyDonHangPage />
-        )}
-        {trangDangChon === "nha-cung-cap" && (
-          <QuanLyNhaCungCapPage />
-        )}
+        {trangDangChon === "danh-muc-san-pham" && <QuanLyDanhMucSanPhamPage />}
+        {trangDangChon === "nha-san-xuat" && <QuanLyNhaSanXuatPage />}
+        {trangDangChon === "don-vi-tinh" && <QuanLyDonViTinhPage />}
+        {trangDangChon === "hoat-chat" && <QuanLyHoatChatPage />}
+        {trangDangChon === "khuyen-mai" && <QuanLyKhuyenMaiPage />}
+        {trangDangChon === "yeu-cau" && <QuanLyYeuCau />}
+        {trangDangChon === "phieu-nhap" && <QuanLyPhieuNhapPage />}
+        {trangDangChon === "don-hang" && <QuanLyDonHangPage />}
+        {trangDangChon === "nha-cung-cap" && <QuanLyNhaCungCapPage />}
       </main>
     </div>
   );
