@@ -40,10 +40,18 @@ public class ZaloPayClientService {
             String appTransId,
             String appUser,
             Long soTien,
-            String moTa
+            String moTa,
+            Long thoiGianHieuLucGiay
     ) {
         kiemTraCauHinh();
-        kiemTraDuLieu(appTransId, appUser, soTien, moTa);
+
+        kiemTraDuLieu(
+                appTransId,
+                appUser,
+                soTien,
+                moTa,
+                thoiGianHieuLucGiay
+        );
 
         long appTime = System.currentTimeMillis();
         String item = "[]";
@@ -67,7 +75,7 @@ public class ZaloPayClientService {
         request.put("app_user", appUser);
         request.put("app_trans_id", appTransId);
         request.put("app_time", appTime);
-        request.put("expire_duration_seconds", zaloPayProperties.getExpireDurationSeconds());
+        request.put("expire_duration_seconds", thoiGianHieuLucGiay);
         request.put("amount", soTien);
         request.put("description", moTa);
         request.put("callback_url", zaloPayProperties.getCallbackUrl());
@@ -236,7 +244,8 @@ private String layThongBaoLoiZaloPay(
             String appTransId,
             String appUser,
             Long soTien,
-            String moTa
+            String moTa,
+            Long thoiGianHieuLucGiay
     ) {
         if (appTransId == null
                 || appTransId.isBlank()
@@ -266,6 +275,14 @@ private String layThongBaoLoiZaloPay(
                 || moTa.length() > 256) {
             throw new IllegalArgumentException(
                     "Mô tả thanh toán ZaloPay không hợp lệ."
+            );
+        }
+
+        if (thoiGianHieuLucGiay == null
+                || thoiGianHieuLucGiay < THOI_GIAN_TOI_THIEU
+                || thoiGianHieuLucGiay > THOI_GIAN_TOI_DA) {
+            throw new IllegalArgumentException(
+                    "Thời gian hiệu lực mã QR ZaloPay không hợp lệ."
             );
         }
     }

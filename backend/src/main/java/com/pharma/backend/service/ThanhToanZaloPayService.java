@@ -57,6 +57,7 @@ public class ThanhToanZaloPayService {
             Pattern.compile("^\\d{6}_DH(\\d+)_[a-fA-F0-9]{8}$");
 
     private final DonHangRepository donHangRepository;
+    private final ChuanBiThanhToanZaloPayService chuanBiThanhToanZaloPayService;
     private final ZaloPayClientService zaloPayClientService;
     private final ZaloPayProperties zaloPayProperties;
     private final ObjectMapper objectMapper;
@@ -65,35 +66,69 @@ public class ThanhToanZaloPayService {
             Long maDonHang,
             Long maKhachHang
     ) {
-        kiemTraMaDonHang(maDonHang);
-        kiemTraMaKhachHang(maKhachHang);
+        /*
+        * Service chuẩn bị sẽ:
+        * - Khóa đơn hàng.
+        * - Kiểm tra quyền sở hữu.
+        * - Kiểm tra phương thức và trạng thái.
+        * - Kiểm tra thời hạn thanh toán.
+        * - Cập nhật hủy đơn nếu đã quá hạn.
+        */
+        DuLieuChuanBiThanhToanZaloPay duLieu =
+                chuanBiThanhToanZaloPayService
+                        .chuanBiThanhToan(
+                                maDonHang,
+                                maKhachHang
+                        );
 
-        DonHang donHang = donHangRepository.findById(maDonHang)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Không tìm thấy đơn hàng."
-                ));
+        /*
+        * Trạng thái hết hạn đã được commit trong transaction
+        * của ChuanBiThanhToanZaloPayService.
+        *
+        * Ném lỗi tại đây sẽ không rollback việc hủy đơn.
+        */
+        if (duLieu.isDaHetHan()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Đơn hàng đã hết thời hạn thanh toán "
+                            + "và không thể tạo mã QR mới."
+            );
+        }
 
-        kiemTraDonHangDuocThanhToan(donHang, maKhachHang);
-Long soTien = chuyenTongTienSangLong(donHang.getTongThanhToan());
-        String appTransId = taoAppTransId(maDonHang);
-        String appUser = taoAppUser(maKhachHang);
-        String moTa = taoMoTaThanhToan(maDonHang);
+        Long soTien = chuyenTongTienSangLong(
+                duLieu.getTongThanhToan()
+        );
+
+        String appTransId = taoAppTransId(
+                duLieu.getMaDonHang()
+        );
+
+        String appUser = taoAppUser(
+                maKhachHang
+        );
+
+        String moTa = taoMoTaThanhToan(
+                duLieu.getMaDonHang()
+        );
 
         TaoDonHangZaloPayResponseDto responseZaloPay =
-                zaloPayClientService.taoDonHangThanhToan(
-                        appTransId,
-                        appUser,
-                        soTien,
-                        moTa
-                );
+                zaloPayClientService
+                        .taoDonHangThanhToan(
+                                appTransId,
+                                appUser,
+                                soTien,
+                                moTa,
+                                duLieu.getThoiGianHieuLucGiay()
+                        );
 
         return new TaoThanhToanZaloPayResponseDto(
-                donHang.getMaDonHang(),
+                duLieu.getMaDonHang(),
                 appTransId,
                 soTien,
                 responseZaloPay.getOrderUrl(),
-                donHang.getTrangThaiThanhToan().name()
+                TrangThaiThanhToan
+                        .CHO_THANH_TOAN
+                        .name()
         );
     }
 
@@ -215,12 +250,12 @@ Long soTien = chuyenTongTienSangLong(donHang.getTongThanhToan());
         }
 
         /*
-         * Theo Enum hiện tại, đơn ZaloPay mới có:
+         * Callback chỉ xử lý đơn ZaloPay đang chờ thanh toán:
          * - Thanh toán: CHO_THANH_TOAN
-         * - Đơn hàng: CHO_XU_LY
+         * - Đơn hàng: CHO_THANH_TOAN
          */
         if (donHang.getTrangThaiThanhToan() != TrangThaiThanhToan.CHO_THANH_TOAN
-                || donHang.getTrangThaiDonHang() != TrangThaiDonHang.CHO_XU_LY) {
+                || donHang.getTrangThaiDonHang() != TrangThaiDonHang.CHO_THANH_TOAN) {
             log.warn(
                     "Đơn không còn chờ thanh toán ZaloPay: maDonHang={}, trangThaiThanhToan={}, trangThaiDonHang={}",
                     maDonHang,
@@ -231,8 +266,13 @@ Long soTien = chuyenTongTienSangLong(donHang.getTongThanhToan());
             return taoPhanHoiCallback(1, "success");
         }
 
-        donHang.setTrangThaiThanhToan(TrangThaiThanhToan.DA_THANH_TOAN);
-        donHang.setTrangThaiDonHang(TrangThaiDonHang.DANG_XU_LY);
+        donHang.setTrangThaiThanhToan(
+                TrangThaiThanhToan.DA_THANH_TOAN
+        );
+
+        donHang.setTrangThaiDonHang(
+                TrangThaiDonHang.CHO_XU_LY
+        );
 
         donHangRepository.save(donHang);
 
@@ -291,57 +331,6 @@ Long maKhachHang
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "Không xác định được khách hàng đang đăng nhập."
-            );
-        }
-    }
-
-    private void kiemTraDonHangDuocThanhToan(
-            DonHang donHang,
-            Long maKhachHang
-    ) {
-        if (donHang.getKhachHang() == null
-                || !maKhachHang.equals(
-                        donHang.getKhachHang().getMaKhachHang()
-                )) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
-                    "Bạn không có quyền thanh toán đơn hàng này."
-            );
-        }
-
-        if (donHang.getPhuongThucThanhToan() != PhuongThucThanhToan.ZALOPAY) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Đơn hàng không sử dụng phương thức thanh toán ZaloPay."
-            );
-        }
-
-        if (donHang.getTrangThaiThanhToan() == TrangThaiThanhToan.DA_THANH_TOAN) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Đơn hàng đã được thanh toán."
-            );
-        }
-
-        if (donHang.getTrangThaiThanhToan()
-                != TrangThaiThanhToan.CHO_THANH_TOAN) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Trạng thái thanh toán của đơn hàng không hợp lệ."
-            );
-        }
-
-        if (donHang.getTrangThaiDonHang() == TrangThaiDonHang.DA_HUY) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-"Đơn hàng đã bị hủy."
-            );
-        }
-
-        if (donHang.getTrangThaiDonHang() != TrangThaiDonHang.CHO_XU_LY) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Đơn hàng không còn ở trạng thái chờ xử lý."
             );
         }
     }

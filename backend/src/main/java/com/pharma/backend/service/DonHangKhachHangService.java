@@ -55,7 +55,6 @@ public class DonHangKhachHangService {
     private final QuyDoiDonViRepository quyDoiDonViRepository;
     private final DonHangRepository donHangRepository;
     private final ChiTietDonHangRepository chiTietDonHangRepository;
-    private final XuatKhoService xuatKhoService;
 
     @Transactional
     public DonHangResponseDto taoDonHang(
@@ -65,11 +64,6 @@ public class DonHangKhachHangService {
         DuLieuTaoDonHang duLieu =
                 chuanBiDuLieuTaoDonHang(maKhachHang, request);
 
-        Map<Long, BigDecimal> soLuongCanXuatTheoSanPham =
-gomSoLuongCanXuatTheoSanPham(
-                        duLieu.getDanhSachChiTietGioHang()
-                );
-
         List<ChiTietDonHang> danhSachChiTietDonHang =
                 taoDanhSachChiTietDonHang(
                         duLieu.getDanhSachChiTietGioHang()
@@ -77,10 +71,6 @@ gomSoLuongCanXuatTheoSanPham(
 
         BigDecimal tongTienHang =
                 tinhTongTienHang(danhSachChiTietDonHang);
-
-        xuatKhoService.truTonTheoFefo(
-                soLuongCanXuatTheoSanPham
-        );
 
         DonHang donHang = taoVaLuuDonHang(
                 duLieu,
@@ -674,21 +664,28 @@ private DonHang taoVaLuuDonHang(
                 phuongThucThanhToan
         );
 
-        /*
-         * Enum hiện tại không còn CHUA_THANH_TOAN.
-         * COD và ZaloPay mới tạo đều đang chờ thanh toán.
-         */
-        donHang.setTrangThaiThanhToan(
-                TrangThaiThanhToan.CHO_THANH_TOAN
-        );
+        if (phuongThucThanhToan == PhuongThucThanhToan.COD) {
+                donHang.setTrangThaiThanhToan(
+                        TrangThaiThanhToan.CHUA_THANH_TOAN
+                );
 
-        /*
-         * Enum đơn hàng hiện tại không còn CHO_THANH_TOAN.
-         * Đơn mới được đưa vào trạng thái chờ xử lý.
-         */
-        donHang.setTrangThaiDonHang(
-                TrangThaiDonHang.CHO_XU_LY
-        );
+                donHang.setTrangThaiDonHang(
+                        TrangThaiDonHang.CHO_XU_LY
+                );
+        } else if (phuongThucThanhToan == PhuongThucThanhToan.ZALOPAY) {
+                donHang.setTrangThaiThanhToan(
+                        TrangThaiThanhToan.CHO_THANH_TOAN
+                );
+
+                donHang.setTrangThaiDonHang(
+                        TrangThaiDonHang.CHO_THANH_TOAN
+                );
+        } else {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Phương thức thanh toán không được hỗ trợ."
+                );
+        }
 
         donHang.setGhiChu(
                 duLieu.getGhiChu()
