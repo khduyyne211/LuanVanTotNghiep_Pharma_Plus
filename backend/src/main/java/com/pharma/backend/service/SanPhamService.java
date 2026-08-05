@@ -29,6 +29,14 @@ import com.pharma.backend.entity.SanPham;
 import com.pharma.backend.repository.DanhMucSanPhamRepository;
 import com.pharma.backend.repository.NhaSanXuatRepository;
 import com.pharma.backend.repository.SanPhamRepository;
+import com.pharma.backend.dto.sanpham.DuLieuChuyenMonThuocRequest;
+import com.pharma.backend.dto.sanpham.ThanhPhanHoatChatTaoMoiRequest;
+import com.pharma.backend.entity.DuLieuChuyenMonThuoc;
+import com.pharma.backend.entity.HoatChat;
+import com.pharma.backend.entity.ThanhPhanHoatChat;
+import com.pharma.backend.repository.DuLieuChuyenMonThuocRepository;
+import com.pharma.backend.repository.HoatChatRepository;
+import com.pharma.backend.repository.ThanhPhanHoatChatRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,6 +49,9 @@ public class SanPhamService {
     private final NhaSanXuatRepository nhaSanXuatRepository;
     private final DonViSanPhamService donViSanPhamService;
     private final QuyDoiDonViService quyDoiDonViService;
+    private final HoatChatRepository hoatChatRepository;
+    private final ThanhPhanHoatChatRepository thanhPhanHoatChatRepository;
+    private final DuLieuChuyenMonThuocRepository duLieuChuyenMonThuocRepository;
 
     @Transactional(readOnly = true)
     public List<SanPhamResponse> layDanhSachSanPham() {
@@ -174,7 +185,13 @@ public class SanPhamService {
                 maSanPham,
                 request.getDanhSachQuyDoi(),
                 maDonViSanPhamTheoMaDonViTinh);
+        luuDanhSachThanhPhanHoatChat(
+                sanPhamDaTao,
+                request.getDanhSachThanhPhanHoatChat());
 
+        luuDuLieuChuyenMonThuoc(
+                sanPhamDaTao,
+                request.getDuLieuChuyenMonThuoc());
         return layChiTietSanPhamDayDu(maSanPham);
     }
 
@@ -375,6 +392,11 @@ public class SanPhamService {
                 request.getDanhSachDonVi(),
                 request.getDanhSachQuyDoi(),
                 maDonViTinhDaChon);
+        kiemTraDanhSachThanhPhanHoatChat(
+                request.getDanhSachThanhPhanHoatChat());
+
+        kiemTraDuLieuChuyenMonThuoc(
+                request.getDuLieuChuyenMonThuoc());
     }
 
     private void kiemTraThongTinSanPham(
@@ -520,6 +542,144 @@ public class SanPhamService {
                         "Không được khai báo trùng cùng một quy đổi");
             }
         }
+    }
+
+    private void kiemTraDanhSachThanhPhanHoatChat(
+            List<ThanhPhanHoatChatTaoMoiRequest> danhSachThanhPhan) {
+        if (danhSachThanhPhan == null
+                || danhSachThanhPhan.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Sản phẩm phải có ít nhất một thành phần hoạt chất");
+        }
+
+        Set<Long> maHoatChatDaChon = new HashSet<>();
+
+        for (ThanhPhanHoatChatTaoMoiRequest thanhPhan : danhSachThanhPhan) {
+            if (thanhPhan == null
+                    || thanhPhan.getMaHoatChat() == null) {
+                throw new IllegalArgumentException(
+                        "Hoạt chất không được để trống");
+            }
+
+            if (!maHoatChatDaChon.add(
+                    thanhPhan.getMaHoatChat())) {
+                throw new IllegalArgumentException(
+                        "Không được chọn trùng hoạt chất");
+            }
+
+            if (thanhPhan.getHamLuong() == null
+                    || thanhPhan.getHamLuong()
+                            .compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException(
+                        "Hàm lượng hoạt chất phải lớn hơn 0");
+            }
+
+            if (thanhPhan.getDonViHamLuong() == null
+                    || thanhPhan.getDonViHamLuong().isBlank()) {
+                throw new IllegalArgumentException(
+                        "Đơn vị hàm lượng không được để trống");
+            }
+        }
+    }
+
+    private void kiemTraDuLieuChuyenMonThuoc(
+            DuLieuChuyenMonThuocRequest duLieu) {
+        if (duLieu == null) {
+            throw new IllegalArgumentException(
+                    "Dữ liệu chuyên môn thuốc không được để trống");
+        }
+
+        if (laChuoiRong(duLieu.getDangBaoChe())) {
+            throw new IllegalArgumentException(
+                    "Dạng bào chế không được để trống");
+        }
+
+        if (laChuoiRong(duLieu.getPhanLoaiThuoc())) {
+            throw new IllegalArgumentException(
+                    "Phân loại thuốc không được để trống");
+        }
+
+        if (laChuoiRong(duLieu.getCongDungThamKhao())) {
+            throw new IllegalArgumentException(
+                    "Công dụng tham khảo không được để trống");
+        }
+
+        if (laChuoiRong(duLieu.getCachDungThamKhao())) {
+            throw new IllegalArgumentException(
+                    "Cách dùng tham khảo không được để trống");
+        }
+
+        if (laChuoiRong(duLieu.getCanhBaoAnToan())) {
+            throw new IllegalArgumentException(
+                    "Cảnh báo an toàn không được để trống");
+        }
+    }
+
+    private void luuDanhSachThanhPhanHoatChat(
+            SanPham sanPham,
+            List<ThanhPhanHoatChatTaoMoiRequest> danhSachThanhPhan) {
+        List<ThanhPhanHoatChat> danhSachCanLuu = danhSachThanhPhan.stream()
+                .map(thanhPhanRequest -> {
+                    HoatChat hoatChat = hoatChatRepository.findById(
+                            thanhPhanRequest.getMaHoatChat()).orElseThrow(
+                                    () -> new IllegalArgumentException(
+                                            "Không tìm thấy hoạt chất"));
+
+                    if (!Boolean.TRUE.equals(hoatChat.getTrangThai())) {
+                        throw new IllegalArgumentException(
+                                "Hoạt chất "
+                                        + hoatChat.getTenHoatChat()
+                                        + " đang bị ẩn");
+                    }
+
+                    ThanhPhanHoatChat thanhPhan = new ThanhPhanHoatChat();
+
+                    thanhPhan.setSanPham(sanPham);
+                    thanhPhan.setHoatChat(hoatChat);
+                    thanhPhan.setHamLuong(
+                            thanhPhanRequest.getHamLuong());
+                    thanhPhan.setDonViHamLuong(
+                            thanhPhanRequest
+                                    .getDonViHamLuong()
+                                    .trim());
+                    thanhPhan.setVaiTroHoatChat(
+                            chuanHoaChuoiRongThanhNull(
+                                    thanhPhanRequest
+                                            .getVaiTroHoatChat()));
+                    thanhPhan.setGhiChu(
+                            chuanHoaChuoiRongThanhNull(
+                                    thanhPhanRequest.getGhiChu()));
+
+                    return thanhPhan;
+                })
+                .toList();
+
+        thanhPhanHoatChatRepository.saveAll(danhSachCanLuu);
+    }
+
+    private void luuDuLieuChuyenMonThuoc(
+            SanPham sanPham,
+            DuLieuChuyenMonThuocRequest request) {
+        DuLieuChuyenMonThuoc duLieu = new DuLieuChuyenMonThuoc();
+
+        duLieu.setSanPham(sanPham);
+        duLieu.setDangBaoChe(
+                request.getDangBaoChe().trim());
+        duLieu.setPhanLoaiThuoc(
+                request.getPhanLoaiThuoc().trim());
+        duLieu.setCongDungThamKhao(
+                request.getCongDungThamKhao().trim());
+        duLieu.setCachDungThamKhao(
+                request.getCachDungThamKhao().trim());
+        duLieu.setCanhBaoAnToan(
+                request.getCanhBaoAnToan().trim());
+        duLieu.setTrangThaiXacNhan(false);
+
+        duLieuChuyenMonThuocRepository.save(duLieu);
+    }
+
+    private boolean laChuoiRong(String giaTri) {
+        return giaTri == null || giaTri.isBlank();
     }
 
     private DanhMucSanPham layDanhMuc(

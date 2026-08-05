@@ -14,4 +14,10 @@ public class SanPhamTaoMoiRequest {
     private List<DonViSanPhamTaoMoiRequest> danhSachDonVi;
 
     private List<QuyDoiDonViTaoMoiRequest> danhSachQuyDoi;
+
+    private List<ThanhPhanHoatChatTaoMoiRequest>
+            danhSachThanhPhanHoatChat;
+
+    private DuLieuChuyenMonThuocRequest
+            duLieuChuyenMonThuoc;
 }

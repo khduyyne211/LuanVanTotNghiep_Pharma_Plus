@@ -9,25 +9,25 @@ import type {
   SanPham,
 } from "../types/SanPham";
 
-export interface ThamSoLocSanPham{
-    page: number;
-    size: number;
-
-    keyword?:string;
-    laThuocKeDon?:boolean;
-    trangThaiSanPham?:boolean;
-
-    maDanhMuc?:number;
-    maNhaSanXuat?:number;
+export interface ThamSoLocSanPham {
+  page: number;
+  size: number;
+  keyword?: string;
+  laThuocKeDon?: boolean;
+  trangThaiSanPham?: boolean;
+  maDanhMuc?: number;
+  maNhaSanXuat?: number;
 }
-export interface SanPhamRequest{
-    maDanhMuc: number;
-    maNhaSanXuat: number | null;
-    tenSanPham:string;
-    hinhAnh:string|null;
-    laThuocKeDon:boolean;
-    moTaNgan:string|null;
+
+export interface SanPhamRequest {
+  maDanhMuc: number;
+  maNhaSanXuat: number | null;
+  tenSanPham: string;
+  hinhAnh: string | null;
+  laThuocKeDon: boolean;
+  moTaNgan: string | null;
 }
+
 export interface DonViSanPhamTaoMoiRequest {
   maDonViTinh: number;
   giaBanTheoDonVi: number | null;
@@ -43,88 +43,116 @@ export interface QuyDoiDonViTaoMoiRequest {
   soLuongDich: number;
 }
 
+export interface ThanhPhanHoatChatTaoMoiRequest {
+  maHoatChat: number;
+  hamLuong: number;
+  donViHamLuong: string;
+  vaiTroHoatChat: string | null;
+  ghiChu: string | null;
+}
+
+export interface DuLieuChuyenMonThuocRequest {
+  dangBaoChe: string;
+  phanLoaiThuoc: string;
+  congDungThamKhao: string;
+  cachDungThamKhao: string;
+  canhBaoAnToan: string;
+}
+
 export interface SanPhamTaoMoiRequest {
   thongTinSanPham: SanPhamRequest;
   danhSachDonVi: DonViSanPhamTaoMoiRequest[];
   danhSachQuyDoi: QuyDoiDonViTaoMoiRequest[];
+  danhSachThanhPhanHoatChat: ThanhPhanHoatChatTaoMoiRequest[];
+  duLieuChuyenMonThuoc: DuLieuChuyenMonThuocRequest;
 }
-export const layDanhSachSanPhamPhanTrang  = (
-    thamSo: ThamSoLocSanPham
-)=>{
-    return axiosClient.get<PhanTrangResponse<SanPham>>(
-        "/san-pham/phan-trang",{
-            params: thamSo,
-        }
-    );
+
+export const layDanhSachSanPhamPhanTrang = (
+  thamSo: ThamSoLocSanPham,
+) => {
+  return axiosClient.get<PhanTrangResponse<SanPham>>(
+    "/san-pham/phan-trang",
+    { params: thamSo },
+  );
 };
 
-export const layChiTietSanPhamDayDu = (maSanPham:number) =>{
-    return axiosClient.get<SanPham>(
-        `/san-pham/${maSanPham}/chi-tiet-day-du`
-    );
+export const layChiTietSanPhamDayDu = (
+  maSanPham: number,
+) => {
+  return axiosClient.get<SanPham>(
+    `/san-pham/${maSanPham}/chi-tiet-day-du`,
+  );
 };
 
-
-
-export const capNhatSanPham = (ma:number,data: SanPhamRequest)=>{
-    return axiosClient.put<SanPham>(`/san-pham/${ma}`, data)
+export const capNhatSanPham = (
+  maSanPham: number,
+  data: SanPhamRequest,
+) => {
+  return axiosClient.put<SanPham>(
+    `/san-pham/${maSanPham}`,
+    data,
+  );
 };
 
-export const anSanPham = (ma:number)=>{
-    return axiosClient.put<SanPham>(`/san-pham/${ma}/an`);
+export const anSanPham = (maSanPham: number) => {
+  return axiosClient.put<SanPham>(
+    `/san-pham/${maSanPham}/an`,
+  );
 };
 
-export const hienSanPham = (ma:number)=>{
-    return axiosClient.put<SanPham>(`/san-pham/${ma}/hien`);
+export const hienSanPham = (maSanPham: number) => {
+  return axiosClient.put<SanPham>(
+    `/san-pham/${maSanPham}/hien`,
+  );
 };
 
-export const layDanhSachDanhMucSanPham = ()=>{
-    return axiosClient.get<DanhMucSanPhamOption[]>(
-        "/danh-muc-san-pham"
-    );
+export const layDanhSachDanhMucSanPham = () => {
+  return axiosClient.get<DanhMucSanPhamOption[]>(
+    "/danh-muc-san-pham",
+  );
 };
 
-export const layDanhSachNhaSanXuat = ()=>{
-    return axiosClient.get<NhaSanXuatOption[]>(
-        "/nha-san-xuat"
-    );
-};
-
-export const anDonViSanPham = (ma:number)=>{
-    return axiosClient.put<DonViSanPham>(
-        `/don-vi-san-pham/${ma}/an`
-    );
-};
-
-export const hienDonViSanPham = (ma:number) =>{
-    return axiosClient.put<DonViSanPham>(
-    `/don-vi-san-pham/${ma}/hien`
-    );
-};
-
-export const anQuyDoiDonVi = (ma:number) =>{
-    return axiosClient.put<QuyDoiDonVi>(
-        `/quy-doi-don-vi/${ma}/an`
-    );
-};
-
-export const hienQuyDoiDonVi = (ma:number) =>{
-    return axiosClient.put<QuyDoiDonVi>(
-        `/quy-doi-don-vi/${ma}/hien`
-    );
+export const layDanhSachNhaSanXuat = () => {
+  return axiosClient.get<NhaSanXuatOption[]>(
+    "/nha-san-xuat",
+  );
 };
 
 export const layDanhSachDonViTinh = () => {
   return axiosClient.get<DonViTinhOption[]>(
-    "/don-vi-tinh"
+    "/don-vi-tinh",
+  );
+};
+
+export const anDonViSanPham = (maDonVi: number) => {
+  return axiosClient.put<DonViSanPham>(
+    `/don-vi-san-pham/${maDonVi}/an`,
+  );
+};
+
+export const hienDonViSanPham = (maDonVi: number) => {
+  return axiosClient.put<DonViSanPham>(
+    `/don-vi-san-pham/${maDonVi}/hien`,
+  );
+};
+
+export const anQuyDoiDonVi = (maQuyDoi: number) => {
+  return axiosClient.put<QuyDoiDonVi>(
+    `/quy-doi-don-vi/${maQuyDoi}/an`,
+  );
+};
+
+export const hienQuyDoiDonVi = (maQuyDoi: number) => {
+  return axiosClient.put<QuyDoiDonVi>(
+    `/quy-doi-don-vi/${maQuyDoi}/hien`,
   );
 };
 
 export const themSanPham = (
-  duLieu: SanPhamTaoMoiRequest
+  duLieu: SanPhamTaoMoiRequest,
 ) => {
   return axiosClient.post<SanPham>(
     "/san-pham",
-    duLieu
+    duLieu,
   );
 };
