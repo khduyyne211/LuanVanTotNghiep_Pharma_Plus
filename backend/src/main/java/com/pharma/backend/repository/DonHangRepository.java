@@ -1,5 +1,7 @@
 package com.pharma.backend.repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -11,11 +13,12 @@ import org.springframework.data.repository.query.Param;
 import com.pharma.backend.dto.donhang.DonHangChiTietProjection;
 import com.pharma.backend.dto.donhang.DonHangDanhSachProjection;
 import com.pharma.backend.entity.DonHang;
+import com.pharma.backend.enums.donhang.TrangThaiDonHang;
+import com.pharma.backend.enums.donhang.TrangThaiThanhToan;
 
 public interface DonHangRepository extends JpaRepository<DonHang, Long> {
 
-    @Query(
-        value = """
+    @Query(value = """
             SELECT
                 dh.ma_don_hang AS maDonHang,
                 dh.ma_khach_hang AS maKhachHang,
@@ -76,8 +79,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                 OR dh.trang_thai_kiem_duyet = :trangThaiKiemDuyet
             )
             ORDER BY dh.ngay_dat_hang DESC
-            """,
-        countQuery = """
+            """, countQuery = """
             SELECT COUNT(*)
             FROM don_hang dh
             LEFT JOIN khach_hang kh
@@ -106,19 +108,15 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                 OR :trangThaiKiemDuyet = ''
                 OR dh.trang_thai_kiem_duyet = :trangThaiKiemDuyet
             )
-            """,
-        nativeQuery = true
-    )
+            """, nativeQuery = true)
     Page<DonHangDanhSachProjection> timKiemDonHang(
             @Param("keyword") String keyword,
             @Param("trangThaiDonHang") String trangThaiDonHang,
             @Param("trangThaiThanhToan") String trangThaiThanhToan,
             @Param("trangThaiKiemDuyet") String trangThaiKiemDuyet,
-            Pageable pageable
-    );
+            Pageable pageable);
 
-    @Query(
-        value = """
+    @Query(value = """
             SELECT
                 dh.ma_don_hang AS maDonHang,
                 dh.ma_khach_hang AS maKhachHang,
@@ -176,10 +174,31 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             LEFT JOIN don_thuoc dt
                 ON dt.ma_don_thuoc = dh.ma_don_thuoc
             WHERE dh.ma_don_hang = :maDonHang
-            """,
-        nativeQuery = true
-    )
+            """, nativeQuery = true)
     Optional<DonHangChiTietProjection> timChiTietDonHang(
-            @Param("maDonHang") long maDonHang
-    );
+            @Param("maDonHang") long maDonHang);
+
+    long countByNgayDatHangGreaterThanEqualAndNgayDatHangLessThan(
+            LocalDateTime tuNgay,
+            LocalDateTime denNgay);
+
+    long countByTrangThaiDonHang(
+            TrangThaiDonHang trangThaiDonHang);
+
+    @Query("""
+            SELECT COALESCE(SUM(dh.tongThanhToan), 0)
+            FROM DonHang dh
+            WHERE dh.trangThaiDonHang = :trangThaiDonHang
+              AND dh.trangThaiThanhToan = :trangThaiThanhToan
+              AND dh.ngayDatHang >= :tuNgay
+              AND dh.ngayDatHang < :denNgay
+            """)
+    BigDecimal tinhDoanhThuTrongKhoang(
+            @Param("tuNgay") LocalDateTime tuNgay,
+
+            @Param("denNgay") LocalDateTime denNgay,
+
+            @Param("trangThaiDonHang") TrangThaiDonHang trangThaiDonHang,
+
+            @Param("trangThaiThanhToan") TrangThaiThanhToan trangThaiThanhToan);
 }

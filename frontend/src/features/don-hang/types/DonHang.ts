@@ -23,7 +23,6 @@ export type TrangThaiDonHang =
   | "DANG_XU_LY"
   | "DANG_GIAO"
   | "HOAN_THANH"
-  | "DA_HUY";
 
 export type TrangThaiKiemDuyetDonHang =
   | "KHONG_CAN_DUYET"
