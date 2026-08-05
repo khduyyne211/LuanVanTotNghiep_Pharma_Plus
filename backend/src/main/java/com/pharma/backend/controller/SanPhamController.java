@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pharma.backend.dto.common.PhanTrangResponse;
 import com.pharma.backend.dto.sanpham.SanPhamRequest;
 import com.pharma.backend.dto.sanpham.SanPhamResponse;
-import com.pharma.backend.dto.sanpham.SanPhamTaoDayDuRequest;
+import com.pharma.backend.dto.sanpham.SanPhamTaoMoiRequest;
 import com.pharma.backend.service.SanPhamService;
-import com.pharma.backend.service.SanPhamTaoDayDuService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class SanPhamController {
 
         private final SanPhamService sanPhamService;
-        private final SanPhamTaoDayDuService sanPhamTaoDayDuService;
 
         @GetMapping
         public List<SanPhamResponse> layDanhSachSanPham() {
@@ -60,8 +58,8 @@ public class SanPhamController {
 
         @PostMapping
         public SanPhamResponse themSanPham(
-                        @RequestBody SanPhamTaoDayDuRequest request) {
-                return sanPhamTaoDayDuService.taoSanPhamDayDu(request);
+                        @RequestBody SanPhamTaoMoiRequest request) {
+                return sanPhamService.themSanPham(request);
         }
 
         @GetMapping("/{maSanPham}/chi-tiet-day-du")

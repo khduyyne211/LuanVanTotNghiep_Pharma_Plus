@@ -9,7 +9,7 @@ import type {
 } from "../types/SanPham";
 import type {
   SanPhamRequest,
-  SanPhamTaoDayDuRequest,
+  SanPhamTaoMoiRequest,
 } from "../api/sanPhamApi";
 
 import {
@@ -17,7 +17,7 @@ import {
   layDanhSachDanhMucSanPham,
   layDanhSachDonViTinh,
   layDanhSachNhaSanXuat,
-  taoSanPhamDayDu,
+  themSanPham,
 } from "../api/sanPhamApi";
 
 import SanPhamThongTinStep from "./form-san-pham/SanPhamThongTinStep";
@@ -29,7 +29,7 @@ import type { SanPhamDonViFormData } from "./form-san-pham/SanPhamDonViStep";
 import SanPhamQuyDoiStep from "./form-san-pham/SanPhamQuyDoiStep";
 import type { SanPhamQuyDoiFormData } from "./form-san-pham/SanPhamQuyDoiStep";
 
-import "../styles/SanPhamTaoDayDuModal.css";
+import "../styles/SanPhamFormModal.css";
 
 type SanPhamForm = SanPhamThongTinFormData;
 type DonViTaoMoiForm = SanPhamDonViFormData;
@@ -663,7 +663,7 @@ function SanPhamFormNoiDung({
       }
 
       const duLieuGuiLen:
-        SanPhamTaoDayDuRequest = {
+        SanPhamTaoMoiRequest = {
         thongTinSanPham:
           taoThongTinSanPhamGuiLen(),
 
@@ -713,7 +713,7 @@ function SanPhamFormNoiDung({
         setDangLuu(true);
 
         const response =
-          await taoSanPhamDayDu(
+          await themSanPham(
             duLieuGuiLen,
           );
 

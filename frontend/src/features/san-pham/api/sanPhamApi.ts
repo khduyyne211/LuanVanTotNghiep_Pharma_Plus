@@ -43,7 +43,7 @@ export interface QuyDoiDonViTaoMoiRequest {
   soLuongDich: number;
 }
 
-export interface SanPhamTaoDayDuRequest {
+export interface SanPhamTaoMoiRequest {
   thongTinSanPham: SanPhamRequest;
   danhSachDonVi: DonViSanPhamTaoMoiRequest[];
   danhSachQuyDoi: QuyDoiDonViTaoMoiRequest[];
@@ -120,8 +120,8 @@ export const layDanhSachDonViTinh = () => {
   );
 };
 
-export const taoSanPhamDayDu = (
-  duLieu: SanPhamTaoDayDuRequest
+export const themSanPham = (
+  duLieu: SanPhamTaoMoiRequest
 ) => {
   return axiosClient.post<SanPham>(
     "/san-pham",

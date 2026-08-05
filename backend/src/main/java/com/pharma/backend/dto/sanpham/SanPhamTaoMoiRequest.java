@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SanPhamTaoDayDuRequest {
+public class SanPhamTaoMoiRequest {
 
     private SanPhamRequest thongTinSanPham;
 
