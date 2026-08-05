@@ -187,6 +187,96 @@ HttpStatus.BAD_REQUEST,
         );
     }
 
+        @Transactional
+        public void huyDonHang(
+                Long maKhachHang,
+                Long maDonHang
+        ) {
+                kiemTraKhachHangDangNhap(maKhachHang);
+
+                if (maDonHang == null || maDonHang <= 0) {
+                        throw new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST,
+                                "Mã đơn hàng không hợp lệ."
+                        );
+                }
+
+                /*
+                * Khóa đơn hàng để tránh xung đột giữa:
+                * - Khách hàng hủy đơn.
+                * - Callback ZaloPay.
+                * - Scheduler hủy đơn quá hạn.
+                * - Nhân viên tiếp nhận xử lý đơn.
+                */
+                DonHang donHang = donHangRepository
+                        .timTheoMaDeCapNhat(maDonHang)
+                        .orElseThrow(() -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Không tìm thấy đơn hàng."
+                        ));
+
+                if (donHang.getKhachHang() == null
+                        || donHang.getKhachHang().getMaKhachHang() == null
+                        || !maKhachHang.equals(
+                                donHang.getKhachHang().getMaKhachHang()
+                        )) {
+                        throw new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Không tìm thấy đơn hàng."
+                        );
+                }
+
+                if (donHang.getTrangThaiDonHang()
+                        == TrangThaiDonHang.DA_HUY) {
+                        throw new ResponseStatusException(
+                                HttpStatus.CONFLICT,
+                                "Đơn hàng đã được hủy trước đó."
+                        );
+                }
+
+                if (donHang.getTrangThaiThanhToan()
+                        == TrangThaiThanhToan.DA_THANH_TOAN) {
+                        throw new ResponseStatusException(
+                                HttpStatus.CONFLICT,
+                                "Đơn hàng đã thanh toán. "
+                                        + "Vui lòng liên hệ nhà thuốc để được hỗ trợ."
+                        );
+                }
+
+                boolean coTheHuyDonCod =
+                        donHang.getPhuongThucThanhToan()
+                                == PhuongThucThanhToan.COD
+                        && donHang.getTrangThaiDonHang()
+                                == TrangThaiDonHang.CHO_XU_LY
+                        && donHang.getTrangThaiThanhToan()
+                                == TrangThaiThanhToan.CHUA_THANH_TOAN;
+
+                boolean coTheHuyDonZaloPay =
+                        donHang.getPhuongThucThanhToan()
+                                == PhuongThucThanhToan.ZALOPAY
+                        && donHang.getTrangThaiDonHang()
+                                == TrangThaiDonHang.CHO_THANH_TOAN
+                        && donHang.getTrangThaiThanhToan()
+                                == TrangThaiThanhToan.CHO_THANH_TOAN;
+
+                if (!coTheHuyDonCod && !coTheHuyDonZaloPay) {
+                        throw new ResponseStatusException(
+                                HttpStatus.CONFLICT,
+                                "Đơn hàng không còn ở trạng thái cho phép khách hàng hủy."
+                        );
+                }
+
+                donHang.setTrangThaiDonHang(
+                        TrangThaiDonHang.DA_HUY
+                );
+
+                donHang.setTrangThaiThanhToan(
+                        TrangThaiThanhToan.DA_HUY
+                );
+
+                donHangRepository.save(donHang);
+        }
+
     private DuLieuTaoDonHang chuanBiDuLieuTaoDonHang(
             Long maKhachHang,
             TaoDonHangRequestDto request
