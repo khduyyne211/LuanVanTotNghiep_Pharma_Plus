@@ -32,42 +32,49 @@ public interface DonViSanPhamRepository extends JpaRepository<DonViSanPham, Long
             Long maDonViSanPham
     );
 
-    @EntityGraph(attributePaths = {"sanPham", "donViTinh"})
-    @Query("""
-            SELECT dvsp
-            FROM DonViSanPham dvsp
-            WHERE dvsp.sanPham.maSanPham = :maSanPham
-              AND dvsp.choPhepBan = true
-              AND dvsp.trangThai = true
-            ORDER BY CASE
-                         WHEN dvsp.laDonViBanMacDinh = true THEN 0
-                         WHEN dvsp.laDonViCoSo = true THEN 1
-                         ELSE 2
-                     END,
-                     dvsp.maDonViSanPham ASC
-            """)
-    List<DonViSanPham> findBySanPham_MaSanPhamAndChoPhepBanTrueAndTrangThaiTrue(
-            @Param("maSanPham") Long maSanPham
-    );
+        @EntityGraph(attributePaths = {"sanPham", "donViTinh"})
+        @Query("""
+                SELECT dvsp
+                FROM DonViSanPham dvsp
+                WHERE dvsp.sanPham.maSanPham = :maSanPham
+                AND dvsp.choPhepBan = true
+                AND dvsp.trangThai = true
+                AND dvsp.giaBanTheoDonVi IS NOT NULL
+                AND dvsp.giaBanTheoDonVi > 0
+                ORDER BY CASE
+                        WHEN dvsp.laDonViBanMacDinh = true THEN 0
+                        WHEN dvsp.laDonViCoSo = true THEN 1
+                        ELSE 2
+                        END,
+                        dvsp.maDonViSanPham ASC
+                """)
+        List<DonViSanPham>
+                findBySanPham_MaSanPhamAndChoPhepBanTrueAndTrangThaiTrue(
+                        @Param("maSanPham") Long maSanPham
+                );
 
-    @EntityGraph(attributePaths = {"sanPham", "donViTinh"})
-    @Query("""
-            SELECT dvsp
-            FROM DonViSanPham dvsp
-            WHERE dvsp.sanPham.maSanPham IN :danhSachMaSanPham
-              AND dvsp.choPhepBan = true
-              AND dvsp.trangThai = true
-            ORDER BY dvsp.sanPham.maSanPham ASC,
-                     CASE
-                         WHEN dvsp.laDonViBanMacDinh = true THEN 0
-                         WHEN dvsp.laDonViCoSo = true THEN 1
-                         ELSE 2
-                     END,
-                     dvsp.maDonViSanPham ASC
-            """)
-    List<DonViSanPham> findBySanPham_MaSanPhamInAndChoPhepBanTrueAndTrangThaiTrue(
-            @Param("danhSachMaSanPham") List<Long> danhSachMaSanPham
-    );
+        @EntityGraph(attributePaths = {"sanPham", "donViTinh"})
+        @Query("""
+                SELECT dvsp
+                FROM DonViSanPham dvsp
+                WHERE dvsp.sanPham.maSanPham IN :danhSachMaSanPham
+                AND dvsp.choPhepBan = true
+                AND dvsp.trangThai = true
+                AND dvsp.giaBanTheoDonVi IS NOT NULL
+                AND dvsp.giaBanTheoDonVi > 0
+                ORDER BY dvsp.sanPham.maSanPham ASC,
+                        CASE
+                        WHEN dvsp.laDonViBanMacDinh = true THEN 0
+                        WHEN dvsp.laDonViCoSo = true THEN 1
+                        ELSE 2
+                        END,
+                        dvsp.maDonViSanPham ASC
+                """)
+        List<DonViSanPham>
+                findBySanPham_MaSanPhamInAndChoPhepBanTrueAndTrangThaiTrue(
+                        @Param("danhSachMaSanPham")
+                        List<Long> danhSachMaSanPham
+                );
 
     Optional<DonViSanPham> findBySanPham_MaSanPhamAndLaDonViCoSoTrueAndTrangThaiTrue(
             Long maSanPham

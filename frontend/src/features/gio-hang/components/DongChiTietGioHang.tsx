@@ -129,10 +129,23 @@ function DongChiTietGioHang({
       </div>
 
       <div className="gio-hang-cot gio-hang-cot-gia">
-        <strong>{dinhDangTien(chiTiet.thanhTien)}</strong>
+        <strong>
+          {dinhDangTien(chiTiet.thanhTien)}
+        </strong>
 
-        <span>
-          {dinhDangTien(chiTiet.giaBanTheoDonVi)}
+        {chiTiet.coKhuyenMai && (
+          <span className="gio-hang-gia-goc">
+            {dinhDangTien(
+              chiTiet.giaBanTheoDonVi
+            )}
+          </span>
+        )}
+
+        <span className="gio-hang-gia-sau-khuyen-mai">
+          {dinhDangTien(
+            chiTiet.giaSauKhuyenMai
+          )}
+
           {chiTiet.tenDonViTinh
             ? ` / ${chiTiet.tenDonViTinh}`
             : ""}
@@ -204,6 +217,17 @@ function DongChiTietGioHang({
                     donVi.maDonViSanPham ===
                     chiTiet.maDonViSanPham;
 
+                  const giaGoc =
+                    donVi.giaBanTheoDonVi ?? 0;
+
+                  const giaSauKhuyenMai =
+                    donVi.giaSauKhuyenMai ??
+                    giaGoc;
+
+                  const coKhuyenMai =
+                    Boolean(donVi.coKhuyenMai) &&
+                    giaGoc > giaSauKhuyenMai;
+
                   return (
                     <button
                       key={donVi.maDonViSanPham}
@@ -230,9 +254,17 @@ function DongChiTietGioHang({
                       </span>
 
                       <span className="gio-hang-don-vi-gia">
-                        {dinhDangTien(
-                          donVi.giaBanTheoDonVi ?? 0
+                        {coKhuyenMai && (
+                          <span className="gio-hang-don-vi-gia-goc">
+                            {dinhDangTien(giaGoc)}
+                          </span>
                         )}
+
+                        <span className="gio-hang-don-vi-gia-hien-tai">
+                          {dinhDangTien(
+                            giaSauKhuyenMai
+                          )}
+                        </span>
                       </span>
                     </button>
                   );

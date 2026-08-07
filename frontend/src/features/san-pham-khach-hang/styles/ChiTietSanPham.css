@@ -130,9 +130,7 @@
 
 .chi-tiet-san-pham-don-vi-gia {
   color: #075eea;
-  border-color: #075eea;
-  box-shadow: 0 1px 4px rgba(7, 94, 234, 0.12);
- font-size: 20px;
+  font-size: 20px;
   font-weight: 400;
 }
 
@@ -140,6 +138,138 @@
   color: #94a3b8;
   font-size: 16px;
   font-weight: 600;
+}
+
+/* =========================
+   GIÁ VÀ TRẠNG THÁI TỒN KHO
+========================= */
+
+.chi-tiet-san-pham-khu-vuc-gia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.chi-tiet-san-pham-gia-goc {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: line-through;
+}
+
+.chi-tiet-san-pham-hinh-anh {
+  position: relative;
+}
+
+.chi-tiet-san-pham-nhan-het-hang {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 9px 14px;
+  border-radius: 999px;
+
+  background-color: #8cf5b1;
+  color: #237d46;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* =========================
+   BỘ CHỌN SỐ LƯỢNG
+========================= */
+
+.chi-tiet-san-pham-chon-so-luong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.chi-tiet-san-pham-chon-so-luong-tieu-de {
+  color: #334155;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.chi-tiet-san-pham-bo-dem-so-luong {
+  width: 128px;
+  height: 38px;
+
+  display: grid;
+  grid-template-columns: 40px 43px 40px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.chi-tiet-san-pham-bo-dem-so-luong button {
+  border: none;
+  background-color: #ffffff;
+  color: #364563;
+
+  font-size: 27px;
+  font-weight: 400;
+  line-height: 1;
+  margin-bottom: 4px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chi-tiet-san-pham-bo-dem-so-luong button:hover:not(:disabled) {
+  background-color: #f1f5f9;
+}
+
+.chi-tiet-san-pham-bo-dem-so-luong button:disabled {
+  color: #cbd5e1;
+  background-color: #ffffff;
+  cursor: not-allowed;
+}
+
+.chi-tiet-san-pham-bo-dem-so-luong input {
+  width: 100%;
+  height: 100%;
+
+  border: none;
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  outline: none;
+
+  background-color: #ffffff;
+  color: #071333;
+
+  font-size: 19px;
+  font-weight: 500;
+  text-align: center;
+
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.chi-tiet-san-pham-bo-dem-so-luong input:disabled {
+  color: #94a3b8;
+  background-color: #f8fafc;
+  cursor: not-allowed;
+}
+
+.chi-tiet-san-pham-bo-dem-so-luong input::-webkit-inner-spin-button,
+.chi-tiet-san-pham-bo-dem-so-luong input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 /* =========================
@@ -183,6 +313,14 @@
 .nut-them-gio-hang:hover,
 .nut-tu-van:hover {
   background-color: #064fc4;
+}
+
+.nut-them-gio-hang.het-hang,
+.nut-them-gio-hang.het-hang:hover,
+.nut-them-gio-hang:disabled {
+  background-color: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
 }
 
 .nut-gui-don-thuoc:hover {
@@ -321,6 +459,15 @@
   .nut-them-gio-hang,
   .nut-tu-van,
   .nut-gui-don-thuoc {
+    width: 100%;
+  }
+
+    .chi-tiet-san-pham-chon-so-luong {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .chi-tiet-san-pham-ton-kho {
     width: 100%;
   }
 }

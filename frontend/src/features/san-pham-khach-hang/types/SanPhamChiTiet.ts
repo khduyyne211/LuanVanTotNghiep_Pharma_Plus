@@ -6,7 +6,21 @@ export interface SanPhamChiTiet {
   maSanPham: number;
   tenSanPham: string;
   hinhAnh: string | null;
+
+  /**
+   * Giá gốc của đơn vị đại diện trước khuyến mãi.
+   */
+  giaBanGoc: number;
+
+  /**
+   * Giá sau khuyến mãi của đơn vị đại diện.
+   */
   giaBan: number;
+
+  soTienGiam: number;
+  coKhuyenMai: boolean;
+  hetHang: boolean;
+
   laThuocKeDon: boolean;
   trangThaiSanPham: boolean;
   moTaNgan: string | null;

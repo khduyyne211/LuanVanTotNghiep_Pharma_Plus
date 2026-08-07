@@ -1,27 +1,47 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import { TEN_TRANG_THAI_DON_HANG } from "../../features/don-hang-khach-hang/constants/TrangThaiDonHang";
 import { TEN_TRANG_THAI_THANH_TOAN } from "../../features/don-hang-khach-hang/constants/TrangThaiThanhToan";
 import { useChiTietDonHang } from "../../features/don-hang-khach-hang/hooks/useChiTietDonHang";
+
 import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
 import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
+
 import "../../features/don-hang-khach-hang/styles/ChiTietDonHang.css";
 import "../../features/don-hang-khach-hang/styles/TrangThaiDonHang.css";
 import "../../features/don-hang-khach-hang/styles/TrangThaiThanhToan.css";
 
-const KHOA_THANH_TOAN_ZALOPAY = "pharma_thanh_toan_zalopay_dang_cho";
+const KHOA_THANH_TOAN_ZALOPAY =
+  "pharma_thanh_toan_zalopay_dang_cho";
 
 function dinhDangTien(soTien: number) {
   return soTien.toLocaleString("vi-VN") + "đ";
+}
+
+function dinhDangSoTienGiam(soTien: number) {
+  if (soTien <= 0) {
+    return "0đ";
+  }
+
+  return `-${dinhDangTien(soTien)}`;
 }
 
 function dinhDangNgay(ngay: string) {
   return new Date(ngay).toLocaleDateString("vi-VN");
 }
 
-function hienThiPhuongThucThanhToan(phuongThuc: string | null) {
-  if (phuongThuc === "COD") return "Thanh toán khi nhận hàng";
-  if (phuongThuc === "ZALOPAY") return "Thanh toán ZaloPay (QR)";
+function hienThiPhuongThucThanhToan(
+  phuongThuc: string | null
+) {
+  if (phuongThuc === "COD") {
+    return "Thanh toán khi nhận hàng";
+  }
+
+  if (phuongThuc === "ZALOPAY") {
+    return "Thanh toán ZaloPay (QR)";
+  }
+
   return phuongThuc || "Chưa cập nhật";
 }
 
@@ -49,21 +69,30 @@ function ChiTietDonHangPage() {
       return;
     }
 
-    thongBao.hienThongBao(loiThaoTac, "LOI", "Không thể thực hiện thao tác");
+    thongBao.hienThongBao(
+      loiThaoTac,
+      "LOI",
+      "Không thể thực hiện thao tác"
+    );
 
     xoaLoiThaoTac();
-  }, [loiThaoTac, thongBao.hienThongBao, xoaLoiThaoTac]);
+  }, [
+    loiThaoTac,
+    thongBao.hienThongBao,
+    xoaLoiThaoTac,
+  ]);
 
   async function xuLyHuyDonHang() {
     const daXacNhan = window.confirm(
-      "Bạn có chắc chắn muốn hủy đơn hàng này không?",
+      "Bạn có chắc chắn muốn hủy đơn hàng này không?"
     );
 
     if (!daXacNhan) {
       return;
     }
 
-    const daHuyThanhCong = await huyDonHang();
+    const daHuyThanhCong =
+      await huyDonHang();
 
     if (!daHuyThanhCong) {
       return;
@@ -72,25 +101,28 @@ function ChiTietDonHangPage() {
     thongBao.hienThongBao(
       "Đơn hàng đã được hủy thành công.",
       "THANH_CONG",
-      "Hủy đơn thành công",
+      "Hủy đơn thành công"
     );
   }
 
   async function xuLyThanhToanLai() {
-    const duLieuThanhToan = await taoThanhToanLai();
+    const duLieuThanhToan =
+      await taoThanhToanLai();
 
     if (!duLieuThanhToan) {
       return;
     }
 
-    const orderUrl = duLieuThanhToan.orderUrl?.trim();
+    const orderUrl =
+      duLieuThanhToan.orderUrl?.trim();
 
     if (!orderUrl) {
       thongBao.hienThongBao(
         "ZaloPay không trả về đường dẫn thanh toán.",
         "LOI",
-        "Không thể tạo mã thanh toán",
+        "Không thể tạo mã thanh toán"
       );
+
       return;
     }
 
@@ -98,21 +130,34 @@ function ChiTietDonHangPage() {
       sessionStorage.setItem(
         KHOA_THANH_TOAN_ZALOPAY,
         JSON.stringify({
-          maDonHang: duLieuThanhToan.maDonHang,
-          appTransId: duLieuThanhToan.appTransId,
-          soTien: duLieuThanhToan.soTien,
+          maDonHang:
+            duLieuThanhToan.maDonHang,
+
+          appTransId:
+            duLieuThanhToan.appTransId,
+
+          soTien:
+            duLieuThanhToan.soTien,
+
           orderUrl,
-          thoiGianHieuLucGiay: duLieuThanhToan.thoiGianHieuLucGiay,
-          thoiDiemTao: Date.now(),
-        }),
+
+          thoiGianHieuLucGiay:
+            duLieuThanhToan
+              .thoiGianHieuLucGiay,
+
+          thoiDiemTao:
+            Date.now(),
+        })
       );
 
-      navigate("/thanh-toan/zalopay/quet-ma");
+      navigate(
+        "/thanh-toan/zalopay/quet-ma"
+      );
     } catch {
       thongBao.hienThongBao(
         "Không thể lưu thông tin thanh toán ZaloPay.",
         "LOI",
-        "Không thể mở mã thanh toán",
+        "Không thể mở mã thanh toán"
       );
     }
   }
@@ -147,16 +192,25 @@ function ChiTietDonHangPage() {
     );
   }
 
-  const maDonHangHienThi = `#${String(donHang.maDonHang).padStart(6, "0")}`;
-  const tenPhuongThucThanhToan = hienThiPhuongThucThanhToan(
-    donHang.phuongThucThanhToan,
-  );
-  const classTrangThai = donHang.trangThaiDonHang
-    .toLowerCase()
-    .replaceAll("_", "-");
-  const classTrangThaiThanhToan = donHang.trangThaiThanhToan
-    .toLowerCase()
-    .replaceAll("_", "-");
+  const maDonHangHienThi =
+    `#${String(
+      donHang.maDonHang
+    ).padStart(6, "0")}`;
+
+  const tenPhuongThucThanhToan =
+    hienThiPhuongThucThanhToan(
+      donHang.phuongThucThanhToan
+    );
+
+  const classTrangThai =
+    donHang.trangThaiDonHang
+      .toLowerCase()
+      .replaceAll("_", "-");
+
+  const classTrangThaiThanhToan =
+    donHang.trangThaiThanhToan
+      .toLowerCase()
+      .replaceAll("_", "-");
 
   const diaChiNhanHang = [
     donHang.diaChiChiTiet,
@@ -166,10 +220,37 @@ function ChiTietDonHangPage() {
     .filter(Boolean)
     .join(", ");
 
+  /*
+   * Giảm giá trực tiếp:
+   * tổng khuyến mãi sản phẩm đã được
+   * snapshot trong từng chi tiết đơn hàng.
+   */
+  const tongGiamGiaTrucTiep =
+    donHang.danhSachChiTietDonHang.reduce(
+      (tong, chiTiet) =>
+        tong +
+        (chiTiet.giamGia ?? 0),
+      0
+    );
+
+  /*
+   * don_hang.giam_gia hiện dành cho
+   * giảm cấp đơn hàng / voucher.
+   */
+  const giamGiaVoucher =
+    donHang.giamGia ?? 0;
+
+  const tietKiemDuoc =
+    tongGiamGiaTrucTiep +
+    giamGiaVoucher;
+
   return (
     <section className="chi-tiet-don-hang-trang">
       <div className="chi-tiet-don-hang-header">
-        <Link to="/tai-khoan/don-hang" className="chi-tiet-don-hang-quay-lai">
+        <Link
+          to="/tai-khoan/don-hang"
+          className="chi-tiet-don-hang-quay-lai"
+        >
           ← Quay lại danh sách đơn hàng
         </Link>
       </div>
@@ -177,22 +258,32 @@ function ChiTietDonHangPage() {
       <div className="chi-tiet-don-hang-khoi">
         <div className="chi-tiet-don-hang-khoi-dau">
           <div>
-            <p className="chi-tiet-don-hang-label">Ngày đặt hàng</p>
+            <p className="chi-tiet-don-hang-label">
+              Ngày đặt hàng
+            </p>
+
             <h1 className="chi-tiet-don-hang-tieu-de">
-              {dinhDangNgay(donHang.ngayDatHang)}
+              {dinhDangNgay(
+                donHang.ngayDatHang
+              )}
             </h1>
           </div>
 
           <div className="chi-tiet-don-hang-thong-tin-ngang">
             <div>
-              <p className="chi-tiet-don-hang-label">Mã đơn hàng</p>
+              <p className="chi-tiet-don-hang-label">
+                Mã đơn hàng
+              </p>
+
               <p className="chi-tiet-don-hang-gia-tri-chinh">
                 {maDonHangHienThi}
               </p>
             </div>
 
             <div>
-              <p className="chi-tiet-don-hang-label">Trạng thái đơn hàng</p>
+              <p className="chi-tiet-don-hang-label">
+                Trạng thái đơn hàng
+              </p>
 
               <span
                 className={
@@ -201,20 +292,30 @@ function ChiTietDonHangPage() {
                 }
               >
                 <span className="trang-thai-don-hang-cham" />
-                {TEN_TRANG_THAI_DON_HANG[donHang.trangThaiDonHang]}
+
+                {
+                  TEN_TRANG_THAI_DON_HANG[
+                    donHang.trangThaiDonHang
+                  ]
+                }
               </span>
             </div>
           </div>
         </div>
 
-        {(coTheThanhToanLai || coTheHuyDonHang) && (
+        {(coTheThanhToanLai ||
+          coTheHuyDonHang) && (
           <div className="chi-tiet-don-hang-thao-tac">
             {coTheThanhToanLai && (
               <button
                 type="button"
                 className="chi-tiet-don-hang-nut chi-tiet-don-hang-nut--thanh-toan"
-                disabled={dangXuLyThaoTac}
-                onClick={() => void xuLyThanhToanLai()}
+                disabled={
+                  dangXuLyThaoTac
+                }
+                onClick={() =>
+                  void xuLyThanhToanLai()
+                }
               >
                 {dangTaoThanhToanLai
                   ? "Đang tạo mã thanh toán..."
@@ -226,10 +327,16 @@ function ChiTietDonHangPage() {
               <button
                 type="button"
                 className="chi-tiet-don-hang-nut chi-tiet-don-hang-nut--huy"
-                disabled={dangXuLyThaoTac}
-                onClick={() => void xuLyHuyDonHang()}
+                disabled={
+                  dangXuLyThaoTac
+                }
+                onClick={() =>
+                  void xuLyHuyDonHang()
+                }
               >
-                {dangHuyDonHang ? "Đang hủy đơn..." : "Hủy đơn hàng"}
+                {dangHuyDonHang
+                  ? "Đang hủy đơn..."
+                  : "Hủy đơn hàng"}
               </button>
             )}
           </div>
@@ -237,36 +344,97 @@ function ChiTietDonHangPage() {
       </div>
 
       <div className="chi-tiet-don-hang-khoi">
-        <h2 className="chi-tiet-don-hang-khoi-tieu-de">Thông tin thanh toán</h2>
+        <h2 className="chi-tiet-don-hang-khoi-tieu-de">
+          Thông tin thanh toán
+        </h2>
 
         <div className="chi-tiet-don-hang-thanh-toan">
           <div className="chi-tiet-don-hang-dong">
-            <span>Tổng tiền hàng</span>
-            <strong>{dinhDangTien(donHang.tongTienHang)}</strong>
+            <span>
+              Tổng tiền hàng
+            </span>
+
+            <strong>
+              {dinhDangTien(
+                donHang.tongTienHang
+              )}
+            </strong>
           </div>
 
           <div className="chi-tiet-don-hang-dong">
-            <span>Phí giao hàng</span>
-            <strong>{dinhDangTien(donHang.phiGiaoHang)}</strong>
+            <span>
+              Giảm giá trực tiếp
+            </span>
+
+            <strong className="chi-tiet-don-hang-gia-tri-khuyen-mai">
+              {dinhDangSoTienGiam(
+                tongGiamGiaTrucTiep
+              )}
+            </strong>
           </div>
 
           <div className="chi-tiet-don-hang-dong">
-            <span>Giảm giá</span>
-            <strong>{dinhDangTien(donHang.giamGia)}</strong>
+            <span>
+              Giảm giá voucher
+            </span>
+
+            <strong className="chi-tiet-don-hang-gia-tri-khuyen-mai">
+              {dinhDangSoTienGiam(
+                giamGiaVoucher
+              )}
+            </strong>
           </div>
 
           <div className="chi-tiet-don-hang-dong">
-            <span>Phương thức thanh toán</span>
-            <strong>{tenPhuongThucThanhToan}</strong>
+            <span>
+              Tiết kiệm được
+            </span>
+
+            <strong className="chi-tiet-don-hang-gia-tri-khuyen-mai">
+              {dinhDangTien(
+                tietKiemDuoc
+              )}
+            </strong>
+          </div>
+
+          <div className="chi-tiet-don-hang-dong">
+            <span>
+              Phí giao hàng
+            </span>
+
+            <strong>
+              {dinhDangTien(
+                donHang.phiGiaoHang
+              )}
+            </strong>
+          </div>
+
+          <div className="chi-tiet-don-hang-dong">
+            <span>
+              Phương thức thanh toán
+            </span>
+
+            <strong>
+              {tenPhuongThucThanhToan}
+            </strong>
           </div>
 
           <div className="chi-tiet-don-hang-dong chi-tiet-don-hang-dong-thanh-tien">
-            <span>Thành tiền</span>
-            <strong>{dinhDangTien(donHang.tongThanhToan)}</strong>
+            <span>
+              Thành tiền
+            </span>
+
+            <strong>
+              {dinhDangTien(
+                donHang.tongThanhToan
+              )}
+            </strong>
           </div>
 
           <div className="chi-tiet-don-hang-dong">
-            <span>Trạng thái thanh toán</span>
+            <span>
+              Trạng thái thanh toán
+            </span>
 
             <span
               className={
@@ -275,13 +443,24 @@ function ChiTietDonHangPage() {
               }
             >
               <span className="trang-thai-thanh-toan-cham" />
-              {TEN_TRANG_THAI_THANH_TOAN[donHang.trangThaiThanhToan]}
+
+              {
+                TEN_TRANG_THAI_THANH_TOAN[
+                  donHang.trangThaiThanhToan
+                ]
+              }
             </span>
           </div>
 
           <div className="chi-tiet-don-hang-ghi-chu">
-            <p className="chi-tiet-don-hang-label">Ghi chú đơn hàng</p>
-            <p>{donHang.ghiChu || "Không có ghi chú."}</p>
+            <p className="chi-tiet-don-hang-label">
+              Ghi chú đơn hàng
+            </p>
+
+            <p>
+              {donHang.ghiChu ||
+                "Không có ghi chú."}
+            </p>
           </div>
         </div>
       </div>
@@ -294,73 +473,115 @@ function ChiTietDonHangPage() {
 
           <div className="chi-tiet-don-hang-noi-dung">
             <p className="chi-tiet-don-hang-ten-nguoi-nhan">
-              {donHang.tenNguoiNhan || "Không có thông tin người nhận"}
+              {donHang.tenNguoiNhan ||
+                "Không có thông tin người nhận"}
             </p>
 
-            <p>{donHang.soDienThoaiNhan || "Không có số điện thoại"}</p>
+            <p>
+              {donHang.soDienThoaiNhan ||
+                "Không có số điện thoại"}
+            </p>
           </div>
         </div>
 
         <div className="chi-tiet-don-hang-khoi">
-          <h2 className="chi-tiet-don-hang-khoi-tieu-de">Địa chỉ nhận hàng</h2>
+          <h2 className="chi-tiet-don-hang-khoi-tieu-de">
+            Địa chỉ nhận hàng
+          </h2>
 
           <div className="chi-tiet-don-hang-noi-dung">
-            <p>{diaChiNhanHang || "Không có thông tin địa chỉ."}</p>
+            <p>
+              {diaChiNhanHang ||
+                "Không có thông tin địa chỉ."}
+            </p>
           </div>
         </div>
       </div>
 
       <div className="chi-tiet-don-hang-khoi">
-        <h2 className="chi-tiet-don-hang-khoi-tieu-de">Danh sách sản phẩm</h2>
+        <h2 className="chi-tiet-don-hang-khoi-tieu-de">
+          Danh sách sản phẩm
+        </h2>
 
         <div className="chi-tiet-don-hang-danh-sach-san-pham">
-          {donHang.danhSachChiTietDonHang.map((chiTiet) => (
-            <div
-              key={chiTiet.maChiTietDonHang}
-              className="chi-tiet-don-hang-san-pham"
-            >
-              <div className="chi-tiet-don-hang-san-pham-ben-trai">
-                <div className="chi-tiet-don-hang-san-pham-anh">
-                  {chiTiet.hinhAnh ? (
-                    <img src={chiTiet.hinhAnh} alt={chiTiet.tenSanPham} />
-                  ) : (
-                    <div className="chi-tiet-don-hang-san-pham-khong-anh">
-                      Chưa có ảnh
-                    </div>
-                  )}
+          {donHang.danhSachChiTietDonHang.map(
+            (chiTiet) => (
+              <div
+                key={
+                  chiTiet.maChiTietDonHang
+                }
+                className="chi-tiet-don-hang-san-pham"
+              >
+                <div className="chi-tiet-don-hang-san-pham-ben-trai">
+                  <div className="chi-tiet-don-hang-san-pham-anh">
+                    {chiTiet.hinhAnh ? (
+                      <img
+                        src={
+                          chiTiet.hinhAnh
+                        }
+                        alt={
+                          chiTiet.tenSanPham
+                        }
+                      />
+                    ) : (
+                      <div className="chi-tiet-don-hang-san-pham-khong-anh">
+                        Chưa có ảnh
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="chi-tiet-don-hang-san-pham-thong-tin">
+                    <p className="chi-tiet-don-hang-san-pham-ten">
+                      {
+                        chiTiet.tenSanPham
+                      }
+                    </p>
+
+                    <p className="chi-tiet-don-hang-san-pham-don-vi">
+                      Đơn vị:{" "}
+                      {
+                        chiTiet.tenDonViTinh
+                      }
+                    </p>
+                  </div>
                 </div>
 
-                <div className="chi-tiet-don-hang-san-pham-thong-tin">
-                  <p className="chi-tiet-don-hang-san-pham-ten">
-                    {chiTiet.tenSanPham}
+                <div className="chi-tiet-don-hang-san-pham-ben-phai">
+                  <p className="chi-tiet-don-hang-san-pham-gia">
+                    {dinhDangTien(
+                      chiTiet.thanhTien
+                    )}
                   </p>
 
-                  <p className="chi-tiet-don-hang-san-pham-don-vi">
-                    Đơn vị: {chiTiet.tenDonViTinh}
+                  <p className="chi-tiet-don-hang-san-pham-so-luong">
+                    x{chiTiet.soLuong}{" "}
+                    {
+                      chiTiet.tenDonViTinh
+                    }
                   </p>
                 </div>
               </div>
-
-              <div className="chi-tiet-don-hang-san-pham-ben-phai">
-                <p className="chi-tiet-don-hang-san-pham-gia">
-                  {dinhDangTien(chiTiet.thanhTien)}
-                </p>
-
-                <p className="chi-tiet-don-hang-san-pham-so-luong">
-                  x{chiTiet.soLuong} {chiTiet.tenDonViTinh}
-                </p>
-              </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       </div>
 
       <ThongBaoHeThong
-        dangHien={thongBao.dangHien}
-        tieuDe={thongBao.tieuDe}
-        noiDung={thongBao.noiDung}
-        loai={thongBao.loai}
-        dongThongBao={thongBao.dongThongBao}
+        dangHien={
+          thongBao.dangHien
+        }
+        tieuDe={
+          thongBao.tieuDe
+        }
+        noiDung={
+          thongBao.noiDung
+        }
+        loai={
+          thongBao.loai
+        }
+        dongThongBao={
+          thongBao.dongThongBao
+        }
       />
     </section>
   );

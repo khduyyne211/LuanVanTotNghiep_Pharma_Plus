@@ -10,7 +10,21 @@ export interface KiemTraGioHangRequest {
 export interface ThongTinKiemTraGioHang {
   maSanPham: number;
   maDonViSanPham: number;
+
+  /**
+   * Giá gốc trước khuyến mãi.
+   */
   giaBanTheoDonVi: number;
+
+  soTienGiamMoiDonVi: number;
+
+  /**
+   * Giá thực trả trên mỗi đơn vị.
+   */
+  giaSauKhuyenMai: number;
+
+  coKhuyenMai: boolean;
+
   heSoQuyDoiVeDonViCoSo: number;
   tonKhaDungTheoQuyDoi: number;
 }

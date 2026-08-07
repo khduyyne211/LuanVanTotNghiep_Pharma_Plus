@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.pharma.backend.entity.DanhMucSanPham;
-import com.pharma.backend.entity.DonViSanPham;
 import com.pharma.backend.entity.DuLieuChuyenMonThuoc;
 import com.pharma.backend.entity.HoatChat;
 import com.pharma.backend.entity.NhaSanXuat;
@@ -80,29 +79,23 @@ public class SanPhamTimKiemSpecification {
                 .toList();
     }
 
-    public Specification<SanPham> taoDieuKienLocSanPham(
-            BigDecimal giaTu,
-            BigDecimal giaDen,
-Long maNhaSanXuat,
-            List<Long> danhSachMaDanhMucCanLoc,
-            String tuKhoaDaChuanHoa,
-            List<String> danhSachThanhPhanTuKhoa,
-            String sapXep
-    ) {
+        public Specification<SanPham> taoDieuKienLocSanPham(
+                Long maNhaSanXuat,
+                List<Long> danhSachMaDanhMucCanLoc,
+                String tuKhoaDaChuanHoa,
+                List<String> danhSachThanhPhanTuKhoa
+        ) {
         return (root, query, cb) -> {
             List<Predicate> dieuKien = new ArrayList<>();
 
             Join<SanPham, NhaSanXuat> nhaSanXuatJoin =
-                    root.join("nhaSanXuat", JoinType.LEFT);
+                    root.join("nhaSanXuat", JoinType.INNER);
 
             Join<SanPham, DanhMucSanPham> danhMucJoin =
                     root.join("danhMuc", JoinType.INNER);
 
             Join<DanhMucSanPham, DanhMucSanPham> danhMucChaJoin =
                     danhMucJoin.join("danhMucCha", JoinType.LEFT);
-
-            Join<SanPham, DonViSanPham> donViBanMacDinhJoin =
-                    root.join("danhSachDonViSanPham", JoinType.INNER);
 
             dieuKien.add(cb.isTrue(root.<Boolean>get("trangThaiSanPham")));
             dieuKien.add(cb.isTrue(danhMucJoin.<Boolean>get("trangThaiHienThi")));
@@ -112,40 +105,10 @@ Long maNhaSanXuat,
                     cb.isTrue(danhMucChaJoin.<Boolean>get("trangThaiHienThi"))
             ));
 
-            dieuKien.add(cb.or(
-                    cb.isNull(nhaSanXuatJoin.<Long>get("maNhaSanXuat")),
-                    cb.isTrue(nhaSanXuatJoin.<Boolean>get("trangThai"))
-            ));
-
             dieuKien.add(cb.isTrue(
-                    donViBanMacDinhJoin.<Boolean>get("laDonViBanMacDinh")
+                nhaSanXuatJoin.<Boolean>get("trangThai")
             ));
 
-            dieuKien.add(cb.isTrue(
-                    donViBanMacDinhJoin.<Boolean>get("choPhepBan")
-            ));
-
-            dieuKien.add(cb.isTrue(
-                    donViBanMacDinhJoin.<Boolean>get("trangThai")
-            ));
-
-            dieuKien.add(cb.isNotNull(
-                    donViBanMacDinhJoin.<BigDecimal>get("giaBanTheoDonVi")
-            ));
-
-            if (giaTu != null) {
-                dieuKien.add(cb.greaterThanOrEqualTo(
-                        donViBanMacDinhJoin.<BigDecimal>get("giaBanTheoDonVi"),
-                        giaTu
-                ));
-            }
-
-            if (giaDen != null) {
-                dieuKien.add(cb.lessThanOrEqualTo(
-                        donViBanMacDinhJoin.<BigDecimal>get("giaBanTheoDonVi"),
-                        giaDen
-                ));
-            }
 
             if (maNhaSanXuat != null) {
                 dieuKien.add(cb.equal(
@@ -182,39 +145,27 @@ for (String thanhPhanTuKhoa : danhSachThanhPhanTuKhoa) {
 
 
             if (!laTruyVanDem(query)) {
-                if ("GIA_TANG_DAN".equals(sapXep)) {
-                    query.orderBy(
-                            cb.asc(donViBanMacDinhJoin.<BigDecimal>get(
-                                    "giaBanTheoDonVi"
-                            )),
-                            cb.desc(root.<Long>get("maSanPham"))
-                    );
-                } else if ("GIA_GIAM_DAN".equals(sapXep)) {
-                    query.orderBy(
-                            cb.desc(donViBanMacDinhJoin.<BigDecimal>get(
-                                    "giaBanTheoDonVi"
-                            )),
-                            cb.desc(root.<Long>get("maSanPham"))
-                    );
-                } else if (coTuKhoaTimKiem) {
-                    Expression<Integer> diemLienQuan =
-                            taoDiemLienQuanTimKiem(
-                                    root,
-                                    query,
-                                    cb,
-                                    nhaSanXuatJoin,
-                                    danhMucJoin,
-                                    danhMucChaJoin,
-                                    tuKhoaDaChuanHoa,
-                                    danhSachThanhPhanTuKhoa
-                            );
+                if (coTuKhoaTimKiem) {
+                        Expression<Integer> diemLienQuan =
+                                taoDiemLienQuanTimKiem(
+                                        root,
+                                        query,
+                                        cb,
+                                        nhaSanXuatJoin,
+                                        danhMucJoin,
+                                        danhMucChaJoin,
+                                        tuKhoaDaChuanHoa,
+                                        danhSachThanhPhanTuKhoa
+                                );
 
-                    query.orderBy(
-                            cb.desc(diemLienQuan),
-                            cb.desc(root.<Long>get("maSanPham"))
-                    );
+                        query.orderBy(
+                                cb.desc(diemLienQuan),
+                                cb.desc(root.<Long>get("maSanPham"))
+                        );
                 } else {
-                    query.orderBy(cb.desc(root.<Long>get("maSanPham")));
+                        query.orderBy(
+                                cb.desc(root.<Long>get("maSanPham"))
+                        );
                 }
             }
 

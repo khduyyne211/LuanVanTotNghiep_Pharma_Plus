@@ -1,13 +1,23 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  useEffect,
+  useState,
+} from "react";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
+
 import DongChiTietGioHang from "../../features/gio-hang/components/DongChiTietGioHang";
 import { dongBoGioHangApi } from "../../features/gio-hang/api/GioHangApi";
 import { useGioHangContext } from "../../features/gio-hang/context/GioHangContext";
 import { useKiemTraGioHangLocal } from "../../features/gio-hang/hooks/useKiemTraGioHangLocal";
+
 import type { ChiTietGioHangLocal } from "../../features/gio-hang/types/GioHangLocal";
+
 import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
 import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
+
 import "../../features/gio-hang/styles/GioHang.css";
 
 interface DuLieuLoiApi {
@@ -17,7 +27,9 @@ interface DuLieuLoiApi {
 
 function GioHangPage() {
   const navigate = useNavigate();
-  const thongBao = useThongBaoHeThong();
+
+  const thongBao =
+    useThongBaoHeThong();
 
   const {
     danhSachChiTietGioHangLocal,
@@ -29,120 +41,243 @@ function GioHangPage() {
 
   const {
     danhSachChiTietHienThi,
-    tongTien,
+    tongTienGoc,
+    tongGiamGiaTrucTiep,
+    hopLe,
     daKiemTraThanhCong,
     dangTaiDuLieu,
     thongBaoLoi,
     kiemTraDanhSachGioHang,
   } = useKiemTraGioHangLocal();
 
-  const [dangDoiDonVi, setDangDoiDonVi] = useState(false);
-  const [dangDongBo, setDangDongBo] = useState(false);
+  const [
+    dangDoiDonVi,
+    setDangDoiDonVi,
+  ] = useState(false);
 
+  const [
+    dangDongBo,
+    setDangDongBo,
+  ] = useState(false);
+
+  /*
+   * dangTaiDuLieu chỉ bật khi thực sự có
+   * request backend.
+   *
+   * Sau tối ưu, thao tác +/- bình thường
+   * không làm dangTaiDuLieu bật nữa.
+   */
   const dangXuLy =
-    dangTaiDuLieu || dangDoiDonVi || dangDongBo;
+    dangTaiDuLieu ||
+    dangDoiDonVi ||
+    dangDongBo;
 
-  const dinhDangTien = (giaTri: number) => {
-    return giaTri.toLocaleString("vi-VN") + "đ";
+  const giamGiaVoucher = 0;
+
+  const tietKiemDuoc =
+    tongGiamGiaTrucTiep +
+    giamGiaVoucher;
+
+  const thanhTien =
+    tongTienGoc -
+    tongGiamGiaTrucTiep -
+    giamGiaVoucher;
+
+  const dinhDangTien = (
+    giaTri: number
+  ) => {
+    return (
+      giaTri.toLocaleString(
+        "vi-VN"
+      ) + "đ"
+    );
   };
 
+  /*
+   * Sau khi backend kiểm tra:
+   * - đồng bộ giá sau khuyến mãi;
+   * - tự hạ số lượng nếu tồn hiện tại
+   *   thấp hơn số lượng local.
+   *
+   * Chỉ trường hợp phải HẠ SỐ LƯỢNG
+   * mới cần backend kiểm tra lại một lần
+   * để cập nhật trạng thái hopLe.
+   */
   useEffect(() => {
     if (
       !daKiemTraThanhCong ||
-      danhSachChiTietHienThi.length === 0
+      danhSachChiTietHienThi.length ===
+        0
     ) {
       return;
     }
 
-    const tonConLaiTheoSanPham = new Map<number, number>();
-    const danhSachMoi: ChiTietGioHangLocal[] = [];
+    const tonConLaiTheoSanPham =
+      new Map<number, number>();
+
+    const danhSachMoi:
+      ChiTietGioHangLocal[] = [];
+
     let daDieuChinh = false;
 
-    for (const chiTietLocal of danhSachChiTietGioHangLocal) {
-      const chiTietHienThi = danhSachChiTietHienThi.find(
-        (chiTiet) =>
-          chiTiet.maDonViSanPham ===
-          chiTietLocal.maDonViSanPham
-      );
+    let daDieuChinhSoLuong =
+      false;
+
+    for (
+      const chiTietLocal
+      of danhSachChiTietGioHangLocal
+    ) {
+      const chiTietHienThi =
+        danhSachChiTietHienThi.find(
+          (chiTiet) =>
+            chiTiet.maDonViSanPham ===
+            chiTietLocal.maDonViSanPham
+        );
 
       if (
         !chiTietHienThi ||
-        chiTietHienThi.heSoQuyDoiVeDonViCoSo === null ||
-        chiTietHienThi.tonKhaDungTheoQuyDoi === null
+        chiTietHienThi
+          .heSoQuyDoiVeDonViCoSo ===
+          null ||
+        chiTietHienThi
+          .tonKhaDungTheoQuyDoi ===
+          null
       ) {
-        danhSachMoi.push(chiTietLocal);
+        danhSachMoi.push(
+          chiTietLocal
+        );
+
         continue;
       }
 
-      const maSanPham = chiTietHienThi.maSanPham;
-      const heSo = chiTietHienThi.heSoQuyDoiVeDonViCoSo;
+      const maSanPham =
+        chiTietHienThi.maSanPham;
+
+      const heSo =
+        chiTietHienThi
+          .heSoQuyDoiVeDonViCoSo;
 
       const tonConLai =
-        tonConLaiTheoSanPham.get(maSanPham) ??
-        chiTietHienThi.tonKhaDungTheoQuyDoi;
+        tonConLaiTheoSanPham.get(
+          maSanPham
+        ) ??
+        chiTietHienThi
+          .tonKhaDungTheoQuyDoi;
 
-      const soLuongToiDa = Math.max(
-        0,
-        Math.floor((tonConLai + 1e-9) / heSo)
-      );
+      const soLuongToiDa =
+        Math.max(
+          0,
+          Math.floor(
+            (
+              tonConLai +
+              1e-9
+            ) /
+              heSo
+          )
+        );
 
-      const soLuongMoi = Math.min(
-        chiTietLocal.soLuong,
-        soLuongToiDa
-      );
+      const soLuongMoi =
+        Math.min(
+          chiTietLocal.soLuong,
+          soLuongToiDa
+        );
 
       if (
-        soLuongMoi !== chiTietLocal.soLuong ||
-        chiTietLocal.giaBanTamThoi !==
-          chiTietHienThi.giaBanTheoDonVi
+        soLuongMoi !==
+        chiTietLocal.soLuong
+      ) {
+        daDieuChinh = true;
+
+        daDieuChinhSoLuong =
+          true;
+      }
+
+      if (
+        chiTietLocal
+          .giaBanTamThoi !==
+        chiTietHienThi
+          .giaSauKhuyenMai
       ) {
         daDieuChinh = true;
       }
 
-      if (soLuongMoi > 0) {
+      if (
+        soLuongMoi > 0
+      ) {
         danhSachMoi.push({
           ...chiTietLocal,
-          soLuong: soLuongMoi,
+
+          soLuong:
+            soLuongMoi,
+
           giaBanTamThoi:
-            chiTietHienThi.giaBanTheoDonVi,
+            chiTietHienThi
+              .giaSauKhuyenMai,
         });
       }
 
       tonConLaiTheoSanPham.set(
         maSanPham,
-        tonConLai - soLuongMoi * heSo
+        tonConLai -
+          soLuongMoi *
+            heSo
       );
     }
 
-    if (!daDieuChinh) return;
+    if (!daDieuChinh) {
+      return;
+    }
 
-    thayTheDanhSachGioHangLocal(danhSachMoi);
-
-    thongBao.hienThongBao(
-      "Một số sản phẩm đã được điều chỉnh theo giá và tồn kho hiện tại.",
-      "CANH_BAO",
-      "Giỏ hàng đã thay đổi"
+    thayTheDanhSachGioHangLocal(
+      danhSachMoi
     );
+
+    /*
+     * Giá thay đổi không cần recheck.
+     *
+     * Nếu backend buộc phải hạ số lượng
+     * vì tồn kho thay đổi thì kiểm tra lại
+     * đúng một lần để hopLe được cập nhật.
+     */
+    if (
+      daDieuChinhSoLuong
+    ) {
+      void kiemTraDanhSachGioHang(
+        danhSachMoi
+      );
+    }
   }, [
     daKiemTraThanhCong,
     danhSachChiTietHienThi,
     danhSachChiTietGioHangLocal,
     thayTheDanhSachGioHangLocal,
-    thongBao,
+    kiemTraDanhSachGioHang,
   ]);
 
+  /*
+   * Tính giới hạn bằng snapshot tồn kho
+   * mà backend đã trả khi vào giỏ.
+   *
+   * Không cần request backend mỗi lần +/-.
+   */
   const laySoLuongToiDa = (
     maDonViSanPham: number
   ): number | null => {
-    const chiTietDangSua = danhSachChiTietHienThi.find(
-      (chiTiet) =>
-        chiTiet.maDonViSanPham === maDonViSanPham
-    );
+    const chiTietDangSua =
+      danhSachChiTietHienThi.find(
+        (chiTiet) =>
+          chiTiet.maDonViSanPham ===
+          maDonViSanPham
+      );
 
     if (
       !chiTietDangSua ||
-      chiTietDangSua.heSoQuyDoiVeDonViCoSo === null ||
-      chiTietDangSua.tonKhaDungTheoQuyDoi === null
+      chiTietDangSua
+        .heSoQuyDoiVeDonViCoSo ===
+        null ||
+      chiTietDangSua
+        .tonKhaDungTheoQuyDoi ===
+        null
     ) {
       return null;
     }
@@ -151,31 +286,52 @@ function GioHangPage() {
       danhSachChiTietHienThi
         .filter(
           (chiTiet) =>
-            chiTiet.maSanPham === chiTietDangSua.maSanPham &&
-            chiTiet.maDonViSanPham !== maDonViSanPham &&
-            chiTiet.heSoQuyDoiVeDonViCoSo !== null
+            chiTiet.maSanPham ===
+              chiTietDangSua
+                .maSanPham &&
+            chiTiet.maDonViSanPham !==
+              maDonViSanPham &&
+            chiTiet
+              .heSoQuyDoiVeDonViCoSo !==
+              null
         )
         .reduce(
           (tong, chiTiet) =>
             tong +
             chiTiet.soLuong *
-              (chiTiet.heSoQuyDoiVeDonViCoSo ?? 0),
+              (
+                chiTiet
+                  .heSoQuyDoiVeDonViCoSo ??
+                0
+              ),
           0
         );
 
     const tonConLaiChoDongHienTai =
-      chiTietDangSua.tonKhaDungTheoQuyDoi -
+      chiTietDangSua
+        .tonKhaDungTheoQuyDoi -
       tongQuyDoiCuaDongKhac;
 
     return Math.max(
       0,
       Math.floor(
-        (tonConLaiChoDongHienTai + 1e-9) /
-          chiTietDangSua.heSoQuyDoiVeDonViCoSo
+        (
+          tonConLaiChoDongHienTai +
+          1e-9
+        ) /
+          chiTietDangSua
+            .heSoQuyDoiVeDonViCoSo
       )
     );
   };
 
+  /*
+   * +/- và nhập số lượng:
+   * chỉ cập nhật state/localStorage.
+   *
+   * Tổng tiền được React tính lại
+   * ngay lập tức ở frontend.
+   */
   const capNhatSoLuong = (
     maDonViSanPham: number,
     soLuongMoi: number,
@@ -184,15 +340,22 @@ function GioHangPage() {
     const chiTietHienTai =
       danhSachChiTietGioHangLocal.find(
         (chiTiet) =>
-          chiTiet.maDonViSanPham === maDonViSanPham
+          chiTiet.maDonViSanPham ===
+          maDonViSanPham
       );
 
-    if (!chiTietHienTai) return 1;
+    if (!chiTietHienTai) {
+      return 1;
+    }
 
     const soLuongToiDa =
-      laySoLuongToiDa(maDonViSanPham);
+      laySoLuongToiDa(
+        maDonViSanPham
+      );
 
-    if (soLuongToiDa === null) {
+    if (
+      soLuongToiDa === null
+    ) {
       thongBao.hienThongBao(
         "Chưa thể xác định số lượng tồn kho của sản phẩm.",
         "CANH_BAO",
@@ -202,7 +365,9 @@ function GioHangPage() {
       return chiTietHienTai.soLuong;
     }
 
-    if (soLuongToiDa <= 0) {
+    if (
+      soLuongToiDa <= 0
+    ) {
       thongBao.hienThongBao(
         "Sản phẩm này hiện đã hết hàng.",
         "CANH_BAO",
@@ -212,7 +377,10 @@ function GioHangPage() {
       return chiTietHienTai.soLuong;
     }
 
-    if (soLuongMoi > soLuongToiDa) {
+    if (
+      soLuongMoi >
+      soLuongToiDa
+    ) {
       thongBao.hienThongBao(
         `Số lượng sản phẩm tối đa có thể mua là ${soLuongToiDa} ${chiTietHienTai.tenDonViTinh}.`,
         "CANH_BAO",
@@ -239,6 +407,11 @@ function GioHangPage() {
     return soLuongMoi;
   };
 
+  /*
+   * Đổi đơn vị vẫn cần backend
+   * kiểm tra vì hệ số quy đổi,
+   * tồn kho và giá có thể khác.
+   */
   const chonDonViBan = async (
     maDonViSanPhamCu: number,
     maDonViSanPhamMoi: number
@@ -246,34 +419,47 @@ function GioHangPage() {
     const chiTietCu =
       danhSachChiTietGioHangLocal.find(
         (chiTiet) =>
-          chiTiet.maDonViSanPham === maDonViSanPhamCu
+          chiTiet.maDonViSanPham ===
+          maDonViSanPhamCu
       );
 
-    if (!chiTietCu) return;
+    if (!chiTietCu) {
+      return;
+    }
 
-    const donViMoi = chiTietCu.danhSachDonViBan.find(
-      (donVi) =>
-        donVi.maDonViSanPham === maDonViSanPhamMoi
-    );
+    const donViMoi =
+      chiTietCu.danhSachDonViBan.find(
+        (donVi) =>
+          donVi.maDonViSanPham ===
+          maDonViSanPhamMoi
+      );
 
-    if (!donViMoi) return;
+    if (!donViMoi) {
+      return;
+    }
 
     const dongDonViMoiDaCo =
       danhSachChiTietGioHangLocal.find(
         (chiTiet) =>
-          chiTiet.maDonViSanPham === maDonViSanPhamMoi
+          chiTiet.maDonViSanPham ===
+          maDonViSanPhamMoi
       );
 
-    const danhSachMoi = danhSachChiTietGioHangLocal
-      .filter(
+    const danhSachMoi =
+      danhSachChiTietGioHangLocal.filter(
         (chiTiet) =>
-          chiTiet.maDonViSanPham !== maDonViSanPhamCu &&
-          chiTiet.maDonViSanPham !== maDonViSanPhamMoi
+          chiTiet.maDonViSanPham !==
+            maDonViSanPhamCu &&
+          chiTiet.maDonViSanPham !==
+            maDonViSanPhamMoi
       );
 
-    if (dongDonViMoiDaCo) {
+    if (
+      dongDonViMoiDaCo
+    ) {
       danhSachMoi.push({
         ...dongDonViMoiDaCo,
+
         soLuong:
           dongDonViMoiDaCo.soLuong +
           chiTietCu.soLuong,
@@ -281,18 +467,31 @@ function GioHangPage() {
     } else {
       danhSachMoi.push({
         ...chiTietCu,
-        maDonViSanPham: maDonViSanPhamMoi,
-        tenDonViTinh: donViMoi.tenDonViTinh,
+
+        maDonViSanPham:
+          maDonViSanPhamMoi,
+
+        tenDonViTinh:
+          donViMoi.tenDonViTinh,
+
         giaBanTamThoi:
-          donViMoi.giaBanTheoDonVi ?? 0,
+          donViMoi
+            .giaSauKhuyenMai ??
+          donViMoi
+            .giaBanTheoDonVi ??
+          0,
       });
     }
 
     try {
-      setDangDoiDonVi(true);
+      setDangDoiDonVi(
+        true
+      );
 
       const ketQua =
-        await kiemTraDanhSachGioHang(danhSachMoi);
+        await kiemTraDanhSachGioHang(
+          danhSachMoi
+        );
 
       if (!ketQua) {
         thongBao.hienThongBao(
@@ -300,6 +499,7 @@ function GioHangPage() {
           "LOI",
           "Không thể đổi đơn vị"
         );
+
         return;
       }
 
@@ -309,63 +509,96 @@ function GioHangPage() {
           "CANH_BAO",
           "Không thể đổi đơn vị"
         );
+
         return;
       }
 
-      thayTheDanhSachGioHangLocal(danhSachMoi);
-    } finally {
-      setDangDoiDonVi(false);
-    }
-  };
-
-  const tienHanhDatHang = async () => {
-    if (
-      danhSachChiTietGioHangLocal.length === 0 ||
-      dangDongBo
-    ) {
-      return;
-    }
-
-    try {
-      setDangDongBo(true);
-
-      const danhSachGuiBackend =
-        danhSachChiTietGioHangLocal.map(
-          (chiTiet) => ({
-            maDonViSanPham:
-              chiTiet.maDonViSanPham,
-            soLuong: chiTiet.soLuong,
-          })
-        );
-
-      await dongBoGioHangApi(danhSachGuiBackend);
-
-      navigate("/xac-nhan-dat-hang");
-    } catch (error: unknown) {
-      let noiDungLoi =
-        "Không thể kiểm tra và đồng bộ giỏ hàng.";
-
-      if (axios.isAxiosError<DuLieuLoiApi>(error)) {
-        noiDungLoi =
-          error.response?.data?.detail ||
-          error.response?.data?.message ||
-          noiDungLoi;
-      }
-
-      thongBao.hienThongBao(
-        noiDungLoi,
-        "LOI",
-        "Không thể mua hàng"
+      thayTheDanhSachGioHangLocal(
+        danhSachMoi
       );
     } finally {
-      setDangDongBo(false);
+      setDangDoiDonVi(
+        false
+      );
     }
   };
+
+  /*
+   * Đây mới là thời điểm cần đồng bộ
+   * số lượng local xuống backend.
+   *
+   * Backend sẽ kiểm tra lại tồn kho
+   * và dữ liệu trước khi sang xác nhận.
+   */
+  const tienHanhDatHang =
+    async () => {
+      if (
+        danhSachChiTietGioHangLocal
+          .length === 0 ||
+        dangDongBo
+      ) {
+        return;
+      }
+
+      try {
+        setDangDongBo(
+          true
+        );
+
+        const danhSachGuiBackend =
+          danhSachChiTietGioHangLocal.map(
+            (chiTiet) => ({
+              maDonViSanPham:
+                chiTiet.maDonViSanPham,
+
+              soLuong:
+                chiTiet.soLuong,
+            })
+          );
+
+        await dongBoGioHangApi(
+          danhSachGuiBackend
+        );
+
+        navigate(
+          "/xac-nhan-dat-hang"
+        );
+      } catch (
+        error: unknown
+      ) {
+        let noiDungLoi =
+          "Không thể kiểm tra và đồng bộ giỏ hàng.";
+
+        if (
+          axios.isAxiosError<DuLieuLoiApi>(
+            error
+          )
+        ) {
+          noiDungLoi =
+            error.response?.data
+              ?.detail ||
+            error.response?.data
+              ?.message ||
+            noiDungLoi;
+        }
+
+        thongBao.hienThongBao(
+          noiDungLoi,
+          "LOI",
+          "Không thể mua hàng"
+        );
+      } finally {
+        setDangDongBo(
+          false
+        );
+      }
+    };
 
   if (
     dangTaiDuLieu &&
     !daKiemTraThanhCong &&
-    danhSachChiTietGioHangLocal.length > 0
+    danhSachChiTietGioHangLocal
+      .length > 0
   ) {
     return (
       <div className="page-container trang-gio-hang">
@@ -376,10 +609,16 @@ function GioHangPage() {
     );
   }
 
-  if (danhSachChiTietGioHangLocal.length === 0) {
+  if (
+    danhSachChiTietGioHangLocal
+      .length === 0
+  ) {
     return (
       <div className="page-container trang-gio-hang">
-        <Link to="/" className="gio-hang-tiep-tuc-mua-sam">
+        <Link
+          to="/"
+          className="gio-hang-tiep-tuc-mua-sam"
+        >
           ← Tiếp tục mua sắm
         </Link>
 
@@ -388,10 +627,14 @@ function GioHangPage() {
             <i className="bi bi-cart-x"></i>
           </div>
 
-          <h2>Chưa có sản phẩm nào trong giỏ</h2>
+          <h2>
+            Chưa có sản phẩm nào
+            trong giỏ
+          </h2>
 
           <p>
-            Cùng khám phá hàng ngàn sản phẩm
+            Cùng khám phá hàng ngàn
+            sản phẩm
             <br />
             tại Pharma+ nhé!
           </p>
@@ -402,7 +645,10 @@ function GioHangPage() {
 
   return (
     <div className="page-container trang-gio-hang">
-      <Link to="/" className="gio-hang-tiep-tuc-mua-sam">
+      <Link
+        to="/"
+        className="gio-hang-tiep-tuc-mua-sam"
+      >
         ← Tiếp tục mua sắm
       </Link>
 
@@ -417,15 +663,19 @@ function GioHangPage() {
           <div className="gio-hang-bang">
             <div className="gio-hang-bang-tieu-de">
               <div></div>
+
               <div className="gio-hang-cot-tieu-de gia-thanh">
                 Giá thành
               </div>
+
               <div className="gio-hang-cot-tieu-de so-luong">
                 Số lượng
               </div>
+
               <div className="gio-hang-cot-tieu-de don-vi">
                 Đơn vị
               </div>
+
               <div></div>
             </div>
 
@@ -433,11 +683,22 @@ function GioHangPage() {
               {danhSachChiTietHienThi.map(
                 (chiTiet) => (
                   <DongChiTietGioHang
-                    key={chiTiet.maDonViSanPham}
-                    chiTiet={chiTiet}
-                    dangXuLy={dangXuLy}
-                    capNhatSoLuong={capNhatSoLuong}
-                    chonDonViBan={chonDonViBan}
+                    key={
+                      chiTiet
+                        .maDonViSanPham
+                    }
+                    chiTiet={
+                      chiTiet
+                    }
+                    dangXuLy={
+                      dangXuLy
+                    }
+                    capNhatSoLuong={
+                      capNhatSoLuong
+                    }
+                    chonDonViBan={
+                      chonDonViBan
+                    }
                     xoaSanPhamKhoiGioHang={
                       xoaSanPhamLocal
                     }
@@ -451,8 +712,12 @@ function GioHangPage() {
             <button
               type="button"
               className="gio-hang-nut-xoa-tat-ca"
-              onClick={xoaToanBoGioHangLocal}
-              disabled={dangXuLy}
+              onClick={
+                xoaToanBoGioHangLocal
+              }
+              disabled={
+                dangXuLy
+              }
             >
               Xóa tất cả sản phẩm
             </button>
@@ -461,38 +726,87 @@ function GioHangPage() {
 
         <div className="gio-hang-ben-phai">
           <div className="gio-hang-tom-tat">
-            <h2>Thông tin đơn hàng</h2>
+            <h2>
+              Thông tin đơn hàng
+            </h2>
 
             <div className="gio-hang-tom-tat-dong">
-              <span>Tổng tiền</span>
-              <strong>{dinhDangTien(tongTien)}</strong>
+              <span>
+                Tổng tiền
+              </span>
+
+              <strong>
+                {dinhDangTien(
+                  tongTienGoc
+                )}
+              </strong>
             </div>
 
             <div className="gio-hang-tom-tat-dong">
-              <span>Giảm giá trực tiếp</span>
-              <strong>0đ</strong>
+              <span>
+                Giảm giá trực tiếp
+              </span>
+
+              <strong className="gio-hang-gia-tri-khuyen-mai">
+                {tongGiamGiaTrucTiep >
+                0
+                  ? `-${dinhDangTien(
+                      tongGiamGiaTrucTiep
+                    )}`
+                  : "0đ"}
+              </strong>
             </div>
 
             <div className="gio-hang-tom-tat-dong">
-              <span>Giảm giá voucher</span>
-              <strong>0đ</strong>
+              <span>
+                Giảm giá voucher
+              </span>
+
+              <strong className="gio-hang-gia-tri-khuyen-mai">
+                {giamGiaVoucher >
+                0
+                  ? `-${dinhDangTien(
+                      giamGiaVoucher
+                    )}`
+                  : "0đ"}
+              </strong>
             </div>
 
             <div className="gio-hang-tom-tat-dong">
-              <span>Tiết kiệm được</span>
-              <strong>0đ</strong>
+              <span>
+                Tiết kiệm được
+              </span>
+
+              <strong className="gio-hang-gia-tri-khuyen-mai">
+                {dinhDangTien(
+                  tietKiemDuoc
+                )}
+              </strong>
             </div>
 
             <div className="gio-hang-tom-tat-dong gio-hang-thanh-tien">
-              <span>Thành tiền</span>
-              <strong>{dinhDangTien(tongTien)}</strong>
+              <span>
+                Thành tiền
+              </span>
+
+              <strong>
+                {dinhDangTien(
+                  thanhTien
+                )}
+              </strong>
             </div>
 
             <button
               type="button"
               className="gio-hang-nut-mua-hang"
-              onClick={tienHanhDatHang}
-              disabled={dangXuLy || !daKiemTraThanhCong}
+              onClick={
+                tienHanhDatHang
+              }
+              disabled={
+                dangXuLy ||
+                !daKiemTraThanhCong ||
+                !hopLe
+              }
             >
               {dangDongBo
                 ? "Đang kiểm tra..."
@@ -503,11 +817,21 @@ function GioHangPage() {
       </div>
 
       <ThongBaoHeThong
-        dangHien={thongBao.dangHien}
-        tieuDe={thongBao.tieuDe}
-        noiDung={thongBao.noiDung}
-        loai={thongBao.loai}
-        dongThongBao={thongBao.dongThongBao}
+        dangHien={
+          thongBao.dangHien
+        }
+        tieuDe={
+          thongBao.tieuDe
+        }
+        noiDung={
+          thongBao.noiDung
+        }
+        loai={
+          thongBao.loai
+        }
+        dongThongBao={
+          thongBao.dongThongBao
+        }
       />
     </div>
   );

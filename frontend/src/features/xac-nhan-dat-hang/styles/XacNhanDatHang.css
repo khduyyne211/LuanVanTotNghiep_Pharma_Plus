@@ -138,6 +138,19 @@
   text-align: left;
 }
 
+.xac-nhan-san-pham-cum-gia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.xac-nhan-san-pham-gia-goc {
+  font-size: 13px;
+  color: #888;
+  text-decoration: line-through;
+}
+
 .xac-nhan-san-pham-gia {
   color: #0f172a;
   font-size: 15px;
@@ -620,9 +633,8 @@
   text-align: left;
 }
 
-.xac-nhan-tong-ket-dong strong {
-  color: #0f172a;
-  text-align: right;
+.xac-nhan-gia-tri-khuyen-mai {
+  color: #f59e0b;
 }
 
 .xac-nhan-tong-ket-thanh-tien {

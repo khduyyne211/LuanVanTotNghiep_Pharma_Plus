@@ -10,11 +10,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.pharma.backend.entity.ChiTietPhieuNhap;
+import com.pharma.backend.enums.nhapkho.TrangThaiLo;
+import com.pharma.backend.enums.nhapkho.TrangThaiPhieuNhap;
 
 import jakarta.persistence.LockModeType;
 
 @Repository
-public interface ChiTietPhieuNhapRepository extends JpaRepository<ChiTietPhieuNhap, Long> {
+public interface ChiTietPhieuNhapRepository
+        extends JpaRepository<ChiTietPhieuNhap, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
@@ -38,7 +41,8 @@ public interface ChiTietPhieuNhapRepository extends JpaRepository<ChiTietPhieuNh
           pn.ngayNhap ASC,
           ctpn.maChiTietPhieuNhap ASC
         """)
-    List<ChiTietPhieuNhap> layDanhSachLoTheoFefoDeCapNhat(@Param("maSanPham") Long maSanPham);
+    List<ChiTietPhieuNhap> layDanhSachLoTheoFefoDeCapNhat(
+            @Param("maSanPham") Long maSanPham);
 
     //Lấy toàn bộ số lượng tồn còn lại của sản phẩm từ chi tiết phiếu nhập
     //COALESCE(SUM(...), 0): Nếu sản phẩm chưa có dòng nhập hợp lệ, SUM thường trả về null, COALESCE chuyển kết quả đó thành 0
@@ -52,5 +56,39 @@ public interface ChiTietPhieuNhapRepository extends JpaRepository<ChiTietPhieuNh
         AND ctpn.trangThaiLo = 'DANG_SU_DUNG'
         AND pn.trangThaiPhieuNhap = 'DA_NHAP'
         """)
-    BigDecimal tinhTongTonKhaDungTheoQuyDoi(@Param("maSanPham") Long maSanPham);
+    BigDecimal tinhTongTonKhaDungTheoQuyDoi(
+            @Param("maSanPham") Long maSanPham);
+
+    @Query("""
+            SELECT
+                ctpn.sanPham.maSanPham AS maSanPham,
+                SUM(ctpn.soLuongConLaiTheoQuyDoi)
+                    AS tonKhaDungTheoQuyDoi
+            FROM ChiTietPhieuNhap ctpn
+            JOIN ctpn.phieuNhapKho pnk
+            WHERE ctpn.sanPham.maSanPham IN :danhSachMaSanPham
+              AND ctpn.soLuongConLaiTheoQuyDoi > 0
+              AND (
+                    ctpn.hanSuDung IS NULL
+                    OR ctpn.hanSuDung >= CURRENT_DATE
+              )
+              AND ctpn.trangThaiLo = :trangThaiLo
+              AND pnk.trangThaiPhieuNhap = :trangThaiPhieuNhap
+            GROUP BY ctpn.sanPham.maSanPham
+            """)
+    List<TonKhaDungTheoSanPhamProjection>
+            tinhTongTonKhaDungTheoDanhSachSanPham(
+                    @Param("danhSachMaSanPham")
+                    List<Long> danhSachMaSanPham,
+                    @Param("trangThaiLo")
+                    TrangThaiLo trangThaiLo,
+                    @Param("trangThaiPhieuNhap")
+                    TrangThaiPhieuNhap trangThaiPhieuNhap);
+
+    interface TonKhaDungTheoSanPhamProjection {
+
+        Long getMaSanPham();
+
+        BigDecimal getTonKhaDungTheoQuyDoi();
+    }
 }

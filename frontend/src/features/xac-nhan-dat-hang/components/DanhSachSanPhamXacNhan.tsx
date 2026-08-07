@@ -1,7 +1,7 @@
-import type { ChiTietGioHang } from "../../gio-hang/types/ChiTietGioHang";
+import type { ChiTietGioHangHienThi } from "../../gio-hang/types/GioHangHienThi";
 
 interface DanhSachSanPhamXacNhanProps {
-  danhSachChiTietGioHang: ChiTietGioHang[];
+  danhSachChiTietGioHang: ChiTietGioHangHienThi[];
 }
 
 function dinhDangTien(soTien: number) {
@@ -12,15 +12,13 @@ function DanhSachSanPhamXacNhan({
   danhSachChiTietGioHang,
 }: DanhSachSanPhamXacNhanProps) {
   return (
-    <section className="xac-nhan-khu-vuc-san-pham">
-      <h2 className="xac-nhan-tieu-de-khu-vuc">
-        Danh sách sản phẩm
-      </h2>
+    <section className="xac-nhan-danh-sach">
+      <h2>Danh sách sản phẩm</h2>
 
       <div className="xac-nhan-danh-sach-san-pham">
         {danhSachChiTietGioHang.map((chiTiet) => (
           <article
-            key={chiTiet.maChiTietGioHang}
+            key={chiTiet.maDonViSanPham}
             className="xac-nhan-san-pham-dong"
           >
             <div className="xac-nhan-san-pham-thong-tin">
@@ -37,18 +35,32 @@ function DanhSachSanPhamXacNhan({
                 )}
               </div>
 
-              <strong>{chiTiet.tenSanPham}</strong>
+              <strong>
+                {chiTiet.tenSanPham}
+              </strong>
             </div>
 
-            <strong className="xac-nhan-san-pham-gia">
-              {dinhDangTien(chiTiet.thanhTien)}
-            </strong>
+            <div className="xac-nhan-san-pham-cum-gia">
+              {chiTiet.coKhuyenMai &&
+                chiTiet.thanhTienGoc >
+                  chiTiet.thanhTien && (
+                  <span className="xac-nhan-san-pham-gia-goc">
+                    {dinhDangTien(
+                      chiTiet.thanhTienGoc
+                    )}
+                  </span>
+                )}
+
+              <strong className="xac-nhan-san-pham-gia">
+                {dinhDangTien(
+                  chiTiet.thanhTien
+                )}
+              </strong>
+            </div>
 
             <span className="xac-nhan-san-pham-so-luong">
               x{chiTiet.soLuong}{" "}
-              {chiTiet.tenDonViTinh ||
-                chiTiet.kyHieuDonViTinh ||
-                ""}
+              {chiTiet.tenDonViTinh}
             </span>
           </article>
         ))}
