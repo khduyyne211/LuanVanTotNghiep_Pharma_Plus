@@ -21,6 +21,19 @@
   flex-shrink: 0;
 }
 
+/* Chờ thanh toán */
+
+.trang-thai-don-hang--cho-thanh-toan {
+  color: #c2410c;
+  background-color: #fff7ed;
+  border-color: #fdba74;
+}
+
+.trang-thai-don-hang--cho-thanh-toan
+.trang-thai-don-hang-cham {
+  background-color: #f97316;
+}
+
 /* Chờ xử lý */
 
 .trang-thai-don-hang--cho-xu-ly {
@@ -84,4 +97,17 @@
 .trang-thai-don-hang--da-huy
 .trang-thai-don-hang-cham {
   background-color: #dc2626;
+}
+
+/* Đã hoàn tiền */
+
+.trang-thai-thanh-toan--da-hoan-tien {
+  color: #6d28d9;
+  background-color: #f5f3ff;
+  border-color: #c4b5fd;
+}
+
+.trang-thai-thanh-toan--da-hoan-tien
+.trang-thai-thanh-toan-cham {
+  background-color: #7c3aed;
 }
