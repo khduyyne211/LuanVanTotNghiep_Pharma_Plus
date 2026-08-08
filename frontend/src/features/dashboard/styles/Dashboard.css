@@ -11,7 +11,8 @@
 
 .dashboard-summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -39,7 +40,8 @@
   font-size: 21px;
 }
 
-.dashboard-summary-card > div:last-child {
+.dashboard-summary-card
+  > div:last-child {
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -65,11 +67,16 @@
   font-size: 22px;
 }
 
-.dashboard-report-section {
+.dashboard-report-section,
+.dashboard-warning-section {
   padding: 22px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background: #ffffff;
+}
+
+.dashboard-report-section {
+  margin-bottom: 24px;
 }
 
 .dashboard-section-header {
@@ -80,21 +87,25 @@
   margin-bottom: 20px;
 }
 
-.dashboard-section-header h2 {
+.dashboard-section-header h2,
+.dashboard-warning-header h2 {
   margin: 0 0 6px;
   color: #111827;
   font-size: 18px;
 }
 
-.dashboard-section-header p {
+.dashboard-section-header p,
+.dashboard-warning-header p {
   margin: 0;
   color: #6b7280;
   font-size: 14px;
+  line-height: 1.5;
 }
 
 .dashboard-date-filter {
   display: grid;
-  grid-template-columns: 220px 220px auto;
+  grid-template-columns:
+    220px 220px auto;
   align-items: end;
   gap: 14px;
 }
@@ -135,7 +146,8 @@
   font-size: 22px;
 }
 
-.dashboard-revenue-result > div:last-child {
+.dashboard-revenue-result
+  > div:last-child {
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -156,6 +168,118 @@
   font-size: 13px;
 }
 
+.dashboard-warning-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.dashboard-warning-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.dashboard-count-badge {
+  display: inline-flex;
+  min-width: 34px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dashboard-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  font-size: 13px;
+}
+
+.dashboard-table th {
+  padding: 11px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #4b5563;
+  text-align: left;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.dashboard-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f0f1f3;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.dashboard-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.dashboard-table td strong {
+  color: #111827;
+}
+
+.dashboard-table-subtext {
+  display: block;
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.dashboard-table-message {
+  height: 80px;
+  color: #6b7280 !important;
+  text-align: center;
+}
+
+.dashboard-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dashboard-status-low-stock {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.dashboard-status-nguy_cap {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.dashboard-status-sap_het_han {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.dashboard-status-can_theo_doi {
+  background: #fffbeb;
+  color: #a16207;
+}
+
 .dashboard-error {
   display: flex;
   align-items: center;
@@ -169,9 +293,25 @@
   font-size: 14px;
 }
 
+.dashboard-error-spacing {
+  margin-top: 18px;
+  margin-bottom: 0;
+}
+
+.dashboard-warning-error {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1300px) {
+  .dashboard-warning-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1200px) {
   .dashboard-summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 
   .dashboard-revenue-card {
@@ -191,5 +331,10 @@
 
   .dashboard-date-filter {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-report-section,
+  .dashboard-warning-section {
+    padding: 16px;
   }
 }

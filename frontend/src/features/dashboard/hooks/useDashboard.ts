@@ -8,17 +8,24 @@ import { isAxiosError } from "axios";
 
 import {
   layDoanhThuTheoKhoang,
+  layLoSapHetHanDashboard,
+  layTonKhoThapDashboard,
   layTongQuanDashboard,
 } from "../api/dashboardApi";
 
 import type {
   DashboardDoanhThu,
+  DashboardLoSapHetHan,
+  DashboardTonKhoThap,
   DashboardTongQuan,
 } from "../types/Dashboard";
 
 type ApiErrorResponse = {
   message?: string;
 };
+
+const NGUONG_TON_KHO_MAC_DINH = 10;
+const SO_NGAY_CANH_BAO_HET_HAN = 30;
 
 const dinhDangNgayNhap = (ngay: Date) => {
   const nam = ngay.getFullYear();
@@ -82,6 +89,20 @@ function useDashboard() {
   );
 
   const [
+    danhSachTonKhoThap,
+    setDanhSachTonKhoThap,
+  ] = useState<DashboardTonKhoThap[]>(
+    [],
+  );
+
+  const [
+    danhSachLoSapHetHan,
+    setDanhSachLoSapHetHan,
+  ] = useState<DashboardLoSapHetHan[]>(
+    [],
+  );
+
+  const [
     tuNgay,
     setTuNgay,
   ] = useState(
@@ -106,6 +127,11 @@ function useDashboard() {
   ] = useState(false);
 
   const [
+    dangTaiCanhBao,
+    setDangTaiCanhBao,
+  ] = useState(true);
+
+  const [
     loiTongQuan,
     setLoiTongQuan,
   ] = useState("");
@@ -113,6 +139,11 @@ function useDashboard() {
   const [
     loiDoanhThu,
     setLoiDoanhThu,
+  ] = useState("");
+
+  const [
+    loiCanhBao,
+    setLoiCanhBao,
   ] = useState("");
 
   const taiTongQuan =
@@ -144,6 +175,51 @@ function useDashboard() {
       }
     }, []);
 
+  const taiCanhBao =
+    useCallback(async () => {
+      try {
+        setDangTaiCanhBao(true);
+        setLoiCanhBao("");
+
+        const [
+          tonKhoThap,
+          loSapHetHan,
+        ] = await Promise.all([
+          layTonKhoThapDashboard(
+            NGUONG_TON_KHO_MAC_DINH,
+          ),
+          layLoSapHetHanDashboard(
+            SO_NGAY_CANH_BAO_HET_HAN,
+          ),
+        ]);
+
+        setDanhSachTonKhoThap(
+          tonKhoThap,
+        );
+
+        setDanhSachLoSapHetHan(
+          loSapHetHan,
+        );
+      } catch (error) {
+        console.error(
+          "Không thể tải cảnh báo Dashboard:",
+          error,
+        );
+
+        setDanhSachTonKhoThap([]);
+        setDanhSachLoSapHetHan([]);
+
+        setLoiCanhBao(
+          layThongBaoLoi(
+            error,
+            "Không thể tải dữ liệu cảnh báo kho.",
+          ),
+        );
+      } finally {
+        setDangTaiCanhBao(false);
+      }
+    }, []);
+
   const xemDoanhThuTheoKhoang =
     useCallback(async () => {
       if (!tuNgay || !denNgay) {
@@ -172,7 +248,9 @@ function useDashboard() {
             denNgay,
           );
 
-        setDoanhThuTheoKhoang(duLieu);
+        setDoanhThuTheoKhoang(
+          duLieu,
+        );
       } catch (error) {
         console.error(
           "Không thể tải doanh thu theo khoảng:",
@@ -190,30 +268,63 @@ function useDashboard() {
       } finally {
         setDangTaiDoanhThu(false);
       }
-    }, [tuNgay, denNgay]);
+    }, [
+      tuNgay,
+      denNgay,
+    ]);
+
+  const lamMoiDashboard =
+    useCallback(async () => {
+      await Promise.all([
+        taiTongQuan(),
+        taiCanhBao(),
+      ]);
+    }, [
+      taiTongQuan,
+      taiCanhBao,
+    ]);
 
   useEffect(() => {
-    void taiTongQuan();
-  }, [taiTongQuan]);
+    void Promise.all([
+      taiTongQuan(),
+      taiCanhBao(),
+    ]);
+  }, [
+    taiTongQuan,
+    taiCanhBao,
+  ]);
 
   return {
     tongQuan,
     doanhThuTheoKhoang,
+
+    danhSachTonKhoThap,
+    danhSachLoSapHetHan,
 
     tuNgay,
     denNgay,
 
     dangTaiTongQuan,
     dangTaiDoanhThu,
+    dangTaiCanhBao,
 
     loiTongQuan,
     loiDoanhThu,
+    loiCanhBao,
 
     setTuNgay,
     setDenNgay,
 
     taiTongQuan,
+    taiCanhBao,
+    lamMoiDashboard,
     xemDoanhThuTheoKhoang,
+
+    nguongTonKhoMacDinh:
+      NGUONG_TON_KHO_MAC_DINH,
+
+    soNgayCanhBaoHetHan:
+      SO_NGAY_CANH_BAO_HET_HAN,
   };
 }
 
