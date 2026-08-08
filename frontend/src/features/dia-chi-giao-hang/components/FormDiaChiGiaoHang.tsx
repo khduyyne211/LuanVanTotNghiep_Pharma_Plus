@@ -1,5 +1,9 @@
 import type { FormEvent } from "react";
 
+import {
+  DANH_SACH_TINH_THANH_GIAO_HANG,
+} from "../constants/DiaChiGiaoHangConstants";
+
 import type {
   DiaChiGiaoHang,
   LoiTruongDiaChiGiaoHang,
@@ -14,12 +18,14 @@ interface FormDiaChiGiaoHangProps {
   duLieuForm: LuuDiaChiGiaoHangRequest;
   loiTruong: LoiTruongDiaChiGiaoHang;
   dangLuu: boolean;
+
   thayDoiDuLieuForm: <
     K extends keyof LuuDiaChiGiaoHangRequest,
   >(
     tenTruong: K,
     giaTri: LuuDiaChiGiaoHangRequest[K],
   ) => void;
+
   dongForm: () => void;
   luuDiaChi: () => void;
 }
@@ -119,9 +125,7 @@ function FormDiaChiGiaoHang({
               <input
                 id="soDienThoaiNhan"
                 type="tel"
-                value={
-                  duLieuForm.soDienThoaiNhan
-                }
+                value={duLieuForm.soDienThoaiNhan}
                 maxLength={10}
                 inputMode="numeric"
                 disabled={dangLuu}
@@ -147,14 +151,12 @@ function FormDiaChiGiaoHang({
 
             <div className="dia-chi-form-truong">
               <label htmlFor="thanhPho">
-                Thành phố
+                Tỉnh/Thành phố
               </label>
 
-              <input
+              <select
                 id="thanhPho"
-                type="text"
                 value={duLieuForm.thanhPho}
-                maxLength={100}
                 disabled={dangLuu}
                 aria-invalid={Boolean(
                   loiTruong.thanhPho,
@@ -165,7 +167,18 @@ function FormDiaChiGiaoHang({
                     event.target.value,
                   )
                 }
-              />
+              >
+                {DANH_SACH_TINH_THANH_GIAO_HANG.map(
+                  (tinhThanh) => (
+                    <option
+                      key={tinhThanh}
+                      value={tinhThanh}
+                    >
+                      {tinhThanh}
+                    </option>
+                  ),
+                )}
+              </select>
 
               {loiTruong.thanhPho && (
                 <p className="dia-chi-form-loi">
@@ -182,9 +195,7 @@ function FormDiaChiGiaoHang({
               <input
                 id="phuongKhuVuc"
                 type="text"
-                value={
-                  duLieuForm.phuongKhuVuc
-                }
+                value={duLieuForm.phuongKhuVuc}
                 maxLength={150}
                 disabled={dangLuu}
                 aria-invalid={Boolean(
@@ -212,9 +223,7 @@ function FormDiaChiGiaoHang({
 
               <textarea
                 id="diaChiChiTiet"
-                value={
-                  duLieuForm.diaChiChiTiet
-                }
+                value={duLieuForm.diaChiChiTiet}
                 maxLength={255}
                 rows={3}
                 disabled={dangLuu}

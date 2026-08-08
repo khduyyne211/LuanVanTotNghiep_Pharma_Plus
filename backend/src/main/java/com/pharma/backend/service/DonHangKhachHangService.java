@@ -25,6 +25,7 @@ import com.pharma.backend.entity.DonHang;
 import com.pharma.backend.entity.DonViSanPham;
 import com.pharma.backend.entity.GioHang;
 import com.pharma.backend.entity.QuyDoiDonVi;
+import com.pharma.backend.enums.diachigiaohang.TinhThanhGiaoHang;
 import com.pharma.backend.enums.donhang.LoaiKhachHang;
 import com.pharma.backend.enums.donhang.PhuongThucThanhToan;
 import com.pharma.backend.enums.donhang.TrangThaiDonHang;
@@ -438,18 +439,33 @@ HttpStatus.BAD_REQUEST,
     }
 
     private DiaChiGiaoHang layDiaChiGiaoHangHopLe(
-            Long maDiaChi,
-            Long maKhachHang
-    ) {
-        return diaChiGiaoHangRepository
-                .findByMaDiaChiAndKhachHang_MaKhachHangAndTrangThaiSuDungTrue(
-                        maDiaChi,
-                        maKhachHang
-                )
-                .orElseThrow(() -> new ResponseStatusException(
+                Long maDiaChi,
+                Long maKhachHang
+        ) {
+        DiaChiGiaoHang diaChiGiaoHang =
+                diaChiGiaoHangRepository
+                        .findByMaDiaChiAndKhachHang_MaKhachHangAndTrangThaiSuDungTrue(
+                                maDiaChi,
+                                maKhachHang
+                        )
+                        .orElseThrow(() ->
+                                new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "Địa chỉ nhận hàng không hợp lệ."
+                                )
+                        );
+
+        if (!TinhThanhGiaoHang.duocHoTro(
+                diaChiGiaoHang.getThanhPho()
+        )) {
+                throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Địa chỉ nhận hàng không hợp lệ."
-                ));
+                        "Địa chỉ nhận hàng nằm ngoài "
+                                + "khu vực giao hàng được hỗ trợ."
+                );
+        }
+
+        return diaChiGiaoHang;
     }
 
     private String chuanHoaGhiChu(String ghiChu) {

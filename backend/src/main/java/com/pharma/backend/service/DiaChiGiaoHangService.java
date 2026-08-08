@@ -12,6 +12,7 @@ import com.pharma.backend.dto.diachigiaohang.DiaChiGiaoHangResponseDto;
 import com.pharma.backend.dto.diachigiaohang.LuuDiaChiGiaoHangRequestDto;
 import com.pharma.backend.entity.DiaChiGiaoHang;
 import com.pharma.backend.entity.KhachHang;
+import com.pharma.backend.enums.diachigiaohang.TinhThanhGiaoHang;
 import com.pharma.backend.repository.DiaChiGiaoHangRepository;
 import com.pharma.backend.repository.KhachHangRepository;
 
@@ -163,22 +164,45 @@ public class DiaChiGiaoHangService {
         }
 
         private void ganDuLieuDiaChi(
-                        DiaChiGiaoHang diaChi,
-                        LuuDiaChiGiaoHangRequestDto request) {
+                DiaChiGiaoHang diaChi,
+                LuuDiaChiGiaoHangRequestDto request
+        ) {
+                TinhThanhGiaoHang tinhThanhGiaoHang =
+                        TinhThanhGiaoHang
+                                .timTheoTenHienThi(
+                                        request.getThanhPho()
+                                )
+                                .orElseThrow(() ->
+                                        new ResponseStatusException(
+                                                HttpStatus.BAD_REQUEST,
+                                                "Hiện hệ thống chưa hỗ trợ giao hàng "
+                                                        + "tại tỉnh/thành phố này."
+                                        )
+                                );
+
                 diaChi.setTenNguoiNhan(
-                                request.getTenNguoiNhan().trim());
+                        request.getTenNguoiNhan().trim()
+                );
 
                 diaChi.setSoDienThoaiNhan(
-                                request.getSoDienThoaiNhan().trim());
+                        request.getSoDienThoaiNhan().trim()
+                );
 
+                /*
+                * Luôn lưu tên chuẩn từ enum,
+                * không lấy nguyên chuỗi client gửi lên.
+                */
                 diaChi.setThanhPho(
-                                request.getThanhPho().trim());
+                        tinhThanhGiaoHang.getTenHienThi()
+                );
 
                 diaChi.setPhuongKhuVuc(
-                                request.getPhuongKhuVuc().trim());
+                        request.getPhuongKhuVuc().trim()
+                );
 
                 diaChi.setDiaChiChiTiet(
-                                request.getDiaChiChiTiet().trim());
+                        request.getDiaChiChiTiet().trim()
+                );
         }
 
         private KhachHang layKhachHangDangHoatDong(
