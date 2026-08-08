@@ -27,7 +27,7 @@ type DonViSanPhamFormModalProps = {
 };
 
 const taoDuLieuFormDonVi = (
-  donViCanSua: DonViSanPham | null
+  donViCanSua: DonViSanPham | null,
 ): DonViSanPhamForm => {
   if (donViCanSua) {
     return {
@@ -51,9 +51,7 @@ const taoDuLieuFormDonVi = (
   };
 };
 
-function DonViSanPhamFormModal(
-  props: DonViSanPhamFormModalProps
-) {
+function DonViSanPhamFormModal(props: DonViSanPhamFormModalProps) {
   if (!props.isOpen) {
     return null;
   }
@@ -72,13 +70,11 @@ function DonViSanPhamFormNoiDung({
   onClose,
   onSuccess,
 }: DonViSanPhamFormModalProps) {
-  const [formData, setFormData] = useState<DonViSanPhamForm>(
-    () => taoDuLieuFormDonVi(donViCanSua)
+  const [formData, setFormData] = useState<DonViSanPhamForm>(() =>
+    taoDuLieuFormDonVi(donViCanSua),
   );
 
-  const [danhSachDonViTinh, setDanhSachDonViTinh] = useState<
-    DonViTinh[]
-  >([]);
+  const [danhSachDonViTinh, setDanhSachDonViTinh] = useState<DonViTinh[]>([]);
   const [dangLuu, setDangLuu] = useState(false);
 
   useEffect(() => {
@@ -86,9 +82,7 @@ function DonViSanPhamFormNoiDung({
 
     const layDanhSachDonViTinh = async () => {
       try {
-        const response = await axiosClient.get<DonViTinh[]>(
-          "/don-vi-tinh"
-        );
+        const response = await axiosClient.get<DonViTinh[]>("/don-vi-tinh");
 
         if (daHuy) {
           return;
@@ -100,10 +94,7 @@ function DonViSanPhamFormNoiDung({
           return;
         }
 
-        console.error(
-          "Lỗi khi lấy danh sách đơn vị tính:",
-          error
-        );
+        console.error("Lỗi khi lấy danh sách đơn vị tính:", error);
         alert("Không thể tải danh sách đơn vị tính");
       }
     };
@@ -116,7 +107,7 @@ function DonViSanPhamFormNoiDung({
   }, []);
 
   const xuLyThayDoiInput = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = event.target;
 
@@ -143,10 +134,7 @@ function DonViSanPhamFormNoiDung({
       return;
     }
 
-    if (
-      formData.giaBanTheoDonVi &&
-      Number(formData.giaBanTheoDonVi) < 0
-    ) {
+    if (formData.giaBanTheoDonVi && Number(formData.giaBanTheoDonVi) < 0) {
       alert("Giá bán theo đơn vị không được nhỏ hơn 0");
       return;
     }
@@ -168,7 +156,7 @@ function DonViSanPhamFormNoiDung({
       if (donViCanSua) {
         await axiosClient.put(
           `/don-vi-san-pham/${donViCanSua.maDonViSanPham}`,
-          duLieuGuiLen
+          duLieuGuiLen,
         );
       } else {
         await axiosClient.post("/don-vi-san-pham", duLieuGuiLen);
@@ -179,7 +167,7 @@ function DonViSanPhamFormNoiDung({
     } catch (error) {
       console.error("Lỗi khi lưu đơn vị sản phẩm:", error);
       alert(
-        "Lưu đơn vị sản phẩm thất bại. Có thể sản phẩm đã có đơn vị này hoặc đã có đơn vị cơ sở."
+        "Lưu đơn vị sản phẩm thất bại. Có thể sản phẩm đã có đơn vị này hoặc đã có đơn vị cơ sở.",
       );
     } finally {
       setDangLuu(false);
@@ -192,15 +180,21 @@ function DonViSanPhamFormNoiDung({
         <div className="modal-header">
           <div>
             <h2>
-              {donViCanSua ? "Cập nhật đơn vị sản phẩm" : "Thêm đơn vị sản phẩm"}
+              {donViCanSua
+                ? "Cập nhật đơn vị sản phẩm"
+                : "Thêm đơn vị sản phẩm"}
             </h2>
+
             <p>
-              Dược sĩ cấu hình đơn vị bán, đơn vị nhập và đơn vị cơ sở cho sản
-              phẩm.
+              Cấu hình đơn vị bán, đơn vị nhập và đơn vị cơ sở cho sản phẩm.
             </p>
           </div>
 
-          <button className="modal-close-button" onClick={onClose} type="button">
+          <button
+            className="modal-close-button"
+            onClick={onClose}
+            type="button"
+          >
             ×
           </button>
         </div>
@@ -208,6 +202,7 @@ function DonViSanPhamFormNoiDung({
         <form onSubmit={xuLySubmit}>
           <div className="form-group">
             <label>Đơn vị tính</label>
+
             <select
               name="maDonViTinh"
               value={formData.maDonViTinh}
@@ -229,6 +224,7 @@ function DonViSanPhamFormNoiDung({
 
           <div className="form-group">
             <label>Giá bán theo đơn vị</label>
+
             <input
               type="number"
               name="giaBanTheoDonVi"
@@ -246,6 +242,7 @@ function DonViSanPhamFormNoiDung({
               checked={formData.laDonViCoSo}
               onChange={xuLyThayDoiCheckbox}
             />
+
             <label>Là đơn vị cơ sở</label>
           </div>
 
@@ -256,6 +253,7 @@ function DonViSanPhamFormNoiDung({
               checked={formData.choPhepBan}
               onChange={xuLyThayDoiCheckbox}
             />
+
             <label>Cho phép bán theo đơn vị này</label>
           </div>
 
@@ -266,6 +264,7 @@ function DonViSanPhamFormNoiDung({
               checked={formData.choPhepNhap}
               onChange={xuLyThayDoiCheckbox}
             />
+
             <label>Cho phép nhập kho theo đơn vị này</label>
           </div>
 
@@ -274,8 +273,8 @@ function DonViSanPhamFormNoiDung({
               {dangLuu
                 ? "Đang lưu..."
                 : donViCanSua
-                ? "Cập nhật"
-                : "Lưu đơn vị"}
+                  ? "Cập nhật"
+                  : "Lưu đơn vị"}
             </button>
 
             <button

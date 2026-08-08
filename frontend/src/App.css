@@ -22,7 +22,7 @@ body {
 
 /* =========================
    2. LAYOUT CHÍNH
-   Giao diện dược sĩ gồm sidebar bên trái và nội dung bên phải
+   Giao diện quản trị viên gồm sidebar bên trái và nội dung bên phải
 ========================= */
 
 .admin-layout {
@@ -40,7 +40,7 @@ body {
 
 /* =========================
    3. SIDEBAR
-   Thanh menu bên trái dành cho dược sĩ
+   Thanh menu bên trái dành cho quản trị viên
 ========================= */
 
 .sidebar {
@@ -560,6 +560,7 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 }
+
 /* =========================
    MODAL ĐƠN VỊ SẢN PHẨM
    Popup thêm/sửa đơn vị sản phẩm trong chi tiết sản phẩm
@@ -582,6 +583,7 @@ button:disabled {
 .detail-section-header h3 {
   margin: 0;
 }
+
 /* =========================
    MODAL QUY ĐỔI ĐƠN VỊ
    Popup thêm/sửa quy đổi đơn vị trong chi tiết sản phẩm
@@ -601,6 +603,7 @@ button:disabled {
   margin-bottom: 16px;
   color: #334155;
 }
+
 /* =========================
    BỘ LỌC NÂNG CAO SẢN PHẨM
 ========================= */

@@ -12,7 +12,6 @@ import QuanLyHoatChatPage from "./features/hoat-chat/pages/QuanLyHoatChatPage";
 import QuanLyKhuyenMaiPage from "./features/khuyen-mai/pages/QuanLyKhuyenMaiPage";
 import QuanLyNhaCungCapPage from "./features/nha-cung-cap/pages/QuanLyNhaCungCapPage";
 import QuanLyPhieuNhapPage from "./features/phieu-nhap/pages/QuanLyPhieuNhapPage";
-import QuanLyYeuCau from "./pages/QuanLyYeuCau";
 
 function App() {
   const [trangDangChon, setTrangDangChon] = useState("dashboard");
@@ -29,9 +28,7 @@ function App() {
           <button
             type="button"
             className={
-              trangDangChon === "dashboard"
-                ? "menu-item active"
-                : "menu-item"
+              trangDangChon === "dashboard" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("dashboard")}
           >
@@ -41,9 +38,7 @@ function App() {
           <button
             type="button"
             className={
-              trangDangChon === "san-pham"
-                ? "menu-item active"
-                : "menu-item"
+              trangDangChon === "san-pham" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("san-pham")}
           >
@@ -77,9 +72,7 @@ function App() {
           <button
             type="button"
             className={
-              trangDangChon === "don-vi-tinh"
-                ? "menu-item active"
-                : "menu-item"
+              trangDangChon === "don-vi-tinh" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("don-vi-tinh")}
           >
@@ -89,9 +82,7 @@ function App() {
           <button
             type="button"
             className={
-              trangDangChon === "hoat-chat"
-                ? "menu-item active"
-                : "menu-item"
+              trangDangChon === "hoat-chat" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("hoat-chat")}
           >
@@ -101,9 +92,7 @@ function App() {
           <button
             type="button"
             className={
-              trangDangChon === "khuyen-mai"
-                ? "menu-item active"
-                : "menu-item"
+              trangDangChon === "khuyen-mai" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("khuyen-mai")}
           >
@@ -113,9 +102,7 @@ function App() {
           <button
             type="button"
             className={
-              trangDangChon === "don-hang"
-                ? "menu-item active"
-                : "menu-item"
+              trangDangChon === "don-hang" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("don-hang")}
           >
@@ -137,9 +124,7 @@ function App() {
           <button
             type="button"
             className={
-              trangDangChon === "phieu-nhap"
-                ? "menu-item active"
-                : "menu-item"
+              trangDangChon === "phieu-nhap" ? "menu-item active" : "menu-item"
             }
             onClick={() => setTrangDangChon("phieu-nhap")}
           >
@@ -153,9 +138,7 @@ function App() {
 
         {trangDangChon === "san-pham" && <QuanLySanPhamPage />}
 
-        {trangDangChon === "danh-muc-san-pham" && (
-          <QuanLyDanhMucSanPhamPage />
-        )}
+        {trangDangChon === "danh-muc-san-pham" && <QuanLyDanhMucSanPhamPage />}
 
         {trangDangChon === "nha-san-xuat" && <QuanLyNhaSanXuatPage />}
 
@@ -164,8 +147,6 @@ function App() {
         {trangDangChon === "hoat-chat" && <QuanLyHoatChatPage />}
 
         {trangDangChon === "khuyen-mai" && <QuanLyKhuyenMaiPage />}
-
-        {trangDangChon === "yeu-cau" && <QuanLyYeuCau />}
 
         {trangDangChon === "don-hang" && <QuanLyDonHangPage />}
 

@@ -1,10 +1,7 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import axiosClient from "../../../api/axiosClient";
-import type {
-  DonViSanPham,
-  QuyDoiDonVi,
-} from "../types/SanPham";
+import type { DonViSanPham, QuyDoiDonVi } from "../types/SanPham";
 
 type QuyDoiDonViForm = {
   maDonViNguon: string;
@@ -23,7 +20,7 @@ type QuyDoiDonViFormModalProps = {
 };
 
 const taoDuLieuFormQuyDoi = (
-  quyDoiCanSua: QuyDoiDonVi | null
+  quyDoiCanSua: QuyDoiDonVi | null,
 ): QuyDoiDonViForm => {
   if (quyDoiCanSua) {
     return {
@@ -42,9 +39,7 @@ const taoDuLieuFormQuyDoi = (
   };
 };
 
-function QuyDoiDonViFormModal(
-  props: QuyDoiDonViFormModalProps
-) {
+function QuyDoiDonViFormModal(props: QuyDoiDonViFormModalProps) {
   if (!props.isOpen) {
     return null;
   }
@@ -64,14 +59,14 @@ function QuyDoiDonViFormNoiDung({
   onClose,
   onSuccess,
 }: QuyDoiDonViFormModalProps) {
-  const [formData, setFormData] = useState<QuyDoiDonViForm>(
-    () => taoDuLieuFormQuyDoi(quyDoiCanSua)
+  const [formData, setFormData] = useState<QuyDoiDonViForm>(() =>
+    taoDuLieuFormQuyDoi(quyDoiCanSua),
   );
 
   const [dangLuu, setDangLuu] = useState(false);
 
   const xuLyThayDoiInput = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = event.target;
 
@@ -123,7 +118,7 @@ function QuyDoiDonViFormNoiDung({
       if (quyDoiCanSua) {
         await axiosClient.put(
           `/quy-doi-don-vi/${quyDoiCanSua.maQuyDoi}`,
-          duLieuGuiLen
+          duLieuGuiLen,
         );
       } else {
         await axiosClient.post("/quy-doi-don-vi", duLieuGuiLen);
@@ -133,8 +128,9 @@ function QuyDoiDonViFormNoiDung({
       onClose();
     } catch (error) {
       console.error("Lỗi khi lưu quy đổi đơn vị:", error);
+
       alert(
-        "Lưu quy đổi đơn vị thất bại. Có thể quy đổi này đã tồn tại hoặc đơn vị không thuộc sản phẩm đang chọn."
+        "Lưu quy đổi đơn vị thất bại. Có thể quy đổi này đã tồn tại hoặc đơn vị không thuộc sản phẩm đang chọn.",
       );
     } finally {
       setDangLuu(false);
@@ -147,16 +143,17 @@ function QuyDoiDonViFormNoiDung({
         <div className="modal-header">
           <div>
             <h2>
-              {quyDoiCanSua
-                ? "Cập nhật quy đổi đơn vị"
-                : "Thêm quy đổi đơn vị"}
+              {quyDoiCanSua ? "Cập nhật quy đổi đơn vị" : "Thêm quy đổi đơn vị"}
             </h2>
-            <p>
-              Dược sĩ cấu hình quy đổi giữa các đơn vị của cùng một sản phẩm.
-            </p>
+
+            <p>Cấu hình quy đổi giữa các đơn vị của cùng một sản phẩm.</p>
           </div>
 
-          <button className="modal-close-button" onClick={onClose} type="button">
+          <button
+            className="modal-close-button"
+            onClick={onClose}
+            type="button"
+          >
             ×
           </button>
         </div>
@@ -164,6 +161,7 @@ function QuyDoiDonViFormNoiDung({
         <form onSubmit={xuLySubmit}>
           <div className="form-group">
             <label>Đơn vị nguồn</label>
+
             <select
               name="maDonViNguon"
               value={formData.maDonViNguon}
@@ -184,6 +182,7 @@ function QuyDoiDonViFormNoiDung({
 
           <div className="form-group">
             <label>Số lượng nguồn</label>
+
             <input
               type="number"
               name="soLuongNguon"
@@ -198,6 +197,7 @@ function QuyDoiDonViFormNoiDung({
 
           <div className="form-group">
             <label>Đơn vị đích</label>
+
             <select
               name="maDonViDich"
               value={formData.maDonViDich}
@@ -218,6 +218,7 @@ function QuyDoiDonViFormNoiDung({
 
           <div className="form-group">
             <label>Số lượng đích</label>
+
             <input
               type="number"
               name="soLuongDich"
@@ -231,9 +232,8 @@ function QuyDoiDonViFormNoiDung({
           </div>
 
           <div className="conversion-preview">
-            <strong>Diễn giải:</strong>{" "}
-            {formData.soLuongNguon || "..."} đơn vị nguồn ={" "}
-            {formData.soLuongDich || "..."} đơn vị đích
+            <strong>Diễn giải:</strong> {formData.soLuongNguon || "..."} đơn vị
+            nguồn = {formData.soLuongDich || "..."} đơn vị đích
           </div>
 
           <div className="form-actions">
@@ -241,8 +241,8 @@ function QuyDoiDonViFormNoiDung({
               {dangLuu
                 ? "Đang lưu..."
                 : quyDoiCanSua
-                ? "Cập nhật"
-                : "Lưu quy đổi"}
+                  ? "Cập nhật"
+                  : "Lưu quy đổi"}
             </button>
 
             <button
