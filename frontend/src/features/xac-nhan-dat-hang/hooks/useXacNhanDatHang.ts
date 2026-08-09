@@ -10,19 +10,19 @@ import {
   capNhatDiaChiGiaoHangApi,
   layDanhSachDiaChiGiaoHangApi,
   themDiaChiGiaoHangApi,
-} from "../../dia-chi-giao-hang/api/DiaChiGiaoHangApi";
+} from "../../customer/dia-chi-giao-hang/api/DiaChiGiaoHangApi";
 
 import {
   TINH_THANH_GIAO_HANG_MAC_DINH,
   laTinhThanhGiaoHangDuocHoTro,
-} from "../../dia-chi-giao-hang/constants/DiaChiGiaoHangConstants";
+} from "../../customer/dia-chi-giao-hang/constants/DiaChiGiaoHangConstants";
 
 import type {
   DiaChiGiaoHang,
   LoiApiDiaChiGiaoHang,
   LoiTruongDiaChiGiaoHang,
   LuuDiaChiGiaoHangRequest,
-} from "../../dia-chi-giao-hang/types/DiaChiGiaoHang";
+} from "../../customer/dia-chi-giao-hang/types/DiaChiGiaoHang";
 
 import {
   taoDonHangApi,

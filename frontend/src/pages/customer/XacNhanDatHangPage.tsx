@@ -11,7 +11,7 @@ import {
 
 import DanhSachSanPhamXacNhan from "../../features/xac-nhan-dat-hang/components/DanhSachSanPhamXacNhan";
 import DiaChiNhanHangXacNhan from "../../features/xac-nhan-dat-hang/components/DiaChiNhanHangXacNhan";
-import FormDiaChiGiaoHang from "../../features/dia-chi-giao-hang/components/FormDiaChiGiaoHang";
+import FormDiaChiGiaoHang from "../../features/customer/dia-chi-giao-hang/components/FormDiaChiGiaoHang";
 import PhuongThucThanhToan from "../../features/xac-nhan-dat-hang/components/PhuongThucThanhToan";
 import TongKetXacNhanDatHang from "../../features/xac-nhan-dat-hang/components/TongKetXacNhanDatHang";
 

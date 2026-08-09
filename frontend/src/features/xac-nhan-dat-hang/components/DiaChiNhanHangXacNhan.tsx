@@ -1,4 +1,4 @@
-import type { DiaChiGiaoHang } from "../../dia-chi-giao-hang/types/DiaChiGiaoHang";
+import type { DiaChiGiaoHang } from "../../customer/dia-chi-giao-hang/types/DiaChiGiaoHang";
 
 interface DiaChiNhanHangXacNhanProps {
   danhSachDiaChi: DiaChiGiaoHang[];
