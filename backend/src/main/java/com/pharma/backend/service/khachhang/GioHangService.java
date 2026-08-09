@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.pharma.backend.dto.khachhang.giohang.ChiTietGioHangResponseDto;
 import com.pharma.backend.dto.khachhang.giohang.GioHangResponseDto;
-import com.pharma.backend.dto.sanpham.DonViBanSanPhamResponseDto;
+import com.pharma.backend.dto.khachhang.sanpham.DonViBanSanPhamResponseDto;
 import com.pharma.backend.entity.ChiTietGioHang;
 import com.pharma.backend.entity.DonViSanPham;
 import com.pharma.backend.entity.GioHang;

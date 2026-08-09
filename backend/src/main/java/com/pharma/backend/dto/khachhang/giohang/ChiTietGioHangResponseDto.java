@@ -3,7 +3,7 @@ package com.pharma.backend.dto.khachhang.giohang;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.pharma.backend.dto.sanpham.DonViBanSanPhamResponseDto;
+import com.pharma.backend.dto.khachhang.sanpham.DonViBanSanPhamResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

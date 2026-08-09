@@ -11,8 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamRequest;
 import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamResponse;
-import com.pharma.backend.dto.sanpham.DanhMucNoiBatResponseDto;
-import com.pharma.backend.dto.sanpham.DanhMucSanPhamResponseDto;
+import com.pharma.backend.dto.common.sanpham.DanhMucNoiBatResponseDto;
+import com.pharma.backend.dto.common.sanpham.DanhMucSanPhamResponseDto;
 import com.pharma.backend.entity.DanhMucSanPham;
 import com.pharma.backend.repository.DanhMucSanPhamRepository;
 import com.pharma.backend.repository.DanhMucSanPhamRepository.DanhMucNoiBatProjection;

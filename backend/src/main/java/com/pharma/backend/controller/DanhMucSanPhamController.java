@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamRequest;
 import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamResponse;
-import com.pharma.backend.dto.sanpham.DanhMucNoiBatResponseDto;
-import com.pharma.backend.dto.sanpham.DanhMucSanPhamResponseDto;
+import com.pharma.backend.dto.common.sanpham.DanhMucNoiBatResponseDto;
+import com.pharma.backend.dto.common.sanpham.DanhMucSanPhamResponseDto;
 import com.pharma.backend.service.DanhMucSanPhamService;
 
 import lombok.RequiredArgsConstructor;
