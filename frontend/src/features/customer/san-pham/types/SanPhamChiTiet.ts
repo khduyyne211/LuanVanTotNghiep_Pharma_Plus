@@ -1,4 +1,4 @@
-import type { DonViBanSanPham } from "../../../shared/types/DonViBanSanPham";
+import type { DonViBanSanPham } from "../../../../shared/types/DonViBanSanPham";
 import type { ThanhPhanHoatChat } from "./ThanhPhanHoatChat";
 import type { DuLieuChuyenMonThuoc } from "./DuLieuChuyenMonThuoc";
 

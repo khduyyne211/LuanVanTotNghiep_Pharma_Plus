@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 import type { SanPhamChiTiet } from "../types/SanPhamChiTiet";
-import type { DonViBanSanPham } from "../../../shared/types/DonViBanSanPham";
-import { useGioHangContext } from "../../gio-hang/context/GioHangContext";
-import { useXacThucContext } from "../../xac-thuc/context/XacThucContext";
-import { useThongBaoHeThong } from "../../../shared/hooks/useThongBaoHeThong";
-import ThongBaoHeThong from "../../../shared/components/thong-bao/ThongBaoHeThong";
+import type { DonViBanSanPham } from "../../../../shared/types/DonViBanSanPham";
+import { useGioHangContext } from "../../../gio-hang/context/GioHangContext";
+import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";
+import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
+import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
 
 interface ThongTinTongQuanSanPhamProps {
   sanPhamChiTiet: SanPhamChiTiet;

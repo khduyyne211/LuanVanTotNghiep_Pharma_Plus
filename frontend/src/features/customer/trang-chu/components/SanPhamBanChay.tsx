@@ -2,10 +2,10 @@ import { useRef } from "react";
 import { faChevronLeft, faChevronRight, faFire } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import TheSanPham from "../../../san-pham-khach-hang/components/TheSanPham";
-import { useSanPhamBanChay } from "../../../san-pham-khach-hang/hooks/useSanPhamBanChay";
+import TheSanPham from "../../san-pham/components/TheSanPham";
+import { useSanPhamBanChay } from "../../san-pham/hooks/useSanPhamBanChay";
 
-import "../../../san-pham-khach-hang/styles/SanPham.css";
+import "../../san-pham/styles/SanPham.css";
 import "../styles/TrangChu.css";
 
 const dinhDangSoLuong = new Intl.NumberFormat("vi-VN");
