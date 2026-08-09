@@ -15,10 +15,6 @@ import com.pharma.backend.repository.projection.TonKhoThapProjection;
 public interface ChiTietPhieuNhapRepository
         extends JpaRepository<ChiTietPhieuNhap, Long> {
 
-    List<ChiTietPhieuNhap>
-            findByPhieuNhapKho_MaPhieuNhapOrderByMaChiTietPhieuNhapAsc(
-                    Long maPhieuNhap
-            );
 
     @Query(
             value = """
