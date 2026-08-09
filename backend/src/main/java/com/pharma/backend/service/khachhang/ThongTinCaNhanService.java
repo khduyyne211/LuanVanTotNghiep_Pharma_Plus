@@ -1,12 +1,12 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.khachhang;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.thongtincanhan.CapNhatThongTinCaNhanRequestDto;
-import com.pharma.backend.dto.thongtincanhan.ThongTinCaNhanResponseDto;
+import com.pharma.backend.dto.khachhang.thongtincanhan.CapNhatThongTinCaNhanRequestDto;
+import com.pharma.backend.dto.khachhang.thongtincanhan.ThongTinCaNhanResponseDto;
 import com.pharma.backend.entity.KhachHang;
 import com.pharma.backend.repository.KhachHangRepository;
 

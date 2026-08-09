@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.thongtincanhan;
+package com.pharma.backend.dto.khachhang.thongtincanhan;
 
 import java.time.LocalDate;
 
