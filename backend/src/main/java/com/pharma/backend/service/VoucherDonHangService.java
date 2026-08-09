@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.pharma.backend.dto.voucherdonhang.VoucherDonHangResponse;
+import com.pharma.backend.dto.admin.voucherdonhang.VoucherDonHangResponse;
 import com.pharma.backend.entity.VoucherDonHang;
 import com.pharma.backend.repository.VoucherDonHangRepository;
 

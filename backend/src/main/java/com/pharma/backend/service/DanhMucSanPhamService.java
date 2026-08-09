@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamRequest;
-import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamResponse;
+import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamRequest;
+import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamResponse;
 import com.pharma.backend.entity.DanhMucSanPham;
 import com.pharma.backend.repository.DanhMucSanPhamRepository;
 

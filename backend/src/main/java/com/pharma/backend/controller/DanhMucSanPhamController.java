@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamRequest;
-import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamResponse;
+import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamRequest;
+import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamResponse;
 import com.pharma.backend.service.DanhMucSanPhamService;
 
 import lombok.RequiredArgsConstructor;

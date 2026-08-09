@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.pharma.backend.dto.donhang.ChiTietDonHangProjection;
+import com.pharma.backend.dto.admin.donhang.ChiTietDonHangProjection;
 import com.pharma.backend.entity.ChiTietDonHang;
 
 public interface ChiTietDonHangRepository
