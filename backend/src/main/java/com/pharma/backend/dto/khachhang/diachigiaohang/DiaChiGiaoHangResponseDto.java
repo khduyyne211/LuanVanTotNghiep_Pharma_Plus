@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.diachigiaohang;
+package com.pharma.backend.dto.khachhang.diachigiaohang;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

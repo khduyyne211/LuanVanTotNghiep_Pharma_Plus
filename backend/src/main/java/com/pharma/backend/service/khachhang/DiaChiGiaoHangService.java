@@ -1,4 +1,4 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.khachhang;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.diachigiaohang.DiaChiGiaoHangResponseDto;
-import com.pharma.backend.dto.diachigiaohang.LuuDiaChiGiaoHangRequestDto;
+import com.pharma.backend.dto.khachhang.diachigiaohang.DiaChiGiaoHangResponseDto;
+import com.pharma.backend.dto.khachhang.diachigiaohang.LuuDiaChiGiaoHangRequestDto;
 import com.pharma.backend.entity.DiaChiGiaoHang;
 import com.pharma.backend.entity.KhachHang;
 import com.pharma.backend.enums.diachigiaohang.TinhThanhGiaoHang;

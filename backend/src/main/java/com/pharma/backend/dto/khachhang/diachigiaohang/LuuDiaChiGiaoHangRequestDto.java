@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.diachigiaohang;
+package com.pharma.backend.dto.khachhang.diachigiaohang;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
