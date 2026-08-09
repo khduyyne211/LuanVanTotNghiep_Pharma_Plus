@@ -1,4 +1,4 @@
-import type { ChiTietGioHangHienThi } from "../../gio-hang/types/GioHangHienThi";
+import type { ChiTietGioHangHienThi } from "../../../gio-hang/types/GioHangHienThi";
 
 interface DanhSachSanPhamXacNhanProps {
   danhSachChiTietGioHang: ChiTietGioHangHienThi[];

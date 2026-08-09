@@ -9,13 +9,13 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import DanhSachSanPhamXacNhan from "../../features/xac-nhan-dat-hang/components/DanhSachSanPhamXacNhan";
-import DiaChiNhanHangXacNhan from "../../features/xac-nhan-dat-hang/components/DiaChiNhanHangXacNhan";
+import DanhSachSanPhamXacNhan from "../../features/customer/xac-nhan-dat-hang/components/DanhSachSanPhamXacNhan";
+import DiaChiNhanHangXacNhan from "../../features/customer/xac-nhan-dat-hang/components/DiaChiNhanHangXacNhan";
 import FormDiaChiGiaoHang from "../../features/customer/dia-chi-giao-hang/components/FormDiaChiGiaoHang";
-import PhuongThucThanhToan from "../../features/xac-nhan-dat-hang/components/PhuongThucThanhToan";
-import TongKetXacNhanDatHang from "../../features/xac-nhan-dat-hang/components/TongKetXacNhanDatHang";
+import PhuongThucThanhToan from "../../features/customer/xac-nhan-dat-hang/components/PhuongThucThanhToan";
+import TongKetXacNhanDatHang from "../../features/customer/xac-nhan-dat-hang/components/TongKetXacNhanDatHang";
 
-import { useXacNhanDatHang } from "../../features/xac-nhan-dat-hang/hooks/useXacNhanDatHang";
+import { useXacNhanDatHang } from "../../features/customer/xac-nhan-dat-hang/hooks/useXacNhanDatHang";
 
 import { useGioHangContext } from "../../features/gio-hang/context/GioHangContext";
 import { useKiemTraGioHangLocal } from "../../features/gio-hang/hooks/useKiemTraGioHangLocal";
@@ -25,7 +25,7 @@ import { taoThanhToanZaloPayApi } from "../../features/thanh-toan/api/ThanhToanZ
 import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
 import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
 
-import "../../features/xac-nhan-dat-hang/styles/XacNhanDatHang.css";
+import "../../features/customer/xac-nhan-dat-hang/styles/XacNhanDatHang.css";
 
 const KHOA_THANH_TOAN_ZALOPAY =
   "pharma_thanh_toan_zalopay_dang_cho";

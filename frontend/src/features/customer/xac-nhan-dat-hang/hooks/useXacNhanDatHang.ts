@@ -10,35 +10,35 @@ import {
   capNhatDiaChiGiaoHangApi,
   layDanhSachDiaChiGiaoHangApi,
   themDiaChiGiaoHangApi,
-} from "../../customer/dia-chi-giao-hang/api/DiaChiGiaoHangApi";
+} from "../../dia-chi-giao-hang/api/DiaChiGiaoHangApi";
 
 import {
   TINH_THANH_GIAO_HANG_MAC_DINH,
   laTinhThanhGiaoHangDuocHoTro,
-} from "../../customer/dia-chi-giao-hang/constants/DiaChiGiaoHangConstants";
+} from "../../dia-chi-giao-hang/constants/DiaChiGiaoHangConstants";
 
 import type {
   DiaChiGiaoHang,
   LoiApiDiaChiGiaoHang,
   LoiTruongDiaChiGiaoHang,
   LuuDiaChiGiaoHangRequest,
-} from "../../customer/dia-chi-giao-hang/types/DiaChiGiaoHang";
+} from "../../dia-chi-giao-hang/types/DiaChiGiaoHang";
 
 import {
   taoDonHangApi,
-} from "../../don-hang-khach-hang/api/DonHangApi";
+} from "../../../don-hang-khach-hang/api/DonHangApi";
 
 import type {
   DonHangResponse,
-} from "../../don-hang-khach-hang/types/DonHang";
+} from "../../../don-hang-khach-hang/types/DonHang";
 
 import {
   layGioHangApi,
-} from "../../gio-hang/api/GioHangApi";
+} from "../../../gio-hang/api/GioHangApi";
 
 import type {
   GioHang,
-} from "../../gio-hang/types/GioHang";
+} from "../../../gio-hang/types/GioHang";
 
 import type {
   PhuongThucThanhToan,
