@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.xacthuc.DangKyTrucTiepRequestDto;
+import com.pharma.backend.dto.xacthuc.DangKyRequestDto;
 import com.pharma.backend.entity.KhachHang;
 import com.pharma.backend.entity.TaiKhoan;
 import com.pharma.backend.entity.VaiTro;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class DangKyTrucTiepService {
+public class DangKyService {
 
     private static final String KHACH_HANG = "KHACH_HANG";
     private static final Pattern MAU_SO_DIEN_THOAI = Pattern.compile("^0\\d{9}$");
@@ -33,7 +33,7 @@ public class DangKyTrucTiepService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void dangKy(DangKyTrucTiepRequestDto request) {
+    public void dangKy(DangKyRequestDto request) {
         kiemTraDuLieuDangKy(request);
 
         String soDienThoai = request.getSoDienThoai().trim();
@@ -45,8 +45,7 @@ public class DangKyTrucTiepService {
                 .timVaiTroDangHoatDongTheoTen(KHACH_HANG)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Hệ thống chưa cấu hình vai trò khách hàng."
-                ));
+                        "Hệ thống chưa cấu hình vai trò khách hàng."));
 
         try {
             TaiKhoan taiKhoan = new TaiKhoan();
@@ -70,42 +69,34 @@ public class DangKyTrucTiepService {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Số điện thoại đã được sử dụng.",
-                    exception
-            );
+                    exception);
         }
     }
 
-    private void kiemTraDuLieuDangKy(DangKyTrucTiepRequestDto request) {
+    private void kiemTraDuLieuDangKy(DangKyRequestDto request) {
         if (request == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Dữ liệu đăng ký không hợp lệ."
-            );
+                    "Dữ liệu đăng ký không hợp lệ.");
         }
 
         String soDienThoai = request.getSoDienThoai();
 
-        if (
-                soDienThoai == null ||
-                !MAU_SO_DIEN_THOAI.matcher(soDienThoai.trim()).matches()
-        ) {
+        if (soDienThoai == null ||
+                !MAU_SO_DIEN_THOAI.matcher(soDienThoai.trim()).matches()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0."
-            );
+                    "Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0.");
         }
 
         String hoTen = request.getHoTen();
 
-        if (
-                hoTen == null ||
+        if (hoTen == null ||
                 hoTen.isBlank() ||
-                hoTen.trim().length() > 100
-        ) {
+                hoTen.trim().length() > 100) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Họ tên không hợp lệ."
-            );
+                    "Họ tên không hợp lệ.");
         }
 
         String matKhau = request.getMatKhau();
@@ -113,18 +104,14 @@ public class DangKyTrucTiepService {
         if (matKhau == null || matKhau.length() < 6) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Mật khẩu phải có ít nhất 6 ký tự."
-            );
+                    "Mật khẩu phải có ít nhất 6 ký tự.");
         }
 
-        if (
-                request.getXacNhanMatKhau() == null ||
-                !matKhau.equals(request.getXacNhanMatKhau())
-        ) {
+        if (request.getXacNhanMatKhau() == null ||
+                !matKhau.equals(request.getXacNhanMatKhau())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Nhập lại mật khẩu không khớp."
-            );
+                    "Nhập lại mật khẩu không khớp.");
         }
     }
 
@@ -132,8 +119,7 @@ public class DangKyTrucTiepService {
         if (taiKhoanRepository.existsBySoDienThoai(soDienThoai)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Tài khoản đã tồn tại."
-            );
+                    "Tài khoản đã tồn tại.");
         }
     }
 }

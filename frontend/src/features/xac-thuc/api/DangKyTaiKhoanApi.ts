@@ -1,17 +1,17 @@
 import apiClient from "../../../api/axiosClient";
 
-export interface DangKyTrucTiepRequest {
+export interface DangKyRequest {
   soDienThoai: string;
   hoTen: string;
   matKhau: string;
   xacNhanMatKhau: string;
 }
 
-export async function dangKyTrucTiepApi(
-  request: DangKyTrucTiepRequest,
+export async function dangKyApi(
+  request: DangKyRequest,
 ): Promise<void> {
   await apiClient.post<void>(
-    "/xac-thuc/dang-ky-truc-tiep",
+    "/xac-thuc/dang-ky",
     request,
   );
 }

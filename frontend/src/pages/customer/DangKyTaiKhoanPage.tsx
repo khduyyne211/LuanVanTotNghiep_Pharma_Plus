@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { dangKyTrucTiepApi } from "../../features/xac-thuc/api/DangKyTaiKhoanApi";
+import { dangKyApi } from "../../features/xac-thuc/api/DangKyTaiKhoanApi";
 import { useXacThucContext } from "../../features/xac-thuc/context/XacThucContext";
 import "../../features/xac-thuc/styles/DangKyTaiKhoan.css";
 
@@ -126,7 +126,7 @@ function DangKyTaiKhoanPage() {
     setLoiTruong({});
 
     try {
-      await dangKyTrucTiepApi({
+      await dangKyApi({
         soDienThoai: soDienThoaiDaChuanHoa,
         hoTen: hoTenDaChuanHoa,
         matKhau,

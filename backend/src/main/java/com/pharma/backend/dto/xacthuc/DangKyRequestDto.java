@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DangKyTrucTiepRequestDto {
+public class DangKyRequestDto {
 
     private String soDienThoai;
 
