@@ -10,10 +10,17 @@
   --customer-color-border: #dbe5f2;
   --customer-color-background: #eef3f8;
   --customer-color-surface: #ffffff;
+
   --customer-page-padding: 42px;
 
   color: var(--customer-color-text);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  font-family:
+    "Segoe UI",
+    Tahoma,
+    Geneva,
+    Verdana,
+    sans-serif;
 }
 
 /* =========================
@@ -22,14 +29,36 @@
 
 .customer-layout .page-container {
   width: 100%;
+
   margin: 0 auto;
-  padding-right: var(--customer-page-padding);
-  padding-left: var(--customer-page-padding);
+
+  padding-right:
+    var(--customer-page-padding);
+
+  padding-left:
+    var(--customer-page-padding);
+
   box-sizing: border-box;
 }
 
-@media (max-width: 900px) {
+/* =========================
+   TABLET
+   768px - 992px
+========================= */
+
+@media (min-width: 768px) and (max-width: 992px) {
   .customer-layout {
     --customer-page-padding: 24px;
+  }
+}
+
+/* =========================
+   MOBILE
+   < 768px
+========================= */
+
+@media (max-width: 767px) {
+  .customer-layout {
+    --customer-page-padding: 16px;
   }
 }

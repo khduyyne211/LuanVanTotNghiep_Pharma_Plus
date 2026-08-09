@@ -596,29 +596,608 @@
   opacity: 0.5;
 }
 
-@media (max-width: 1200px) {
+/* =========================
+   TABLET
+   768px - 992px
+========================= */
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .trang-gio-hang {
+    gap: 16px;
+  }
+
+  .trang-gio-hang h1 {
+    font-size: 25px;
+  }
+
+  /*
+   * Tablet:
+   * danh sách sản phẩm ở trên,
+   * tổng kết đơn hàng ở dưới.
+   */
   .gio-hang-bo-cuc {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .gio-hang-tom-tat {
     position: static;
+    width: 100%;
   }
-}
 
-@media (max-width: 900px) {
+  /*
+   * Không giữ header bảng desktop vì
+   * các cột không còn đủ chiều rộng.
+   */
   .gio-hang-bang-tieu-de {
     display: none;
   }
 
+  /*
+   * Mỗi sản phẩm trở thành một card dạng:
+   *
+   * Sản phẩm                  Xóa
+   * Giá        Số lượng       Đơn vị
+   */
   .gio-hang-dong {
-    grid-template-columns: 1fr;
-    gap: 14px;
+    grid-template-columns:
+      minmax(0, 1fr)
+      150px
+      150px;
+
+    grid-template-areas:
+      "san-pham san-pham xoa"
+      "gia so-luong don-vi";
+
+    gap: 18px;
+
+    padding: 22px;
+  }
+
+  .gio-hang-cot-san-pham {
+    grid-area: san-pham;
+  }
+
+  .gio-hang-cot-gia {
+    grid-area: gia;
+  }
+
+  .gio-hang-cot-so-luong {
+    grid-area: so-luong;
+  }
+
+  .gio-hang-cot-don-vi {
+    grid-area: don-vi;
+  }
+
+  .gio-hang-cot-xoa {
+    grid-area: xoa;
+
+    align-self: start;
+    justify-self: end;
+
+    margin-right: 0;
+  }
+
+  .gio-hang-cot-so-luong,
+  .gio-hang-cot-don-vi {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 7px;
+  }
+
+  .gio-hang-cot-so-luong::before {
+    content: "Số lượng";
+
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .gio-hang-cot-don-vi::before {
+    content: "Đơn vị";
+
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .gio-hang-bo-dem-so-luong {
+    width: 128px;
+  }
+
+  .gio-hang-don-vi-dropdown,
+  .gio-hang-don-vi-nut-chon {
+    width: 132px;
   }
 
   .gio-hang-don-vi-gia {
     align-items: flex-start;
+
     margin-left: 0;
+
     text-align: left;
+  }
+
+  .gio-hang-khu-vuc-xoa {
+    margin-top: 14px;
+  }
+
+  .gio-hang-tom-tat {
+    padding: 22px;
+  }
+
+  .gio-hang-thanh-tien {
+    margin-bottom: 12px;
+  }
+}
+
+/* =========================
+   MOBILE
+   < 768px
+========================= */
+
+@media (max-width: 767px) {
+  .trang-gio-hang {
+    gap: 14px;
+  }
+
+  .trang-gio-hang h1 {
+    font-size: 22px;
+  }
+
+  /*
+   * Danh sách và tổng kết
+   * xếp dọc hoàn toàn.
+   */
+  .gio-hang-bo-cuc {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .gio-hang-ben-trai,
+  .gio-hang-ben-phai {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /*
+   * Bỏ cảm giác bảng desktop.
+   */
+  .gio-hang-bang {
+    overflow: visible;
+
+    border-radius: 0;
+
+    background-color: transparent;
+
+    box-shadow: none;
+  }
+
+  .gio-hang-bang-tieu-de {
+    display: none;
+  }
+
+  .gio-hang-bang-noi-dung {
+    gap: 12px;
+  }
+
+  /*
+   * Card mobile:
+   *
+   * [Ảnh + tên]              [Xóa]
+   *
+   * [Giá]
+   *
+   * Số lượng          Đơn vị
+   * [- 1 +]           [Hộp v]
+   */
+  .gio-hang-dong {
+    width: 100%;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr)
+      38px;
+
+    grid-template-areas:
+      "san-pham san-pham xoa"
+      "gia gia gia"
+      "so-luong don-vi don-vi";
+
+    gap:
+      14px
+      10px;
+
+    align-items: start;
+
+    padding: 16px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background-color: #ffffff;
+
+    box-shadow:
+      0 2px 10px
+      rgba(7, 19, 51, 0.06);
+  }
+
+  .gio-hang-dong:last-child {
+    border-bottom: none;
+  }
+
+  /* =========================
+     SẢN PHẨM
+  ========================= */
+
+  .gio-hang-cot-san-pham {
+    grid-area: san-pham;
+
+    gap: 12px;
+
+    padding-right: 4px;
+  }
+
+  .gio-hang-anh-san-pham {
+    width: 72px;
+    height: 72px;
+
+    border-radius: 11px;
+  }
+
+  .gio-hang-anh-san-pham img {
+    max-width: 64px;
+    max-height: 64px;
+  }
+
+  .gio-hang-thong-tin-san-pham {
+    gap: 6px;
+  }
+
+  .gio-hang-thong-tin-san-pham h3 {
+    font-size: 14px;
+    line-height: 1.4;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+  }
+
+  /* =========================
+     GIÁ
+  ========================= */
+
+  .gio-hang-cot-gia {
+    grid-area: gia;
+
+    gap: 3px;
+
+    padding-top: 10px;
+
+    border-top:
+      1px solid
+      #eef2f7;
+  }
+
+  .gio-hang-cot-gia strong {
+    font-size: 16px;
+  }
+
+  .gio-hang-cot-gia span,
+  .gio-hang-cot-gia .gio-hang-gia-goc,
+  .gio-hang-cot-gia .gio-hang-gia-sau-khuyen-mai {
+    font-size: 12px;
+  }
+
+  /* =========================
+     SỐ LƯỢNG
+  ========================= */
+
+  .gio-hang-cot-so-luong {
+    grid-area: so-luong;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 7px;
+
+    min-width: 0;
+  }
+
+  .gio-hang-cot-so-luong::before {
+    content: "Số lượng";
+
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .gio-hang-bo-dem-so-luong {
+    width: 116px;
+    height: 34px;
+
+    grid-template-columns:
+      36px
+      42px
+      36px;
+  }
+
+  .gio-hang-bo-dem-so-luong button {
+    font-size: 21px;
+  }
+
+  .gio-hang-bo-dem-so-luong input {
+    font-size: 15px;
+  }
+
+  /* =========================
+     ĐƠN VỊ
+  ========================= */
+
+  .gio-hang-cot-don-vi {
+    grid-area: don-vi;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 7px;
+  }
+
+  .gio-hang-cot-don-vi::before {
+    content: "Đơn vị";
+
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .gio-hang-don-vi-dropdown {
+    width: 100%;
+    max-width: 145px;
+  }
+
+  .gio-hang-don-vi-nut-chon {
+    width: 100%;
+    height: 34px;
+
+    padding:
+      0 11px;
+
+    font-size: 14px;
+  }
+
+  /*
+   * Menu đơn vị mở về bên phải
+   * để hạn chế tràn khỏi viewport.
+   */
+  .gio-hang-don-vi-menu {
+    right: 0;
+    left: auto;
+
+    width:
+      min(
+        260px,
+        calc(100vw - 32px)
+      );
+
+    border-radius: 12px;
+  }
+
+  .gio-hang-don-vi-lua-chon {
+    min-height: 48px;
+
+    grid-template-columns:
+      24px
+      minmax(0, 1fr)
+      auto;
+
+    column-gap: 9px;
+
+    padding:
+      0 12px;
+
+    font-size: 14px;
+  }
+
+  .gio-hang-don-vi-radio {
+    width: 18px;
+    height: 18px;
+  }
+
+  .gio-hang-don-vi-radio-cham {
+    width: 7px;
+    height: 7px;
+  }
+
+  .gio-hang-don-vi-ten {
+    min-width: 0;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gio-hang-don-vi-gia {
+    margin-left: 0;
+
+    gap: 1px;
+
+    align-items: flex-end;
+
+    text-align: right;
+  }
+
+  .gio-hang-don-vi-gia-goc {
+    font-size: 11px;
+  }
+
+  .gio-hang-don-vi-gia-hien-tai {
+    font-size: 13px;
+  }
+
+  .gio-hang-don-vi-dang-cap-nhat {
+    font-size: 12px;
+  }
+
+  /* =========================
+     XÓA SẢN PHẨM
+  ========================= */
+
+  .gio-hang-cot-xoa {
+    grid-area: xoa;
+
+    align-self: start;
+    justify-self: end;
+
+    margin-right: 0;
+  }
+
+  .gio-hang-nut-xoa-icon {
+    width: 34px;
+    height: 34px;
+
+    font-size: 18px;
+  }
+
+  /* =========================
+     XÓA TẤT CẢ
+  ========================= */
+
+  .gio-hang-khu-vuc-xoa {
+    margin-top: 12px;
+  }
+
+  .gio-hang-nut-xoa-tat-ca {
+    width: 100%;
+
+    padding:
+      11px 16px;
+
+    font-size: 13px;
+  }
+
+  /* =========================
+     TỔNG KẾT ĐƠN HÀNG
+  ========================= */
+
+  .gio-hang-tom-tat {
+    position: static;
+
+    width: 100%;
+
+    padding: 18px;
+
+    border-radius: 14px;
+  }
+
+  .gio-hang-tom-tat h2 {
+    margin-bottom: 12px;
+
+    font-size: 19px;
+  }
+
+  .gio-hang-tom-tat-dong {
+    gap: 12px;
+
+    padding:
+      11px 0;
+
+    font-size: 14px;
+  }
+
+  .gio-hang-tom-tat-dong > span:first-child {
+    min-width: 0;
+  }
+
+  .gio-hang-tom-tat-dong > span:last-child,
+  .gio-hang-tom-tat-dong > strong {
+    flex-shrink: 0;
+
+    text-align: right;
+  }
+
+  .gio-hang-thanh-tien {
+    padding-top: 15px;
+
+    margin-bottom: 12px;
+
+    font-size: 16px;
+  }
+
+  .gio-hang-thanh-tien strong {
+    font-size: 20px;
+  }
+
+  .gio-hang-nut-mua-hang {
+    min-height: 46px;
+
+    padding:
+      12px 16px;
+
+    font-size: 15px;
+  }
+
+  .gio-hang-tiep-tuc-mua-sam {
+    width: 100%;
+
+    margin-top: 12px;
+
+    text-align: center;
+
+    font-size: 14px;
+  }
+
+  /* =========================
+     GIỎ HÀNG RỖNG
+  ========================= */
+
+  .gio-hang-rong {
+    min-height: 300px;
+
+    padding:
+      32px 16px;
+  }
+
+  .gio-hang-rong-bieu-tuong {
+    width: 120px;
+    height: 90px;
+
+    margin-bottom: 18px;
+  }
+
+  .gio-hang-rong-bieu-tuong i {
+    font-size: 70px;
+  }
+
+  .gio-hang-rong h2 {
+    font-size: 21px;
+  }
+
+  .gio-hang-rong p {
+    font-size: 16px;
+  }
+
+  .gio-hang-dang-tai {
+    padding:
+      38px 18px;
+
+    border-radius: 14px;
+
+    font-size: 14px;
   }
 }
