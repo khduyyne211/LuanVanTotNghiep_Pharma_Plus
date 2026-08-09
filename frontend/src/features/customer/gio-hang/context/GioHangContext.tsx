@@ -14,7 +14,7 @@ import {
   xoaGioHangLocal,
 } from "../utils/gioHangLocalStorage";
 import { kiemTraGioHangApi } from "../api/GioHangApi";
-import { useXacThucContext } from "../../xac-thuc/context/XacThucContext";
+import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";
 
 export type LyDoThemGioHang =
   | "THANH_CONG"

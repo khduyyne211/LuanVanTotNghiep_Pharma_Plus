@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { DanhMucSanPhamProvider } from "../../features/customer/danh-muc/context/DanhMucSanPhamContext";
-import { GioHangProvider } from "../../features/gio-hang/context/GioHangContext";
+import { GioHangProvider } from "../../features/customer/gio-hang/context/GioHangContext";
 
 interface CustomerProvidersProps {
   children: ReactNode;

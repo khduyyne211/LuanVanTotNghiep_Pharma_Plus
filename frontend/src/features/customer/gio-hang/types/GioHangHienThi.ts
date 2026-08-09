@@ -1,4 +1,4 @@
-import type { DonViBanSanPham } from "../../../shared/types/DonViBanSanPham";
+import type { DonViBanSanPham } from "../../../../shared/types/DonViBanSanPham";
 
 /**
  * Dữ liệu giỏ hàng hiển thị được kết hợp từ:

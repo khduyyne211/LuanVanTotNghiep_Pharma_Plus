@@ -8,7 +8,7 @@ import {
 
 import { kiemTraGioHangApi } from "../api/GioHangApi";
 import { useGioHangContext } from "../context/GioHangContext";
-import { useXacThucContext } from "../../xac-thuc/context/XacThucContext";
+import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";
 
 import type { ChiTietGioHangLocal } from "../types/GioHangLocal";
 import type {

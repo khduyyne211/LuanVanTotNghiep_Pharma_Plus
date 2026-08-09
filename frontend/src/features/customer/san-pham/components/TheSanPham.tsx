@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import type { SanPham } from "../types/SanPham";
 import type { DonViBanSanPham } from "../../../../shared/types/DonViBanSanPham";
 import { taoSlug } from "../../../../shared/utils/taoSlug";
-import { useGioHangContext } from "../../../gio-hang/context/GioHangContext";
+import { useGioHangContext } from "../../gio-hang/context/GioHangContext";
 import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";
 import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
 import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";

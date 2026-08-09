@@ -12,7 +12,7 @@ import {
 
 import logoPharma from "../../../assets/image/logo/pharma+.png";
 
-import NutGioHang from "../../../features/gio-hang/components/NutGioHang";
+import NutGioHang from "../../../features/customer/gio-hang/components/NutGioHang";
 import NutTaiKhoan from "../../../features/xac-thuc/components/NutTaiKhoan";
 
 import MenuKhachHangResponsive from "./MenuKhachHangResponsive";

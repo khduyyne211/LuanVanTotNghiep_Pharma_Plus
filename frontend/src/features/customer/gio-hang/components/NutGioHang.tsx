@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useGioHangContext } from "../context/GioHangContext";
-import { useXacThucContext } from "../../xac-thuc/context/XacThucContext";
+import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";
 import "../styles/ThongBaoGioHang.css"
 
 function NutGioHang() {

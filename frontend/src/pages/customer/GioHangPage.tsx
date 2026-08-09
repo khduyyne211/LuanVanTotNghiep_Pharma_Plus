@@ -8,17 +8,17 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import DongChiTietGioHang from "../../features/gio-hang/components/DongChiTietGioHang";
-import { dongBoGioHangApi } from "../../features/gio-hang/api/GioHangApi";
-import { useGioHangContext } from "../../features/gio-hang/context/GioHangContext";
-import { useKiemTraGioHangLocal } from "../../features/gio-hang/hooks/useKiemTraGioHangLocal";
+import DongChiTietGioHang from "../../features/customer/gio-hang/components/DongChiTietGioHang";
+import { dongBoGioHangApi } from "../../features/customer/gio-hang/api/GioHangApi";
+import { useGioHangContext } from "../../features/customer/gio-hang/context/GioHangContext";
+import { useKiemTraGioHangLocal } from "../../features/customer/gio-hang/hooks/useKiemTraGioHangLocal";
 
-import type { ChiTietGioHangLocal } from "../../features/gio-hang/types/GioHangLocal";
+import type { ChiTietGioHangLocal } from "../../features/customer/gio-hang/types/GioHangLocal";
 
 import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
 import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
 
-import "../../features/gio-hang/styles/GioHang.css";
+import "../../features/customer/gio-hang/styles/GioHang.css";
 
 interface DuLieuLoiApi {
   detail?: string;

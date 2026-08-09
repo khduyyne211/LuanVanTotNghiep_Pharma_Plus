@@ -34,11 +34,11 @@ import type {
 
 import {
   layGioHangApi,
-} from "../../../gio-hang/api/GioHangApi";
+} from "../../gio-hang/api/GioHangApi";
 
 import type {
   GioHang,
-} from "../../../gio-hang/types/GioHang";
+} from "../../gio-hang/types/GioHang";
 
 import type {
   PhuongThucThanhToan,

@@ -17,8 +17,8 @@ import TongKetXacNhanDatHang from "../../features/customer/xac-nhan-dat-hang/com
 
 import { useXacNhanDatHang } from "../../features/customer/xac-nhan-dat-hang/hooks/useXacNhanDatHang";
 
-import { useGioHangContext } from "../../features/gio-hang/context/GioHangContext";
-import { useKiemTraGioHangLocal } from "../../features/gio-hang/hooks/useKiemTraGioHangLocal";
+import { useGioHangContext } from "../../features/customer/gio-hang/context/GioHangContext";
+import { useKiemTraGioHangLocal } from "../../features/customer/gio-hang/hooks/useKiemTraGioHangLocal";
 
 import { taoThanhToanZaloPayApi } from "../../features/customer/thanh-toan/api/ThanhToanZaloPayApi";
 
