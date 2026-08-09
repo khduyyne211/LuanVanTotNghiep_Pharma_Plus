@@ -1,4 +1,4 @@
-package com.pharma.backend.controller;
+package com.pharma.backend.controller.khachhang;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.giohang.GioHangResponseDto;
-import com.pharma.backend.dto.giohang.KiemTraGioHangRequestDto;
-import com.pharma.backend.dto.giohang.KiemTraGioHangResponseDto;
+import com.pharma.backend.dto.khachhang.giohang.GioHangResponseDto;
+import com.pharma.backend.dto.khachhang.giohang.KiemTraGioHangRequestDto;
+import com.pharma.backend.dto.khachhang.giohang.KiemTraGioHangResponseDto;
 import com.pharma.backend.security.NguoiDungDangNhap;
-import com.pharma.backend.service.DongBoGioHangService;
-import com.pharma.backend.service.GioHangService;
-import com.pharma.backend.service.KiemTraGioHangService;
+import com.pharma.backend.service.khachhang.DongBoGioHangService;
+import com.pharma.backend.service.khachhang.GioHangService;
+import com.pharma.backend.service.khachhang.KiemTraGioHangService;
 
 import lombok.RequiredArgsConstructor;
 

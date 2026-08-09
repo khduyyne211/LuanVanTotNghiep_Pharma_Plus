@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.giohang;
+package com.pharma.backend.dto.khachhang.giohang;
 
 import java.math.BigDecimal;
 

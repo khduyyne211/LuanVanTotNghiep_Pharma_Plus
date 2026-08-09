@@ -1,4 +1,4 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.khachhang;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,13 +13,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.giohang.ChiTietGioHangLocalRequestDto;
-import com.pharma.backend.dto.giohang.KiemTraGioHangRequestDto;
-import com.pharma.backend.dto.giohang.KiemTraGioHangResponseDto;
-import com.pharma.backend.dto.giohang.ThongTinKiemTraGioHangDto;
+import com.pharma.backend.dto.khachhang.giohang.ChiTietGioHangLocalRequestDto;
+import com.pharma.backend.dto.khachhang.giohang.KiemTraGioHangRequestDto;
+import com.pharma.backend.dto.khachhang.giohang.KiemTraGioHangResponseDto;
+import com.pharma.backend.dto.khachhang.giohang.ThongTinKiemTraGioHangDto;
 import com.pharma.backend.entity.DonViSanPham;
 import com.pharma.backend.entity.QuyDoiDonVi;
 import com.pharma.backend.repository.DonViSanPhamRepository;
+import com.pharma.backend.service.KetQuaTinhGiaSanPham;
+import com.pharma.backend.service.TinhGiaSanPhamService;
+import com.pharma.backend.service.TonKhoSanPhamService;
 
 import lombok.RequiredArgsConstructor;
 

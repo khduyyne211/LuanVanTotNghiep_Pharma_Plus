@@ -1,4 +1,4 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.khachhang;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.giohang.ChiTietGioHangLocalRequestDto;
-import com.pharma.backend.dto.giohang.KiemTraGioHangRequestDto;
-import com.pharma.backend.dto.giohang.KiemTraGioHangResponseDto;
+import com.pharma.backend.dto.khachhang.giohang.ChiTietGioHangLocalRequestDto;
+import com.pharma.backend.dto.khachhang.giohang.KiemTraGioHangRequestDto;
+import com.pharma.backend.dto.khachhang.giohang.KiemTraGioHangResponseDto;
 import com.pharma.backend.entity.ChiTietGioHang;
 import com.pharma.backend.entity.DonViSanPham;
 import com.pharma.backend.entity.GioHang;

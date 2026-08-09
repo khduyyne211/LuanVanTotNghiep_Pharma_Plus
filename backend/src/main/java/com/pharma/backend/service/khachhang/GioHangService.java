@@ -1,4 +1,4 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.khachhang;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.giohang.ChiTietGioHangResponseDto;
-import com.pharma.backend.dto.giohang.GioHangResponseDto;
+import com.pharma.backend.dto.khachhang.giohang.ChiTietGioHangResponseDto;
+import com.pharma.backend.dto.khachhang.giohang.GioHangResponseDto;
 import com.pharma.backend.dto.sanpham.DonViBanSanPhamResponseDto;
 import com.pharma.backend.entity.ChiTietGioHang;
 import com.pharma.backend.entity.DonViSanPham;
