@@ -1,5 +1,4 @@
 export type TrangThaiDonHang =
-  | "CHO_THANH_TOAN"
   | "CHO_XU_LY"
   | "DANG_XU_LY"
   | "DANG_GIAO"
@@ -25,7 +24,9 @@ export interface DonHangDanhSach {
   soSanPhamKhac: number;
 }
 
-export type PhuongThucThanhToan = "COD" | "ZALOPAY";
+export type PhuongThucThanhToan =
+  | "COD"
+  | "ZALOPAY";
 
 export type TrangThaiThanhToan =
   | "CHUA_THANH_TOAN"
@@ -70,9 +71,18 @@ export interface DonHangResponse {
   phiGiaoHang: number;
   giamGia: number;
   tongThanhToan: number;
-  phuongThucThanhToan: PhuongThucThanhToan | null;
-  trangThaiThanhToan: TrangThaiThanhToan;
-  trangThaiDonHang: TrangThaiDonHang;
+
+  phuongThucThanhToan:
+    PhuongThucThanhToan | null;
+
+  trangThaiThanhToan:
+    TrangThaiThanhToan;
+
+  trangThaiDonHang:
+    TrangThaiDonHang;
+
   ghiChu: string | null;
-  danhSachChiTietDonHang: ChiTietDonHangResponse[];
+
+  danhSachChiTietDonHang:
+    ChiTietDonHangResponse[];
 }

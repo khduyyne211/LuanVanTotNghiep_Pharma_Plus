@@ -26,7 +26,8 @@ public class XuLyHetHanThanhToanZaloPayService {
             Long maDonHang,
             LocalDateTime thoiDiemGioiHan
     ) {
-        if (maDonHang == null || thoiDiemGioiHan == null) {
+        if (maDonHang == null
+                || thoiDiemGioiHan == null) {
             return false;
         }
 
@@ -76,8 +77,12 @@ public class XuLyHetHanThanhToanZaloPayService {
             return false;
         }
 
+        /*
+         * ZaloPay chưa thanh toán vẫn có
+         * trạng thái đơn hàng CHO_XU_LY.
+         */
         if (donHang.getTrangThaiDonHang()
-                != TrangThaiDonHang.CHO_THANH_TOAN) {
+                != TrangThaiDonHang.CHO_XU_LY) {
             return false;
         }
 

@@ -49,11 +49,18 @@ public class TacVuHetHanThanhToanZaloPay {
                             tongThoiGianChoGiay
                     );
 
+            /*
+             * Theo nghiệp vụ mới:
+             *
+             * Đơn ZaloPay chưa thanh toán:
+             * - Đơn hàng   = CHO_XU_LY
+             * - Thanh toán = CHO_THANH_TOAN
+             */
             List<Long> danhSachMaDonHang =
                     donHangRepository
                             .timMaDonHangZaloPayChoThanhToanQuaHan(
                                     PhuongThucThanhToan.ZALOPAY,
-                                    TrangThaiDonHang.CHO_THANH_TOAN,
+                                    TrangThaiDonHang.CHO_XU_LY,
                                     TrangThaiThanhToan.CHO_THANH_TOAN,
                                     thoiDiemGioiHan
                             );

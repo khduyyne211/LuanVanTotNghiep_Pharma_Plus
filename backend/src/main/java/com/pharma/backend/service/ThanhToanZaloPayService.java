@@ -323,11 +323,10 @@ public class ThanhToanZaloPayService {
         /*
          * Callback có thể được ZaloPay gửi lại.
          *
-         * Nếu đơn đã thanh toán:
+         * Nếu trạng thái thanh toán đã là DA_THANH_TOAN:
          * - DANG_XU_LY: trạng thái đã đúng.
-         * - CHO_XU_LY: đây là dữ liệu được tạo bởi
-         *   luồng cũ bị sai trạng thái, tự sửa về
-         *   DANG_XU_LY.
+         * - CHO_XU_LY: trạng thái đơn chưa đồng bộ,
+         *   tự sửa về DANG_XU_LY.
          */
         if (
                 donHang.getTrangThaiThanhToan()
@@ -388,17 +387,19 @@ public class ThanhToanZaloPayService {
         }
 
         /*
-         * Callback chỉ xử lý đơn ZaloPay:
+         * Callback chỉ xử lý đơn ZaloPay còn đang chờ thanh toán.
+         *
+         * Theo nghiệp vụ mới:
          *
          * Thanh toán = CHO_THANH_TOAN
-         * Đơn hàng   = CHO_THANH_TOAN
+         * Đơn hàng   = CHO_XU_LY
          */
         if (
                 donHang.getTrangThaiThanhToan()
                         != TrangThaiThanhToan.CHO_THANH_TOAN
                         ||
                 donHang.getTrangThaiDonHang()
-                        != TrangThaiDonHang.CHO_THANH_TOAN
+                        != TrangThaiDonHang.CHO_XU_LY
         ) {
             log.warn(
                     "Đơn không còn chờ thanh toán ZaloPay: "
@@ -423,7 +424,7 @@ public class ThanhToanZaloPayService {
          * CHO_THANH_TOAN → DA_THANH_TOAN
          *
          * Đơn hàng:
-         * CHO_THANH_TOAN → DANG_XU_LY
+         * CHO_XU_LY → DANG_XU_LY
          *
          * Khi đã DA_THANH_TOAN + DANG_XU_LY,
          * khách hàng không còn được phép hủy đơn.

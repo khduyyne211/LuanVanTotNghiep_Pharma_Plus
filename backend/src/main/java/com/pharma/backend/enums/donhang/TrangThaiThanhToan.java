@@ -6,5 +6,4 @@ public enum TrangThaiThanhToan {
     DA_THANH_TOAN,
     THANH_TOAN_THAT_BAI,
     DA_HUY,
-    DA_HOAN_TIEN
 }

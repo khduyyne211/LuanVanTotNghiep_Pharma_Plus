@@ -298,7 +298,7 @@ HttpStatus.BAD_REQUEST,
                         donHang.getPhuongThucThanhToan()
                                 == PhuongThucThanhToan.ZALOPAY
                         && donHang.getTrangThaiDonHang()
-                                == TrangThaiDonHang.CHO_THANH_TOAN
+                                == TrangThaiDonHang.CHO_XU_LY
                         && donHang.getTrangThaiThanhToan()
                                 == TrangThaiThanhToan.CHO_THANH_TOAN;
 
@@ -853,7 +853,7 @@ HttpStatus.BAD_REQUEST,
                         );
 
                         donHang.setTrangThaiDonHang(
-                                TrangThaiDonHang.CHO_THANH_TOAN
+                                TrangThaiDonHang.CHO_XU_LY
                         );
                 } else {
                         throw new ResponseStatusException(

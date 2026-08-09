@@ -92,12 +92,12 @@ public class ChuanBiThanhToanZaloPayService {
                         );
 
         /*
-        * Đã hết cả thời hạn thanh toán và thời gian
-        * chờ callback:
-        *
-        * CHO_THANH_TOAN + CHO_THANH_TOAN
-        * → DA_HUY + THANH_TOAN_THAT_BAI
-        */
+         * Đã hết cả thời hạn thanh toán và thời gian
+         * chờ callback:
+         *
+         * CHO_XU_LY + CHO_THANH_TOAN
+         * → DA_HUY + THANH_TOAN_THAT_BAI
+         */
         if (!thoiDiemHienTai.isBefore(
                 thoiDiemHuyDon
         )) {
@@ -121,11 +121,11 @@ public class ChuanBiThanhToanZaloPayService {
         }
 
         /*
-        * Đã hết 30 phút nhưng vẫn còn trong khoảng
-        * chờ callback.
-        *
-        * Không tạo QR mới và cũng chưa hủy đơn.
-        */
+         * Đã hết thời hạn thanh toán nhưng vẫn còn
+         * trong khoảng chờ callback.
+         *
+         * Không tạo QR mới và cũng chưa hủy đơn.
+         */
         if (!thoiDiemHienTai.isBefore(
                 thoiDiemHetHanThanhToan
         )) {
@@ -142,6 +142,7 @@ public class ChuanBiThanhToanZaloPayService {
                         thoiDiemHienTai,
                         thoiDiemHetHanThanhToan
                 ).getSeconds();
+
         if (thoiGianConLaiGiay
                 < THOI_GIAN_QR_TOI_THIEU_GIAY) {
             throw new ResponseStatusException(
@@ -239,11 +240,18 @@ public class ChuanBiThanhToanZaloPayService {
             );
         }
 
+        /*
+         * Theo nghiệp vụ mới:
+         *
+         * ZaloPay chưa thanh toán vẫn là:
+         * Đơn hàng   = CHO_XU_LY
+         * Thanh toán = CHO_THANH_TOAN
+         */
         if (donHang.getTrangThaiDonHang()
-                != TrangThaiDonHang.CHO_THANH_TOAN) {
+                != TrangThaiDonHang.CHO_XU_LY) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "Đơn hàng không còn ở trạng thái chờ thanh toán."
+                    "Đơn hàng không còn ở trạng thái cho phép thanh toán."
             );
         }
 
@@ -278,7 +286,7 @@ public class ChuanBiThanhToanZaloPayService {
 
         if (thoiGianQrToiDa == null
                 || thoiGianQrToiDa
-                < THOI_GIAN_QR_TOI_THIEU_GIAY) {
+                        < THOI_GIAN_QR_TOI_THIEU_GIAY) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     "Thời gian hiệu lực mã QR ZaloPay không hợp lệ."

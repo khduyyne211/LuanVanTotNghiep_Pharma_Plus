@@ -21,19 +21,6 @@
   flex-shrink: 0;
 }
 
-/* Chờ thanh toán */
-
-.trang-thai-don-hang--cho-thanh-toan {
-  color: #c2410c;
-  background-color: #fff7ed;
-  border-color: #fdba74;
-}
-
-.trang-thai-don-hang--cho-thanh-toan
-.trang-thai-don-hang-cham {
-  background-color: #f97316;
-}
-
 /* Chờ xử lý */
 
 .trang-thai-don-hang--cho-xu-ly {
