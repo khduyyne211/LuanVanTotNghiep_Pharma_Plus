@@ -1,14 +1,14 @@
 import { useState } from "react";
 import "./AdminLayout.css";
-import QuanLySanPhamPage from "../../features/san-pham/pages/QuanLySanPhamPage";
+import QuanLySanPhamPage from "../../features/admin/san-pham/pages/QuanLySanPhamPage";
 import QuanLyYeuCau from "../../pages/QuanLyYeuCau";
-import QuanLyDonHangPage from "../../features/don-hang/pages/QuanLyDonHangPage";
-import QuanLyDanhMucSanPhamPage from "../../features/danh-muc-san-pham/pages/QuanLyDanhMucSanPhamPage";
-import QuanLyNhaSanXuatPage from "../../features/nha-san-xuat/pages/QuanLyNhaSanXuatPage";
-import QuanLyDonViTinhPage from "../../features/don-vi-tinh/pages/QuanLyDonViTinhPage";
-import QuanLyHoatChatPage from "../../features/hoat-chat/pages/QuanLyHoatChatPage";
-import QuanLyKhuyenMaiPage from "../../features/khuyen-mai/pages/QuanLyKhuyenMaiPage";
-import QuanLyNhaCungCapPage from "../../features/nha-cung-cap/pages/QuanLyNhaCungCapPage";
+import QuanLyDonHangPage from "../../features/admin/don-hang/pages/QuanLyDonHangPage";
+import QuanLyDanhMucSanPhamPage from "../../features/admin/danh-muc-san-pham/pages/QuanLyDanhMucSanPhamPage";
+import QuanLyNhaSanXuatPage from "../../features/admin/nha-san-xuat/pages/QuanLyNhaSanXuatPage";
+import QuanLyDonViTinhPage from "../../features/admin/don-vi-tinh/pages/QuanLyDonViTinhPage";
+import QuanLyHoatChatPage from "../../features/admin/hoat-chat/pages/QuanLyHoatChatPage";
+import QuanLyKhuyenMaiPage from "../../features/admin/khuyen-mai/pages/QuanLyKhuyenMaiPage";
+import QuanLyNhaCungCapPage from "../../features/admin/nha-cung-cap/pages/QuanLyNhaCungCapPage";
 function AdminLayout() {
   const [trangDangChon, setTrangDangChon] = useState("san-pham");
 

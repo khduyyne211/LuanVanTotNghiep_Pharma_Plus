@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamRequest;
-import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamResponse;
+import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamRequest;
+import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamResponse;
 import com.pharma.backend.dto.common.sanpham.DanhMucNoiBatResponseDto;
 import com.pharma.backend.dto.common.sanpham.DanhMucSanPhamResponseDto;
 import com.pharma.backend.entity.DanhMucSanPham;

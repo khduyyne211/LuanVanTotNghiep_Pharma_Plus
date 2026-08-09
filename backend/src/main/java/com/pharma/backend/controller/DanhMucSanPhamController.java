@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamRequest;
-import com.pharma.backend.dto.danhmucsanpham.DanhMucSanPhamResponse;
+import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamRequest;
+import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamResponse;
 import com.pharma.backend.dto.common.sanpham.DanhMucNoiBatResponseDto;
 import com.pharma.backend.dto.common.sanpham.DanhMucSanPhamResponseDto;
 import com.pharma.backend.service.DanhMucSanPhamService;

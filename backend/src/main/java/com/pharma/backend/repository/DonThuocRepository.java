@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.pharma.backend.dto.donthuoc.DonThuocDanhSachProjection;
+import com.pharma.backend.dto.admin.donthuoc.DonThuocDanhSachProjection;
 import com.pharma.backend.entity.DonThuoc;
 
 public interface DonThuocRepository extends JpaRepository<DonThuoc, Long> {

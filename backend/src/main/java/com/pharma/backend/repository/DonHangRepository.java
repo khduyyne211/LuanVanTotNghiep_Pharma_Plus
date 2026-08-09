@@ -11,8 +11,8 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.pharma.backend.dto.donhang.DonHangChiTietProjection;
-import com.pharma.backend.dto.donhang.DonHangDanhSachProjection;
+import com.pharma.backend.dto.admin.donhang.DonHangChiTietProjection;
+import com.pharma.backend.dto.admin.donhang.DonHangDanhSachProjection;
 import com.pharma.backend.entity.DonHang;
 import com.pharma.backend.enums.donhang.PhuongThucThanhToan;
 import com.pharma.backend.enums.donhang.TrangThaiDonHang;
