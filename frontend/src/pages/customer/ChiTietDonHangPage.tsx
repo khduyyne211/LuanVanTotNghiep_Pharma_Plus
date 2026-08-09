@@ -1,16 +1,16 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { TEN_TRANG_THAI_DON_HANG } from "../../features/don-hang-khach-hang/constants/TrangThaiDonHang";
-import { TEN_TRANG_THAI_THANH_TOAN } from "../../features/don-hang-khach-hang/constants/TrangThaiThanhToan";
-import { useChiTietDonHang } from "../../features/don-hang-khach-hang/hooks/useChiTietDonHang";
+import { TEN_TRANG_THAI_DON_HANG } from "../../features/customer/don-hang/constants/TrangThaiDonHang";
+import { TEN_TRANG_THAI_THANH_TOAN } from "../../features/customer/don-hang/constants/TrangThaiThanhToan";
+import { useChiTietDonHang } from "../../features/customer/don-hang/hooks/useChiTietDonHang";
 
 import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
 import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
 
-import "../../features/don-hang-khach-hang/styles/ChiTietDonHang.css";
-import "../../features/don-hang-khach-hang/styles/TrangThaiDonHang.css";
-import "../../features/don-hang-khach-hang/styles/TrangThaiThanhToan.css";
+import "../../features/customer/don-hang/styles/ChiTietDonHang.css";
+import "../../features/customer/don-hang/styles/TrangThaiDonHang.css";
+import "../../features/customer/don-hang/styles/TrangThaiThanhToan.css";
 
 const KHOA_THANH_TOAN_ZALOPAY =
   "pharma_thanh_toan_zalopay_dang_cho";

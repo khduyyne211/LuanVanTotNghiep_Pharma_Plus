@@ -17,7 +17,7 @@ import {
 import {
   taoThanhToanZaloPayApi,
   type TaoThanhToanZaloPayResponse,
-} from "../../customer/thanh-toan/api/ThanhToanZaloPayApi";
+} from "../../thanh-toan/api/ThanhToanZaloPayApi";
 
 import type {
   DonHangResponse,

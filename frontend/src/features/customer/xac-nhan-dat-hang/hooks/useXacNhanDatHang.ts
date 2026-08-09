@@ -26,11 +26,11 @@ import type {
 
 import {
   taoDonHangApi,
-} from "../../../don-hang-khach-hang/api/DonHangApi";
+} from "../../don-hang/api/DonHangApi";
 
 import type {
   DonHangResponse,
-} from "../../../don-hang-khach-hang/types/DonHang";
+} from "../../don-hang/types/DonHang";
 
 import {
   layGioHangApi,

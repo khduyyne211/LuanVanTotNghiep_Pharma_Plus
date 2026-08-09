@@ -4,7 +4,7 @@ import apiClient from
 import type {
   TrangThaiDonHang,
   TrangThaiThanhToan,
-} from "../../../don-hang-khach-hang/types/DonHang";
+} from "../../don-hang/types/DonHang";
 
 export interface TaoThanhToanZaloPayResponse {
   maDonHang: number;
