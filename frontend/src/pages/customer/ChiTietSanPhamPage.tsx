@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useChiTietSanPham } from "../../features/san-pham-khach-hang/hooks/useChiTietSanPham";
 import ThongTinTongQuanSanPham from "../../features/san-pham-khach-hang/components/ThongTinTongQuanSanPham";
 import ThongTinChiTietSanPham from "../../features/san-pham-khach-hang/components/ThongTinChiTietSanPham";
-import DuongDanDanhMuc from "../../features/danh-muc-khach-hang/components/DuongDanDanhMuc";
+import DuongDanDanhMuc from "../../features/customer/danh-muc/components/DuongDanDanhMuc";
 import "../../features/san-pham-khach-hang/styles/ChiTietSanPham.css";
 
 function ChiTietSanPhamPage() {

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useDanhMucSanPham } from "../hooks/useDanhMucSanPham";
 import type { DanhMucSanPham } from "../types/DanhMucSanPham";
-import { taoSlug } from "../../../shared/utils/taoSlug";
+import { taoSlug } from "../../../../shared/utils/taoSlug";
 import "../styles/DuongDanDanhMuc.css";
 
 interface DuongDanDanhMucProps {

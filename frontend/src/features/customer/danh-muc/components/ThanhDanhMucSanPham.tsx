@@ -1,5 +1,5 @@
 import { useDanhMucSanPham } from "../hooks/useDanhMucSanPham";
-import { taoSlug } from "../../../shared/utils/taoSlug";
+import { taoSlug } from "../../../../shared/utils/taoSlug";
 import "../styles/ThanhDanhMucSanPham.css";
 import { useNavigate } from "react-router-dom";
 

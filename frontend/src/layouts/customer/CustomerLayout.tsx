@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-import ThanhDanhMucSanPham from "../../features/danh-muc-khach-hang/components/ThanhDanhMucSanPham";
+import ThanhDanhMucSanPham from "../../features/customer/danh-muc/components/ThanhDanhMucSanPham";
 import Footer from "../../shared/components/footer/Footer";
 import Header from "../../shared/components/header/Header";
 

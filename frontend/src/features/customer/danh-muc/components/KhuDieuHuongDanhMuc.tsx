@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDanhMucSanPham } from "../hooks/useDanhMucSanPham";
 import type { DanhMucSanPham } from "../types/DanhMucSanPham";
 import DuongDanDanhMuc from "./DuongDanDanhMuc";
-import { taoSlug } from "../../../shared/utils/taoSlug";
+import { taoSlug } from "../../../../shared/utils/taoSlug";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { layIconDanhMuc } from "../constants/IconDanhMuc";
 import "../styles/KhuDieuHuongDanhMuc.css"

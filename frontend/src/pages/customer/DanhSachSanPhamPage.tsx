@@ -21,7 +21,7 @@ import ThongBaoKhongCoSanPham from "../../features/san-pham-khach-hang/component
 
 import { useSanPham } from "../../features/san-pham-khach-hang/hooks/useSanPham";
 
-import KhuDieuHuongDanhMuc from "../../features/danh-muc-khach-hang/components/KhuDieuHuongDanhMuc";
+import KhuDieuHuongDanhMuc from "../../features/customer/danh-muc/components/KhuDieuHuongDanhMuc";
 
 import "../../features/san-pham-khach-hang/styles/SanPham.css";
 
