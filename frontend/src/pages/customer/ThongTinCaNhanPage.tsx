@@ -3,8 +3,8 @@ import {
   useState,
 } from "react";
 
-import ThongTinCaNhanForm from "../../features/tai-khoan-khach-hang/components/ThongTinCaNhanForm";
-import { useThongTinCaNhan } from "../../features/tai-khoan-khach-hang/hooks/useThongTinCaNhan";
+import ThongTinCaNhanForm from "../../features/customer/tai-khoan/components/ThongTinCaNhanForm";
+import { useThongTinCaNhan } from "../../features/customer/tai-khoan/hooks/useThongTinCaNhan";
 import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
 import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
 

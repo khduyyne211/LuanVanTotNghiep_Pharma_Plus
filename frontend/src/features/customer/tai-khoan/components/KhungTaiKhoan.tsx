@@ -5,7 +5,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import { useXacThucContext } from "../../xac-thuc/context/XacThucContext";
+import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";
 import "../styles/TaiKhoan.css";
 
 function KhungTaiKhoan() {

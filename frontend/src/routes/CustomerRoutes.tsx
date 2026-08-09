@@ -13,7 +13,7 @@ import BatBuocDangNhap
   from "../features/xac-thuc/components/BatBuocDangNhap";
 
 import KhungTaiKhoan
-  from "../features/tai-khoan-khach-hang/components/KhungTaiKhoan";
+  from "../features/customer/tai-khoan/components/KhungTaiKhoan";
 
 import TrangChuPage
   from "../pages/customer/TrangChuPage";
