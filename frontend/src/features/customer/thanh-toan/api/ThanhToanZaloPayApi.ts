@@ -1,10 +1,10 @@
 import apiClient from
-  "../../../api/axiosClient";
+  "../../../../api/axiosClient";
 
 import type {
   TrangThaiDonHang,
   TrangThaiThanhToan,
-} from "../../don-hang-khach-hang/types/DonHang";
+} from "../../../don-hang-khach-hang/types/DonHang";
 
 export interface TaoThanhToanZaloPayResponse {
   maDonHang: number;

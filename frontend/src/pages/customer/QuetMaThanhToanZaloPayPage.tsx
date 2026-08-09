@@ -14,9 +14,9 @@ import { QRCodeSVG } from "qrcode.react";
 
 import {
   layTrangThaiThanhToanZaloPayApi,
-} from "../../features/thanh-toan/api/ThanhToanZaloPayApi";
+} from "../../features/customer/thanh-toan/api/ThanhToanZaloPayApi";
 
-import "../../features/thanh-toan/styles/QuetMaThanhToanZaloPay.css";
+import "../../features/customer/thanh-toan/styles/QuetMaThanhToanZaloPay.css";
 
 const KHOA_THANH_TOAN_ZALOPAY =
   "pharma_thanh_toan_zalopay_dang_cho";

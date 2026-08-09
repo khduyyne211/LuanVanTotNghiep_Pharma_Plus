@@ -20,7 +20,7 @@ import { useXacNhanDatHang } from "../../features/customer/xac-nhan-dat-hang/hoo
 import { useGioHangContext } from "../../features/gio-hang/context/GioHangContext";
 import { useKiemTraGioHangLocal } from "../../features/gio-hang/hooks/useKiemTraGioHangLocal";
 
-import { taoThanhToanZaloPayApi } from "../../features/thanh-toan/api/ThanhToanZaloPayApi";
+import { taoThanhToanZaloPayApi } from "../../features/customer/thanh-toan/api/ThanhToanZaloPayApi";
 
 import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
 import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
