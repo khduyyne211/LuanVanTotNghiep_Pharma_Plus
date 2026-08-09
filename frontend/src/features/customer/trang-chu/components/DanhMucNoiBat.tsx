@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 
-import { layIconDanhMuc } from "../../danh-muc-khach-hang/constants/IconDanhMuc";
-import { useDanhMucNoiBat } from "../../danh-muc-khach-hang/hooks/useDanhMucNoiBat";
-import type { DanhMucNoiBat as DanhMucNoiBatType } from "../../danh-muc-khach-hang/types/DanhMucNoiBat";
-import { taoSlug } from "../../../shared/utils/taoSlug";
+import { layIconDanhMuc } from "../../../danh-muc-khach-hang/constants/IconDanhMuc";
+import { useDanhMucNoiBat } from "../../../danh-muc-khach-hang/hooks/useDanhMucNoiBat";
+import type { DanhMucNoiBat as DanhMucNoiBatType } from "../../../danh-muc-khach-hang/types/DanhMucNoiBat";
+import { taoSlug } from "../../../../shared/utils/taoSlug";
 
 import "../styles/TrangChu.css";
 
