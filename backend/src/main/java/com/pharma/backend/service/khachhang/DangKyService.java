@@ -1,4 +1,4 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.khachhang;
 
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.xacthuc.DangKyRequestDto;
+import com.pharma.backend.dto.khachhang.xacthuc.DangKyRequestDto;
 import com.pharma.backend.entity.KhachHang;
 import com.pharma.backend.entity.TaiKhoan;
 import com.pharma.backend.entity.VaiTro;

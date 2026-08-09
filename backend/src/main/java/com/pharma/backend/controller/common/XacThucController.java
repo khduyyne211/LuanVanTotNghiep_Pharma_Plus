@@ -1,13 +1,13 @@
-package com.pharma.backend.controller;
+package com.pharma.backend.controller.common;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pharma.backend.dto.xacthuc.DangNhapRequestDto;
-import com.pharma.backend.dto.xacthuc.DangNhapResponseDto;
-import com.pharma.backend.service.XacThucService;
+import com.pharma.backend.dto.common.xacthuc.DangNhapRequestDto;
+import com.pharma.backend.dto.common.xacthuc.DangNhapResponseDto;
+import com.pharma.backend.service.common.XacThucService;
 
 import lombok.RequiredArgsConstructor;
 

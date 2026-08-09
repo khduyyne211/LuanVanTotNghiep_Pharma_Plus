@@ -1,4 +1,4 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.common;
 
 import java.util.List;
 import java.util.Locale;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.pharma.backend.dto.xacthuc.DangNhapRequestDto;
-import com.pharma.backend.dto.xacthuc.DangNhapResponseDto;
+import com.pharma.backend.dto.common.xacthuc.DangNhapRequestDto;
+import com.pharma.backend.dto.common.xacthuc.DangNhapResponseDto;
 import com.pharma.backend.entity.KhachHang;
 import com.pharma.backend.entity.NhanVienNoiBo;
 import com.pharma.backend.entity.TaiKhoan;

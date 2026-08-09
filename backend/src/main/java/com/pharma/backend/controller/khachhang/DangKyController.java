@@ -1,4 +1,4 @@
-package com.pharma.backend.controller;
+package com.pharma.backend.controller.khachhang;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pharma.backend.dto.xacthuc.DangKyRequestDto;
-import com.pharma.backend.service.DangKyService;
+import com.pharma.backend.dto.khachhang.xacthuc.DangKyRequestDto;
+import com.pharma.backend.service.khachhang.DangKyService;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.xacthuc;
+package com.pharma.backend.dto.common.xacthuc;
 
 import lombok.Getter;
 import lombok.Setter;
