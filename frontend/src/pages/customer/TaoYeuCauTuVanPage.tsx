@@ -4,9 +4,9 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import { useTaoYeuCauTuVan } from "../../features/yeu-cau-tu-van-khach-hang/hooks/useTaoYeuCauTuVan";
+import { useTaoYeuCauTuVan } from "../../features/customer/yeu-cau-tu-van/hooks/useTaoYeuCauTuVan";
 
-import "../../features/yeu-cau-tu-van-khach-hang/styles/TaoYeuCauTuVan.css";
+import "../../features/customer/yeu-cau-tu-van/styles/TaoYeuCauTuVan.css";
 
 export default function TaoYeuCauTuVanPage() {
   const navigate = useNavigate();

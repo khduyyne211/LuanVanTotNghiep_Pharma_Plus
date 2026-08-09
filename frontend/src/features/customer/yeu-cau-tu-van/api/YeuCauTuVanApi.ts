@@ -1,5 +1,5 @@
-import apiClient from "../../../api/axiosClient";
-import type { PageResponse } from "../../../shared/types/PageResponse";
+import apiClient from "../../../../api/axiosClient";
+import type { PageResponse } from "../../../../shared/types/PageResponse";
 import type {
   TaoYeuCauTuVanRequest,
   ThongTinTaoYeuCauTuVan,

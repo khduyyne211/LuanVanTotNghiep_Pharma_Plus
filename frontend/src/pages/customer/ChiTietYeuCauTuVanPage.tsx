@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 
-import TrangThaiYeuCauTuVan from "../../features/yeu-cau-tu-van-khach-hang/components/TrangThaiYeuCauTuVan";
-import { useChiTietYeuCauTuVan } from "../../features/yeu-cau-tu-van-khach-hang/hooks/useChiTietYeuCauTuVan";
+import TrangThaiYeuCauTuVan from "../../features/customer/yeu-cau-tu-van/components/TrangThaiYeuCauTuVan";
+import { useChiTietYeuCauTuVan } from "../../features/customer/yeu-cau-tu-van/hooks/useChiTietYeuCauTuVan";
 
-import "../../features/yeu-cau-tu-van-khach-hang/styles/YeuCauTuVan.css";
-import "../../features/yeu-cau-tu-van-khach-hang/styles/ChiTietYeuCauTuVan.css";
+import "../../features/customer/yeu-cau-tu-van/styles/YeuCauTuVan.css";
+import "../../features/customer/yeu-cau-tu-van/styles/ChiTietYeuCauTuVan.css";
 
 const dinhDangNgayGio =
   new Intl.DateTimeFormat("vi-VN", {

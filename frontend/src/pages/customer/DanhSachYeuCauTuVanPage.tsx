@@ -3,10 +3,10 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import TheYeuCauTuVan from "../../features/yeu-cau-tu-van-khach-hang/components/TheYeuCauTuVan";
-import { useDanhSachYeuCauTuVan } from "../../features/yeu-cau-tu-van-khach-hang/hooks/useDanhSachYeuCauTuVan";
+import TheYeuCauTuVan from "../../features/customer/yeu-cau-tu-van/components/TheYeuCauTuVan";
+import { useDanhSachYeuCauTuVan } from "../../features/customer/yeu-cau-tu-van/hooks/useDanhSachYeuCauTuVan";
 
-import "../../features/yeu-cau-tu-van-khach-hang/styles/YeuCauTuVan.css";
+import "../../features/customer/yeu-cau-tu-van/styles/YeuCauTuVan.css";
 
 export default function DanhSachYeuCauTuVanPage() {
   const navigate = useNavigate();
