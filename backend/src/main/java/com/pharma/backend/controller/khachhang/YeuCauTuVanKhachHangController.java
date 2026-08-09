@@ -1,4 +1,4 @@
-package com.pharma.backend.controller;
+package com.pharma.backend.controller.khachhang;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.backend.dto.common.PageResponseDto;
-import com.pharma.backend.dto.tuvan.TaoYeuCauTuVanRequestDto;
-import com.pharma.backend.dto.tuvan.ThongTinTaoYeuCauTuVanResponseDto;
-import com.pharma.backend.dto.tuvan.YeuCauTuVanChiTietResponseDto;
-import com.pharma.backend.dto.tuvan.YeuCauTuVanDanhSachResponseDto;
+import com.pharma.backend.dto.khachhang.tuvan.TaoYeuCauTuVanRequestDto;
+import com.pharma.backend.dto.khachhang.tuvan.ThongTinTaoYeuCauTuVanResponseDto;
+import com.pharma.backend.dto.khachhang.tuvan.YeuCauTuVanChiTietResponseDto;
+import com.pharma.backend.dto.khachhang.tuvan.YeuCauTuVanDanhSachResponseDto;
 import com.pharma.backend.security.NguoiDungDangNhap;
-import com.pharma.backend.service.YeuCauTuVanKhachHangService;
+import com.pharma.backend.service.khachhang.YeuCauTuVanKhachHangService;
 
 import lombok.RequiredArgsConstructor;
 

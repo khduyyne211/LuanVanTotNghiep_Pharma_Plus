@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.tuvan;
+package com.pharma.backend.dto.khachhang.tuvan;
 
 import java.time.LocalDateTime;
 

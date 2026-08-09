@@ -1,4 +1,4 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.khachhang;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.pharma.backend.dto.common.PageResponseDto;
-import com.pharma.backend.dto.tuvan.TaoYeuCauTuVanRequestDto;
-import com.pharma.backend.dto.tuvan.ThongTinTaoYeuCauTuVanResponseDto;
-import com.pharma.backend.dto.tuvan.YeuCauTuVanChiTietResponseDto;
-import com.pharma.backend.dto.tuvan.YeuCauTuVanDanhSachResponseDto;
+import com.pharma.backend.dto.khachhang.tuvan.TaoYeuCauTuVanRequestDto;
+import com.pharma.backend.dto.khachhang.tuvan.ThongTinTaoYeuCauTuVanResponseDto;
+import com.pharma.backend.dto.khachhang.tuvan.YeuCauTuVanChiTietResponseDto;
+import com.pharma.backend.dto.khachhang.tuvan.YeuCauTuVanDanhSachResponseDto;
 import com.pharma.backend.entity.KhachHang;
 import com.pharma.backend.entity.YeuCauTuVan;
 import com.pharma.backend.enums.tuvan.HinhThucLienHe;
