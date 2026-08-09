@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.backend.dto.dashboard.DashboardDoanhThuResponse;
+import com.pharma.backend.dto.dashboard.DashboardDoanhThuTheoNgayResponse;
 import com.pharma.backend.dto.dashboard.DashboardLoSapHetHanResponse;
 import com.pharma.backend.dto.dashboard.DashboardTonKhoThapResponse;
 import com.pharma.backend.dto.dashboard.DashboardTongQuanResponse;
+import com.pharma.backend.dto.dashboard.DashboardTrangThaiDonHangResponse;
 import com.pharma.backend.service.DashboardService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,46 +25,42 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DashboardController {
 
-    private final DashboardService dashboardService;
+        private final DashboardService dashboardService;
 
-    @GetMapping("/tong-quan")
-    public DashboardTongQuanResponse layTongQuan() {
-        return dashboardService.layTongQuan();
-    }
+        @GetMapping("/tong-quan")
+        public DashboardTongQuanResponse layTongQuan() {
+                return dashboardService.layTongQuan();
+        }
 
-    @GetMapping("/doanh-thu")
-    public DashboardDoanhThuResponse layDoanhThuTheoKhoang(
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate tuNgay,
+        @GetMapping("/doanh-thu")
+        public DashboardDoanhThuResponse layDoanhThuTheoKhoang(
+                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tuNgay,
 
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate denNgay
-    ) {
-        return dashboardService.layDoanhThuTheoKhoang(
-                tuNgay,
-                denNgay
-        );
-    }
+                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate denNgay) {
+                return dashboardService.layDoanhThuTheoKhoang(
+                                tuNgay,
+                                denNgay);
+        }
 
-    @GetMapping("/ton-kho-thap")
-    public List<DashboardTonKhoThapResponse> layDanhSachTonKhoThap(
-            @RequestParam(defaultValue = "10")
-            BigDecimal nguongTon
-    ) {
-        return dashboardService.layDanhSachTonKhoThap(
-                nguongTon
-        );
-    }
+        @GetMapping("/doanh-thu-7-ngay")
+        public List<DashboardDoanhThuTheoNgayResponse> layDoanhThu7NgayGanNhat() {
+                return dashboardService.layDoanhThu7NgayGanNhat();
+        }
 
-    @GetMapping("/lo-sap-het-han")
-    public List<DashboardLoSapHetHanResponse> layDanhSachLoSapHetHan(
-            @RequestParam(defaultValue = "30")
-            int soNgay
-    ) {
-        return dashboardService.layDanhSachLoSapHetHan(
-                soNgay
-        );
-    }
+        @GetMapping("/trang-thai-don-hang")
+        public List<DashboardTrangThaiDonHangResponse> layThongKeTrangThaiDonHang() {
+                return dashboardService.layThongKeTrangThaiDonHang();
+        }
+
+        @GetMapping("/ton-kho-thap")
+        public List<DashboardTonKhoThapResponse> layDanhSachTonKhoThap(
+                        @RequestParam(defaultValue = "10") BigDecimal nguongTon) {
+                return dashboardService.layDanhSachTonKhoThap(nguongTon);
+        }
+
+        @GetMapping("/lo-sap-het-han")
+        public List<DashboardLoSapHetHanResponse> layDanhSachLoSapHetHan(
+                        @RequestParam(defaultValue = "30") int soNgay) {
+                return dashboardService.layDanhSachLoSapHetHan(soNgay);
+        }
 }

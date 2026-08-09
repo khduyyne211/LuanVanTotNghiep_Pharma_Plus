@@ -5,15 +5,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.pharma.backend.dto.dashboard.DashboardDoanhThuResponse;
+import com.pharma.backend.dto.dashboard.DashboardDoanhThuTheoNgayResponse;
 import com.pharma.backend.dto.dashboard.DashboardLoSapHetHanResponse;
 import com.pharma.backend.dto.dashboard.DashboardTonKhoThapResponse;
 import com.pharma.backend.dto.dashboard.DashboardTongQuanResponse;
+import com.pharma.backend.dto.dashboard.DashboardTrangThaiDonHangResponse;
 import com.pharma.backend.enums.donhang.TrangThaiDonHang;
 import com.pharma.backend.enums.donhang.TrangThaiThanhToan;
 import com.pharma.backend.repository.ChiTietPhieuNhapRepository;
@@ -128,6 +131,56 @@ public class DashboardService {
                                                                 ? doanhThu
                                                                 : BigDecimal.ZERO)
                                 .build();
+        }
+
+        @Transactional(readOnly = true)
+        public List<DashboardDoanhThuTheoNgayResponse> layDoanhThu7NgayGanNhat() {
+                LocalDate homNay = LocalDate.now(MUI_GIO_VIET_NAM);
+
+                List<DashboardDoanhThuTheoNgayResponse> ketQua = new ArrayList<>();
+
+                for (int soNgayLui = 6; soNgayLui >= 0; soNgayLui--) {
+                        LocalDate ngay = homNay.minusDays(soNgayLui);
+
+                        LocalDateTime dauNgay = ngay.atStartOfDay();
+
+                        LocalDateTime dauNgayKeTiep = ngay.plusDays(1).atStartOfDay();
+
+                        BigDecimal doanhThu = donHangRepository.tinhDoanhThuTrongKhoang(
+                                        dauNgay,
+                                        dauNgayKeTiep,
+                                        TrangThaiDonHang.HOAN_THANH,
+                                        TrangThaiThanhToan.DA_THANH_TOAN);
+
+                        ketQua.add(
+                                        DashboardDoanhThuTheoNgayResponse.builder()
+                                                        .ngay(ngay)
+                                                        .doanhThu(
+                                                                        doanhThu != null
+                                                                                        ? doanhThu
+                                                                                        : BigDecimal.ZERO)
+                                                        .build());
+                }
+
+                return ketQua;
+        }
+
+        @Transactional(readOnly = true)
+        public List<DashboardTrangThaiDonHangResponse> layThongKeTrangThaiDonHang() {
+                List<DashboardTrangThaiDonHangResponse> ketQua = new ArrayList<>();
+
+                for (TrangThaiDonHang trangThai : TrangThaiDonHang.values()) {
+                        long soLuong = donHangRepository.countByTrangThaiDonHang(
+                                        trangThai);
+
+                        ketQua.add(
+                                        DashboardTrangThaiDonHangResponse.builder()
+                                                        .trangThai(trangThai)
+                                                        .soLuong(soLuong)
+                                                        .build());
+                }
+
+                return ketQua;
         }
 
         @Transactional(readOnly = true)
