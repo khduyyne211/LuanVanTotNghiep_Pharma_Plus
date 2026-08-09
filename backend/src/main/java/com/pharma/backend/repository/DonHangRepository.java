@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.pharma.backend.dto.donhang.DonHangChiTietProjection;
-import com.pharma.backend.dto.donhang.DonHangDanhSachProjection;
+import com.pharma.backend.dto.admin.donhang.DonHangChiTietProjection;
+import com.pharma.backend.dto.admin.donhang.DonHangDanhSachProjection;
 import com.pharma.backend.entity.DonHang;
 import com.pharma.backend.enums.donhang.TrangThaiDonHang;
 import com.pharma.backend.enums.donhang.TrangThaiThanhToan;
