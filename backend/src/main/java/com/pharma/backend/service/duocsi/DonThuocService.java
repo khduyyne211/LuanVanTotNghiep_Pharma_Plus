@@ -1,4 +1,4 @@
-package com.pharma.backend.service.admin;
+package com.pharma.backend.service.duocsi;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -7,14 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.pharma.backend.dto.common.PhanTrangResponse;
-import com.pharma.backend.dto.admin.donthuoc.DonThuocDanhSachProjection;
-import com.pharma.backend.dto.admin.donthuoc.DonThuocKiemDuyetRequest;
-import com.pharma.backend.dto.admin.donthuoc.DonThuocResponse;
+import com.pharma.backend.dto.duocsi.donthuoc.DonThuocDanhSachProjection;
+import com.pharma.backend.dto.duocsi.donthuoc.DonThuocKiemDuyetRequest;
+import com.pharma.backend.dto.duocsi.donthuoc.DonThuocResponse;
 import com.pharma.backend.entity.DonThuoc;
+import com.pharma.backend.entity.NhanVienNoiBo;
 import com.pharma.backend.enums.donthuoc.TrangThaiDonThuoc;
 import com.pharma.backend.repository.DonThuocRepository;
-import com.pharma.backend.entity.NhanVienNoiBo;
 import com.pharma.backend.repository.NhanVienNoiBoRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
