@@ -1,4 +1,4 @@
-import type { DonViBanSanPham } from "../../../../shared/types/DonViBanSanPham";
+import type { DonViBanSanPham } from "../../san-pham/types/DonViBanSanPham";
 import type { ChiTietGioHangLocal } from "../types/GioHangLocal";
 
 function taoKhoaGioHang(maKhachHang: number): string {

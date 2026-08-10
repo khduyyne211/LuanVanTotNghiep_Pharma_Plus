@@ -7,7 +7,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import { useDanhMucSanPham } from "../../../features/customer/danh-muc/hooks/useDanhMucSanPham";
+import { useDanhMucSanPham } from "../../../features/khach-hang/danh-muc/hooks/useDanhMucSanPham";
 import { useXacThucContext } from "../../../features/xac-thuc/context/XacThucContext";
 import { taoSlug } from "../../utils/taoSlug";
 

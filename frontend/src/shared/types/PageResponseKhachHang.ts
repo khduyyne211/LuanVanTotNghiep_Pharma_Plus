@@ -1,4 +1,4 @@
-export interface PageResponse<T> {
+export interface PageResponseKhachHang<T> {
   danhSachNoiDung: T[];
 
   trangHienTai: number;

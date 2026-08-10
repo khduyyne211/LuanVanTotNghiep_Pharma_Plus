@@ -1,5 +1,5 @@
 import apiClient from "../../../../api/axiosClient";
-import type { PageResponse } from "../../../../shared/types/PageResponse";
+import type { PageResponseKhachHang } from "../../../../shared/types/PageResponseKhachHang";
 import type {
   TaoYeuCauTuVanRequest,
   ThongTinTaoYeuCauTuVan,
@@ -12,7 +12,7 @@ export const layDanhSachYeuCauTuVanApi = (
   size = 10
 ) => {
   return apiClient.get<
-    PageResponse<YeuCauTuVanDanhSach>
+    PageResponseKhachHang<YeuCauTuVanDanhSach>
   >("/yeu-cau-tu-van/khach-hang/cua-toi", {
     params: {
       page,

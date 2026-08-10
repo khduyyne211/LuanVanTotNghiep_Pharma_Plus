@@ -1,4 +1,4 @@
-package com.pharma.backend.controller.common;
+package com.pharma.backend.controller.admin;
 
 import java.util.List;
 
@@ -10,14 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamRequest;
 import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamResponse;
-import com.pharma.backend.dto.common.sanpham.DanhMucNoiBatResponseDto;
-import com.pharma.backend.dto.common.sanpham.DanhMucSanPhamResponseDto;
-import com.pharma.backend.service.common.DanhMucSanPhamService;
+import com.pharma.backend.service.admin.DanhMucSanPhamService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,18 +28,6 @@ public class DanhMucSanPhamController {
     @GetMapping
     public List<DanhMucSanPhamResponse> layDanhSachDanhMucSanPham() {
         return danhMucSanPhamService.layDanhSachDanhMucSanPham();
-    }
-
-    @GetMapping("/menu")
-    public List<DanhMucSanPhamResponseDto> layDanhMucMenuKhachHang() {
-        return danhMucSanPhamService.layDanhMucMenuKhachHang();
-    }
-
-    @GetMapping("/noi-bat")
-    public List<DanhMucNoiBatResponseDto> layDanhMucNoiBat(
-            @RequestParam(defaultValue = "12") int gioiHan
-    ) {
-        return danhMucSanPhamService.layDanhMucNoiBat(gioiHan);
     }
 
     @GetMapping("/{maDanhMuc}")

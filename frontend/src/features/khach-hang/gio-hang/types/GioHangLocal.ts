@@ -1,4 +1,4 @@
-import type { DonViBanSanPham } from "../../../../shared/types/DonViBanSanPham";
+import type { DonViBanSanPham } from "../../san-pham/types/DonViBanSanPham";
 //Tạo kiểu dữ liệu giỏ hàng local
 export interface ChiTietGioHangLocal {
   maSanPham: number;

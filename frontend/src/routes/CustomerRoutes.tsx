@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 
 import CustomerLayout
-  from "../layouts/customer/CustomerLayout";
+  from "../layouts/khach-hang/CustomerLayout";
 
 import CustomerProviders
   from "../shared/providers/CustomerProviders";
@@ -13,52 +13,52 @@ import BatBuocDangNhap
   from "../features/xac-thuc/components/BatBuocDangNhap";
 
 import KhungTaiKhoan
-  from "../features/customer/tai-khoan/components/KhungTaiKhoan";
+  from "../features/khach-hang/tai-khoan/components/KhungTaiKhoan";
 
 import TrangChuPage
-  from "../features/customer/trang-chu/pages/TrangChuPage";
+  from "../features/khach-hang/trang-chu/pages/TrangChuPage";
 
 import DanhSachSanPhamPage
-  from "../features/customer/san-pham/pages/DanhSachSanPhamPage";
+  from "../features/khach-hang/san-pham/pages/DanhSachSanPhamPage";
 
 import ChiTietSanPhamPage
-  from "../features/customer/san-pham/pages/ChiTietSanPhamPage";
+  from "../features/khach-hang/san-pham/pages/ChiTietSanPhamPage";
 
 import DangKyTaiKhoanPage
-  from "../features/customer/dang-ky/pages/DangKyTaiKhoanPage";
+  from "../features/khach-hang/dang-ky/pages/DangKyTaiKhoanPage";
 
 import GioHangPage
-  from "../features/customer/gio-hang/pages/GioHangPage";
+  from "../features/khach-hang/gio-hang/pages/GioHangPage";
 
 import XacNhanDatHangPage
-  from "../features/customer/xac-nhan-dat-hang/pages/XacNhanDatHangPage";
+  from "../features/khach-hang/xac-nhan-dat-hang/pages/XacNhanDatHangPage";
 
 import QuetMaThanhToanZaloPayPage
-  from "../features/customer/thanh-toan/pages/QuetMaThanhToanZaloPayPage";
+  from "../features/khach-hang/thanh-toan/pages/QuetMaThanhToanZaloPayPage";
 
 import KetQuaThanhToanZaloPayPage
-  from "../features/customer/thanh-toan/pages/KetQuaThanhToanZaloPayPage";
+  from "../features/khach-hang/thanh-toan/pages/KetQuaThanhToanZaloPayPage";
 
 import ThongTinCaNhanPage
-  from "../features/customer/tai-khoan/pages/ThongTinCaNhanPage";
+  from "../features/khach-hang/tai-khoan/pages/ThongTinCaNhanPage";
 
 import SoDiaChiNhanHangPage
-  from "../features/customer/dia-chi-giao-hang/pages/SoDiaChiNhanHangPage";
+  from "../features/khach-hang/dia-chi-giao-hang/pages/SoDiaChiNhanHangPage";
 
 import DonHangCuaToiPage
-  from "../features/customer/don-hang/pages/DonHangCuaToiPage";
+  from "../features/khach-hang/don-hang/pages/DonHangCuaToiPage";
 
 import ChiTietDonHangPage
-  from "../features/customer/don-hang/pages/ChiTietDonHangPage";
+  from "../features/khach-hang/don-hang/pages/ChiTietDonHangPage";
 
 import DanhSachYeuCauTuVanPage
-  from "../features/customer/yeu-cau-tu-van/pages/DanhSachYeuCauTuVanPage";
+  from "../features/khach-hang/yeu-cau-tu-van/pages/DanhSachYeuCauTuVanPage";
 
 import ChiTietYeuCauTuVanPage
-  from "../features/customer/yeu-cau-tu-van/pages/ChiTietYeuCauTuVanPage";
+  from "../features/khach-hang/yeu-cau-tu-van/pages/ChiTietYeuCauTuVanPage";
 
 import TaoYeuCauTuVanPage
-  from "../features/customer/yeu-cau-tu-van/pages/TaoYeuCauTuVanPage";
+  from "../features/khach-hang/yeu-cau-tu-van/pages/TaoYeuCauTuVanPage";
 
 export const CustomerRoutes = (
   <Route

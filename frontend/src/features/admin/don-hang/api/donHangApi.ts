@@ -1,9 +1,9 @@
+import type { PhanTrangResponse } from "../../../../shared/types/PhanTrangResponse";
 import axiosClient from "../../../../api/axiosClient";
 import type {
   DonHangBoLoc,
   DonHangChiTiet,
   DonHangDanhSach,
-  PhanTrangResponse,
 } from "../types/DonHang";
 
 export const layDanhSachDonHang = async (boLoc: DonHangBoLoc) => {

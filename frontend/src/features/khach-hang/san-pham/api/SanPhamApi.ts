@@ -1,5 +1,5 @@
 import apiClient from "../../../../api/axiosClient";
-import type { PageResponse } from "../../../../shared/types/PageResponse";
+import type { PageResponseKhachHang } from "../../../../shared/types/PageResponseKhachHang";
 import type { SanPham } from "../types/SanPham";
 import type { SanPhamBanChay } from "../types/SanPhamBanChay";
 
@@ -15,7 +15,7 @@ export interface LayDanhSachSanPhamParams {
 }
 
 export const layDanhSachSanPhamApi = (params: LayDanhSachSanPhamParams) => {
-  return apiClient.get<PageResponse<SanPham>>("/san-pham/khach-hang", { params });
+  return apiClient.get<PageResponseKhachHang<SanPham>>("/san-pham/khach-hang", { params });
 };
 
 export async function laySanPhamBanChayApi(gioiHan = 12): Promise<SanPhamBanChay[]> {

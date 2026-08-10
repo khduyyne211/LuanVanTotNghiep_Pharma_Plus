@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import type { SanPham } from "../types/SanPham";
-import type { DonViBanSanPham } from "../../../../shared/types/DonViBanSanPham";
+import type { DonViBanSanPham } from "../types/DonViBanSanPham";
 import { taoSlug } from "../../../../shared/utils/taoSlug";
 import { useGioHangContext } from "../../gio-hang/context/GioHangContext";
 import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";

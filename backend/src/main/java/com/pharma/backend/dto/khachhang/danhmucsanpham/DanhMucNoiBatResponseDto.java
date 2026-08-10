@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.common.sanpham;
+package com.pharma.backend.dto.khachhang.danhmucsanpham;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

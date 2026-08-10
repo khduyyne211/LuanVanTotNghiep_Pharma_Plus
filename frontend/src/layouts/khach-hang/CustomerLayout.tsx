@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 
-import ThanhDanhMucSanPham from "../../features/customer/danh-muc/components/ThanhDanhMucSanPham";
+import ThanhDanhMucSanPham from "../../features/khach-hang/danh-muc/components/ThanhDanhMucSanPham";
 import Footer from "../../shared/components/footer/Footer";
 import Header from "../../shared/components/header/Header";
 
-import "../../shared/styles/customer/CustomerCommon.css";
+import "../../shared/styles/khach-hang/CustomerCommon.css";
 import "./CustomerLayout.css";
 
 function CustomerLayout() {

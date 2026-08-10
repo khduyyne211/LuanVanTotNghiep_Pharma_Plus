@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.common.sanpham;
+package com.pharma.backend.dto.khachhang.danhmucsanpham;
 
 import java.util.List;
 
