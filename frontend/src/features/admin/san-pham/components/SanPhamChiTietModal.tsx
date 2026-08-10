@@ -34,13 +34,7 @@ function SanPhamChiTietModal({
   onAnQuyDoi,
   onHienQuyDoi,
 }: SanPhamChiTietModalProps) {
-  const dinhDangTien = (
-    giaTri: number | null | undefined
-  ) => {
-    if (typeof giaTri !== "number" || !Number.isFinite(giaTri)) {
-      return "Không có";
-    }
-
+  const dinhDangTien = (giaTri: number) => {
     return giaTri.toLocaleString("vi-VN") + " đ";
   };
 
@@ -97,7 +91,6 @@ function SanPhamChiTietModal({
                 {sanPhamChiTiet.tenNhaSanXuat || "Chưa cập nhật"}
               </strong>
             </div>
-
             <div>
               <span>Thuốc kê đơn</span>
               <strong>
@@ -158,7 +151,9 @@ function SanPhamChiTietModal({
                   </td>
 
                   <td>
-                    {dinhDangTien(donVi.giaBanTheoDonVi)}
+                    {donVi.giaBanTheoDonVi !== null
+                      ? dinhDangTien(donVi.giaBanTheoDonVi)
+                      : "Không có"}
                   </td>
 
                   <td>{donVi.laDonViCoSo ? "Có" : "Không"}</td>

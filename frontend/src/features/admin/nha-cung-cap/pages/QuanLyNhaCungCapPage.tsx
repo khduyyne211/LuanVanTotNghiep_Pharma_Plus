@@ -3,10 +3,10 @@ import NhaCungCapTable from "../components/NhaCungCapTable";
 import useDanhSachNhaCungCap from "../hooks/useDanhSachNhaCungCap";
 import useFormNhaCungCap from "../hooks/useFormNhaCungCap";
 import useTrangThaiNhaCungCap from "../hooks/useTrangThaiNhaCungCap";
-import KhungDanhSachQuanLy from "../../../../shared/components/quan-ly/KhungDanhSachQuanLy";
-import NutThaoTacChinh from "../../../../shared/components/quan-ly/NutThaoTacChinh";
-import TieuDeTrangQuanLy from "../../../../shared/components/quan-ly/TieuDeTrangQuanLy";
-import "../../../../shared/styles/quan-ly/QuanLyCommon.css";
+import KhungDanhSachQuanLy from "../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyNhaCungCapPage() {
   const {

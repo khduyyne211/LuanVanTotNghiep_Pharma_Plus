@@ -3,10 +3,10 @@ import NhaSanXuatTable from "../components/NhaSanXuatTable";
 import useDanhSachNhaSanXuat from "../hooks/useDanhSachNhaSanXuat";
 import useFormNhaSanXuat from "../hooks/useFormNhaSanXuat";
 import useTrangThaiNhaSanXuat from "../hooks/useTrangThaiNhaSanXuat";
-import KhungDanhSachQuanLy from "../../../../shared/components/quan-ly/KhungDanhSachQuanLy";
-import NutThaoTacChinh from "../../../../shared/components/quan-ly/NutThaoTacChinh";
-import TieuDeTrangQuanLy from "../../../../shared/components/quan-ly/TieuDeTrangQuanLy";
-import "../../../../shared/styles/quan-ly/QuanLyCommon.css";
+import KhungDanhSachQuanLy from "../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyNhaSanXuatPage() {
   const {

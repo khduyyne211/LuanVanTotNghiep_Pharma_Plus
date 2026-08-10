@@ -7,11 +7,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SanPhamTaoDayDuRequest {
+public class SanPhamTaoMoiRequest {
 
     private SanPhamRequest thongTinSanPham;
 
     private List<DonViSanPhamTaoMoiRequest> danhSachDonVi;
 
     private List<QuyDoiDonViTaoMoiRequest> danhSachQuyDoi;
+
+    private List<ThanhPhanHoatChatTaoMoiRequest>
+            danhSachThanhPhanHoatChat;
+
+    private DuLieuChuyenMonThuocRequest
+            duLieuChuyenMonThuoc;
 }

@@ -2,10 +2,10 @@ import KhuyenMaiFormModal from "../components/KhuyenMaiFormModal";
 import KhuyenMaiTable from "../components/KhuyenMaiTable";
 import { useDanhSachKhuyenMai } from "../hooks/useDanhSachKhuyenMai";
 import useFormKhuyenMai from "../hooks/useFormKhuyenMai";
-import KhungDanhSachQuanLy from "../../../../shared/components/quan-ly/KhungDanhSachQuanLy";
-import NutThaoTacChinh from "../../../../shared/components/quan-ly/NutThaoTacChinh";
-import TieuDeTrangQuanLy from "../../../../shared/components/quan-ly/TieuDeTrangQuanLy";
-import "../../../../shared/styles/quan-ly/QuanLyCommon.css";
+import KhungDanhSachQuanLy from "../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyKhuyenMaiPage() {
   const {

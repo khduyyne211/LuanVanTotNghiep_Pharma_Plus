@@ -3,10 +3,10 @@ import DonViTinhTable from "../components/DonViTinhTable";
 import useDanhSachDonViTinh from "../hooks/useDanhSachDonViTinh";
 import useFormDonViTinh from "../hooks/useFormDonViTinh";
 import useTrangThaiDonViTinh from "../hooks/useTrangThaiDonViTinh";
-import KhungDanhSachQuanLy from "../../../../shared/components/quan-ly/KhungDanhSachQuanLy";
-import NutThaoTacChinh from "../../../../shared/components/quan-ly/NutThaoTacChinh";
-import TieuDeTrangQuanLy from "../../../../shared/components/quan-ly/TieuDeTrangQuanLy";
-import "../../../../shared/styles/quan-ly/QuanLyCommon.css";
+import KhungDanhSachQuanLy from "../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyDonViTinhPage() {
   const {

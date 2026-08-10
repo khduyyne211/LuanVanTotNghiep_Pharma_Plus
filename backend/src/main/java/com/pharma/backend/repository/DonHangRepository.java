@@ -1,5 +1,6 @@
 package com.pharma.backend.repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -191,6 +192,12 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             @Param("maDonHang") long maDonHang
     );
 
+    /*
+     * =========================
+     * KHÁCH HÀNG / ĐƠN HÀNG
+     * =========================
+     */
+
     List<DonHang> findByKhachHang_MaKhachHangOrderByNgayDatHangDesc(
             Long maKhachHang
     );
@@ -208,7 +215,6 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             @Param("maKhachHang") Long maKhachHang
     );
 
-
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
             SELECT dh
@@ -223,10 +229,10 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             SELECT dh.maDonHang
             FROM DonHang dh
             WHERE dh.phuongThucThanhToan = :phuongThucThanhToan
-            AND dh.trangThaiDonHang = :trangThaiDonHang
-            AND dh.trangThaiThanhToan = :trangThaiThanhToan
-            AND dh.ngayDatHang IS NOT NULL
-            AND dh.ngayDatHang <= :thoiDiemGioiHan
+              AND dh.trangThaiDonHang = :trangThaiDonHang
+              AND dh.trangThaiThanhToan = :trangThaiThanhToan
+              AND dh.ngayDatHang IS NOT NULL
+              AND dh.ngayDatHang <= :thoiDiemGioiHan
             ORDER BY dh.maDonHang ASC
             """)
     List<Long> timMaDonHangZaloPayChoThanhToanQuaHan(
@@ -241,5 +247,40 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
 
             @Param("thoiDiemGioiHan")
             LocalDateTime thoiDiemGioiHan
+    );
+
+    /*
+     * =========================
+     * DASHBOARD ADMIN
+     * =========================
+     */
+
+    long countByNgayDatHangGreaterThanEqualAndNgayDatHangLessThan(
+            LocalDateTime tuNgay,
+            LocalDateTime denNgay
+    );
+
+    long countByTrangThaiDonHang(
+            TrangThaiDonHang trangThaiDonHang
+    );
+
+    @Query("""
+            SELECT COALESCE(SUM(dh.tongThanhToan), 0)
+            FROM DonHang dh
+            WHERE dh.trangThaiDonHang = :trangThaiDonHang
+              AND dh.trangThaiThanhToan = :trangThaiThanhToan
+              AND dh.ngayDatHang >= :tuNgay
+              AND dh.ngayDatHang < :denNgay
+            """)
+    BigDecimal tinhDoanhThuTrongKhoang(
+            @Param("tuNgay") LocalDateTime tuNgay,
+
+            @Param("denNgay") LocalDateTime denNgay,
+
+            @Param("trangThaiDonHang")
+            TrangThaiDonHang trangThaiDonHang,
+
+            @Param("trangThaiThanhToan")
+            TrangThaiThanhToan trangThaiThanhToan
     );
 }

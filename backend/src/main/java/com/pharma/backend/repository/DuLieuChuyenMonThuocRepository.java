@@ -19,4 +19,13 @@ public interface DuLieuChuyenMonThuocRepository
     Optional<DuLieuChuyenMonThuoc> timTheoMaSanPham(
             @Param("maSanPham") Long maSanPham
     );
+
+    @Query("""
+            SELECT dlcm
+            FROM DuLieuChuyenMonThuoc dlcm
+            WHERE dlcm.sanPham.maSanPham = :maSanPham
+            """)
+    Optional<DuLieuChuyenMonThuoc> findByMaSanPham(
+            @Param("maSanPham") Long maSanPham
+    );
 }

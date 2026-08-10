@@ -14,11 +14,22 @@ public interface ThanhPhanHoatChatRepository
     @Query("""
             SELECT tphc
             FROM ThanhPhanHoatChat tphc
-            JOIN FETCH tphc.hoatChat hc
+            JOIN FETCH tphc.hoatChat
             WHERE tphc.sanPham.maSanPham = :maSanPham
             ORDER BY tphc.maThanhPhan ASC
             """)
     List<ThanhPhanHoatChat> timTheoMaSanPham(
+            @Param("maSanPham") Long maSanPham
+    );
+
+    @Query("""
+            SELECT tphc
+            FROM ThanhPhanHoatChat tphc
+            JOIN FETCH tphc.hoatChat
+            WHERE tphc.sanPham.maSanPham = :maSanPham
+            ORDER BY tphc.maThanhPhan ASC
+            """)
+    List<ThanhPhanHoatChat> findByMaSanPham(
             @Param("maSanPham") Long maSanPham
     );
 }
