@@ -1,4 +1,4 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.common;
 
 import java.util.List;
 

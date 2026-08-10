@@ -1,4 +1,4 @@
-package com.pharma.backend.controller;
+package com.pharma.backend.controller.common;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamRequest;
 import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamResponse;
 import com.pharma.backend.dto.common.sanpham.DanhMucNoiBatResponseDto;
 import com.pharma.backend.dto.common.sanpham.DanhMucSanPhamResponseDto;
-import com.pharma.backend.service.DanhMucSanPhamService;
+import com.pharma.backend.service.common.DanhMucSanPhamService;
 
 import lombok.RequiredArgsConstructor;
 

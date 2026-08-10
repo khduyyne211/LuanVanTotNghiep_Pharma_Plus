@@ -1,4 +1,4 @@
-package com.pharma.backend.service;
+package com.pharma.backend.service.admin;
 
 import java.math.BigDecimal;
 import java.util.List;
