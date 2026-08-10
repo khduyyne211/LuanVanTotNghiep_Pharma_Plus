@@ -1,11 +1,12 @@
-import axiosClient from "../../../../api/axiosClient";
+import axiosClient from "../../../../shared/api/axiosClient";
 
 import type {
   DonHangBoLoc,
   DonHangChiTiet,
   DonHangDanhSach,
-  PhanTrangResponse,
 } from "../types/DonHang";
+
+import type { PhanTrangResponse } from "../../../../shared/types/PhanTrangResponse";
 
 const TRANG_THAI_DON_HANG_HOP_LE = new Set([
   "CHO_XU_LY",

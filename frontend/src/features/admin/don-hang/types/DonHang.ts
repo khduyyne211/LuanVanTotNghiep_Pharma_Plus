@@ -1,13 +1,3 @@
-export type PhanTrangResponse<T> = {
-  content: T[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-  first: boolean;
-  last: boolean;
-};
-
 export type LoaiKhachHang =
   | "CO_TAI_KHOAN"
   | "VANG_LAI";
