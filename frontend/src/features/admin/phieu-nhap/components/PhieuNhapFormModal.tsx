@@ -8,6 +8,8 @@ import { layTuyChonNhapKho, taoPhieuNhap } from "../api/phieuNhapApi";
 
 import { layDanhSachNhaCungCap } from "../../nha-cung-cap/api/nhaCungCapApi";
 
+import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";
+
 import type {
   DonViNhapKhoOption,
   PhieuNhap,
@@ -41,8 +43,6 @@ type DuLieuTaoPhieuNhap = {
   danhSachNhaCungCap: NhaCungCap[];
   danhSachSanPham: SanPhamNhapKhoOption[];
 };
-
-const MA_NHAN_VIEN_TAM_THOI = 1;
 
 let yeuCauTaiDuLieuDangChay: Promise<DuLieuTaoPhieuNhap> | null = null;
 
@@ -107,6 +107,8 @@ function PhieuNhapFormModal(props: PhieuNhapFormModalProps) {
 }
 
 function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
+  const { nguoiDungDangNhap } = useXacThucContext();
+
   const [danhSachNhaCungCap, setDanhSachNhaCungCap] = useState<NhaCungCap[]>(
     [],
   );
@@ -132,6 +134,9 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
   const [dangLuu, setDangLuu] = useState(false);
 
   const ngayToiThieu = useMemo(() => layNgayToiThieu(), []);
+
+  const tenNhanVienLap =
+    nguoiDungDangNhap?.hoTen?.trim() || "Không xác định được nhân viên";
 
   useEffect(() => {
     let daHuy = false;
@@ -243,6 +248,15 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
   };
 
   const kiemTraDuLieu = () => {
+    if (
+      nguoiDungDangNhap?.maNhanVien == null ||
+      nguoiDungDangNhap.vaiTro !== "ADMIN"
+    ) {
+      alert("Không xác định được tài khoản Admin đang đăng nhập.");
+
+      return false;
+    }
+
     if (!maNhaCungCap) {
       alert("Vui lòng chọn nhà cung cấp.");
 
@@ -323,8 +337,6 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
 
     const request: PhieuNhapTaoMoiRequest = {
       maNhaCungCap: Number(maNhaCungCap),
-
-      maNhanVienLap: MA_NHAN_VIEN_TAM_THOI,
 
       ghiChu: ghiChu.trim() || null,
 
@@ -436,10 +448,7 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
                 <div className="form-group">
                   <label>Nhân viên lập</label>
 
-                  <input
-                    value={`Nhân viên #${MA_NHAN_VIEN_TAM_THOI}`}
-                    disabled
-                  />
+                  <input value={tenNhanVienLap} disabled />
                 </div>
 
                 <div className="form-group">

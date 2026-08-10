@@ -59,10 +59,10 @@ export interface ChiTietPhieuNhapTaoMoiRequest {
 
 export interface PhieuNhapTaoMoiRequest {
   maNhaCungCap: number;
-  maNhanVienLap: number;
   ghiChu: string | null;
   danhSachChiTiet: ChiTietPhieuNhapTaoMoiRequest[];
 }
+
 export interface DonViNhapKhoOption {
   maDonViSanPham: number;
   maDonViTinh: number;
