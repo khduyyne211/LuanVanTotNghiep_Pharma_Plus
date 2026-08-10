@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import axiosClient from "../../../../api/axiosClient";
-import type { DonViSanPham } from "../types/SanPham";
 
-type DonViTinh = {
-  maDonViTinh: number;
-  tenDonViTinh: string;
-  kyHieu: string | null;
-  trangThai: boolean;
-};
+import {
+  capNhatDonViSanPham,
+  layDanhSachDonViTinh,
+  themDonViSanPham,
+} from "../api/sanPhamApi";
+
+import type { DonViSanPham, DonViTinhOption } from "../types/SanPham";
 
 type DonViSanPhamForm = {
   maDonViTinh: string;
@@ -74,15 +73,18 @@ function DonViSanPhamFormNoiDung({
     taoDuLieuFormDonVi(donViCanSua),
   );
 
-  const [danhSachDonViTinh, setDanhSachDonViTinh] = useState<DonViTinh[]>([]);
+  const [danhSachDonViTinh, setDanhSachDonViTinh] = useState<DonViTinhOption[]>(
+    [],
+  );
+
   const [dangLuu, setDangLuu] = useState(false);
 
   useEffect(() => {
     let daHuy = false;
 
-    const layDanhSachDonViTinh = async () => {
+    const taiDanhSachDonViTinh = async () => {
       try {
-        const response = await axiosClient.get<DonViTinh[]>("/don-vi-tinh");
+        const response = await layDanhSachDonViTinh();
 
         if (daHuy) {
           return;
@@ -95,11 +97,12 @@ function DonViSanPhamFormNoiDung({
         }
 
         console.error("Lỗi khi lấy danh sách đơn vị tính:", error);
+
         alert("Không thể tải danh sách đơn vị tính");
       }
     };
 
-    void layDanhSachDonViTinh();
+    void taiDanhSachDonViTinh();
 
     return () => {
       daHuy = true;
@@ -140,7 +143,7 @@ function DonViSanPhamFormNoiDung({
     }
 
     const duLieuGuiLen = {
-      maSanPham: maSanPham,
+      maSanPham,
       maDonViTinh: Number(formData.maDonViTinh),
       giaBanTheoDonVi: formData.giaBanTheoDonVi
         ? Number(formData.giaBanTheoDonVi)
@@ -154,18 +157,16 @@ function DonViSanPhamFormNoiDung({
       setDangLuu(true);
 
       if (donViCanSua) {
-        await axiosClient.put(
-          `/don-vi-san-pham/${donViCanSua.maDonViSanPham}`,
-          duLieuGuiLen,
-        );
+        await capNhatDonViSanPham(donViCanSua.maDonViSanPham, duLieuGuiLen);
       } else {
-        await axiosClient.post("/don-vi-san-pham", duLieuGuiLen);
+        await themDonViSanPham(duLieuGuiLen);
       }
 
       await onSuccess();
       onClose();
     } catch (error) {
       console.error("Lỗi khi lưu đơn vị sản phẩm:", error);
+
       alert(
         "Lưu đơn vị sản phẩm thất bại. Có thể sản phẩm đã có đơn vị này hoặc đã có đơn vị cơ sở.",
       );
@@ -212,11 +213,14 @@ function DonViSanPhamFormNoiDung({
               <option value="">-- Chọn đơn vị tính --</option>
 
               {danhSachDonViTinh
-                .filter((dv) => dv.trangThai)
-                .map((dv) => (
-                  <option key={dv.maDonViTinh} value={dv.maDonViTinh}>
-                    {dv.tenDonViTinh}
-                    {dv.kyHieu ? ` (${dv.kyHieu})` : ""}
+                .filter((donViTinh) => donViTinh.trangThai)
+                .map((donViTinh) => (
+                  <option
+                    key={donViTinh.maDonViTinh}
+                    value={donViTinh.maDonViTinh}
+                  >
+                    {donViTinh.tenDonViTinh}
+                    {donViTinh.kyHieu ? ` (${donViTinh.kyHieu})` : ""}
                   </option>
                 ))}
             </select>

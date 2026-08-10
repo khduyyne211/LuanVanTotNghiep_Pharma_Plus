@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import axiosClient from "../../../../api/axiosClient";
+
+import { capNhatQuyDoiDonVi, themQuyDoiDonVi } from "../api/sanPhamApi";
+
 import type { DonViSanPham, QuyDoiDonVi } from "../types/SanPham";
 
 type QuyDoiDonViForm = {
@@ -105,7 +107,7 @@ function QuyDoiDonViFormNoiDung({
     }
 
     const duLieuGuiLen = {
-      maSanPham: maSanPham,
+      maSanPham,
       maDonViNguon: Number(formData.maDonViNguon),
       soLuongNguon: Number(formData.soLuongNguon),
       maDonViDich: Number(formData.maDonViDich),
@@ -116,12 +118,9 @@ function QuyDoiDonViFormNoiDung({
       setDangLuu(true);
 
       if (quyDoiCanSua) {
-        await axiosClient.put(
-          `/quy-doi-don-vi/${quyDoiCanSua.maQuyDoi}`,
-          duLieuGuiLen,
-        );
+        await capNhatQuyDoiDonVi(quyDoiCanSua.maQuyDoi, duLieuGuiLen);
       } else {
-        await axiosClient.post("/quy-doi-don-vi", duLieuGuiLen);
+        await themQuyDoiDonVi(duLieuGuiLen);
       }
 
       await onSuccess();
@@ -171,10 +170,14 @@ function QuyDoiDonViFormNoiDung({
               <option value="">-- Chọn đơn vị nguồn --</option>
 
               {danhSachDonViSanPham
-                .filter((dv) => dv.trangThai)
-                .map((dv) => (
-                  <option key={dv.maDonViSanPham} value={dv.maDonViSanPham}>
-                    {dv.tenDonViTinh} ({dv.kyHieu}) - mã {dv.maDonViSanPham}
+                .filter((donVi) => donVi.trangThai)
+                .map((donVi) => (
+                  <option
+                    key={donVi.maDonViSanPham}
+                    value={donVi.maDonViSanPham}
+                  >
+                    {donVi.tenDonViTinh} ({donVi.kyHieu}) - mã{" "}
+                    {donVi.maDonViSanPham}
                   </option>
                 ))}
             </select>
@@ -207,10 +210,14 @@ function QuyDoiDonViFormNoiDung({
               <option value="">-- Chọn đơn vị đích --</option>
 
               {danhSachDonViSanPham
-                .filter((dv) => dv.trangThai)
-                .map((dv) => (
-                  <option key={dv.maDonViSanPham} value={dv.maDonViSanPham}>
-                    {dv.tenDonViTinh} ({dv.kyHieu}) - mã {dv.maDonViSanPham}
+                .filter((donVi) => donVi.trangThai)
+                .map((donVi) => (
+                  <option
+                    key={donVi.maDonViSanPham}
+                    value={donVi.maDonViSanPham}
+                  >
+                    {donVi.tenDonViTinh} ({donVi.kyHieu}) - mã{" "}
+                    {donVi.maDonViSanPham}
                   </option>
                 ))}
             </select>
