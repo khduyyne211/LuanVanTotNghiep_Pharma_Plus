@@ -11,19 +11,19 @@ import {
 
 import BoLocSanPham, {
   type NhomBoLocResponsive,
-} from "../../features/customer/san-pham/components/BoLocSanPham";
+} from "../../san-pham/components/BoLocSanPham";
 
-import ThanhSapXepSanPham from "../../features/customer/san-pham/components/ThanhSapXepSanPham";
-import ThanhBoLocDangChon from "../../features/customer/san-pham/components/ThanhBoLocDangChon";
-import BangSanPham from "../../features/customer/san-pham/components/BangSanPham";
-import NutXemThem from "../../features/customer/san-pham/components/NutXemThem";
-import ThongBaoKhongCoSanPham from "../../features/customer/san-pham/components/ThongBaoKhongCoSanPham";
+import ThanhSapXepSanPham from "../../san-pham/components/ThanhSapXepSanPham";
+import ThanhBoLocDangChon from "../../san-pham/components/ThanhBoLocDangChon";
+import BangSanPham from "../../san-pham/components/BangSanPham";
+import NutXemThem from "../../san-pham/components/NutXemThem";
+import ThongBaoKhongCoSanPham from "../../san-pham/components/ThongBaoKhongCoSanPham";
 
-import { useSanPham } from "../../features/customer/san-pham/hooks/useSanPham";
+import { useSanPham } from "../../san-pham/hooks/useSanPham";
 
-import KhuDieuHuongDanhMuc from "../../features/customer/danh-muc/components/KhuDieuHuongDanhMuc";
+import KhuDieuHuongDanhMuc from "../../danh-muc/components/KhuDieuHuongDanhMuc";
 
-import "../../features/customer/san-pham/styles/SanPham.css";
+import "../../san-pham/styles/SanPham.css";
 
 function SanPhamPage() {
   const navigate = useNavigate();

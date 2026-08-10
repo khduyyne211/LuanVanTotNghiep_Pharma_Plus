@@ -16,49 +16,49 @@ import KhungTaiKhoan
   from "../features/customer/tai-khoan/components/KhungTaiKhoan";
 
 import TrangChuPage
-  from "../pages/customer/TrangChuPage";
+  from "../features/customer/trang-chu/pages/TrangChuPage";
 
 import DanhSachSanPhamPage
-  from "../pages/customer/DanhSachSanPhamPage";
+  from "../features/customer/san-pham/pages/DanhSachSanPhamPage";
 
 import ChiTietSanPhamPage
-  from "../pages/customer/ChiTietSanPhamPage";
+  from "../features/customer/san-pham/pages/ChiTietSanPhamPage";
 
 import DangKyTaiKhoanPage
-  from "../pages/customer/DangKyTaiKhoanPage";
+  from "../features/customer/dang-ky/pages/DangKyTaiKhoanPage";
 
 import GioHangPage
-  from "../pages/customer/GioHangPage";
+  from "../features/customer/gio-hang/pages/GioHangPage";
 
 import XacNhanDatHangPage
-  from "../pages/customer/XacNhanDatHangPage";
+  from "../features/customer/xac-nhan-dat-hang/pages/XacNhanDatHangPage";
 
 import QuetMaThanhToanZaloPayPage
-  from "../pages/customer/QuetMaThanhToanZaloPayPage";
+  from "../features/customer/thanh-toan/pages/QuetMaThanhToanZaloPayPage";
 
 import KetQuaThanhToanZaloPayPage
-  from "../pages/customer/KetQuaThanhToanZaloPayPage";
+  from "../features/customer/thanh-toan/pages/KetQuaThanhToanZaloPayPage";
 
 import ThongTinCaNhanPage
-  from "../pages/customer/ThongTinCaNhanPage";
+  from "../features/customer/tai-khoan/pages/ThongTinCaNhanPage";
 
 import SoDiaChiNhanHangPage
-  from "../pages/customer/SoDiaChiNhanHangPage";
+  from "../features/customer/dia-chi-giao-hang/pages/SoDiaChiNhanHangPage";
 
 import DonHangCuaToiPage
-  from "../pages/customer/DonHangCuaToiPage";
+  from "../features/customer/don-hang/pages/DonHangCuaToiPage";
 
 import ChiTietDonHangPage
-  from "../pages/customer/ChiTietDonHangPage";
+  from "../features/customer/don-hang/pages/ChiTietDonHangPage";
 
 import DanhSachYeuCauTuVanPage
-  from "../pages/customer/DanhSachYeuCauTuVanPage";
+  from "../features/customer/yeu-cau-tu-van/pages/DanhSachYeuCauTuVanPage";
 
 import ChiTietYeuCauTuVanPage
-  from "../pages/customer/ChiTietYeuCauTuVanPage";
+  from "../features/customer/yeu-cau-tu-van/pages/ChiTietYeuCauTuVanPage";
 
 import TaoYeuCauTuVanPage
-  from "../pages/customer/TaoYeuCauTuVanPage";
+  from "../features/customer/yeu-cau-tu-van/pages/TaoYeuCauTuVanPage";
 
 export const CustomerRoutes = (
   <Route

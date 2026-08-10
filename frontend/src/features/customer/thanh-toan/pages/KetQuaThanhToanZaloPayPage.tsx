@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-import "../../features/customer/thanh-toan/styles/KetQuaThanhToanZaloPay.css";
+import "../../thanh-toan/styles/KetQuaThanhToanZaloPay.css";
 
 type LoaiKetQuaThanhToan =
   | "THANH_CONG"

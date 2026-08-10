@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 
-import DanhSachDiaChiGiaoHang from "../../features/customer/dia-chi-giao-hang/components/DanhSachDiaChiGiaoHang";
-import FormDiaChiGiaoHang from "../../features/customer/dia-chi-giao-hang/components/FormDiaChiGiaoHang";
-import { useDiaChiGiaoHang } from "../../features/customer/dia-chi-giao-hang/hooks/useDiaChiGiaoHang";
-import type { DiaChiGiaoHang } from "../../features/customer/dia-chi-giao-hang/types/DiaChiGiaoHang";
+import DanhSachDiaChiGiaoHang from "../../dia-chi-giao-hang/components/DanhSachDiaChiGiaoHang";
+import FormDiaChiGiaoHang from "../../dia-chi-giao-hang/components/FormDiaChiGiaoHang";
+import { useDiaChiGiaoHang } from "../../dia-chi-giao-hang/hooks/useDiaChiGiaoHang";
+import type { DiaChiGiaoHang } from "../../dia-chi-giao-hang/types/DiaChiGiaoHang";
 
-import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
-import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
+import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
 
 function SoDiaChiNhanHangPage() {
   const thongBao = useThongBaoHeThong();

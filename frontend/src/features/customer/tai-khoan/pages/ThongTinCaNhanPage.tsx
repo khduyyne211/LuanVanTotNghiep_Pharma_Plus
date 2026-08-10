@@ -3,10 +3,10 @@ import {
   useState,
 } from "react";
 
-import ThongTinCaNhanForm from "../../features/customer/tai-khoan/components/ThongTinCaNhanForm";
-import { useThongTinCaNhan } from "../../features/customer/tai-khoan/hooks/useThongTinCaNhan";
-import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
-import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
+import ThongTinCaNhanForm from "../../tai-khoan/components/ThongTinCaNhanForm";
+import { useThongTinCaNhan } from "../../tai-khoan/hooks/useThongTinCaNhan";
+import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
 
 function ThongTinCaNhanPage() {
   const thongBao = useThongBaoHeThong();

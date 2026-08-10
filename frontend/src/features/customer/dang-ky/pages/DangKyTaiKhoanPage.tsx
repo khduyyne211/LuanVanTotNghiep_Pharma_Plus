@@ -2,12 +2,12 @@ import axios from "axios";
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { dangKyApi } from "../../features/xac-thuc/api/DangKyTaiKhoanApi";
-import { useXacThucContext } from "../../features/xac-thuc/context/XacThucContext";
-import "../../features/xac-thuc/styles/DangKyTaiKhoan.css";
+import { dangKyApi } from "../api/DangKyTaiKhoanApi";
+import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";
+import "../styles/DangKyTaiKhoan.css";
 
-import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
-import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
+import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
 
 interface DuLieuLoiApi {
   detail?: string;

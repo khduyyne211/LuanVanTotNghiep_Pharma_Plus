@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
-import { useChiTietSanPham } from "../../features/customer/san-pham/hooks/useChiTietSanPham";
-import ThongTinTongQuanSanPham from "../../features/customer/san-pham/components/ThongTinTongQuanSanPham";
-import ThongTinChiTietSanPham from "../../features/customer/san-pham/components/ThongTinChiTietSanPham";
-import DuongDanDanhMuc from "../../features/customer/danh-muc/components/DuongDanDanhMuc";
-import "../../features/customer/san-pham/styles/ChiTietSanPham.css";
+import { useChiTietSanPham } from "../../san-pham/hooks/useChiTietSanPham";
+import ThongTinTongQuanSanPham from "../../san-pham/components/ThongTinTongQuanSanPham";
+import ThongTinChiTietSanPham from "../../san-pham/components/ThongTinChiTietSanPham";
+import DuongDanDanhMuc from "../../danh-muc/components/DuongDanDanhMuc";
+import "../../san-pham/styles/ChiTietSanPham.css";
 
 function ChiTietSanPhamPage() {
   const { maSanPham } = useParams();

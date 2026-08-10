@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import ThanhLocDonHang from "../../features/customer/don-hang/components/ThanhLocDonHang";
-import TheDonHang from "../../features/customer/don-hang/components/TheDonHang";
-import { useDanhSachDonHang } from "../../features/customer/don-hang/hooks/useDanhSachDonHang";
+import ThanhLocDonHang from "../../don-hang/components/ThanhLocDonHang";
+import TheDonHang from "../../don-hang/components/TheDonHang";
+import { useDanhSachDonHang } from "../../don-hang/hooks/useDanhSachDonHang";
 
-import "../../features/customer/don-hang/styles/DonHangCuaToi.css";
+import "../../don-hang/styles/DonHangCuaToi.css";
 
 export default function DonHangCuaToiPage() {
   const navigate = useNavigate();

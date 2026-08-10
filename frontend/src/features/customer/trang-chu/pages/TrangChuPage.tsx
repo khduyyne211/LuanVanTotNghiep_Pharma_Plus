@@ -3,9 +3,9 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import DanhMucNoiBat from "../../features/customer/trang-chu/components/DanhMucNoiBat";
-import "../../features/customer/trang-chu/styles/TrangChu.css";
-import SanPhamBanChay from "../../features/customer/trang-chu/components/SanPhamBanChay";
+import DanhMucNoiBat from "../../trang-chu/components/DanhMucNoiBat";
+import "../../trang-chu/styles/TrangChu.css";
+import SanPhamBanChay from "../../trang-chu/components/SanPhamBanChay";
 
 interface TrangThaiTrangChu {
   tuKhoaKhongCoKetQua?: string;

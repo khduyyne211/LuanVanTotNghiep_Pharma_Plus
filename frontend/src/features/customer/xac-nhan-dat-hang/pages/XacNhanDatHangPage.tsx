@@ -9,23 +9,23 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import DanhSachSanPhamXacNhan from "../../features/customer/xac-nhan-dat-hang/components/DanhSachSanPhamXacNhan";
-import DiaChiNhanHangXacNhan from "../../features/customer/xac-nhan-dat-hang/components/DiaChiNhanHangXacNhan";
-import FormDiaChiGiaoHang from "../../features/customer/dia-chi-giao-hang/components/FormDiaChiGiaoHang";
-import PhuongThucThanhToan from "../../features/customer/xac-nhan-dat-hang/components/PhuongThucThanhToan";
-import TongKetXacNhanDatHang from "../../features/customer/xac-nhan-dat-hang/components/TongKetXacNhanDatHang";
+import DanhSachSanPhamXacNhan from "../../xac-nhan-dat-hang/components/DanhSachSanPhamXacNhan";
+import DiaChiNhanHangXacNhan from "../../xac-nhan-dat-hang/components/DiaChiNhanHangXacNhan";
+import FormDiaChiGiaoHang from "../../dia-chi-giao-hang/components/FormDiaChiGiaoHang";
+import PhuongThucThanhToan from "../../xac-nhan-dat-hang/components/PhuongThucThanhToan";
+import TongKetXacNhanDatHang from "../../xac-nhan-dat-hang/components/TongKetXacNhanDatHang";
 
-import { useXacNhanDatHang } from "../../features/customer/xac-nhan-dat-hang/hooks/useXacNhanDatHang";
+import { useXacNhanDatHang } from "../../xac-nhan-dat-hang/hooks/useXacNhanDatHang";
 
-import { useGioHangContext } from "../../features/customer/gio-hang/context/GioHangContext";
-import { useKiemTraGioHangLocal } from "../../features/customer/gio-hang/hooks/useKiemTraGioHangLocal";
+import { useGioHangContext } from "../../gio-hang/context/GioHangContext";
+import { useKiemTraGioHangLocal } from "../../gio-hang/hooks/useKiemTraGioHangLocal";
 
-import { taoThanhToanZaloPayApi } from "../../features/customer/thanh-toan/api/ThanhToanZaloPayApi";
+import { taoThanhToanZaloPayApi } from "../../thanh-toan/api/ThanhToanZaloPayApi";
 
-import ThongBaoHeThong from "../../shared/components/thong-bao/ThongBaoHeThong";
-import { useThongBaoHeThong } from "../../shared/hooks/useThongBaoHeThong";
+import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
 
-import "../../features/customer/xac-nhan-dat-hang/styles/XacNhanDatHang.css";
+import "../../xac-nhan-dat-hang/styles/XacNhanDatHang.css";
 
 const KHOA_THANH_TOAN_ZALOPAY =
   "pharma_thanh_toan_zalopay_dang_cho";
