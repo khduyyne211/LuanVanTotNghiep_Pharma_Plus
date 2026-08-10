@@ -1,5 +1,5 @@
-import axiosClient from "../../../api/axiosClient";
-import type { PhanTrangResponse } from "../../../types/PhanTrangResponse";
+import axiosClient from "../../../../api/axiosClient";
+import type { PhanTrangResponse } from "../../../../types/PhanTrangResponse";
 import type {
   DonThuoc,
   DonThuocKiemDuyetRequest,
