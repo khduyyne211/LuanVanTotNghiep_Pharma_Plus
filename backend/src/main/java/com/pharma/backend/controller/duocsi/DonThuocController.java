@@ -1,4 +1,4 @@
-package com.pharma.backend.controller.admin;
+package com.pharma.backend.controller.duocsi;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.backend.dto.common.PhanTrangResponse;
-import com.pharma.backend.dto.admin.donthuoc.DonThuocKiemDuyetRequest;
-import com.pharma.backend.dto.admin.donthuoc.DonThuocResponse;
-import com.pharma.backend.service.admin.DonThuocService;
+import com.pharma.backend.dto.duocsi.donthuoc.DonThuocKiemDuyetRequest;
+import com.pharma.backend.dto.duocsi.donthuoc.DonThuocResponse;
+import com.pharma.backend.service.duocsi.DonThuocService;
 import com.pharma.backend.enums.donthuoc.TrangThaiDonThuoc;
 import lombok.RequiredArgsConstructor;
 

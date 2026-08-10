@@ -3,10 +3,10 @@ import DanhMucSanPhamTable from "../components/DanhMucSanPhamTable";
 import useDanhSachDanhMucSanPham from "../hooks/useDanhSachDanhMucSanPham";
 import useFormDanhMucSanPham from "../hooks/useFormDanhMucSanPham";
 import useTrangThaiDanhMucSanPham from "../hooks/useTrangThaiDanhMucSanPham";
-import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
-import NutThaoTacChinh from "../../../shared/components/quan-ly/NutThaoTacChinh";
-import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
-import "../../../shared/styles/quan-ly/QuanLyCommon.css";
+import KhungDanhSachQuanLy from "../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyDanhMucSanPhamPage() {
   const {

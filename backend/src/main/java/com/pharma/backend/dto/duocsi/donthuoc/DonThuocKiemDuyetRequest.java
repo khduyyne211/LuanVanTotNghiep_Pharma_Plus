@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.admin.donthuoc;
+package com.pharma.backend.dto.duocsi.donthuoc;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

@@ -20,12 +20,12 @@ import type {
   NhaSanXuatOption,
 } from "../types/SanPham";
 
-import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
-import NutThaoTacChinh from "../../../shared/components/quan-ly/NutThaoTacChinh";
-import PhanTrangQuanLy from "../../../shared/components/quan-ly/PhanTrangQuanLy";
-import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import KhungDanhSachQuanLy from "../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../shared/components/quan-ly/NutThaoTacChinh";
+import PhanTrangQuanLy from "../../shared/components/quan-ly/PhanTrangQuanLy";
+import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy";
 
-import "../../../shared/styles/quan-ly/QuanLyCommon.css";
+import "../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLySanPhamPage() {
   const {

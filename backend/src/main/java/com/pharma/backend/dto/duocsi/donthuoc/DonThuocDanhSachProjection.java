@@ -1,4 +1,4 @@
-package com.pharma.backend.dto.admin.donthuoc;
+package com.pharma.backend.dto.duocsi.donthuoc;
 
 import java.time.LocalDateTime;
 

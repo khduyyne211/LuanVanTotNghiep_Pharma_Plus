@@ -1,35 +1,38 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { isAxiosError } from "axios";
 
 import {
+  layDoanhThu7NgayDashboard,
   layDoanhThuTheoKhoang,
+  layLoSapHetHanDashboard,
+  layTonKhoThapDashboard,
   layTongQuanDashboard,
+  layTrangThaiDonHangDashboard,
 } from "../api/dashboardApi";
 
 import type {
   DashboardDoanhThu,
+  DashboardDoanhThuTheoNgay,
+  DashboardLoSapHetHan,
+  DashboardTonKhoThap,
   DashboardTongQuan,
+  DashboardTrangThaiDonHang,
 } from "../types/Dashboard";
 
 type ApiErrorResponse = {
   message?: string;
 };
 
+const NGUONG_TON_KHO_MAC_DINH = 10;
+const SO_NGAY_CANH_BAO_HET_HAN = 30;
+
 const dinhDangNgayNhap = (ngay: Date) => {
   const nam = ngay.getFullYear();
 
-  const thang = String(
-    ngay.getMonth() + 1,
-  ).padStart(2, "0");
+  const thang = String(ngay.getMonth() + 1).padStart(2, "0");
 
-  const ngayTrongThang = String(
-    ngay.getDate(),
-  ).padStart(2, "0");
+  const ngayTrongThang = String(ngay.getDate()).padStart(2, "0");
 
   return `${nam}-${thang}-${ngayTrongThang}`;
 };
@@ -37,11 +40,7 @@ const dinhDangNgayNhap = (ngay: Date) => {
 const taoKhoangNgayMacDinh = () => {
   const homNay = new Date();
 
-  const dauThang = new Date(
-    homNay.getFullYear(),
-    homNay.getMonth(),
-    1,
-  );
+  const dauThang = new Date(homNay.getFullYear(), homNay.getMonth(), 1);
 
   return {
     tuNgay: dinhDangNgayNhap(dauThang),
@@ -49,171 +48,204 @@ const taoKhoangNgayMacDinh = () => {
   };
 };
 
-const layThongBaoLoi = (
-  error: unknown,
-  thongBaoMacDinh: string,
-) => {
+const layThongBaoLoi = (error: unknown, thongBaoMacDinh: string) => {
   if (isAxiosError<ApiErrorResponse>(error)) {
-    return (
-      error.response?.data?.message
-      ?? thongBaoMacDinh
-    );
+    return error.response?.data?.message ?? thongBaoMacDinh;
   }
 
   return thongBaoMacDinh;
 };
 
 function useDashboard() {
-  const khoangNgayMacDinh =
-    taoKhoangNgayMacDinh();
+  const khoangNgayMacDinh = taoKhoangNgayMacDinh();
 
-  const [
-    tongQuan,
-    setTongQuan,
-  ] = useState<DashboardTongQuan | null>(
-    null,
-  );
+  const [tongQuan, setTongQuan] = useState<DashboardTongQuan | null>(null);
 
-  const [
-    doanhThuTheoKhoang,
-    setDoanhThuTheoKhoang,
-  ] = useState<DashboardDoanhThu | null>(
-    null,
-  );
+  const [doanhThuTheoKhoang, setDoanhThuTheoKhoang] =
+    useState<DashboardDoanhThu | null>(null);
 
-  const [
-    tuNgay,
-    setTuNgay,
-  ] = useState(
-    khoangNgayMacDinh.tuNgay,
-  );
+  const [doanhThu7Ngay, setDoanhThu7Ngay] = useState<
+    DashboardDoanhThuTheoNgay[]
+  >([]);
 
-  const [
-    denNgay,
-    setDenNgay,
-  ] = useState(
-    khoangNgayMacDinh.denNgay,
-  );
+  const [thongKeTrangThaiDonHang, setThongKeTrangThaiDonHang] = useState<
+    DashboardTrangThaiDonHang[]
+  >([]);
 
-  const [
-    dangTaiTongQuan,
-    setDangTaiTongQuan,
-  ] = useState(true);
+  const [danhSachTonKhoThap, setDanhSachTonKhoThap] = useState<
+    DashboardTonKhoThap[]
+  >([]);
 
-  const [
-    dangTaiDoanhThu,
-    setDangTaiDoanhThu,
-  ] = useState(false);
+  const [danhSachLoSapHetHan, setDanhSachLoSapHetHan] = useState<
+    DashboardLoSapHetHan[]
+  >([]);
 
-  const [
-    loiTongQuan,
-    setLoiTongQuan,
-  ] = useState("");
+  const [tuNgay, setTuNgay] = useState(khoangNgayMacDinh.tuNgay);
 
-  const [
-    loiDoanhThu,
-    setLoiDoanhThu,
-  ] = useState("");
+  const [denNgay, setDenNgay] = useState(khoangNgayMacDinh.denNgay);
 
-  const taiTongQuan =
-    useCallback(async () => {
-      try {
-        setDangTaiTongQuan(true);
-        setLoiTongQuan("");
+  const [dangTaiTongQuan, setDangTaiTongQuan] = useState(true);
 
-        const duLieu =
-          await layTongQuanDashboard();
+  const [dangTaiDoanhThu, setDangTaiDoanhThu] = useState(false);
 
-        setTongQuan(duLieu);
-      } catch (error) {
-        console.error(
-          "Không thể tải tổng quan Dashboard:",
-          error,
-        );
+  const [dangTaiBieuDo, setDangTaiBieuDo] = useState(true);
 
-        setTongQuan(null);
+  const [dangTaiCanhBao, setDangTaiCanhBao] = useState(true);
 
-        setLoiTongQuan(
-          layThongBaoLoi(
-            error,
-            "Không thể tải dữ liệu tổng quan.",
-          ),
-        );
-      } finally {
-        setDangTaiTongQuan(false);
-      }
-    }, []);
+  const [loiTongQuan, setLoiTongQuan] = useState("");
 
-  const xemDoanhThuTheoKhoang =
-    useCallback(async () => {
-      if (!tuNgay || !denNgay) {
-        setLoiDoanhThu(
-          "Vui lòng chọn đầy đủ khoảng ngày.",
-        );
+  const [loiDoanhThu, setLoiDoanhThu] = useState("");
 
-        return;
-      }
+  const [loiBieuDo, setLoiBieuDo] = useState("");
 
-      if (tuNgay > denNgay) {
-        setLoiDoanhThu(
-          "Ngày bắt đầu không được lớn hơn ngày kết thúc.",
-        );
+  const [loiCanhBao, setLoiCanhBao] = useState("");
 
-        return;
-      }
+  const taiTongQuan = useCallback(async () => {
+    try {
+      setDangTaiTongQuan(true);
+      setLoiTongQuan("");
 
-      try {
-        setDangTaiDoanhThu(true);
-        setLoiDoanhThu("");
+      const duLieu = await layTongQuanDashboard();
 
-        const duLieu =
-          await layDoanhThuTheoKhoang(
-            tuNgay,
-            denNgay,
-          );
+      setTongQuan(duLieu);
+    } catch (error) {
+      console.error("Không thể tải tổng quan Dashboard:", error);
 
-        setDoanhThuTheoKhoang(duLieu);
-      } catch (error) {
-        console.error(
-          "Không thể tải doanh thu theo khoảng:",
-          error,
-        );
+      setTongQuan(null);
 
-        setDoanhThuTheoKhoang(null);
+      setLoiTongQuan(layThongBaoLoi(error, "Không thể tải dữ liệu tổng quan."));
+    } finally {
+      setDangTaiTongQuan(false);
+    }
+  }, []);
 
-        setLoiDoanhThu(
-          layThongBaoLoi(
-            error,
-            "Không thể tải doanh thu theo khoảng ngày.",
-          ),
-        );
-      } finally {
-        setDangTaiDoanhThu(false);
-      }
-    }, [tuNgay, denNgay]);
+  const taiBieuDo = useCallback(async () => {
+    try {
+      setDangTaiBieuDo(true);
+      setLoiBieuDo("");
+
+      const [duLieuDoanhThu, duLieuTrangThai] = await Promise.all([
+        layDoanhThu7NgayDashboard(),
+        layTrangThaiDonHangDashboard(),
+      ]);
+
+      setDoanhThu7Ngay(duLieuDoanhThu);
+
+      setThongKeTrangThaiDonHang(duLieuTrangThai);
+    } catch (error) {
+      console.error("Không thể tải dữ liệu biểu đồ Dashboard:", error);
+
+      setDoanhThu7Ngay([]);
+      setThongKeTrangThaiDonHang([]);
+
+      setLoiBieuDo(layThongBaoLoi(error, "Không thể tải dữ liệu biểu đồ."));
+    } finally {
+      setDangTaiBieuDo(false);
+    }
+  }, []);
+
+  const taiCanhBao = useCallback(async () => {
+    try {
+      setDangTaiCanhBao(true);
+      setLoiCanhBao("");
+
+      const [tonKhoThap, loSapHetHan] = await Promise.all([
+        layTonKhoThapDashboard(NGUONG_TON_KHO_MAC_DINH),
+        layLoSapHetHanDashboard(SO_NGAY_CANH_BAO_HET_HAN),
+      ]);
+
+      setDanhSachTonKhoThap(tonKhoThap);
+
+      setDanhSachLoSapHetHan(loSapHetHan);
+    } catch (error) {
+      console.error("Không thể tải cảnh báo Dashboard:", error);
+
+      setDanhSachTonKhoThap([]);
+      setDanhSachLoSapHetHan([]);
+
+      setLoiCanhBao(
+        layThongBaoLoi(error, "Không thể tải dữ liệu cảnh báo kho."),
+      );
+    } finally {
+      setDangTaiCanhBao(false);
+    }
+  }, []);
+
+  const xemDoanhThuTheoKhoang = useCallback(async () => {
+    if (!tuNgay || !denNgay) {
+      setLoiDoanhThu("Vui lòng chọn đầy đủ khoảng ngày.");
+
+      return;
+    }
+
+    if (tuNgay > denNgay) {
+      setLoiDoanhThu("Ngày bắt đầu không được lớn hơn ngày kết thúc.");
+
+      return;
+    }
+
+    try {
+      setDangTaiDoanhThu(true);
+      setLoiDoanhThu("");
+
+      const duLieu = await layDoanhThuTheoKhoang(tuNgay, denNgay);
+
+      setDoanhThuTheoKhoang(duLieu);
+    } catch (error) {
+      console.error("Không thể tải doanh thu theo khoảng:", error);
+
+      setDoanhThuTheoKhoang(null);
+
+      setLoiDoanhThu(
+        layThongBaoLoi(error, "Không thể tải doanh thu theo khoảng ngày."),
+      );
+    } finally {
+      setDangTaiDoanhThu(false);
+    }
+  }, [tuNgay, denNgay]);
+
+  const lamMoiDashboard = useCallback(async () => {
+    await Promise.all([taiTongQuan(), taiBieuDo(), taiCanhBao()]);
+  }, [taiTongQuan, taiBieuDo, taiCanhBao]);
 
   useEffect(() => {
-    void taiTongQuan();
-  }, [taiTongQuan]);
+    void Promise.all([taiTongQuan(), taiBieuDo(), taiCanhBao()]);
+  }, [taiTongQuan, taiBieuDo, taiCanhBao]);
 
   return {
     tongQuan,
     doanhThuTheoKhoang,
+    doanhThu7Ngay,
+    thongKeTrangThaiDonHang,
+
+    danhSachTonKhoThap,
+    danhSachLoSapHetHan,
 
     tuNgay,
     denNgay,
 
     dangTaiTongQuan,
     dangTaiDoanhThu,
+    dangTaiBieuDo,
+    dangTaiCanhBao,
 
     loiTongQuan,
     loiDoanhThu,
+    loiBieuDo,
+    loiCanhBao,
 
     setTuNgay,
     setDenNgay,
 
     taiTongQuan,
+    taiBieuDo,
+    taiCanhBao,
+    lamMoiDashboard,
     xemDoanhThuTheoKhoang,
+
+    nguongTonKhoMacDinh: NGUONG_TON_KHO_MAC_DINH,
+
+    soNgayCanhBaoHetHan: SO_NGAY_CANH_BAO_HET_HAN,
   };
 }
 

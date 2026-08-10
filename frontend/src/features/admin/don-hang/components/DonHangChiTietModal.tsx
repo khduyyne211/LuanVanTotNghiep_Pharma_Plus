@@ -1,4 +1,9 @@
-import type { DonHangChiTiet } from "../types/DonHang";
+import type {
+  DonHangChiTiet,
+  TrangThaiDonHang,
+  TrangThaiKiemDuyetDonHang,
+  TrangThaiThanhToan,
+} from "../types/DonHang";
 
 type Props = {
   donHang: DonHangChiTiet | null;
@@ -6,41 +11,192 @@ type Props = {
   onDong: () => void;
 };
 
-const dinhDangTien = (giaTri: number | null | undefined) =>
+const dinhDangTien = (
+  giaTri: number | null | undefined,
+) =>
   new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   }).format(giaTri ?? 0);
 
-const dinhDangNgay = (giaTri: string | null | undefined) => {
-  if (!giaTri) return "—";
+const dinhDangNgay = (
+  giaTri: string | null | undefined,
+) => {
+  if (!giaTri) {
+    return "—";
+  }
 
-  return new Intl.DateTimeFormat("vi-VN", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(new Date(giaTri));
+  return new Intl.DateTimeFormat(
+    "vi-VN",
+    {
+      dateStyle: "short",
+      timeStyle: "short",
+    },
+  ).format(
+    new Date(giaTri),
+  );
 };
 
-const hienThiTrangThai = (giaTri: string | null | undefined) =>
-  (giaTri || "CHUA_CO").replaceAll("_", " ");
+const hienThiLoaiKhach = (
+  giaTri: string | null | undefined,
+) => {
+  switch (giaTri) {
+    case "CO_TAI_KHOAN":
+      return "Có tài khoản";
+
+    case "VANG_LAI":
+      return "Khách vãng lai";
+
+    default:
+      return "Chưa xác định";
+  }
+};
+
+const hienThiPhuongThucThanhToan = (
+  giaTri: string | null | undefined,
+) => {
+  switch (giaTri) {
+    case "COD":
+      return "Thanh toán khi nhận hàng";
+
+    case "ZALOPAY":
+      return "ZaloPay";
+
+    case "TIEN_MAT":
+      return "Tiền mặt";
+
+    default:
+      return "Chưa xác định";
+  }
+};
+
+const hienThiTrangThaiThanhToan = (
+  giaTri:
+    | TrangThaiThanhToan
+    | null
+    | undefined,
+) => {
+  switch (giaTri) {
+    case "CHUA_THANH_TOAN":
+      return "Chưa thanh toán";
+
+    case "CHO_THANH_TOAN":
+      return "Chờ thanh toán";
+
+    case "DA_THANH_TOAN":
+      return "Đã thanh toán";
+
+    case "THANH_TOAN_THAT_BAI":
+      return "Thanh toán thất bại";
+
+    case "DA_HUY":
+      return "Đã hủy";
+
+    default:
+      return "Chưa xác định";
+  }
+};
+
+const hienThiTrangThaiDonHang = (
+  giaTri:
+    | TrangThaiDonHang
+    | null
+    | undefined,
+) => {
+  switch (giaTri) {
+    case "CHO_XU_LY":
+      return "Chờ xử lý";
+
+    case "DANG_XU_LY":
+      return "Đang xử lý";
+
+    case "DANG_GIAO":
+      return "Đang giao";
+
+    case "HOAN_THANH":
+      return "Hoàn thành";
+
+    case "DA_HUY":
+      return "Đã hủy";
+
+    default:
+      return "Chưa xác định";
+  }
+};
+
+const hienThiTrangThaiKiemDuyet = (
+  giaTri:
+    | TrangThaiKiemDuyetDonHang
+    | null
+    | undefined,
+) => {
+  switch (giaTri) {
+    case "KHONG_CAN_DUYET":
+      return "Không cần duyệt";
+
+    case "CHO_DUYET":
+      return "Chờ duyệt";
+
+    case "DA_DUYET":
+      return "Đã duyệt";
+
+    case "TU_CHOI":
+      return "Từ chối";
+
+    default:
+      return "Chưa xác định";
+  }
+};
+
+const hienThiTrangThaiDonThuoc = (
+  giaTri: string | null | undefined,
+) => {
+  switch (giaTri) {
+    case "CHO_DUYET":
+      return "Chờ duyệt";
+
+    case "DA_DUYET":
+      return "Đã duyệt";
+
+    case "TU_CHOI":
+      return "Từ chối";
+
+    default:
+      return "Chưa xác định";
+  }
+};
 
 export default function DonHangChiTietModal({
   donHang,
   dangTai,
   onDong,
 }: Props) {
-  if (!donHang && !dangTai) return null;
+  if (!donHang && !dangTai) {
+    return null;
+  }
 
   return (
-    <div className="dh-modal-overlay" onMouseDown={onDong}>
+    <div
+      className="dh-modal-overlay"
+      onMouseDown={onDong}
+    >
       <div
         className="dh-modal dh-modal-large"
-        onMouseDown={(event) => event.stopPropagation()}
+        onMouseDown={(event) =>
+          event.stopPropagation()
+        }
       >
         <div className="dh-modal-header">
           <div>
-            <p className="dh-eyebrow">Chi tiết đơn hàng</p>
-            <h2>{donHang ? `Đơn #${donHang.maDonHang}` : "Đang tải..."}</h2>
+            <p className="dh-eyebrow">
+              Chi tiết đơn hàng
+            </p>
+
+            <h2>
+              {donHang
+                ? `Đơn #${donHang.maDonHang}`
+                : "Đang tải..."}
+            </h2>
           </div>
 
           <button
@@ -54,61 +210,129 @@ export default function DonHangChiTietModal({
         </div>
 
         {dangTai || !donHang ? (
-          <div className="dh-loading-block">Đang tải chi tiết đơn hàng...</div>
+          <div className="dh-loading-block">
+            Đang tải chi tiết đơn hàng...
+          </div>
         ) : (
           <div className="dh-modal-body">
             <div className="dh-detail-grid">
               <section className="dh-detail-card">
-                <h3>Thông tin chung</h3>
+                <h3>
+                  Thông tin chung
+                </h3>
 
                 <div className="dh-info-row">
-                  <span>Ngày tạo</span>
-                  <strong>{dinhDangNgay(donHang.ngayDatHang)}</strong>
-                </div>
+                  <span>
+                    Ngày tạo
+                  </span>
 
-                <div className="dh-info-row">
-                  <span>Loại khách</span>
-                  <strong>{hienThiTrangThai(donHang.loaiKhach)}</strong>
-                </div>
-
-                <div className="dh-info-row">
-                  <span>Nhân viên xử lý</span>
-                  <strong>{donHang.tenNhanVienXuLy || "Chưa phân công"}</strong>
-                </div>
-
-                <div className="dh-info-row">
-                  <span>Phương thức thanh toán</span>
                   <strong>
-                    {hienThiTrangThai(donHang.phuongThucThanhToan)}
+                    {dinhDangNgay(
+                      donHang.ngayDatHang,
+                    )}
+                  </strong>
+                </div>
+
+                <div className="dh-info-row">
+                  <span>
+                    Loại khách
+                  </span>
+
+                  <strong>
+                    {hienThiLoaiKhach(
+                      donHang.loaiKhach,
+                    )}
+                  </strong>
+                </div>
+
+                <div className="dh-info-row">
+                  <span>
+                    Nhân viên xử lý
+                  </span>
+
+                  <strong>
+                    {
+                      donHang.tenNhanVienXuLy
+                      || "Chưa phân công"
+                    }
+                  </strong>
+                </div>
+
+                <div className="dh-info-row">
+                  <span>
+                    Phương thức thanh toán
+                  </span>
+
+                  <strong>
+                    {hienThiPhuongThucThanhToan(
+                      donHang.phuongThucThanhToan,
+                    )}
                   </strong>
                 </div>
               </section>
 
               <section className="dh-detail-card">
-                <h3>Khách hàng và giao nhận</h3>
+                <h3>
+                  Khách hàng và giao nhận
+                </h3>
 
                 <div className="dh-info-row">
-                  <span>Khách hàng</span>
-                  <strong>{donHang.tenKhachHang || "Khách vãng lai"}</strong>
+                  <span>
+                    Khách hàng
+                  </span>
+
+                  <strong>
+                    {
+                      donHang.tenKhachHang
+                      || "Khách vãng lai"
+                    }
+                  </strong>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>Số điện thoại</span>
-                  <strong>{donHang.soDienThoaiKhachHang || "—"}</strong>
+                  <span>
+                    Số điện thoại
+                  </span>
+
+                  <strong>
+                    {
+                      donHang.soDienThoaiKhachHang
+                      || "—"
+                    }
+                  </strong>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>Người nhận</span>
-                  <strong>{donHang.tenNguoiNhan || "—"}</strong>
+                  <span>
+                    Người nhận
+                  </span>
+
+                  <strong>
+                    {
+                      donHang.tenNguoiNhan
+                      || "—"
+                    }
+                  </strong>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>SĐT người nhận</span>
-                  <strong>{donHang.soDienThoaiNhan || "—"}</strong>
+                  <span>
+                    SĐT người nhận
+                  </span>
+
+                  <strong>
+                    {
+                      donHang.soDienThoaiNhan
+                      || "—"
+                    }
+                  </strong>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>Địa chỉ</span>
+                  <span>
+                    Địa chỉ
+                  </span>
+
                   <strong>
                     {[
                       donHang.diaChiChiTiet,
@@ -116,135 +340,240 @@ export default function DonHangChiTietModal({
                       donHang.thanhPho,
                     ]
                       .filter(Boolean)
-                      .join(", ") || "Nhận tại nhà thuốc"}
+                      .join(", ")
+                      || "Nhận tại nhà thuốc"}
                   </strong>
                 </div>
               </section>
 
               <section className="dh-detail-card">
-                <h3>Trạng thái</h3>
+                <h3>
+                  Trạng thái
+                </h3>
 
                 <div className="dh-info-row">
-                  <span>Đơn hàng</span>
+                  <span>
+                    Đơn hàng
+                  </span>
+
                   <span
                     className={`dh-badge dh-badge-${donHang.trangThaiDonHang.toLowerCase()}`}
                   >
-                    {hienThiTrangThai(donHang.trangThaiDonHang)}
+                    {hienThiTrangThaiDonHang(
+                      donHang.trangThaiDonHang,
+                    )}
                   </span>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>Thanh toán</span>
+                  <span>
+                    Thanh toán
+                  </span>
+
                   <span
                     className={`dh-badge dh-badge-${donHang.trangThaiThanhToan.toLowerCase()}`}
                   >
-                    {hienThiTrangThai(donHang.trangThaiThanhToan)}
+                    {hienThiTrangThaiThanhToan(
+                      donHang.trangThaiThanhToan,
+                    )}
                   </span>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>Kiểm duyệt</span>
+                  <span>
+                    Kiểm duyệt
+                  </span>
+
                   <span
                     className={`dh-badge dh-badge-${donHang.trangThaiKiemDuyet.toLowerCase()}`}
                   >
-                    {hienThiTrangThai(donHang.trangThaiKiemDuyet)}
+                    {hienThiTrangThaiKiemDuyet(
+                      donHang.trangThaiKiemDuyet,
+                    )}
                   </span>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>Thuốc kê đơn</span>
-                  <strong>{donHang.coThuocKeDon ? "Có" : "Không"}</strong>
+                  <span>
+                    Thuốc kê đơn
+                  </span>
+
+                  <strong>
+                    {donHang.coThuocKeDon
+                      ? "Có"
+                      : "Không"}
+                  </strong>
                 </div>
               </section>
 
               <section className="dh-detail-card">
-                <h3>Thanh toán</h3>
+                <h3>
+                  Thanh toán
+                </h3>
 
                 <div className="dh-info-row">
-                  <span>Tiền hàng</span>
-                  <strong>{dinhDangTien(donHang.tongTienHang)}</strong>
+                  <span>
+                    Tiền hàng
+                  </span>
+
+                  <strong>
+                    {dinhDangTien(
+                      donHang.tongTienHang,
+                    )}
+                  </strong>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>Phí giao hàng</span>
-                  <strong>{dinhDangTien(donHang.phiGiaoHang)}</strong>
+                  <span>
+                    Phí giao hàng
+                  </span>
+
+                  <strong>
+                    {dinhDangTien(
+                      donHang.phiGiaoHang,
+                    )}
+                  </strong>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>Giảm giá</span>
-                  <strong>{dinhDangTien(donHang.giamGia)}</strong>
+                  <span>
+                    Giảm giá
+                  </span>
+
+                  <strong>
+                    {dinhDangTien(
+                      donHang.giamGia,
+                    )}
+                  </strong>
                 </div>
 
                 <div className="dh-info-row dh-info-total">
-                  <span>Tổng thanh toán</span>
-                  <strong>{dinhDangTien(donHang.tongThanhToan)}</strong>
+                  <span>
+                    Tổng thanh toán
+                  </span>
+
+                  <strong>
+                    {dinhDangTien(
+                      donHang.tongThanhToan,
+                    )}
+                  </strong>
                 </div>
               </section>
             </div>
 
             <section className="dh-detail-card dh-products-card">
-              <h3>Sản phẩm trong đơn</h3>
+              <h3>
+                Sản phẩm trong đơn
+              </h3>
 
               <div className="dh-detail-products">
-                {donHang.danhSachChiTiet.map((chiTiet) => (
-                  <div
-                    className="dh-detail-product"
-                    key={chiTiet.maChiTietDonHang}
-                  >
-                    <img
-                      src={
-                        (chiTiet.hinhAnh || "").trim()
-                        || "https://placehold.co/72x72?text=SP"
+                {donHang.danhSachChiTiet.map(
+                  (chiTiet) => (
+                    <div
+                      className="dh-detail-product"
+                      key={
+                        chiTiet.maChiTietDonHang
                       }
-                      alt={chiTiet.tenSanPham}
-                    />
+                    >
+                      <img
+                        src={
+                          (
+                            chiTiet.hinhAnh
+                            || ""
+                          ).trim()
+                          || "https://placehold.co/72x72?text=SP"
+                        }
+                        alt={
+                          chiTiet.tenSanPham
+                        }
+                      />
 
-                    <div className="dh-detail-product-main">
-                      <div className="dh-product-title-row">
-                        <strong>{chiTiet.tenSanPham}</strong>
+                      <div className="dh-detail-product-main">
+                        <div className="dh-product-title-row">
+                          <strong>
+                            {
+                              chiTiet.tenSanPham
+                            }
+                          </strong>
 
-                        {chiTiet.laThuocKeDon && (
-                          <span className="dh-prescription-tag">
-                            Thuốc kê đơn
-                          </span>
-                        )}
+                          {chiTiet.laThuocKeDon && (
+                            <span className="dh-prescription-tag">
+                              Thuốc kê đơn
+                            </span>
+                          )}
+                        </div>
+
+                        <span>
+                          {
+                            chiTiet.tenDonViTinh
+                          }{" "}
+                          ×{" "}
+                          {
+                            chiTiet.soLuong
+                          }
+                        </span>
                       </div>
 
-                      <span>
-                        {chiTiet.tenDonViTinh} × {chiTiet.soLuong}
-                      </span>
-                    </div>
+                      <div className="dh-detail-product-price">
+                        <span>
+                          {dinhDangTien(
+                            chiTiet.donGia,
+                          )}
+                        </span>
 
-                    <div className="dh-detail-product-price">
-                      <span>{dinhDangTien(chiTiet.donGia)}</span>
-                      <strong>{dinhDangTien(chiTiet.thanhTien)}</strong>
+                        <strong>
+                          {dinhDangTien(
+                            chiTiet.thanhTien,
+                          )}
+                        </strong>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ),
+                )}
               </div>
             </section>
 
             {donHang.maDonThuoc && (
               <section className="dh-detail-card dh-note-card">
-                <h3>Thông tin đơn thuốc</h3>
+                <h3>
+                  Thông tin đơn thuốc
+                </h3>
 
                 <div className="dh-info-row">
-                  <span>Mã đơn thuốc</span>
-                  <strong>#{donHang.maDonThuoc}</strong>
+                  <span>
+                    Mã đơn thuốc
+                  </span>
+
+                  <strong>
+                    #
+                    {
+                      donHang.maDonThuoc
+                    }
+                  </strong>
                 </div>
 
                 <div className="dh-info-row">
-                  <span>Trạng thái</span>
+                  <span>
+                    Trạng thái
+                  </span>
+
                   <strong>
-                    {hienThiTrangThai(donHang.trangThaiDonThuoc)}
+                    {hienThiTrangThaiDonThuoc(
+                      donHang.trangThaiDonThuoc,
+                    )}
                   </strong>
                 </div>
 
                 {donHang.anhDonThuoc && (
                   <div className="dh-info-row">
-                    <span>Ảnh đơn thuốc</span>
+                    <span>
+                      Ảnh đơn thuốc
+                    </span>
+
                     <a
-                      href={donHang.anhDonThuoc}
+                      href={
+                        donHang.anhDonThuoc
+                      }
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -255,15 +584,23 @@ export default function DonHangChiTietModal({
 
                 {donHang.lyDoTuChoiDonThuoc && (
                   <p>
-                    <strong>Lý do từ chối:</strong>{" "}
-                    {donHang.lyDoTuChoiDonThuoc}
+                    <strong>
+                      Lý do từ chối:
+                    </strong>{" "}
+                    {
+                      donHang.lyDoTuChoiDonThuoc
+                    }
                   </p>
                 )}
 
                 {donHang.ghiChuDonThuoc && (
                   <p>
-                    <strong>Ghi chú đơn thuốc:</strong>{" "}
-                    {donHang.ghiChuDonThuoc}
+                    <strong>
+                      Ghi chú đơn thuốc:
+                    </strong>{" "}
+                    {
+                      donHang.ghiChuDonThuoc
+                    }
                   </p>
                 )}
               </section>
@@ -273,25 +610,40 @@ export default function DonHangChiTietModal({
               || donHang.ghiChuKiemDuyet
               || donHang.lyDoTuChoiDuyet) && (
               <section className="dh-detail-card dh-note-card">
-                <h3>Ghi chú xử lý</h3>
+                <h3>
+                  Ghi chú xử lý
+                </h3>
 
                 {donHang.ghiChu && (
                   <p>
-                    <strong>Đơn hàng:</strong> {donHang.ghiChu}
+                    <strong>
+                      Đơn hàng:
+                    </strong>{" "}
+                    {
+                      donHang.ghiChu
+                    }
                   </p>
                 )}
 
                 {donHang.ghiChuKiemDuyet && (
                   <p>
-                    <strong>Kiểm duyệt:</strong>{" "}
-                    {donHang.ghiChuKiemDuyet}
+                    <strong>
+                      Kiểm duyệt:
+                    </strong>{" "}
+                    {
+                      donHang.ghiChuKiemDuyet
+                    }
                   </p>
                 )}
 
                 {donHang.lyDoTuChoiDuyet && (
                   <p>
-                    <strong>Lý do từ chối duyệt:</strong>{" "}
-                    {donHang.lyDoTuChoiDuyet}
+                    <strong>
+                      Lý do từ chối duyệt:
+                    </strong>{" "}
+                    {
+                      donHang.lyDoTuChoiDuyet
+                    }
                   </p>
                 )}
               </section>

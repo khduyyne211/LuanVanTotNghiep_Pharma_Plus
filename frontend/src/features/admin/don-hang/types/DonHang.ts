@@ -1,28 +1,25 @@
-export type PhanTrangResponse<T> = {
-  content: T[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-  first: boolean;
-  last: boolean;
-};
+export type LoaiKhachHang =
+  | "CO_TAI_KHOAN"
+  | "VANG_LAI";
 
-export type LoaiKhachHang = "CO_TAI_KHOAN" | "VANG_LAI";
-
-export type PhuongThucThanhToan = "COD" | "ZALOPAY" | "TIEN_MAT";
+export type PhuongThucThanhToan =
+  | "COD"
+  | "ZALOPAY"
+  | "TIEN_MAT";
 
 export type TrangThaiThanhToan =
   | "CHUA_THANH_TOAN"
+  | "CHO_THANH_TOAN"
   | "DA_THANH_TOAN"
   | "THANH_TOAN_THAT_BAI"
-  | "DA_HOAN_TIEN";
+  | "DA_HUY";
 
 export type TrangThaiDonHang =
   | "CHO_XU_LY"
   | "DANG_XU_LY"
   | "DANG_GIAO"
   | "HOAN_THANH"
+  | "DA_HUY";
 
 export type TrangThaiKiemDuyetDonHang =
   | "KHONG_CAN_DUYET"
@@ -30,7 +27,10 @@ export type TrangThaiKiemDuyetDonHang =
   | "DA_DUYET"
   | "TU_CHOI";
 
-export type TrangThaiDonThuoc = "CHO_DUYET" | "DA_DUYET" | "TU_CHOI";
+export type TrangThaiDonThuoc =
+  | "CHO_DUYET"
+  | "DA_DUYET"
+  | "TU_CHOI";
 
 export type DonHangDanhSach = {
   maDonHang: number;
@@ -121,7 +121,7 @@ export type DonHangBoLoc = {
   page: number;
   size: number;
   keyword?: string;
-  trangThaiDonHang?: string;
-  trangThaiThanhToan?: string;
-  trangThaiKiemDuyet?: string;
+  trangThaiDonHang?: TrangThaiDonHang;
+  trangThaiThanhToan?: TrangThaiThanhToan;
+  trangThaiKiemDuyet?: TrangThaiKiemDuyetDonHang;
 };

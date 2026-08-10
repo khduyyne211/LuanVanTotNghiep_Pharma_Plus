@@ -3,10 +3,10 @@ import HoatChatTable from "../components/HoatChatTable";
 import useDanhSachHoatChat from "../hooks/useDanhSachHoatChat";
 import useFormHoatChat from "../hooks/useFormHoatChat";
 import useTrangThaiHoatChat from "../hooks/useTrangThaiHoatChat";
-import KhungDanhSachQuanLy from "../../../shared/components/quan-ly/KhungDanhSachQuanLy";
-import NutThaoTacChinh from "../../../shared/components/quan-ly/NutThaoTacChinh";
-import TieuDeTrangQuanLy from "../../../shared/components/quan-ly/TieuDeTrangQuanLy";
-import "../../../shared/styles/quan-ly/QuanLyCommon.css";
+import KhungDanhSachQuanLy from "../../shared/components/quan-ly/KhungDanhSachQuanLy";
+import NutThaoTacChinh from "../../shared/components/quan-ly/NutThaoTacChinh";
+import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy";
+import "../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyHoatChatPage() {
   const {

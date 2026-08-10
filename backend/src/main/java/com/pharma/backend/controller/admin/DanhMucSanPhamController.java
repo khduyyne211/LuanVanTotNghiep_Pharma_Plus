@@ -1,4 +1,4 @@
-package com.pharma.backend.controller;
+package com.pharma.backend.controller.admin;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamRequest;
 import com.pharma.backend.dto.admin.danhmucsanpham.DanhMucSanPhamResponse;
-import com.pharma.backend.service.DanhMucSanPhamService;
+import com.pharma.backend.service.admin.DanhMucSanPhamService;
 
 import lombok.RequiredArgsConstructor;
 @RestController

@@ -1,4 +1,4 @@
-import axiosClient from "../../../api/axiosClient";
+import axiosClient from "../../../../shared/api/axiosClient";
 
 import type {
   KhuyenMai,
@@ -11,18 +11,10 @@ export const layDanhSachKhuyenMai = () => {
   );
 };
 
-export const layChiTietKhuyenMai = (
-  maKhuyenMai: number
-) => {
-  return axiosClient.get<KhuyenMai>(
-    `/khuyen-mai/${maKhuyenMai}`
-  );
-};
-
 export const themKhuyenMai = (
   request: KhuyenMaiRequest
 ) => {
-  return axiosClient.post<KhuyenMai>(
+  return axiosClient.post(
     "/khuyen-mai",
     request
   );
@@ -32,7 +24,7 @@ export const capNhatKhuyenMai = (
   maKhuyenMai: number,
   request: KhuyenMaiRequest
 ) => {
-  return axiosClient.put<KhuyenMai>(
+  return axiosClient.put(
     `/khuyen-mai/${maKhuyenMai}`,
     request
   );
