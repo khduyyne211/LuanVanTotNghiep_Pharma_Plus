@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import axiosClient from "../../../../api/axiosClient";
+import axiosClient from "../../../../shared/api/axiosClient";
 import type { DonViSanPham } from "../types/SanPham";
 
 type DonViTinh = {

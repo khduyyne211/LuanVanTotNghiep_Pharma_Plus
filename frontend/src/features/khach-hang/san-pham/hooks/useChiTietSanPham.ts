@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import apiClient from "../../../../api/axiosClient";
+import apiClient from "../../../../shared/api/axiosClient";
 import type { SanPhamChiTiet } from "../types/SanPhamChiTiet";
 
 export function useChiTietSanPham(maSanPham?: number) {

@@ -1,4 +1,4 @@
-import apiClient from "../../../../api/axiosClient";
+import apiClient from "../../../../shared/api/axiosClient";
 import type { GioHang } from "../types/GioHang";
 import type {
   ChiTietKiemTraGioHangRequest,

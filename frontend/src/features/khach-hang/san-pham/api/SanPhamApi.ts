@@ -1,4 +1,4 @@
-import apiClient from "../../../../api/axiosClient";
+import apiClient from "../../../../shared/api/axiosClient";
 import type { PageResponseKhachHang } from "../../../../shared/types/PageResponseKhachHang";
 import type { SanPham } from "../types/SanPham";
 import type { SanPhamBanChay } from "../types/SanPhamBanChay";

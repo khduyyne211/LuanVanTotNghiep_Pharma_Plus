@@ -1,4 +1,4 @@
-import apiClient from "../../../../api/axiosClient";
+import apiClient from "../../../../shared/api/axiosClient";
 import type { DanhMucNoiBat } from "../types/DanhMucNoiBat";
 import type { DanhMucSanPham } from "../types/DanhMucSanPham";
 
