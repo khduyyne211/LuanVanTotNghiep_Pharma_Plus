@@ -6,6 +6,8 @@ import {
 } from "react";
 import { NavLink } from "react-router-dom";
 
+import { useXacThucContext } from "../../features/xac-thuc/context/XacThucContext";
+
 type MenuItem = {
   label: string;
   path: string;
@@ -94,6 +96,8 @@ function layTrangThaiThuGonDaLuu(): boolean {
 }
 
 function AdminSidebar() {
+  const { dangXuat } = useXacThucContext();
+
   const [chieuRong, setChieuRong] = useState<number>(layChieuRongSidebarDaLuu);
 
   const [daThuGon, setDaThuGon] = useState<boolean>(layTrangThaiThuGonDaLuu);
@@ -180,6 +184,11 @@ function AdminSidebar() {
 
   const dongMenuMobile = () => {
     setMenuMobileDangMo(false);
+  };
+
+  const xuLyDangXuat = () => {
+    dangXuat();
+    dongMenuMobile();
   };
 
   const chieuRongDangHienThi = daThuGon ? SIDEBAR_COLLAPSED_WIDTH : chieuRong;
@@ -298,6 +307,21 @@ function AdminSidebar() {
               </div>
             )}
           </div>
+
+          <NavLink
+            to="/"
+            onClick={xuLyDangXuat}
+            title={daThuGon ? "Đăng xuất" : undefined}
+            className="admin-sidebar-menu-item"
+          >
+            <span className="admin-sidebar-menu-icon">
+              <i className="bi bi-box-arrow-right" />
+            </span>
+
+            {!daThuGon && (
+              <span className="admin-sidebar-menu-label">Đăng xuất</span>
+            )}
+          </NavLink>
         </div>
 
         {!daThuGon && (
