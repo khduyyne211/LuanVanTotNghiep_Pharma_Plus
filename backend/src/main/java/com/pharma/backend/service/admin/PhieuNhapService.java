@@ -358,11 +358,9 @@ public class PhieuNhapService {
                 continue;
             }
 
-            BigDecimal heSoThuan = quyDoi.getSoLuongDich().divide(quyDoi.getSoLuongNguon(), SCALE_HE_SO,
-                    RoundingMode.HALF_UP);
+            BigDecimal heSoThuan = quyDoi.getSoLuongDich().divide(quyDoi.getSoLuongNguon(), SCALE_HE_SO, RoundingMode.HALF_UP);
 
-            BigDecimal heSoNghich = quyDoi.getSoLuongNguon().divide(quyDoi.getSoLuongDich(), SCALE_HE_SO,
-                    RoundingMode.HALF_UP);
+            BigDecimal heSoNghich = quyDoi.getSoLuongNguon().divide(quyDoi.getSoLuongDich(),SCALE_HE_SO, RoundingMode.HALF_UP);
 
             themCanh(doThi, donViNguon.getMaDonViSanPham(), donViDich.getMaDonViSanPham(), heSoThuan);
 
