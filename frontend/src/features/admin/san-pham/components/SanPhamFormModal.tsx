@@ -107,6 +107,7 @@ const taoDonViMacDinh = (): DonViTaoMoiForm => ({
   maDonViTinh: "",
   giaBanTheoDonVi: "",
   laDonViCoSo: true,
+  laDonViBanMacDinh: true,
   choPhepBan: true,
   choPhepNhap: true,
 });
@@ -127,9 +128,7 @@ const taoDuLieuChuyenMonMacDinh = (): DuLieuChuyenMonForm => ({
   canhBaoAnToan: "",
 });
 
-function SanPhamFormModal(
-  props: SanPhamFormModalProps,
-) {
+function SanPhamFormModal(props: SanPhamFormModalProps) {
   if (!props.isOpen) {
     return null;
   }
@@ -145,12 +144,7 @@ function SanPhamFormModal(
     );
   }
 
-  return (
-    <SanPhamFormNoiDung
-      key="them-moi"
-      {...props}
-    />
-  );
+  return <SanPhamFormNoiDung key="them-moi" {...props} />;
 }
 
 function SanPhamFormNoiDung({
@@ -281,6 +275,15 @@ function SanPhamFormNoiDung({
     field: keyof DonViTaoMoiForm,
     value: string | boolean,
   ) => {
+    if (
+      field === "choPhepBan" &&
+      value === false &&
+      danhSachDonVi[index]?.laDonViBanMacDinh
+    ) {
+      alert("Đơn vị bán mặc định phải được phép bán");
+      return;
+    }
+
     setDanhSachDonVi((danhSachCu) =>
       danhSachCu.map((donVi, viTri) =>
         viTri === index ? { ...donVi, [field]: value } : donVi,
@@ -297,6 +300,16 @@ function SanPhamFormNoiDung({
     );
   };
 
+  const chonDonViBanMacDinh = (index: number) => {
+    setDanhSachDonVi((danhSachCu) =>
+      danhSachCu.map((donVi, viTri) => ({
+        ...donVi,
+        laDonViBanMacDinh: viTri === index,
+        choPhepBan: viTri === index ? true : donVi.choPhepBan,
+      })),
+    );
+  };
+
   const themDongDonVi = () => {
     setDanhSachDonVi((danhSachCu) => [
       ...danhSachCu,
@@ -304,6 +317,7 @@ function SanPhamFormNoiDung({
         maDonViTinh: "",
         giaBanTheoDonVi: "",
         laDonViCoSo: false,
+        laDonViBanMacDinh: false,
         choPhepBan: true,
         choPhepNhap: true,
       },
@@ -318,6 +332,7 @@ function SanPhamFormNoiDung({
 
     const maDonViBiXoa = danhSachDonVi[index].maDonViTinh;
     const donViBiXoaLaCoSo = danhSachDonVi[index].laDonViCoSo;
+    const donViBiXoaLaBanMacDinh = danhSachDonVi[index].laDonViBanMacDinh;
 
     setDanhSachDonVi((danhSachCu) => {
       const danhSachMoi = danhSachCu.filter((_, viTri) => viTri !== index);
@@ -326,6 +341,20 @@ function SanPhamFormNoiDung({
         danhSachMoi[0] = {
           ...danhSachMoi[0],
           laDonViCoSo: true,
+        };
+      }
+
+      if (donViBiXoaLaBanMacDinh && danhSachMoi.length > 0) {
+        const viTriDonViChoPhepBan = danhSachMoi.findIndex(
+          (donVi) => donVi.choPhepBan,
+        );
+        const viTriMacDinhMoi =
+          viTriDonViChoPhepBan >= 0 ? viTriDonViChoPhepBan : 0;
+
+        danhSachMoi[viTriMacDinhMoi] = {
+          ...danhSachMoi[viTriMacDinhMoi],
+          laDonViBanMacDinh: true,
+          choPhepBan: true,
         };
       }
 
@@ -443,6 +472,7 @@ function SanPhamFormNoiDung({
 
     const maDonViDaChon = new Set<string>();
     let soDonViCoSo = 0;
+    let soDonViBanMacDinh = 0;
 
     for (const donVi of danhSachDonVi) {
       if (!donVi.maDonViTinh) {
@@ -461,6 +491,15 @@ function SanPhamFormNoiDung({
         soDonViCoSo++;
       }
 
+      if (donVi.laDonViBanMacDinh) {
+        soDonViBanMacDinh++;
+
+        if (!donVi.choPhepBan) {
+          alert("Đơn vị bán mặc định phải được phép bán");
+          return false;
+        }
+      }
+
       if (
         donVi.choPhepBan &&
         (!donVi.giaBanTheoDonVi || Number(donVi.giaBanTheoDonVi) <= 0)
@@ -472,6 +511,11 @@ function SanPhamFormNoiDung({
 
     if (soDonViCoSo !== 1) {
       alert("Sản phẩm phải có đúng một đơn vị cơ sở");
+      return false;
+    }
+
+    if (soDonViBanMacDinh !== 1) {
+      alert("Sản phẩm phải có đúng một đơn vị bán mặc định");
       return false;
     }
 
@@ -685,6 +729,7 @@ function SanPhamFormNoiDung({
           ? Number(donVi.giaBanTheoDonVi)
           : null,
         laDonViCoSo: donVi.laDonViCoSo,
+        laDonViBanMacDinh: donVi.laDonViBanMacDinh,
         choPhepBan: donVi.choPhepBan,
         choPhepNhap: donVi.choPhepNhap,
       })),
@@ -804,6 +849,7 @@ function SanPhamFormNoiDung({
             donViTinhDangDung={donViTinhDangDung}
             onCapNhatDonVi={capNhatDonVi}
             onChonDonViCoSo={chonDonViCoSo}
+            onChonDonViBanMacDinh={chonDonViBanMacDinh}
             onThemDongDonVi={themDongDonVi}
             onXoaDongDonVi={xoaDongDonVi}
             onQuayLai={() => setBuocHienTai(1)}

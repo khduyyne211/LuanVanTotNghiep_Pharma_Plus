@@ -10,6 +10,7 @@ export interface DonViSanPham {
   giaBanTheoDonVi: number | null;
 
   laDonViCoSo: boolean;
+  laDonViBanMacDinh: boolean;
   choPhepBan: boolean;
   choPhepNhap: boolean;
   trangThai: boolean;

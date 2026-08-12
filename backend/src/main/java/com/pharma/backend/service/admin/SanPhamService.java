@@ -855,6 +855,9 @@ public class SanPhamService {
             donViRequest.setLaDonViCoSo(
                     Boolean.TRUE.equals(
                             donVi.getLaDonViCoSo()));
+            donViRequest.setLaDonViBanMacDinh(
+                    Boolean.TRUE.equals(
+                            donVi.getLaDonViBanMacDinh()));
             donViRequest.setChoPhepBan(
                     Boolean.TRUE.equals(
                             donVi.getChoPhepBan()));
@@ -963,6 +966,7 @@ public class SanPhamService {
 
         Set<Long> maDonViTinhDaChon = new HashSet<>();
         int soDonViCoSo = 0;
+        int soDonViBanMacDinh = 0;
 
         for (DonViSanPhamTaoMoiRequest donVi : danhSachDonVi) {
             if (donVi == null
@@ -980,6 +984,17 @@ public class SanPhamService {
             if (Boolean.TRUE.equals(
                     donVi.getLaDonViCoSo())) {
                 soDonViCoSo++;
+            }
+
+            if (Boolean.TRUE.equals(
+                    donVi.getLaDonViBanMacDinh())) {
+                soDonViBanMacDinh++;
+
+                if (!Boolean.TRUE.equals(
+                        donVi.getChoPhepBan())) {
+                    throw new IllegalArgumentException(
+                            "Đơn vị bán mặc định phải được phép bán");
+                }
             }
 
             if (Boolean.TRUE.equals(
@@ -1004,6 +1019,11 @@ public class SanPhamService {
         if (soDonViCoSo != 1) {
             throw new IllegalArgumentException(
                     "Sản phẩm phải có đúng một đơn vị cơ sở");
+        }
+
+        if (soDonViBanMacDinh != 1) {
+            throw new IllegalArgumentException(
+                    "Sản phẩm phải có đúng một đơn vị bán mặc định");
         }
 
         return maDonViTinhDaChon;

@@ -4,6 +4,7 @@ export type SanPhamDonViFormData = {
   maDonViTinh: string;
   giaBanTheoDonVi: string;
   laDonViCoSo: boolean;
+  laDonViBanMacDinh: boolean;
   choPhepBan: boolean;
   choPhepNhap: boolean;
 };
@@ -15,9 +16,11 @@ type SanPhamDonViStepProps = {
   onCapNhatDonVi: (
     index: number,
     field: keyof SanPhamDonViFormData,
-    value: string | boolean
+    value: string | boolean,
   ) => void;
+
   onChonDonViCoSo: (index: number) => void;
+  onChonDonViBanMacDinh: (index: number) => void;
   onThemDongDonVi: () => void;
   onXoaDongDonVi: (index: number) => void;
   onQuayLai: () => void;
@@ -29,6 +32,7 @@ function SanPhamDonViStep({
   donViTinhDangDung,
   onCapNhatDonVi,
   onChonDonViCoSo,
+  onChonDonViBanMacDinh,
   onThemDongDonVi,
   onXoaDongDonVi,
   onQuayLai,
@@ -39,9 +43,10 @@ function SanPhamDonViStep({
       <div className="product-step-title">
         <div>
           <h3>Đơn vị sản phẩm</h3>
+
           <p>
-            Chọn đúng một đơn vị cơ sở. Đơn vị được bán
-            phải có giá bán.
+            Chọn đúng một đơn vị cơ sở và một đơn vị bán mặc định. Đơn vị được
+            bán phải có giá bán.
           </p>
         </div>
 
@@ -62,6 +67,7 @@ function SanPhamDonViStep({
               <th>Đơn vị tính</th>
               <th>Giá bán</th>
               <th>Cơ sở</th>
+              <th>Bán mặc định</th>
               <th>Cho bán</th>
               <th>Cho nhập</th>
               <th>Thao tác</th>
@@ -75,25 +81,17 @@ function SanPhamDonViStep({
                   <select
                     value={donVi.maDonViTinh}
                     onChange={(event) =>
-                      onCapNhatDonVi(
-                        index,
-                        "maDonViTinh",
-                        event.target.value
-                      )
+                      onCapNhatDonVi(index, "maDonViTinh", event.target.value)
                     }
                   >
-                    <option value="">
-                      -- Chọn đơn vị --
-                    </option>
+                    <option value="">-- Chọn đơn vị --</option>
 
                     {donViTinhDangDung.map((item) => {
-                      const daDuocDongKhacChon =
-                        danhSachDonVi.some(
-                          (donViKhac, viTriKhac) =>
-                            viTriKhac !== index &&
-                            donViKhac.maDonViTinh ===
-                              String(item.maDonViTinh)
-                        );
+                      const daDuocDongKhacChon = danhSachDonVi.some(
+                        (donViKhac, viTriKhac) =>
+                          viTriKhac !== index &&
+                          donViKhac.maDonViTinh === String(item.maDonViTinh),
+                      );
 
                       return (
                         <option
@@ -102,9 +100,7 @@ function SanPhamDonViStep({
                           disabled={daDuocDongKhacChon}
                         >
                           {item.tenDonViTinh}
-                          {item.kyHieu
-                            ? ` (${item.kyHieu})`
-                            : ""}
+                          {item.kyHieu ? ` (${item.kyHieu})` : ""}
                         </option>
                       );
                     })}
@@ -120,7 +116,7 @@ function SanPhamDonViStep({
                       onCapNhatDonVi(
                         index,
                         "giaBanTheoDonVi",
-                        event.target.value
+                        event.target.value,
                       )
                     }
                     placeholder="Giá bán"
@@ -132,10 +128,18 @@ function SanPhamDonViStep({
                     type="radio"
                     name="donViCoSo"
                     checked={donVi.laDonViCoSo}
-                    onChange={() =>
-                      onChonDonViCoSo(index)
-                    }
+                    onChange={() => onChonDonViCoSo(index)}
                     title="Chọn làm đơn vị cơ sở"
+                  />
+                </td>
+
+                <td className="product-center-cell">
+                  <input
+                    type="radio"
+                    name="donViBanMacDinh"
+                    checked={donVi.laDonViBanMacDinh}
+                    onChange={() => onChonDonViBanMacDinh(index)}
+                    title="Chọn làm đơn vị bán mặc định"
                   />
                 </td>
 
@@ -144,11 +148,7 @@ function SanPhamDonViStep({
                     type="checkbox"
                     checked={donVi.choPhepBan}
                     onChange={(event) =>
-                      onCapNhatDonVi(
-                        index,
-                        "choPhepBan",
-                        event.target.checked
-                      )
+                      onCapNhatDonVi(index, "choPhepBan", event.target.checked)
                     }
                   />
                 </td>
@@ -158,11 +158,7 @@ function SanPhamDonViStep({
                     type="checkbox"
                     checked={donVi.choPhepNhap}
                     onChange={(event) =>
-                      onCapNhatDonVi(
-                        index,
-                        "choPhepNhap",
-                        event.target.checked
-                      )
+                      onCapNhatDonVi(index, "choPhepNhap", event.target.checked)
                     }
                   />
                 </td>
@@ -171,9 +167,7 @@ function SanPhamDonViStep({
                   <button
                     type="button"
                     className="icon-button danger"
-                    onClick={() =>
-                      onXoaDongDonVi(index)
-                    }
+                    onClick={() => onXoaDongDonVi(index)}
                     title="Xóa đơn vị"
                     aria-label="Xóa đơn vị"
                   >
@@ -187,20 +181,12 @@ function SanPhamDonViStep({
       </div>
 
       <div className="form-actions">
-        <button
-          type="button"
-          className="secondary-button"
-          onClick={onQuayLai}
-        >
+        <button type="button" className="secondary-button" onClick={onQuayLai}>
           <i className="bi bi-arrow-left" />
           Quay lại
         </button>
 
-        <button
-          type="button"
-          className="primary-button"
-          onClick={onTiepTuc}
-        >
+        <button type="button" className="primary-button" onClick={onTiepTuc}>
           Tiếp tục
           <i className="bi bi-arrow-right" />
         </button>

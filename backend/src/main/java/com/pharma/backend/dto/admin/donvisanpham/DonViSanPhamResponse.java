@@ -21,7 +21,12 @@ public class DonViSanPhamResponse {
     private BigDecimal giaBanTheoDonVi;
 
     private Boolean laDonViCoSo;
+
+    private Boolean laDonViBanMacDinh;
+
     private Boolean choPhepBan;
+
     private Boolean choPhepNhap;
+
     private Boolean trangThai;
 }
