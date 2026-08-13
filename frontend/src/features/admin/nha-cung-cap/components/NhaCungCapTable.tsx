@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type { NhaCungCap } from "../types/NhaCungCap";
 
 type NhaCungCapTableProps = {
@@ -15,6 +16,10 @@ function NhaCungCapTable({
   onSua,
   onDoiTrangThai,
 }: NhaCungCapTableProps) {
+  if (loading) {
+    return <AdminLoading noiDung="Đang tải danh sách nhà cung cấp..." />;
+  }
+
   return (
     <div className="ql-table-wrapper">
       <table className="ql-table">
@@ -31,13 +36,7 @@ function NhaCungCapTable({
         </thead>
 
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={7} className="ql-table-message">
-                Đang tải danh sách nhà cung cấp...
-              </td>
-            </tr>
-          ) : danhSachNhaCungCap.length === 0 ? (
+          {danhSachNhaCungCap.length === 0 ? (
             <tr>
               <td colSpan={7} className="ql-table-message">
                 Chưa có nhà cung cấp
@@ -113,6 +112,7 @@ function NhaCungCapTable({
                               : "bi bi-eye"
                           }
                         />
+
                         {dangXuLy
                           ? "Đang xử lý..."
                           : nhaCungCap.trangThaiHopTac

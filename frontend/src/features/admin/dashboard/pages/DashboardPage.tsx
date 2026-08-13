@@ -11,6 +11,7 @@ import {
   YAxis,
 } from "recharts";
 
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy";
 
 import useDashboard from "../hooks/useDashboard";
@@ -296,9 +297,7 @@ function DashboardPage() {
 
           <div className="dashboard-chart-content">
             {dangTaiBieuDo ? (
-              <div className="dashboard-chart-message">
-                Đang tải dữ liệu biểu đồ...
-              </div>
+              <AdminLoading noiDung="Đang tải dữ liệu biểu đồ..." />
             ) : duLieuBieuDoDoanhThu.length === 0 ? (
               <div className="dashboard-chart-message">
                 Chưa có dữ liệu doanh thu.
@@ -413,7 +412,7 @@ function DashboardPage() {
           <div className="dashboard-donut-layout">
             <div className="dashboard-donut-wrapper">
               {dangTaiBieuDo ? (
-                <div className="dashboard-chart-message">Đang tải...</div>
+                <AdminLoading noiDung="Đang tải trạng thái đơn hàng..." />
               ) : tongSoDonTheoTrangThai === 0 ? (
                 <div className="dashboard-chart-message">Chưa có đơn hàng.</div>
               ) : (
@@ -642,7 +641,10 @@ function DashboardPage() {
                 {dangTaiCanhBao ? (
                   <tr>
                     <td colSpan={5} className="dashboard-table-message">
-                      Đang tải dữ liệu...
+                      <AdminLoading
+                        noiDung="Đang tải dữ liệu tồn kho..."
+                        gon
+                      />
                     </td>
                   </tr>
                 ) : danhSachTonKhoThap.length === 0 ? (
@@ -714,7 +716,10 @@ function DashboardPage() {
                 {dangTaiCanhBao ? (
                   <tr>
                     <td colSpan={6} className="dashboard-table-message">
-                      Đang tải dữ liệu...
+                      <AdminLoading
+                        noiDung="Đang tải dữ liệu lô sắp hết hạn..."
+                        gon
+                      />
                     </td>
                   </tr>
                 ) : danhSachLoSapHetHan.length === 0 ? (

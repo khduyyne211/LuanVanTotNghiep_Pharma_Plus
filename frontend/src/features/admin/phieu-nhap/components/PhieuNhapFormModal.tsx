@@ -4,6 +4,8 @@ import type { ChangeEvent, FormEvent } from "react";
 
 import { isAxiosError } from "axios";
 
+import AdminLoading from "../../shared/components/loading/AdminLoading";
+
 import { layTuyChonNhapKho, taoPhieuNhap } from "../api/phieuNhapApi";
 
 import { layDanhSachNhaCungCap } from "../../nha-cung-cap/api/nhaCungCapApi";
@@ -407,9 +409,7 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
         </div>
 
         {dangTaiDuLieu ? (
-          <div className="ql-table-message">
-            Đang tải dữ liệu tạo phiếu nhập...
-          </div>
+          <AdminLoading noiDung="Đang tải dữ liệu tạo phiếu nhập..." />
         ) : loiTaiDuLieu ? (
           <div className="ql-error-message">
             <i className="bi bi-exclamation-circle-fill" />

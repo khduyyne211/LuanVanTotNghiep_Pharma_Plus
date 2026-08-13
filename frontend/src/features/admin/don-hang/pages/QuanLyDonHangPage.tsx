@@ -12,6 +12,7 @@ import type {
   TrangThaiThanhToan,
 } from "../types/DonHang";
 
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import KhungDanhSachQuanLy from "../../shared/components/quan-ly/KhungDanhSachQuanLy";
 import PhanTrangQuanLy from "../../shared/components/quan-ly/PhanTrangQuanLy";
 import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy";
@@ -428,7 +429,7 @@ export default function QuanLyDonHangPage() {
               {dangTai ? (
                 <tr>
                   <td colSpan={8} className="dh-table-message">
-                    Đang tải dữ liệu...
+                    <AdminLoading noiDung="Đang tải danh sách đơn hàng..." />
                   </td>
                 </tr>
               ) : danhSachDonHang.length === 0 ? (

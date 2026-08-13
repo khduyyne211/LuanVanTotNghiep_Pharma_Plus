@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type { PhieuNhap, TrangThaiPhieuNhap } from "../types/PhieuNhap";
 
 type PhieuNhapTableProps = {
@@ -44,6 +45,10 @@ function PhieuNhapTable({
   loading,
   onXemChiTiet,
 }: PhieuNhapTableProps) {
+  if (loading) {
+    return <AdminLoading noiDung="Đang tải danh sách phiếu nhập..." />;
+  }
+
   return (
     <div className="ql-table-wrapper">
       <table className="ql-table">
@@ -60,13 +65,7 @@ function PhieuNhapTable({
         </thead>
 
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={7} className="ql-table-message">
-                Đang tải danh sách phiếu nhập...
-              </td>
-            </tr>
-          ) : danhSachPhieuNhap.length === 0 ? (
+          {danhSachPhieuNhap.length === 0 ? (
             <tr>
               <td colSpan={6} className="ql-table-message">
                 Chưa có phiếu nhập phù hợp

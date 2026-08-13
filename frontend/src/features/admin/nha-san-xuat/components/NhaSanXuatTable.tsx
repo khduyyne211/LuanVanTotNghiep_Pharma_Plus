@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type { NhaSanXuat } from "../types/NhaSanXuat";
 
 type NhaSanXuatTableProps = {
@@ -15,6 +16,10 @@ function NhaSanXuatTable({
   onSua,
   onDoiTrangThai,
 }: NhaSanXuatTableProps) {
+  if (loading) {
+    return <AdminLoading noiDung="Đang tải danh sách nhà sản xuất..." />;
+  }
+
   return (
     <div className="ql-table-wrapper">
       <table className="ql-table">
@@ -30,13 +35,7 @@ function NhaSanXuatTable({
         </thead>
 
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={6} className="ql-table-message">
-                Đang tải danh sách nhà sản xuất...
-              </td>
-            </tr>
-          ) : danhSachNhaSanXuat.length === 0 ? (
+          {danhSachNhaSanXuat.length === 0 ? (
             <tr>
               <td colSpan={6} className="ql-table-message">
                 Chưa có nhà sản xuất
@@ -44,8 +43,7 @@ function NhaSanXuatTable({
             </tr>
           ) : (
             danhSachNhaSanXuat.map((nhaSanXuat) => {
-              const dangXuLy =
-                maNhaSanXuatDangXuLy === nhaSanXuat.maNhaSanXuat;
+              const dangXuLy = maNhaSanXuatDangXuLy === nhaSanXuat.maNhaSanXuat;
 
               return (
                 <tr key={nhaSanXuat.maNhaSanXuat}>
@@ -102,6 +100,7 @@ function NhaSanXuatTable({
                               : "bi bi-eye"
                           }
                         />
+
                         {dangXuLy
                           ? "Đang xử lý..."
                           : nhaSanXuat.trangThai

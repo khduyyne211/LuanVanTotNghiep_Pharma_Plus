@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type { PhieuNhap, TrangThaiPhieuNhap } from "../types/PhieuNhap";
 
 type PhieuNhapChiTietModalProps = {
@@ -103,9 +104,7 @@ function PhieuNhapChiTietModal({
         </div>
 
         {loading ? (
-          <div className="ql-table-message">
-            Đang tải chi tiết phiếu nhập...
-          </div>
+          <AdminLoading noiDung="Đang tải chi tiết phiếu nhập..." />
         ) : loi ? (
           <div className="ql-error-message">
             <i className="bi bi-exclamation-circle-fill" />

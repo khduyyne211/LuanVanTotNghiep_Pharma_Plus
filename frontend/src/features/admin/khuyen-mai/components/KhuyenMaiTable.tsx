@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type { KhuyenMai } from "../types/KhuyenMai";
 
 type KhuyenMaiTableProps = {
@@ -43,9 +44,7 @@ const layGiaTriKhuyenMai = (khuyenMai: KhuyenMai) => {
     : "Chưa cập nhật";
 };
 
-const layThongTinTrangThai = (
-  trangThai: KhuyenMai["trangThaiKhuyenMai"],
-) => {
+const layThongTinTrangThai = (trangThai: KhuyenMai["trangThaiKhuyenMai"]) => {
   if (trangThai === "DANG_DIEN_RA") {
     return {
       tenTrangThai: "Đang diễn ra",
@@ -71,6 +70,10 @@ function KhuyenMaiTable({
   loading,
   onSua,
 }: KhuyenMaiTableProps) {
+  if (loading) {
+    return <AdminLoading noiDung="Đang tải danh sách khuyến mãi..." />;
+  }
+
   return (
     <div className="ql-table-wrapper">
       <table className="ql-table">
@@ -88,13 +91,7 @@ function KhuyenMaiTable({
         </thead>
 
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={8} className="ql-table-message">
-                Đang tải danh sách khuyến mãi...
-              </td>
-            </tr>
-          ) : danhSachKhuyenMai.length === 0 ? (
+          {danhSachKhuyenMai.length === 0 ? (
             <tr>
               <td colSpan={8} className="ql-table-message">
                 Chưa có chương trình khuyến mãi
@@ -120,13 +117,9 @@ function KhuyenMaiTable({
 
                   <td>{layGiaTriKhuyenMai(khuyenMai)}</td>
 
-                  <td>
-                    {dinhDangThoiGian(khuyenMai.thoiGianBatDau)}
-                  </td>
+                  <td>{dinhDangThoiGian(khuyenMai.thoiGianBatDau)}</td>
 
-                  <td>
-                    {dinhDangThoiGian(khuyenMai.thoiGianKetThuc)}
-                  </td>
+                  <td>{dinhDangThoiGian(khuyenMai.thoiGianKetThuc)}</td>
 
                   <td>
                     <span className={thongTinTrangThai.className}>

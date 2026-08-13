@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type {
   DonViSanPham,
   QuyDoiDonVi,
@@ -42,7 +43,7 @@ function SanPhamChiTietModal({
     return (
       <div className="modal-overlay">
         <div className="modal-card product-detail-modal">
-          <p>Đang tải chi tiết sản phẩm...</p>
+          <AdminLoading noiDung="Đang tải chi tiết sản phẩm..." />
         </div>
       </div>
     );

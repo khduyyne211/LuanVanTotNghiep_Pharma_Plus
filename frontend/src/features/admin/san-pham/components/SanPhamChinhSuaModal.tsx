@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
+import AdminLoading from "../../shared/components/loading/AdminLoading";
+
 import type { HoatChat } from "../../hoat-chat/types/HoatChat";
 import { layDanhSachHoatChat } from "../../hoat-chat/api/hoatChatApi";
 
@@ -811,9 +813,7 @@ function SanPhamChinhSuaModal({
         </div>
 
         {dangTai ? (
-          <div className="product-edit-loading">
-            Đang tải dữ liệu sản phẩm...
-          </div>
+          <AdminLoading noiDung="Đang tải dữ liệu sản phẩm..." />
         ) : (
           <>
             {tabHienTai === "thong-tin" && (

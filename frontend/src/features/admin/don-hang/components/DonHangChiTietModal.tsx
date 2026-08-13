@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type {
   DonHangChiTiet,
   TrangThaiDonHang,
@@ -210,9 +211,7 @@ export default function DonHangChiTietModal({
         </div>
 
         {dangTai || !donHang ? (
-          <div className="dh-loading-block">
-            Đang tải chi tiết đơn hàng...
-          </div>
+          <AdminLoading noiDung="Đang tải chi tiết đơn hàng..." />
         ) : (
           <div className="dh-modal-body">
             <div className="dh-detail-grid">

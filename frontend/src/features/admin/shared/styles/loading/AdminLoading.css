@@ -1,0 +1,79 @@
+.admin-loading {
+  width: 100%;
+  min-height: 180px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+}
+
+.admin-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  color: #667085;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-loading-spinner {
+  width: 36px;
+  height: 36px;
+
+  border: 4px solid #e4e7ec;
+  border-top-color: #078c67;
+  border-radius: 50%;
+
+  animation: admin-loading-spin 0.75s linear infinite;
+}
+
+.admin-loading-compact {
+  min-height: 82px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.admin-loading-compact .admin-loading-content {
+  gap: 8px;
+  font-size: 13px;
+}
+
+.admin-loading-compact .admin-loading-spinner {
+  width: 26px;
+  height: 26px;
+  border-width: 3px;
+}
+
+.admin-loading-overlay {
+  position: fixed;
+  inset: 0;
+
+  min-height: 100vh;
+
+  background-color: rgba(255, 255, 255, 0.78);
+
+  z-index: 1400;
+}
+
+@keyframes admin-loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-loading-spinner {
+    animation-duration: 1.5s;
+  }
+}

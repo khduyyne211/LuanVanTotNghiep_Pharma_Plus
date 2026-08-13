@@ -235,6 +235,13 @@
 }
 
 
+.dashboard-chart-content > .admin-loading,
+.dashboard-donut-wrapper > .admin-loading {
+  height: 100%;
+  min-height: 0;
+}
+
+
 /* =========================================
    ORDER CHART
    ========================================= */

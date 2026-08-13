@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type { HoatChat } from "../types/HoatChat";
 
 type HoatChatTableProps = {
@@ -15,6 +16,10 @@ function HoatChatTable({
   onSua,
   onDoiTrangThai,
 }: HoatChatTableProps) {
+  if (loading) {
+    return <AdminLoading noiDung="Đang tải danh sách hoạt chất..." />;
+  }
+
   return (
     <div className="ql-table-wrapper">
       <table className="ql-table">
@@ -30,13 +35,7 @@ function HoatChatTable({
         </thead>
 
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={6} className="ql-table-message">
-                Đang tải danh sách hoạt chất...
-              </td>
-            </tr>
-          ) : danhSachHoatChat.length === 0 ? (
+          {danhSachHoatChat.length === 0 ? (
             <tr>
               <td colSpan={6} className="ql-table-message">
                 Chưa có hoạt chất
@@ -44,8 +43,7 @@ function HoatChatTable({
             </tr>
           ) : (
             danhSachHoatChat.map((hoatChat) => {
-              const dangXuLy =
-                maHoatChatDangXuLy === hoatChat.maHoatChat;
+              const dangXuLy = maHoatChatDangXuLy === hoatChat.maHoatChat;
 
               return (
                 <tr key={hoatChat.maHoatChat}>
@@ -97,11 +95,10 @@ function HoatChatTable({
                       >
                         <i
                           className={
-                            hoatChat.trangThai
-                              ? "bi bi-eye-slash"
-                              : "bi bi-eye"
+                            hoatChat.trangThai ? "bi bi-eye-slash" : "bi bi-eye"
                           }
                         />
+
                         {dangXuLy
                           ? "Đang xử lý..."
                           : hoatChat.trangThai

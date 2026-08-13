@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type { SanPham } from "../types/SanPham";
 
 type SanPhamTableProps = {
@@ -21,6 +22,10 @@ function SanPhamTable({
     return new Date(ngay).toLocaleDateString("vi-VN");
   };
 
+  if (loading) {
+    return <AdminLoading noiDung="Đang tải danh sách sản phẩm..." />;
+  }
+
   return (
     <div className="ql-table-wrapper">
       <table className="ql-table">
@@ -38,13 +43,7 @@ function SanPhamTable({
         </thead>
 
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={8} className="ql-table-message">
-                Đang tải danh sách sản phẩm...
-              </td>
-            </tr>
-          ) : danhSachSanPham.length === 0 ? (
+          {danhSachSanPham.length === 0 ? (
             <tr>
               <td colSpan={8} className="ql-table-message">
                 Không tìm thấy sản phẩm phù hợp
@@ -61,17 +60,13 @@ function SanPhamTable({
                   <strong>{sanPham.tenSanPham}</strong>
 
                   {sanPham.moTaNgan && (
-                    <div className="ql-muted-text">
-                      {sanPham.moTaNgan}
-                    </div>
+                    <div className="ql-muted-text">{sanPham.moTaNgan}</div>
                   )}
                 </td>
 
                 <td>{sanPham.tenDanhMuc}</td>
 
-                <td>
-                  {sanPham.tenNhaSanXuat || "Chưa cập nhật"}
-                </td>
+                <td>{sanPham.tenNhaSanXuat || "Chưa cập nhật"}</td>
 
                 <td>{sanPham.laThuocKeDon ? "Có" : "Không"}</td>
 
@@ -83,9 +78,7 @@ function SanPhamTable({
                         : "ql-status ql-status-inactive"
                     }
                   >
-                    {sanPham.trangThaiSanPham
-                      ? "Đang hiển thị"
-                      : "Đã ẩn"}
+                    {sanPham.trangThaiSanPham ? "Đang hiển thị" : "Đã ẩn"}
                   </span>
                 </td>
 
@@ -105,9 +98,7 @@ function SanPhamTable({
                     <button
                       type="button"
                       className="ql-action-button"
-                      onClick={() =>
-                        onXemChiTiet(sanPham.maSanPham)
-                      }
+                      onClick={() => onXemChiTiet(sanPham.maSanPham)}
                       aria-label="Xem chi tiết sản phẩm"
                       title="Xem chi tiết"
                     >

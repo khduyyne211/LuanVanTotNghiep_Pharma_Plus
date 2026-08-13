@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type { DanhMucSanPham } from "../types/DanhMucSanPham";
 
 type DanhMucSanPhamTableProps = {
@@ -15,6 +16,10 @@ function DanhMucSanPhamTable({
   onSua,
   onDoiTrangThai,
 }: DanhMucSanPhamTableProps) {
+  if (loading) {
+    return <AdminLoading noiDung="Đang tải danh sách danh mục sản phẩm..." />;
+  }
+
   return (
     <div className="ql-table-wrapper">
       <table className="ql-table">
@@ -31,13 +36,7 @@ function DanhMucSanPhamTable({
         </thead>
 
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={7} className="ql-table-message">
-                Đang tải danh sách danh mục sản phẩm...
-              </td>
-            </tr>
-          ) : danhSachDanhMuc.length === 0 ? (
+          {danhSachDanhMuc.length === 0 ? (
             <tr>
               <td colSpan={7} className="ql-table-message">
                 Chưa có danh mục sản phẩm
@@ -45,8 +44,7 @@ function DanhMucSanPhamTable({
             </tr>
           ) : (
             danhSachDanhMuc.map((danhMuc) => {
-              const dangXuLy =
-                maDanhMucDangXuLy === danhMuc.maDanhMuc;
+              const dangXuLy = maDanhMucDangXuLy === danhMuc.maDanhMuc;
 
               return (
                 <tr key={danhMuc.maDanhMuc}>
@@ -58,10 +56,7 @@ function DanhMucSanPhamTable({
                     <strong>{danhMuc.tenDanhMuc}</strong>
                   </td>
 
-                  <td>
-                    {danhMuc.tenDanhMucCha
-                      ?? "Danh mục cấp cao nhất"}
-                  </td>
+                  <td>{danhMuc.tenDanhMucCha ?? "Danh mục cấp cao nhất"}</td>
 
                   <td>
                     <span className="ql-muted-text">
@@ -108,6 +103,7 @@ function DanhMucSanPhamTable({
                               : "bi bi-eye"
                           }
                         />
+
                         {dangXuLy
                           ? "Đang xử lý..."
                           : danhMuc.trangThaiHienThi

@@ -1,3 +1,4 @@
+import AdminLoading from "../../shared/components/loading/AdminLoading";
 import type { DonViTinh } from "../types/DonViTinh";
 
 type DonViTinhTableProps = {
@@ -15,6 +16,10 @@ function DonViTinhTable({
   onSua,
   onDoiTrangThai,
 }: DonViTinhTableProps) {
+  if (loading) {
+    return <AdminLoading noiDung="Đang tải danh sách đơn vị tính..." />;
+  }
+
   return (
     <div className="ql-table-wrapper">
       <table className="ql-table">
@@ -30,13 +35,7 @@ function DonViTinhTable({
         </thead>
 
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={6} className="ql-table-message">
-                Đang tải danh sách đơn vị tính...
-              </td>
-            </tr>
-          ) : danhSachDonViTinh.length === 0 ? (
+          {danhSachDonViTinh.length === 0 ? (
             <tr>
               <td colSpan={6} className="ql-table-message">
                 Chưa có đơn vị tính
@@ -44,8 +43,7 @@ function DonViTinhTable({
             </tr>
           ) : (
             danhSachDonViTinh.map((donViTinh) => {
-              const dangXuLy =
-                maDonViTinhDangXuLy === donViTinh.maDonViTinh;
+              const dangXuLy = maDonViTinhDangXuLy === donViTinh.maDonViTinh;
 
               return (
                 <tr key={donViTinh.maDonViTinh}>
@@ -102,6 +100,7 @@ function DonViTinhTable({
                               : "bi bi-eye"
                           }
                         />
+
                         {dangXuLy
                           ? "Đang xử lý..."
                           : donViTinh.trangThai
