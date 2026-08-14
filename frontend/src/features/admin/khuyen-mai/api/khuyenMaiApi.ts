@@ -1,8 +1,11 @@
 import axiosClient from "../../../../shared/api/axiosClient";
 
 import type {
+  CapNhatSanPhamKhuyenMaiRequest,
   KhuyenMai,
   KhuyenMaiRequest,
+  KhuyenMaiSanPham,
+  PhanTrangResponse,
 } from "../types/KhuyenMai";
 
 export const layDanhSachKhuyenMai = () => {
@@ -26,6 +29,44 @@ export const capNhatKhuyenMai = (
 ) => {
   return axiosClient.put(
     `/khuyen-mai/${maKhuyenMai}`,
+    request
+  );
+};
+
+export const layDanhSachSanPhamDangGan = (
+  maKhuyenMai: number
+) => {
+  return axiosClient.get<KhuyenMaiSanPham[]>(
+    `/khuyen-mai/${maKhuyenMai}/san-pham`
+  );
+};
+
+export const layDanhSachSanPhamCoTheGan = (
+  maKhuyenMai: number,
+  keyword = "",
+  page = 0,
+  size = 10
+) => {
+  return axiosClient.get<
+    PhanTrangResponse<KhuyenMaiSanPham>
+  >(
+    `/khuyen-mai/${maKhuyenMai}/san-pham-co-the-gan`,
+    {
+      params: {
+        keyword,
+        page,
+        size,
+      },
+    }
+  );
+};
+
+export const capNhatDanhSachSanPhamKhuyenMai = (
+  maKhuyenMai: number,
+  request: CapNhatSanPhamKhuyenMaiRequest
+) => {
+  return axiosClient.put<KhuyenMaiSanPham[]>(
+    `/khuyen-mai/${maKhuyenMai}/san-pham`,
     request
   );
 };
