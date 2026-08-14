@@ -191,7 +191,7 @@ function QuyDoiDonViFormNoiDung({
           </button>
         </div>
 
-        <form onSubmit={xuLySubmit}>
+        <form noValidate onSubmit={xuLySubmit}>
           <div className="form-group">
             <label>Đơn vị nguồn</label>
 

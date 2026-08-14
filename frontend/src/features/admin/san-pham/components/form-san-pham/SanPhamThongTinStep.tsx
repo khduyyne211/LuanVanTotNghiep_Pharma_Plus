@@ -50,7 +50,7 @@ function SanPhamThongTinStep({
   onClose,
 }: SanPhamThongTinStepProps) {
   return (
-    <form onSubmit={onSubmit}>
+    <form noValidate onSubmit={onSubmit}>
       <div className="product-form-grid">
         <div className="form-group">
           <label>Danh mục sản phẩm</label>

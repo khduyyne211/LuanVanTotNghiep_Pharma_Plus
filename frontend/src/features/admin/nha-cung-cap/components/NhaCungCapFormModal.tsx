@@ -213,7 +213,7 @@ function NhaCungCapFormNoiDung({
           </button>
         </div>
 
-        <form onSubmit={xuLySubmit}>
+        <form noValidate onSubmit={xuLySubmit}>
           <div className="form-group">
             <label htmlFor="tenNhaCungCap">
               Tên nhà cung cấp

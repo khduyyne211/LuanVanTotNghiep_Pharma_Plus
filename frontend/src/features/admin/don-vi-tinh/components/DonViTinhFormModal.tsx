@@ -197,7 +197,7 @@ function DonViTinhFormContent({
           </button>
         </div>
 
-        <form onSubmit={xuLySubmit}>
+        <form noValidate onSubmit={xuLySubmit}>
           <div className="modal-body">
             <div className="form-group">
               <label htmlFor="tenDonViTinh">

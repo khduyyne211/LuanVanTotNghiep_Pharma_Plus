@@ -444,7 +444,7 @@ function PhieuNhapFormNoiDung({
             <span>{loiTaiDuLieu}</span>
           </div>
         ) : (
-          <form onSubmit={xuLySubmit}>
+          <form noValidate onSubmit={xuLySubmit}>
             <section className="detail-section">
               <h3>Thông tin phiếu nhập</h3>
 

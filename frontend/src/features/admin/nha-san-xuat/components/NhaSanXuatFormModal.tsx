@@ -211,7 +211,7 @@ function NhaSanXuatFormNoiDung({
           </button>
         </div>
 
-        <form onSubmit={xuLySubmit}>
+        <form noValidate onSubmit={xuLySubmit}>
           <div className="form-group">
             <label htmlFor="tenNhaSanXuat">
               Tên nhà sản xuất

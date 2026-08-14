@@ -32,7 +32,7 @@ function SanPhamDuLieuChuyenMonStep({
   };
 
   return (
-    <form onSubmit={xuLySubmit}>
+    <form noValidate onSubmit={xuLySubmit}>
       <div className="product-step-title">
         <div>
           <h3>Dữ liệu chuyên môn thuốc</h3>
