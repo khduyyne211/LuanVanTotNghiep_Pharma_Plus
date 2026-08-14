@@ -78,12 +78,15 @@ const danhSachMenu: MenuItem[] = [
     path: "/admin/kho",
     icon: "bi-boxes",
   },
+  {
+    label: "Quản lý tài khoản & vai trò",
+    path: "/admin/tai-khoan-vai-tro",
+    icon: "bi-person-gear",
+  },
 ];
 
 function layChieuRongSidebarDaLuu(): number {
-  const giaTriDaLuu = localStorage.getItem(
-    SIDEBAR_WIDTH_STORAGE_KEY,
-  );
+  const giaTriDaLuu = localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY);
 
   if (!giaTriDaLuu) {
     return SIDEBAR_DEFAULT_WIDTH;
@@ -95,71 +98,34 @@ function layChieuRongSidebarDaLuu(): number {
     return SIDEBAR_DEFAULT_WIDTH;
   }
 
-  return Math.min(
-    SIDEBAR_MAX_WIDTH,
-    Math.max(
-      SIDEBAR_MIN_WIDTH,
-      giaTriSo,
-    ),
-  );
+  return Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, giaTriSo));
 }
 
 function layTrangThaiThuGonDaLuu(): boolean {
-  return (
-    localStorage.getItem(
-      SIDEBAR_COLLAPSED_STORAGE_KEY,
-    ) === "true"
-  );
+  return localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === "true";
 }
 
 function AdminSidebar() {
-  const { dangXuat } =
-    useXacThucContext();
+  const { dangXuat } = useXacThucContext();
 
-  const [
-    chieuRong,
-    setChieuRong,
-  ] = useState<number>(
-    layChieuRongSidebarDaLuu,
-  );
+  const [chieuRong, setChieuRong] = useState<number>(layChieuRongSidebarDaLuu);
 
-  const [
-    daThuGon,
-    setDaThuGon,
-  ] = useState<boolean>(
-    layTrangThaiThuGonDaLuu,
-  );
+  const [daThuGon, setDaThuGon] = useState<boolean>(layTrangThaiThuGonDaLuu);
 
-  const [
-    dangResize,
-    setDangResize,
-  ] = useState(false);
+  const [dangResize, setDangResize] = useState(false);
 
-  const [
-    menuMobileDangMo,
-    setMenuMobileDangMo,
-  ] = useState(false);
+  const [menuMobileDangMo, setMenuMobileDangMo] = useState(false);
 
-  const viTriBatDauResize =
-    useRef(0);
+  const viTriBatDauResize = useRef(0);
 
-  const chieuRongBatDauResize =
-    useRef(
-      SIDEBAR_DEFAULT_WIDTH,
-    );
+  const chieuRongBatDauResize = useRef(SIDEBAR_DEFAULT_WIDTH);
 
   useEffect(() => {
-    localStorage.setItem(
-      SIDEBAR_WIDTH_STORAGE_KEY,
-      String(chieuRong),
-    );
+    localStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY, String(chieuRong));
   }, [chieuRong]);
 
   useEffect(() => {
-    localStorage.setItem(
-      SIDEBAR_COLLAPSED_STORAGE_KEY,
-      String(daThuGon),
-    );
+    localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(daThuGon));
   }, [daThuGon]);
 
   useEffect(() => {
@@ -167,117 +133,69 @@ function AdminSidebar() {
       return;
     }
 
-    const xuLyDiChuyenChuot = (
-      event: PointerEvent,
-    ) => {
-      const khoangCach =
-        event.clientX
-        - viTriBatDauResize.current;
+    const xuLyDiChuyenChuot = (event: PointerEvent) => {
+      const khoangCach = event.clientX - viTriBatDauResize.current;
 
-      const chieuRongMoi =
-        chieuRongBatDauResize.current
-        + khoangCach;
+      const chieuRongMoi = chieuRongBatDauResize.current + khoangCach;
 
-      const chieuRongHopLe =
-        Math.min(
-          SIDEBAR_MAX_WIDTH,
-          Math.max(
-            SIDEBAR_MIN_WIDTH,
-            chieuRongMoi,
-          ),
-        );
-
-      setChieuRong(
-        chieuRongHopLe,
+      const chieuRongHopLe = Math.min(
+        SIDEBAR_MAX_WIDTH,
+        Math.max(SIDEBAR_MIN_WIDTH, chieuRongMoi),
       );
+
+      setChieuRong(chieuRongHopLe);
     };
 
     const ketThucResize = () => {
       setDangResize(false);
     };
 
-    window.addEventListener(
-      "pointermove",
-      xuLyDiChuyenChuot,
-    );
+    window.addEventListener("pointermove", xuLyDiChuyenChuot);
 
-    window.addEventListener(
-      "pointerup",
-      ketThucResize,
-    );
+    window.addEventListener("pointerup", ketThucResize);
 
-    document.body.classList.add(
-      "admin-sidebar-is-resizing",
-    );
+    document.body.classList.add("admin-sidebar-is-resizing");
 
     return () => {
-      window.removeEventListener(
-        "pointermove",
-        xuLyDiChuyenChuot,
-      );
+      window.removeEventListener("pointermove", xuLyDiChuyenChuot);
 
-      window.removeEventListener(
-        "pointerup",
-        ketThucResize,
-      );
+      window.removeEventListener("pointerup", ketThucResize);
 
-      document.body.classList.remove(
-        "admin-sidebar-is-resizing",
-      );
+      document.body.classList.remove("admin-sidebar-is-resizing");
     };
   }, [dangResize]);
 
   useEffect(() => {
-    const xuLyPhimTat = (
-      event: KeyboardEvent,
-    ) => {
-      if (
-        event.key === "Escape"
-      ) {
-        setMenuMobileDangMo(
-          false,
-        );
+    const xuLyPhimTat = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuMobileDangMo(false);
       }
     };
 
-    window.addEventListener(
-      "keydown",
-      xuLyPhimTat,
-    );
+    window.addEventListener("keydown", xuLyPhimTat);
 
     return () => {
-      window.removeEventListener(
-        "keydown",
-        xuLyPhimTat,
-      );
+      window.removeEventListener("keydown", xuLyPhimTat);
     };
   }, []);
 
-  const batDauResize = (
-    event: ReactPointerEvent<HTMLDivElement>,
-  ) => {
+  const batDauResize = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (daThuGon) {
       return;
     }
 
     event.preventDefault();
 
-    viTriBatDauResize.current =
-      event.clientX;
+    viTriBatDauResize.current = event.clientX;
 
-    chieuRongBatDauResize.current =
-      chieuRong;
+    chieuRongBatDauResize.current = chieuRong;
 
     setDangResize(true);
   };
 
-  const thayDoiTrangThaiThuGon =
-    () => {
-      setDaThuGon(
-        (trangThaiHienTai) =>
-          !trangThaiHienTai,
-      );
-    };
+  const thayDoiTrangThaiThuGon = () => {
+    setDaThuGon((trangThaiHienTai) => !trangThaiHienTai);
+  };
 
   const dongMenuMobile = () => {
     setMenuMobileDangMo(false);
@@ -288,21 +206,14 @@ function AdminSidebar() {
     dongMenuMobile();
   };
 
-  const chieuRongDangHienThi =
-    daThuGon
-      ? SIDEBAR_COLLAPSED_WIDTH
-      : chieuRong;
+  const chieuRongDangHienThi = daThuGon ? SIDEBAR_COLLAPSED_WIDTH : chieuRong;
 
   return (
     <>
       <button
         type="button"
         className="admin-mobile-menu-button"
-        onClick={() =>
-          setMenuMobileDangMo(
-            true,
-          )
-        }
+        onClick={() => setMenuMobileDangMo(true)}
         aria-label="Mở menu quản trị"
         title="Mở menu"
       >
@@ -313,9 +224,7 @@ function AdminSidebar() {
         <button
           type="button"
           className="admin-sidebar-overlay"
-          onClick={
-            dongMenuMobile
-          }
+          onClick={dongMenuMobile}
           aria-label="Đóng menu quản trị"
         />
       )}
@@ -323,12 +232,8 @@ function AdminSidebar() {
       <aside
         className={[
           "admin-sidebar",
-          daThuGon
-            ? "admin-sidebar-collapsed"
-            : "",
-          menuMobileDangMo
-            ? "admin-sidebar-mobile-open"
-            : "",
+          daThuGon ? "admin-sidebar-collapsed" : "",
+          menuMobileDangMo ? "admin-sidebar-mobile-open" : "",
         ]
           .filter(Boolean)
           .join(" ")}
@@ -344,13 +249,9 @@ function AdminSidebar() {
 
             {!daThuGon && (
               <div className="admin-sidebar-brand-text">
-                <strong>
-                  Pharma
-                </strong>
+                <strong>Pharma</strong>
 
-                <span>
-                  Quản trị viên
-                </span>
+                <span>Quản trị viên</span>
               </div>
             )}
           </div>
@@ -358,25 +259,15 @@ function AdminSidebar() {
           <button
             type="button"
             className="admin-sidebar-collapse-button"
-            onClick={
-              thayDoiTrangThaiThuGon
-            }
+            onClick={thayDoiTrangThaiThuGon}
             aria-label={
-              daThuGon
-                ? "Mở rộng thanh điều hướng"
-                : "Thu gọn thanh điều hướng"
+              daThuGon ? "Mở rộng thanh điều hướng" : "Thu gọn thanh điều hướng"
             }
-            title={
-              daThuGon
-                ? "Mở rộng"
-                : "Thu gọn"
-            }
+            title={daThuGon ? "Mở rộng" : "Thu gọn"}
           >
             <i
               className={
-                daThuGon
-                  ? "bi bi-chevron-right"
-                  : "bi bi-chevron-left"
+                daThuGon ? "bi bi-chevron-right" : "bi bi-chevron-left"
               }
             />
           </button>
@@ -384,9 +275,7 @@ function AdminSidebar() {
           <button
             type="button"
             className="admin-sidebar-mobile-close"
-            onClick={
-              dongMenuMobile
-            }
+            onClick={dongMenuMobile}
             aria-label="Đóng menu quản trị"
             title="Đóng menu"
           >
@@ -395,50 +284,30 @@ function AdminSidebar() {
         </div>
 
         <nav className="admin-sidebar-menu">
-          {danhSachMenu.map(
-            (menu) => (
-              <NavLink
-                key={menu.path}
-                to={menu.path}
-                onClick={
-                  dongMenuMobile
-                }
-                title={
-                  daThuGon
-                    ? menu.label
-                    : undefined
-                }
-                className={({
-                  isActive,
-                }) =>
-                  [
-                    "admin-sidebar-menu-item",
-                    isActive
-                      ? "admin-sidebar-menu-item-active"
-                      : "",
-                  ]
-                    .filter(
-                      Boolean,
-                    )
-                    .join(" ")
-                }
-              >
-                <span className="admin-sidebar-menu-icon">
-                  <i
-                    className={`bi ${menu.icon}`}
-                  />
-                </span>
+          {danhSachMenu.map((menu) => (
+            <NavLink
+              key={menu.path}
+              to={menu.path}
+              onClick={dongMenuMobile}
+              title={daThuGon ? menu.label : undefined}
+              className={({ isActive }) =>
+                [
+                  "admin-sidebar-menu-item",
+                  isActive ? "admin-sidebar-menu-item-active" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")
+              }
+            >
+              <span className="admin-sidebar-menu-icon">
+                <i className={`bi ${menu.icon}`} />
+              </span>
 
-                {!daThuGon && (
-                  <span className="admin-sidebar-menu-label">
-                    {
-                      menu.label
-                    }
-                  </span>
-                )}
-              </NavLink>
-            ),
-          )}
+              {!daThuGon && (
+                <span className="admin-sidebar-menu-label">{menu.label}</span>
+              )}
+            </NavLink>
+          ))}
         </nav>
 
         <div className="admin-sidebar-footer">
@@ -449,27 +318,17 @@ function AdminSidebar() {
 
             {!daThuGon && (
               <div className="admin-sidebar-user-info">
-                <strong>
-                  Admin
-                </strong>
+                <strong>Admin</strong>
 
-                <span>
-                  Quản trị viên
-                </span>
+                <span>Quản trị viên</span>
               </div>
             )}
           </div>
 
           <NavLink
             to="/"
-            onClick={
-              xuLyDangXuat
-            }
-            title={
-              daThuGon
-                ? "Đăng xuất"
-                : undefined
-            }
+            onClick={xuLyDangXuat}
+            title={daThuGon ? "Đăng xuất" : undefined}
             className="admin-sidebar-menu-item"
           >
             <span className="admin-sidebar-menu-icon">
@@ -477,9 +336,7 @@ function AdminSidebar() {
             </span>
 
             {!daThuGon && (
-              <span className="admin-sidebar-menu-label">
-                Đăng xuất
-              </span>
+              <span className="admin-sidebar-menu-label">Đăng xuất</span>
             )}
           </NavLink>
         </div>
@@ -488,15 +345,11 @@ function AdminSidebar() {
           <div
             className={[
               "admin-sidebar-resize-handle",
-              dangResize
-                ? "admin-sidebar-resize-handle-active"
-                : "",
+              dangResize ? "admin-sidebar-resize-handle-active" : "",
             ]
               .filter(Boolean)
               .join(" ")}
-            onPointerDown={
-              batDauResize
-            }
+            onPointerDown={batDauResize}
             role="separator"
             aria-orientation="vertical"
             aria-label="Điều chỉnh độ rộng thanh điều hướng"

@@ -33,6 +33,8 @@ import QuanLyPhieuNhapPage
   from "../features/admin/phieu-nhap/pages/QuanLyPhieuNhapPage";
 import QuanLyKhoPage
   from "../features/admin/kho/pages/QuanLyKhoPage";
+import QuanLyTaiKhoanVaiTroPage
+  from "../features/admin/tai-khoan-vai-tro/pages/QuanLyTaiKhoanVaiTroPage";
 
 const AdminLayout =
   lazy(() =>
@@ -119,6 +121,11 @@ export const AdminRoutes = (
     <Route
       path="kho"
       element={<QuanLyKhoPage />}
+    />
+
+    <Route
+      path="tai-khoan-vai-tro"
+      element={<QuanLyTaiKhoanVaiTroPage />}
     />
 
     <Route
