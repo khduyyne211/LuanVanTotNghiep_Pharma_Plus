@@ -59,6 +59,11 @@ const danhSachMenu: MenuItem[] = [
     icon: "bi-tags",
   },
   {
+    label: "Quản lý voucher đơn hàng",
+    path: "/admin/voucher-don-hang",
+    icon: "bi-ticket",
+  },
+  {
     label: "Quản lý đơn hàng",
     path: "/admin/don-hang",
     icon: "bi-receipt",
