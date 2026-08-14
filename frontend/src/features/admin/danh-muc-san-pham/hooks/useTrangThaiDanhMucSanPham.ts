@@ -1,14 +1,25 @@
 import { useState } from "react";
+
 import { isAxiosError } from "axios";
+
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
 
 import {
   anDanhMucSanPham,
   hienDanhMucSanPham,
 } from "../api/danhMucSanPhamApi";
+
 import type { DanhMucSanPham } from "../types/DanhMucSanPham";
+
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
 
 type UseTrangThaiDanhMucSanPhamProps = {
   onTaiLaiDanhSach: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
@@ -17,48 +28,73 @@ type ApiErrorResponse = {
 
 function useTrangThaiDanhMucSanPham({
   onTaiLaiDanhSach,
+  onThongBao,
 }: UseTrangThaiDanhMucSanPhamProps) {
   const [maDanhMucDangXuLy, setMaDanhMucDangXuLy] =
     useState<number | null>(null);
 
-  const xuLyDoiTrangThai = async (
-    danhMuc: DanhMucSanPham
+  const [danhMucChoXuLy, setDanhMucChoXuLy] =
+    useState<DanhMucSanPham | null>(null);
+
+  const moXacNhanDoiTrangThai = (
+    danhMuc: DanhMucSanPham,
   ) => {
-    const hanhDong = danhMuc.trangThaiHienThi
-      ? "ẩn"
-      : "hiển thị";
+    setDanhMucChoXuLy(danhMuc);
+  };
 
-    const daXacNhan = window.confirm(
-      `Bạn có chắc muốn ${hanhDong} danh mục "${danhMuc.tenDanhMuc}"?`
-    );
-
-    if (!daXacNhan) {
+  const dongXacNhanDoiTrangThai = () => {
+    if (maDanhMucDangXuLy !== null) {
       return;
     }
+
+    setDanhMucChoXuLy(null);
+  };
+
+  const xacNhanDoiTrangThai = async () => {
+    if (!danhMucChoXuLy) {
+      return;
+    }
+
+    const danhMuc = danhMucChoXuLy;
+    const dangHienThi = danhMuc.trangThaiHienThi;
 
     try {
       setMaDanhMucDangXuLy(danhMuc.maDanhMuc);
 
-      if (danhMuc.trangThaiHienThi) {
+      if (dangHienThi) {
         await anDanhMucSanPham(danhMuc.maDanhMuc);
       } else {
         await hienDanhMucSanPham(danhMuc.maDanhMuc);
       }
 
+      setDanhMucChoXuLy(null);
+
       onTaiLaiDanhSach();
+
+      onThongBao(
+        dangHienThi
+          ? "Ẩn danh mục sản phẩm thành công."
+          : "Hiển thị danh mục sản phẩm thành công.",
+        "THANH_CONG",
+        "Thành công",
+      );
     } catch (error) {
       console.error(
         "Không thể cập nhật trạng thái danh mục:",
-        error
+        error,
       );
 
       const message = isAxiosError<ApiErrorResponse>(error)
         ? error.response?.data?.message
         : null;
 
-      alert(
+      setDanhMucChoXuLy(null);
+
+      onThongBao(
         message ??
-          "Không thể cập nhật trạng thái danh mục sản phẩm."
+          "Không thể cập nhật trạng thái danh mục sản phẩm.",
+        "LOI",
+        "Không thể cập nhật trạng thái",
       );
     } finally {
       setMaDanhMucDangXuLy(null);
@@ -67,7 +103,10 @@ function useTrangThaiDanhMucSanPham({
 
   return {
     maDanhMucDangXuLy,
-    xuLyDoiTrangThai,
+    danhMucChoXuLy,
+    moXacNhanDoiTrangThai,
+    dongXacNhanDoiTrangThai,
+    xacNhanDoiTrangThai,
   };
 }
 

@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 
+import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
+
 import type {
   DanhMucSanPhamOption,
   DonViTinhOption,
@@ -42,11 +46,21 @@ type QuyDoiTaoMoiForm = SanPhamQuyDoiFormData;
 type ThanhPhanHoatChatForm = SanPhamThanhPhanHoatChatFormData;
 type DuLieuChuyenMonForm = SanPhamDuLieuChuyenMonFormData;
 
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
+
 type SanPhamFormModalProps = {
   isOpen: boolean;
   sanPhamCanSua: SanPham | null;
   onClose: () => void;
   onSuccess: (sanPhamDaLuu: SanPham, laThemMoi: boolean) => Promise<void>;
+};
+
+type SanPhamFormNoiDungProps = SanPhamFormModalProps & {
+  onThongBao: HienThongBao;
 };
 
 const taoYeuCauDuLieuDropdown = () =>
@@ -129,29 +143,49 @@ const taoDuLieuChuyenMonMacDinh = (): DuLieuChuyenMonForm => ({
 });
 
 function SanPhamFormModal(props: SanPhamFormModalProps) {
-  if (!props.isOpen) {
-    return null;
-  }
+  const thongBao = useThongBaoHeThong();
 
-  if (props.sanPhamCanSua) {
-    return (
+  let noiDungForm = null;
+
+  if (props.isOpen) {
+    noiDungForm = props.sanPhamCanSua ? (
       <SanPhamChinhSuaModal
         key={props.sanPhamCanSua.maSanPham}
         sanPhamCanSua={props.sanPhamCanSua}
         onClose={props.onClose}
         onSuccess={props.onSuccess}
+        onThongBao={thongBao.hienThongBao}
+      />
+    ) : (
+      <SanPhamFormNoiDung
+        key="them-moi"
+        {...props}
+        onThongBao={thongBao.hienThongBao}
       />
     );
   }
 
-  return <SanPhamFormNoiDung key="them-moi" {...props} />;
+  return (
+    <>
+      <ThongBaoHeThong
+        dangHien={thongBao.dangHien}
+        noiDung={thongBao.noiDung}
+        tieuDe={thongBao.tieuDe}
+        loai={thongBao.loai}
+        dongThongBao={thongBao.dongThongBao}
+      />
+
+      {noiDungForm}
+    </>
+  );
 }
 
 function SanPhamFormNoiDung({
   sanPhamCanSua,
   onClose,
   onSuccess,
-}: SanPhamFormModalProps) {
+  onThongBao,
+}: SanPhamFormNoiDungProps) {
   const laThemMoi = sanPhamCanSua === null;
 
   const [buocHienTai, setBuocHienTai] = useState(1);
@@ -189,6 +223,21 @@ function SanPhamFormNoiDung({
 
   const [dangLuu, setDangLuu] = useState(false);
 
+  const hienCanhBao = (noiDung: string) => {
+    onThongBao(noiDung, "CANH_BAO", "Dữ liệu chưa hợp lệ");
+  };
+
+  const hienLoi = (
+    noiDung: string,
+    tieuDe = "Không thể thực hiện thao tác",
+  ) => {
+    onThongBao(noiDung, "LOI", tieuDe);
+  };
+
+  const hienThanhCong = (noiDung: string) => {
+    onThongBao(noiDung, "THANH_CONG", "Thành công");
+  };
+
   useEffect(() => {
     let daHuy = false;
 
@@ -216,8 +265,9 @@ function SanPhamFormNoiDung({
 
         console.error("Lỗi khi tải dữ liệu form sản phẩm:", error);
 
-        alert(
-          "Không thể tải danh mục, nhà sản xuất, đơn vị tính hoặc hoạt chất",
+        hienLoi(
+          "Không thể tải danh mục, nhà sản xuất, đơn vị tính hoặc hoạt chất.",
+          "Không thể tải dữ liệu",
         );
       }
     };
@@ -280,7 +330,7 @@ function SanPhamFormNoiDung({
       value === false &&
       danhSachDonVi[index]?.laDonViBanMacDinh
     ) {
-      alert("Đơn vị bán mặc định phải được phép bán");
+      hienCanhBao("Đơn vị bán mặc định phải được phép bán");
       return;
     }
 
@@ -326,7 +376,7 @@ function SanPhamFormNoiDung({
 
   const xoaDongDonVi = (index: number) => {
     if (danhSachDonVi.length === 1) {
-      alert("Sản phẩm phải có ít nhất một đơn vị");
+      hienCanhBao("Sản phẩm phải có ít nhất một đơn vị");
       return;
     }
 
@@ -431,7 +481,7 @@ function SanPhamFormNoiDung({
 
   const xoaDongThanhPhanHoatChat = (index: number) => {
     if (danhSachThanhPhanHoatChat.length === 1) {
-      alert("Sản phẩm phải có ít nhất một thành phần hoạt chất");
+      hienCanhBao("Sản phẩm phải có ít nhất một thành phần hoạt chất");
       return;
     }
 
@@ -452,12 +502,12 @@ function SanPhamFormNoiDung({
 
   const kiemTraThongTinSanPham = () => {
     if (!formData.maDanhMuc) {
-      alert("Vui lòng chọn danh mục sản phẩm");
+      hienCanhBao("Vui lòng chọn danh mục sản phẩm");
       return false;
     }
 
     if (!formData.tenSanPham.trim()) {
-      alert("Vui lòng nhập tên sản phẩm");
+      hienCanhBao("Vui lòng nhập tên sản phẩm");
       return false;
     }
 
@@ -466,7 +516,7 @@ function SanPhamFormNoiDung({
 
   const kiemTraDanhSachDonVi = () => {
     if (danhSachDonVi.length === 0) {
-      alert("Sản phẩm phải có ít nhất một đơn vị");
+      hienCanhBao("Sản phẩm phải có ít nhất một đơn vị");
       return false;
     }
 
@@ -476,12 +526,12 @@ function SanPhamFormNoiDung({
 
     for (const donVi of danhSachDonVi) {
       if (!donVi.maDonViTinh) {
-        alert("Vui lòng chọn đơn vị tính cho tất cả các dòng");
+        hienCanhBao("Vui lòng chọn đơn vị tính cho tất cả các dòng");
         return false;
       }
 
       if (maDonViDaChon.has(donVi.maDonViTinh)) {
-        alert("Không được chọn trùng đơn vị tính");
+        hienCanhBao("Không được chọn trùng đơn vị tính");
         return false;
       }
 
@@ -495,7 +545,7 @@ function SanPhamFormNoiDung({
         soDonViBanMacDinh++;
 
         if (!donVi.choPhepBan) {
-          alert("Đơn vị bán mặc định phải được phép bán");
+          hienCanhBao("Đơn vị bán mặc định phải được phép bán");
           return false;
         }
       }
@@ -504,18 +554,18 @@ function SanPhamFormNoiDung({
         donVi.choPhepBan &&
         (!donVi.giaBanTheoDonVi || Number(donVi.giaBanTheoDonVi) <= 0)
       ) {
-        alert("Đơn vị được phép bán phải có giá bán lớn hơn 0");
+        hienCanhBao("Đơn vị được phép bán phải có giá bán lớn hơn 0");
         return false;
       }
     }
 
     if (soDonViCoSo !== 1) {
-      alert("Sản phẩm phải có đúng một đơn vị cơ sở");
+      hienCanhBao("Sản phẩm phải có đúng một đơn vị cơ sở");
       return false;
     }
 
     if (soDonViBanMacDinh !== 1) {
-      alert("Sản phẩm phải có đúng một đơn vị bán mặc định");
+      hienCanhBao("Sản phẩm phải có đúng một đơn vị bán mặc định");
       return false;
     }
 
@@ -524,7 +574,7 @@ function SanPhamFormNoiDung({
 
   const kiemTraDanhSachQuyDoi = () => {
     if (danhSachDonVi.length >= 2 && danhSachQuyDoi.length === 0) {
-      alert("Sản phẩm có từ hai đơn vị phải có ít nhất một quy đổi");
+      hienCanhBao("Sản phẩm có từ hai đơn vị phải có ít nhất một quy đổi");
       return false;
     }
 
@@ -532,12 +582,12 @@ function SanPhamFormNoiDung({
 
     for (const quyDoi of danhSachQuyDoi) {
       if (!quyDoi.maDonViTinhNguon || !quyDoi.maDonViTinhDich) {
-        alert("Vui lòng chọn đầy đủ đơn vị nguồn và đích");
+        hienCanhBao("Vui lòng chọn đầy đủ đơn vị nguồn và đích");
         return false;
       }
 
       if (quyDoi.maDonViTinhNguon === quyDoi.maDonViTinhDich) {
-        alert("Đơn vị nguồn và đơn vị đích không được giống nhau");
+        hienCanhBao("Đơn vị nguồn và đơn vị đích không được giống nhau");
         return false;
       }
 
@@ -547,7 +597,7 @@ function SanPhamFormNoiDung({
         !quyDoi.soLuongDich ||
         Number(quyDoi.soLuongDich) <= 0
       ) {
-        alert("Số lượng quy đổi phải lớn hơn 0");
+        hienCanhBao("Số lượng quy đổi phải lớn hơn 0");
         return false;
       }
 
@@ -555,7 +605,7 @@ function SanPhamFormNoiDung({
         `${quyDoi.maDonViTinhNguon}-` + `${quyDoi.maDonViTinhDich}`;
 
       if (capQuyDoiDaChon.has(capQuyDoi)) {
-        alert("Không được khai báo trùng cùng một quy đổi");
+        hienCanhBao("Không được khai báo trùng cùng một quy đổi");
         return false;
       }
 
@@ -567,7 +617,7 @@ function SanPhamFormNoiDung({
 
   const kiemTraDanhSachThanhPhanHoatChat = () => {
     if (danhSachThanhPhanHoatChat.length === 0) {
-      alert("Sản phẩm phải có ít nhất một thành phần hoạt chất");
+      hienCanhBao("Sản phẩm phải có ít nhất một thành phần hoạt chất");
       return false;
     }
 
@@ -575,24 +625,24 @@ function SanPhamFormNoiDung({
 
     for (const thanhPhan of danhSachThanhPhanHoatChat) {
       if (!thanhPhan.maHoatChat) {
-        alert("Vui lòng chọn hoạt chất cho tất cả các dòng");
+        hienCanhBao("Vui lòng chọn hoạt chất cho tất cả các dòng");
         return false;
       }
 
       if (maHoatChatDaChon.has(thanhPhan.maHoatChat)) {
-        alert("Không được chọn trùng hoạt chất");
+        hienCanhBao("Không được chọn trùng hoạt chất");
         return false;
       }
 
       maHoatChatDaChon.add(thanhPhan.maHoatChat);
 
       if (!thanhPhan.hamLuong || Number(thanhPhan.hamLuong) <= 0) {
-        alert("Hàm lượng hoạt chất phải lớn hơn 0");
+        hienCanhBao("Hàm lượng hoạt chất phải lớn hơn 0");
         return false;
       }
 
       if (!thanhPhan.donViHamLuong.trim()) {
-        alert("Đơn vị hàm lượng không được để trống");
+        hienCanhBao("Đơn vị hàm lượng không được để trống");
         return false;
       }
     }
@@ -602,27 +652,27 @@ function SanPhamFormNoiDung({
 
   const kiemTraDuLieuChuyenMon = () => {
     if (!duLieuChuyenMon.dangBaoChe.trim()) {
-      alert("Vui lòng nhập dạng bào chế");
+      hienCanhBao("Vui lòng nhập dạng bào chế");
       return false;
     }
 
     if (!duLieuChuyenMon.phanLoaiThuoc.trim()) {
-      alert("Vui lòng nhập phân loại thuốc");
+      hienCanhBao("Vui lòng nhập phân loại thuốc");
       return false;
     }
 
     if (!duLieuChuyenMon.congDungThamKhao.trim()) {
-      alert("Vui lòng nhập công dụng tham khảo");
+      hienCanhBao("Vui lòng nhập công dụng tham khảo");
       return false;
     }
 
     if (!duLieuChuyenMon.cachDungThamKhao.trim()) {
-      alert("Vui lòng nhập cách dùng tham khảo");
+      hienCanhBao("Vui lòng nhập cách dùng tham khảo");
       return false;
     }
 
     if (!duLieuChuyenMon.canhBaoAnToan.trim()) {
-      alert("Vui lòng nhập cảnh báo an toàn");
+      hienCanhBao("Vui lòng nhập cảnh báo an toàn");
       return false;
     }
 
@@ -700,10 +750,10 @@ function SanPhamFormNoiDung({
 
       await onSuccess(response.data, false);
       onClose();
-      alert("Cập nhật sản phẩm thành công");
+      hienThanhCong("Cập nhật sản phẩm thành công.");
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
-      alert("Cập nhật sản phẩm thất bại");
+      hienLoi("Cập nhật sản phẩm thất bại.", "Không thể cập nhật sản phẩm");
     } finally {
       setDangLuu(false);
     }
@@ -766,11 +816,14 @@ function SanPhamFormNoiDung({
       await onSuccess(response.data, true);
       onClose();
 
-      alert("Tạo sản phẩm và dữ liệu chuyên môn thành công");
+      hienThanhCong("Tạo sản phẩm và dữ liệu chuyên môn thành công.");
     } catch (error) {
       console.error("Lỗi khi tạo sản phẩm:", error);
 
-      alert("Tạo sản phẩm thất bại. Toàn bộ dữ liệu đã được rollback.");
+      hienLoi(
+        "Tạo sản phẩm thất bại. Toàn bộ dữ liệu đã được rollback.",
+        "Không thể tạo sản phẩm",
+      );
     } finally {
       setDangLuu(false);
     }

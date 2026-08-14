@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 
-import AdminLoading from "../../shared/components/loading/AdminLoading";
-
 import type { HoatChat } from "../../hoat-chat/types/HoatChat";
 import { layDanhSachHoatChat } from "../../hoat-chat/api/hoatChatApi";
 
@@ -55,6 +53,7 @@ type DonViForm = {
   maDonViTinh: string;
   giaBanTheoDonVi: string;
   laDonViCoSo: boolean;
+  laDonViBanMacDinh: boolean;
   choPhepBan: boolean;
   choPhepNhap: boolean;
   trangThai: boolean;
@@ -85,10 +84,17 @@ type DuLieuChuyenMonForm = {
   canhBaoAnToan: string;
 };
 
+type HienThongBao = (
+  noiDung: string,
+  loai?: "THANH_CONG" | "LOI" | "CANH_BAO" | "THONG_TIN",
+  tieuDe?: string,
+) => void;
+
 type SanPhamChinhSuaModalProps = {
   sanPhamCanSua: SanPham;
   onClose: () => void;
   onSuccess: (sanPhamDaLuu: SanPham, laThemMoi: boolean) => Promise<void>;
+  onThongBao: HienThongBao;
 };
 
 const danhSachTab: {
@@ -143,11 +149,27 @@ function SanPhamChinhSuaModal({
   sanPhamCanSua,
   onClose,
   onSuccess,
+  onThongBao,
 }: SanPhamChinhSuaModalProps) {
   const [tabHienTai, setTabHienTai] = useState<TabChinhSua>("thong-tin");
 
   const [dangTai, setDangTai] = useState(true);
   const [dangLuu, setDangLuu] = useState(false);
+
+  const hienCanhBao = (noiDung: string) => {
+    onThongBao(noiDung, "CANH_BAO", "Dữ liệu chưa hợp lệ");
+  };
+
+  const hienLoi = (
+    noiDung: string,
+    tieuDe = "Không thể thực hiện thao tác",
+  ) => {
+    onThongBao(noiDung, "LOI", tieuDe);
+  };
+
+  const hienThanhCong = (noiDung: string) => {
+    onThongBao(noiDung, "THANH_CONG", "Thành công");
+  };
 
   const [sanPhamChiTiet, setSanPhamChiTiet] = useState<SanPham | null>(null);
 
@@ -206,6 +228,7 @@ function SanPhamChinhSuaModal({
         giaBanTheoDonVi:
           donVi.giaBanTheoDonVi !== null ? String(donVi.giaBanTheoDonVi) : "",
         laDonViCoSo: donVi.laDonViCoSo,
+        laDonViBanMacDinh: donVi.laDonViBanMacDinh,
         choPhepBan: donVi.choPhepBan,
         choPhepNhap: donVi.choPhepNhap,
         trangThai: donVi.trangThai,
@@ -292,7 +315,10 @@ function SanPhamChinhSuaModal({
         apDungChiTiet(chiTietResponse.data);
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu sửa sản phẩm:", error);
-        alert("Không thể tải đầy đủ dữ liệu sản phẩm");
+        hienLoi(
+          "Không thể tải đầy đủ dữ liệu sản phẩm.",
+          "Không thể tải dữ liệu",
+        );
         onClose();
       } finally {
         if (!daHuy) {
@@ -308,10 +334,10 @@ function SanPhamChinhSuaModal({
     };
   }, [sanPhamCanSua.maSanPham]);
 
-  const dongBoSauKhiLuu = async (thongBao: string) => {
+  const dongBoSauKhiLuu = async (noiDungThongBao: string) => {
     const sanPhamMoi = await taiLaiChiTiet();
     await onSuccess(sanPhamMoi, false);
-    alert(thongBao);
+    hienThanhCong(noiDungThongBao);
   };
 
   const donViSanPhamDaLuu = useMemo(
@@ -324,17 +350,17 @@ function SanPhamChinhSuaModal({
 
   const luuThongTinSanPham = async () => {
     if (!thongTinForm.maDanhMuc) {
-      alert("Vui lòng chọn danh mục");
+      hienCanhBao("Vui lòng chọn danh mục.");
       return;
     }
 
     if (!thongTinForm.maNhaSanXuat) {
-      alert("Vui lòng chọn nhà sản xuất");
+      hienCanhBao("Vui lòng chọn nhà sản xuất.");
       return;
     }
 
     if (!thongTinForm.tenSanPham.trim()) {
-      alert("Vui lòng nhập tên sản phẩm");
+      hienCanhBao("Vui lòng nhập tên sản phẩm.");
       return;
     }
 
@@ -355,7 +381,7 @@ function SanPhamChinhSuaModal({
       await dongBoSauKhiLuu("Cập nhật thông tin sản phẩm thành công");
     } catch (error) {
       console.error("Lỗi cập nhật thông tin sản phẩm:", error);
-      alert("Cập nhật sản phẩm thất bại");
+      hienLoi("Cập nhật sản phẩm thất bại.");
     } finally {
       setDangLuu(false);
     }
@@ -369,6 +395,7 @@ function SanPhamChinhSuaModal({
         maDonViTinh: "",
         giaBanTheoDonVi: "",
         laDonViCoSo: danhSachCu.length === 0,
+        laDonViBanMacDinh: danhSachCu.length === 0,
         choPhepBan: true,
         choPhepNhap: true,
         trangThai: true,
@@ -381,6 +408,15 @@ function SanPhamChinhSuaModal({
     field: keyof DonViForm,
     value: string | boolean,
   ) => {
+    if (
+      field === "choPhepBan" &&
+      value === false &&
+      danhSachDonVi[index]?.laDonViBanMacDinh
+    ) {
+      hienCanhBao("Đơn vị bán mặc định phải được phép bán.");
+      return;
+    }
+
     setDanhSachDonVi((danhSachCu) =>
       danhSachCu.map((donVi, viTri) =>
         viTri === index
@@ -402,6 +438,17 @@ function SanPhamChinhSuaModal({
     );
   };
 
+  const chonDonViBanMacDinh = (index: number) => {
+    setDanhSachDonVi((danhSachCu) =>
+      danhSachCu.map((donVi, viTri) => ({
+        ...donVi,
+        laDonViBanMacDinh: viTri === index && donVi.trangThai,
+        choPhepBan:
+          viTri === index && donVi.trangThai ? true : donVi.choPhepBan,
+      })),
+    );
+  };
+
   const xoaDongDonViMoi = (index: number) => {
     const donVi = danhSachDonVi[index];
 
@@ -416,21 +463,22 @@ function SanPhamChinhSuaModal({
 
   const luuDanhSachDonVi = async () => {
     if (danhSachDonVi.length === 0) {
-      alert("Sản phẩm phải có ít nhất một đơn vị");
+      hienCanhBao("Sản phẩm phải có ít nhất một đơn vị.");
       return;
     }
 
     const maDonViTinhDaChon = new Set<string>();
     let soDonViCoSoDangHoatDong = 0;
+    let soDonViBanMacDinhDangHoatDong = 0;
 
     for (const donVi of danhSachDonVi) {
       if (!donVi.maDonViTinh) {
-        alert("Vui lòng chọn đơn vị tính cho tất cả các dòng");
+        hienCanhBao("Vui lòng chọn đơn vị tính cho tất cả các dòng.");
         return;
       }
 
       if (maDonViTinhDaChon.has(donVi.maDonViTinh)) {
-        alert("Không được chọn trùng đơn vị tính");
+        hienCanhBao("Không được chọn trùng đơn vị tính.");
         return;
       }
 
@@ -441,26 +489,42 @@ function SanPhamChinhSuaModal({
       }
 
       if (donVi.laDonViCoSo && !donVi.trangThai) {
-        alert("Đơn vị cơ sở phải đang hoạt động");
+        hienCanhBao("Đơn vị cơ sở phải đang hoạt động.");
         return;
       }
 
-      if (
-        donVi.giaBanTheoDonVi &&
-        Number(donVi.giaBanTheoDonVi) <= 0
-      ) {
-        alert("Giá bán theo đơn vị phải lớn hơn 0");
+      if (donVi.laDonViBanMacDinh && donVi.trangThai) {
+        soDonViBanMacDinhDangHoatDong++;
+      }
+
+      if (donVi.laDonViBanMacDinh && !donVi.trangThai) {
+        hienCanhBao("Đơn vị bán mặc định phải đang hoạt động.");
+        return;
+      }
+
+      if (donVi.laDonViBanMacDinh && !donVi.choPhepBan) {
+        hienCanhBao("Đơn vị bán mặc định phải được phép bán.");
+        return;
+      }
+
+      if (donVi.giaBanTheoDonVi && Number(donVi.giaBanTheoDonVi) <= 0) {
+        hienCanhBao("Giá bán theo đơn vị phải lớn hơn 0.");
         return;
       }
 
       if (donVi.choPhepBan && !donVi.giaBanTheoDonVi) {
-        alert("Đơn vị cho phép bán phải có giá lớn hơn 0");
+        hienCanhBao("Đơn vị cho phép bán phải có giá lớn hơn 0.");
         return;
       }
     }
 
     if (soDonViCoSoDangHoatDong !== 1) {
-      alert("Phải có đúng một đơn vị cơ sở đang hoạt động");
+      hienCanhBao("Phải có đúng một đơn vị cơ sở đang hoạt động.");
+      return;
+    }
+
+    if (soDonViBanMacDinhDangHoatDong !== 1) {
+      hienCanhBao("Phải có đúng một đơn vị bán mặc định đang hoạt động.");
       return;
     }
 
@@ -472,6 +536,7 @@ function SanPhamChinhSuaModal({
           ? Number(donVi.giaBanTheoDonVi)
           : null,
         laDonViCoSo: donVi.laDonViCoSo,
+        laDonViBanMacDinh: donVi.laDonViBanMacDinh,
         choPhepBan: donVi.choPhepBan,
         choPhepNhap: donVi.choPhepNhap,
         trangThai: donVi.trangThai,
@@ -489,11 +554,11 @@ function SanPhamChinhSuaModal({
       apDungChiTiet(response.data);
       await onSuccess(response.data, false);
 
-      alert("Cập nhật đơn vị sản phẩm thành công");
+      hienThanhCong("Cập nhật đơn vị sản phẩm thành công.");
     } catch (error) {
       console.error("Lỗi cập nhật đơn vị sản phẩm:", error);
 
-      alert("Cập nhật đơn vị sản phẩm thất bại");
+      hienLoi("Cập nhật đơn vị sản phẩm thất bại.");
     } finally {
       setDangLuu(false);
     }
@@ -512,6 +577,7 @@ function SanPhamChinhSuaModal({
           ...donVi,
           trangThai: trangThaiMoi,
           laDonViCoSo: trangThaiMoi ? donVi.laDonViCoSo : false,
+          laDonViBanMacDinh: trangThaiMoi ? donVi.laDonViBanMacDinh : false,
         };
       }),
     );
@@ -519,7 +585,7 @@ function SanPhamChinhSuaModal({
 
   const themDongQuyDoi = () => {
     if (donViSanPhamDaLuu.length < 2) {
-      alert("Cần có ít nhất hai đơn vị đã lưu và đang hoạt động");
+      hienCanhBao("Cần có ít nhất hai đơn vị đã lưu và đang hoạt động.");
       return;
     }
 
@@ -570,12 +636,12 @@ function SanPhamChinhSuaModal({
 
     for (const quyDoi of danhSachQuyDoi) {
       if (!quyDoi.maDonViNguon || !quyDoi.maDonViDich) {
-        alert("Vui lòng chọn đầy đủ đơn vị nguồn và đích");
+        hienCanhBao("Vui lòng chọn đầy đủ đơn vị nguồn và đích.");
         return;
       }
 
       if (quyDoi.maDonViNguon === quyDoi.maDonViDich) {
-        alert("Đơn vị nguồn và đơn vị đích không được giống nhau");
+        hienCanhBao("Đơn vị nguồn và đơn vị đích không được giống nhau.");
         return;
       }
 
@@ -585,14 +651,14 @@ function SanPhamChinhSuaModal({
         !quyDoi.soLuongDich ||
         Number(quyDoi.soLuongDich) <= 0
       ) {
-        alert("Số lượng quy đổi phải lớn hơn 0");
+        hienCanhBao("Số lượng quy đổi phải lớn hơn 0.");
         return;
       }
 
       const khoa = `${quyDoi.maDonViNguon}-${quyDoi.maDonViDich}`;
 
       if (capQuyDoiDaChon.has(khoa)) {
-        alert("Không được khai báo trùng quy đổi");
+        hienCanhBao("Không được khai báo trùng quy đổi.");
         return;
       }
 
@@ -603,12 +669,9 @@ function SanPhamChinhSuaModal({
       }
     }
 
-    if (
-      donViSanPhamDaLuu.length >= 2 &&
-      soQuyDoiDangHoatDong === 0
-    ) {
-      alert(
-        "Sản phẩm có từ hai đơn vị hoạt động phải có quy đổi hoạt động",
+    if (donViSanPhamDaLuu.length >= 2 && soQuyDoiDangHoatDong === 0) {
+      hienCanhBao(
+        "Sản phẩm có từ hai đơn vị hoạt động phải có quy đổi hoạt động.",
       );
       return;
     }
@@ -635,10 +698,10 @@ function SanPhamChinhSuaModal({
       apDungChiTiet(response.data);
       await onSuccess(response.data, false);
 
-      alert("Cập nhật quy đổi đơn vị thành công");
+      hienThanhCong("Cập nhật quy đổi đơn vị thành công.");
     } catch (error) {
       console.error("Lỗi cập nhật quy đổi đơn vị:", error);
-      alert("Cập nhật quy đổi đơn vị thất bại");
+      hienLoi("Cập nhật quy đổi đơn vị thất bại.");
     } finally {
       setDangLuu(false);
     }
@@ -679,24 +742,24 @@ function SanPhamChinhSuaModal({
 
     for (const thanhPhan of danhSachThanhPhan) {
       if (!thanhPhan.maHoatChat) {
-        alert("Vui lòng chọn hoạt chất cho tất cả các dòng");
+        hienCanhBao("Vui lòng chọn hoạt chất cho tất cả các dòng.");
         return;
       }
 
       if (maHoatChatDaChon.has(thanhPhan.maHoatChat)) {
-        alert("Không được chọn trùng hoạt chất");
+        hienCanhBao("Không được chọn trùng hoạt chất.");
         return;
       }
 
       maHoatChatDaChon.add(thanhPhan.maHoatChat);
 
       if (Number(thanhPhan.hamLuong) <= 0) {
-        alert("Hàm lượng phải lớn hơn 0");
+        hienCanhBao("Hàm lượng phải lớn hơn 0.");
         return;
       }
 
       if (!thanhPhan.donViHamLuong.trim()) {
-        alert("Đơn vị hàm lượng không được để trống");
+        hienCanhBao("Đơn vị hàm lượng không được để trống.");
         return;
       }
     }
@@ -719,7 +782,7 @@ function SanPhamChinhSuaModal({
       await dongBoSauKhiLuu("Cập nhật thành phần hoạt chất thành công");
     } catch (error) {
       console.error("Lỗi cập nhật hoạt chất:", error);
-      alert("Cập nhật thành phần hoạt chất thất bại");
+      hienLoi("Cập nhật thành phần hoạt chất thất bại.");
     } finally {
       setDangLuu(false);
     }
@@ -727,27 +790,27 @@ function SanPhamChinhSuaModal({
 
   const luuDuLieuChuyenMon = async () => {
     if (!duLieuChuyenMon.dangBaoChe.trim()) {
-      alert("Vui lòng nhập dạng bào chế");
+      hienCanhBao("Vui lòng nhập dạng bào chế.");
       return;
     }
 
     if (!duLieuChuyenMon.phanLoaiThuoc.trim()) {
-      alert("Vui lòng nhập phân loại thuốc");
+      hienCanhBao("Vui lòng nhập phân loại thuốc.");
       return;
     }
 
     if (!duLieuChuyenMon.congDungThamKhao.trim()) {
-      alert("Vui lòng nhập công dụng tham khảo");
+      hienCanhBao("Vui lòng nhập công dụng tham khảo.");
       return;
     }
 
     if (!duLieuChuyenMon.cachDungThamKhao.trim()) {
-      alert("Vui lòng nhập cách dùng tham khảo");
+      hienCanhBao("Vui lòng nhập cách dùng tham khảo.");
       return;
     }
 
     if (!duLieuChuyenMon.canhBaoAnToan.trim()) {
-      alert("Vui lòng nhập cảnh báo an toàn");
+      hienCanhBao("Vui lòng nhập cảnh báo an toàn.");
       return;
     }
 
@@ -767,7 +830,7 @@ function SanPhamChinhSuaModal({
       await dongBoSauKhiLuu("Cập nhật dữ liệu chuyên môn thành công");
     } catch (error) {
       console.error("Lỗi cập nhật dữ liệu chuyên môn:", error);
-      alert("Cập nhật dữ liệu chuyên môn thất bại");
+      hienLoi("Cập nhật dữ liệu chuyên môn thất bại.");
     } finally {
       setDangLuu(false);
     }
@@ -813,7 +876,9 @@ function SanPhamChinhSuaModal({
         </div>
 
         {dangTai ? (
-          <AdminLoading noiDung="Đang tải dữ liệu sản phẩm..." />
+          <div className="product-edit-loading">
+            Đang tải dữ liệu sản phẩm...
+          </div>
         ) : (
           <>
             {tabHienTai === "thong-tin" && (
@@ -942,7 +1007,8 @@ function SanPhamChinhSuaModal({
                   <div>
                     <h3>Đơn vị sản phẩm</h3>
                     <p>
-                      Cập nhật giá bán, quyền bán, quyền nhập và đơn vị cơ sở.
+                      Cập nhật giá bán, quyền bán, quyền nhập, đơn vị cơ sở và
+                      đơn vị bán mặc định.
                     </p>
                   </div>
 
@@ -963,6 +1029,7 @@ function SanPhamChinhSuaModal({
                         <th>Đơn vị tính</th>
                         <th>Giá bán</th>
                         <th>Cơ sở</th>
+                        <th>Bán mặc định</th>
                         <th>Cho bán</th>
                         <th>Cho nhập</th>
                         <th>Trạng thái</th>
@@ -1030,6 +1097,16 @@ function SanPhamChinhSuaModal({
                               checked={donVi.laDonViCoSo}
                               disabled={!donVi.trangThai}
                               onChange={() => chonDonViCoSo(index)}
+                            />
+                          </td>
+
+                          <td className="product-center-cell">
+                            <input
+                              type="radio"
+                              name="donViBanMacDinhSua"
+                              checked={donVi.laDonViBanMacDinh}
+                              disabled={!donVi.trangThai}
+                              onChange={() => chonDonViBanMacDinh(index)}
                             />
                           </td>
 
@@ -1247,9 +1324,7 @@ function SanPhamChinhSuaModal({
                                     ? "secondary-button"
                                     : "primary-button"
                                 }
-                                onClick={() =>
-                                  doiTrangThaiQuyDoi(index)
-                                }
+                                onClick={() => doiTrangThaiQuyDoi(index)}
                               >
                                 {quyDoi.trangThai ? "Ẩn" : "Hiện"}
                               </button>
@@ -1438,7 +1513,7 @@ function SanPhamChinhSuaModal({
                               className="icon-button danger"
                               onClick={() => {
                                 if (danhSachThanhPhan.length === 1) {
-                                  alert("Phải có ít nhất một hoạt chất");
+                                  hienCanhBao("Phải có ít nhất một hoạt chất.");
                                   return;
                                 }
 

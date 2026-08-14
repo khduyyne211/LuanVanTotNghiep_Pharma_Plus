@@ -1,6 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
-import { layChiTietDonHang, layDanhSachDonHang } from "../api/donHangApi";
+import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
+
+import {
+  layChiTietDonHang,
+  layDanhSachDonHang,
+} from "../api/donHangApi";
 
 import DonHangChiTietModal from "../components/DonHangChiTietModal";
 
@@ -20,7 +30,9 @@ import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy
 import "../../shared/styles/quan-ly/QuanLyCommon.css";
 import "../styles/DonHang.css";
 
-const dinhDangTien = (giaTri: number | null | undefined) =>
+const dinhDangTien = (
+  giaTri: number | null | undefined,
+) =>
   new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -32,7 +44,9 @@ const dinhDangNgay = (giaTri: string) =>
     timeStyle: "short",
   }).format(new Date(giaTri));
 
-const hienThiLoaiKhach = (giaTri: string | null | undefined) => {
+const hienThiLoaiKhach = (
+  giaTri: string | null | undefined,
+) => {
   switch (giaTri) {
     case "CO_TAI_KHOAN":
       return "Có tài khoản";
@@ -94,7 +108,10 @@ const hienThiTrangThaiDonHang = (
 };
 
 const hienThiTrangThaiKiemDuyet = (
-  giaTri: TrangThaiKiemDuyetDonHang | null | undefined,
+  giaTri:
+    | TrangThaiKiemDuyetDonHang
+    | null
+    | undefined,
 ) => {
   switch (giaTri) {
     case "KHONG_CAN_DUYET":
@@ -115,87 +132,137 @@ const hienThiTrangThaiKiemDuyet = (
 };
 
 export default function QuanLyDonHangPage() {
-  const [danhSachDonHang, setDanhSachDonHang] = useState<DonHangDanhSach[]>([]);
+  const thongBao = useThongBaoHeThong();
 
-  const [dangTai, setDangTai] = useState(true);
+  const [
+    danhSachDonHang,
+    setDanhSachDonHang,
+  ] = useState<DonHangDanhSach[]>([]);
 
-  const [loi, setLoi] = useState("");
+  const [dangTai, setDangTai] =
+    useState(true);
 
-  const [page, setPage] = useState(0);
+  const [loi, setLoi] =
+    useState("");
 
-  const [size, setSize] = useState(10);
+  const [page, setPage] =
+    useState(0);
 
-  const [totalElements, setTotalElements] = useState(0);
+  const [size, setSize] =
+    useState(10);
 
-  const [totalPages, setTotalPages] = useState(0);
+  const [
+    totalElements,
+    setTotalElements,
+  ] = useState(0);
 
-  const [first, setFirst] = useState(true);
+  const [
+    totalPages,
+    setTotalPages,
+  ] = useState(0);
 
-  const [last, setLast] = useState(true);
+  const [first, setFirst] =
+    useState(true);
 
-  const [keywordInput, setKeywordInput] = useState("");
+  const [last, setLast] =
+    useState(true);
 
-  const [keyword, setKeyword] = useState("");
+  const [
+    keywordInput,
+    setKeywordInput,
+  ] = useState("");
 
-  const [trangThaiDonHang, setTrangThaiDonHang] = useState<
-    TrangThaiDonHang | ""
-  >("");
+  const [keyword, setKeyword] =
+    useState("");
 
-  const [trangThaiThanhToan, setTrangThaiThanhToan] = useState<
-    TrangThaiThanhToan | ""
-  >("");
+  const [
+    trangThaiDonHang,
+    setTrangThaiDonHang,
+  ] = useState<TrangThaiDonHang | "">("");
 
-  const [trangThaiKiemDuyet, setTrangThaiKiemDuyet] = useState<
+  const [
+    trangThaiThanhToan,
+    setTrangThaiThanhToan,
+  ] = useState<TrangThaiThanhToan | "">("");
+
+  const [
+    trangThaiKiemDuyet,
+    setTrangThaiKiemDuyet,
+  ] = useState<
     TrangThaiKiemDuyetDonHang | ""
   >("");
 
-  const [chiTiet, setChiTiet] = useState<DonHangChiTiet | null>(null);
+  const [chiTiet, setChiTiet] =
+    useState<DonHangChiTiet | null>(null);
 
-  const [dangTaiChiTiet, setDangTaiChiTiet] = useState(false);
+  const [
+    dangTaiChiTiet,
+    setDangTaiChiTiet,
+  ] = useState(false);
 
-  const taiDanhSach = useCallback(async () => {
-    try {
-      setDangTai(true);
-      setLoi("");
+  const taiDanhSach =
+    useCallback(async () => {
+      try {
+        setDangTai(true);
+        setLoi("");
 
-      const data = await layDanhSachDonHang({
-        page,
-        size,
-        keyword: keyword || undefined,
-        trangThaiDonHang: trangThaiDonHang || undefined,
-        trangThaiThanhToan: trangThaiThanhToan || undefined,
-        trangThaiKiemDuyet: trangThaiKiemDuyet || undefined,
-      });
+        const data =
+          await layDanhSachDonHang({
+            page,
+            size,
+            keyword:
+              keyword || undefined,
+            trangThaiDonHang:
+              trangThaiDonHang ||
+              undefined,
+            trangThaiThanhToan:
+              trangThaiThanhToan ||
+              undefined,
+            trangThaiKiemDuyet:
+              trangThaiKiemDuyet ||
+              undefined,
+          });
 
-      setDanhSachDonHang(data.content);
+        setDanhSachDonHang(
+          data.content,
+        );
 
-      setTotalElements(data.totalElements);
+        setTotalElements(
+          data.totalElements,
+        );
 
-      setTotalPages(data.totalPages);
+        setTotalPages(
+          data.totalPages,
+        );
 
-      setFirst(data.first);
-      setLast(data.last);
-    } catch (error) {
-      console.error("Không thể tải danh sách đơn hàng:", error);
+        setFirst(data.first);
+        setLast(data.last);
+      } catch (error) {
+        console.error(
+          "Không thể tải danh sách đơn hàng:",
+          error,
+        );
 
-      setDanhSachDonHang([]);
-      setTotalElements(0);
-      setTotalPages(0);
-      setFirst(true);
-      setLast(true);
+        setDanhSachDonHang([]);
+        setTotalElements(0);
+        setTotalPages(0);
+        setFirst(true);
+        setLast(true);
 
-      setLoi("Không thể tải danh sách đơn hàng");
-    } finally {
-      setDangTai(false);
-    }
-  }, [
-    page,
-    size,
-    keyword,
-    trangThaiDonHang,
-    trangThaiThanhToan,
-    trangThaiKiemDuyet,
-  ]);
+        setLoi(
+          "Không thể tải danh sách đơn hàng",
+        );
+      } finally {
+        setDangTai(false);
+      }
+    }, [
+      page,
+      size,
+      keyword,
+      trangThaiDonHang,
+      trangThaiThanhToan,
+      trangThaiKiemDuyet,
+    ]);
 
   useEffect(() => {
     void taiDanhSach();
@@ -204,7 +271,9 @@ export default function QuanLyDonHangPage() {
   const timKiem = () => {
     setPage(0);
 
-    setKeyword(keywordInput.trim());
+    setKeyword(
+      keywordInput.trim(),
+    );
   };
 
   const xoaBoLoc = () => {
@@ -218,18 +287,30 @@ export default function QuanLyDonHangPage() {
     setPage(0);
   };
 
-  const moChiTiet = async (maDonHang: number) => {
+  const moChiTiet = async (
+    maDonHang: number,
+  ) => {
     try {
       setDangTaiChiTiet(true);
       setChiTiet(null);
 
-      const data = await layChiTietDonHang(maDonHang);
+      const data =
+        await layChiTietDonHang(
+          maDonHang,
+        );
 
       setChiTiet(data);
     } catch (error) {
-      console.error("Không thể tải chi tiết đơn hàng:", error);
+      console.error(
+        "Không thể tải chi tiết đơn hàng:",
+        error,
+      );
 
-      alert("Không thể tải chi tiết đơn hàng");
+      thongBao.hienThongBao(
+        "Không thể tải chi tiết đơn hàng.",
+        "LOI",
+        "Không thể tải dữ liệu",
+      );
     } finally {
       setDangTaiChiTiet(false);
     }
@@ -242,16 +323,25 @@ export default function QuanLyDonHangPage() {
 
         <input
           value={keywordInput}
-          onChange={(event) => setKeywordInput(event.target.value)}
+          onChange={(event) =>
+            setKeywordInput(
+              event.target.value,
+            )
+          }
           onKeyDown={(event) => {
-            if (event.key === "Enter") {
+            if (
+              event.key === "Enter"
+            ) {
               timKiem();
             }
           }}
           placeholder="Mã đơn, tên hoặc số điện thoại..."
         />
 
-        <button type="button" onClick={timKiem}>
+        <button
+          type="button"
+          onClick={timKiem}
+        >
           Tìm
         </button>
       </div>
@@ -260,44 +350,74 @@ export default function QuanLyDonHangPage() {
         className="ql-filter-control"
         value={trangThaiDonHang}
         onChange={(event) => {
-          setTrangThaiDonHang(event.target.value as TrangThaiDonHang | "");
+          setTrangThaiDonHang(
+            event.target
+              .value as TrangThaiDonHang | "",
+          );
 
           setPage(0);
         }}
       >
-        <option value="">Tất cả trạng thái</option>
+        <option value="">
+          Tất cả trạng thái
+        </option>
 
-        <option value="CHO_XU_LY">Chờ xử lý</option>
+        <option value="CHO_XU_LY">
+          Chờ xử lý
+        </option>
 
-        <option value="DANG_XU_LY">Đang xử lý</option>
+        <option value="DANG_XU_LY">
+          Đang xử lý
+        </option>
 
-        <option value="DANG_GIAO">Đang giao</option>
+        <option value="DANG_GIAO">
+          Đang giao
+        </option>
 
-        <option value="HOAN_THANH">Hoàn thành</option>
+        <option value="HOAN_THANH">
+          Hoàn thành
+        </option>
 
-        <option value="DA_HUY">Đã hủy</option>
+        <option value="DA_HUY">
+          Đã hủy
+        </option>
       </select>
 
       <select
         className="ql-filter-control"
         value={trangThaiThanhToan}
         onChange={(event) => {
-          setTrangThaiThanhToan(event.target.value as TrangThaiThanhToan | "");
+          setTrangThaiThanhToan(
+            event.target
+              .value as TrangThaiThanhToan | "",
+          );
 
           setPage(0);
         }}
       >
-        <option value="">Tất cả thanh toán</option>
+        <option value="">
+          Tất cả thanh toán
+        </option>
 
-        <option value="CHUA_THANH_TOAN">Chưa thanh toán</option>
+        <option value="CHUA_THANH_TOAN">
+          Chưa thanh toán
+        </option>
 
-        <option value="CHO_THANH_TOAN">Chờ thanh toán</option>
+        <option value="CHO_THANH_TOAN">
+          Chờ thanh toán
+        </option>
 
-        <option value="DA_THANH_TOAN">Đã thanh toán</option>
+        <option value="DA_THANH_TOAN">
+          Đã thanh toán
+        </option>
 
-        <option value="THANH_TOAN_THAT_BAI">Thanh toán thất bại</option>
+        <option value="THANH_TOAN_THAT_BAI">
+          Thanh toán thất bại
+        </option>
 
-        <option value="DA_HUY">Đã hủy</option>
+        <option value="DA_HUY">
+          Đã hủy
+        </option>
       </select>
 
       <select
@@ -305,21 +425,32 @@ export default function QuanLyDonHangPage() {
         value={trangThaiKiemDuyet}
         onChange={(event) => {
           setTrangThaiKiemDuyet(
-            event.target.value as TrangThaiKiemDuyetDonHang | "",
+            event.target
+              .value as TrangThaiKiemDuyetDonHang | "",
           );
 
           setPage(0);
         }}
       >
-        <option value="">Tất cả kiểm duyệt</option>
+        <option value="">
+          Tất cả kiểm duyệt
+        </option>
 
-        <option value="KHONG_CAN_DUYET">Không cần duyệt</option>
+        <option value="KHONG_CAN_DUYET">
+          Không cần duyệt
+        </option>
 
-        <option value="CHO_DUYET">Chờ duyệt</option>
+        <option value="CHO_DUYET">
+          Chờ duyệt
+        </option>
 
-        <option value="DA_DUYET">Đã duyệt</option>
+        <option value="DA_DUYET">
+          Đã duyệt
+        </option>
 
-        <option value="TU_CHOI">Từ chối</option>
+        <option value="TU_CHOI">
+          Từ chối
+        </option>
       </select>
 
       <button
@@ -335,6 +466,24 @@ export default function QuanLyDonHangPage() {
 
   return (
     <div className="ql-page">
+      <ThongBaoHeThong
+        dangHien={
+          thongBao.dangHien
+        }
+        noiDung={
+          thongBao.noiDung
+        }
+        tieuDe={
+          thongBao.tieuDe
+        }
+        loai={
+          thongBao.loai
+        }
+        dongThongBao={
+          thongBao.dongThongBao
+        }
+      />
+
       <TieuDeTrangQuanLy
         tieuDe="Quản lý đơn hàng"
         moTa="Theo dõi và quản lý các đơn hàng trong hệ thống"
@@ -342,38 +491,59 @@ export default function QuanLyDonHangPage() {
 
       <section className="dh-summary-grid">
         <div className="dh-summary-card">
-          <span>Tổng đơn hàng</span>
+          <span>
+            Tổng đơn hàng
+          </span>
 
-          <strong>{totalElements}</strong>
+          <strong>
+            {totalElements}
+          </strong>
 
           <i className="bi bi-receipt-cutoff" />
         </div>
 
         <div className="dh-summary-card">
-          <span>Đơn trên trang</span>
+          <span>
+            Đơn trên trang
+          </span>
 
-          <strong>{danhSachDonHang.length}</strong>
+          <strong>
+            {
+              danhSachDonHang.length
+            }
+          </strong>
 
           <i className="bi bi-list-check" />
         </div>
 
         <div className="dh-summary-card">
-          <span>Đơn kê đơn</span>
+          <span>
+            Đơn kê đơn
+          </span>
 
           <strong>
-            {danhSachDonHang.filter((donHang) => donHang.coThuocKeDon).length}
+            {
+              danhSachDonHang.filter(
+                (donHang) =>
+                  donHang.coThuocKeDon,
+              ).length
+            }
           </strong>
 
           <i className="bi bi-prescription2" />
         </div>
 
         <div className="dh-summary-card">
-          <span>Khách vãng lai</span>
+          <span>
+            Khách vãng lai
+          </span>
 
           <strong>
             {
               danhSachDonHang.filter(
-                (donHang) => donHang.loaiKhach === "VANG_LAI",
+                (donHang) =>
+                  donHang.loaiKhach ===
+                  "VANG_LAI",
               ).length
             }
           </strong>
@@ -383,20 +553,32 @@ export default function QuanLyDonHangPage() {
       </section>
 
       <KhungDanhSachQuanLy
-        thanhCongCu={thanhCongCu}
+        thanhCongCu={
+          thanhCongCu
+        }
         thongBaoLoi={loi}
         phanTrang={
           <PhanTrangQuanLy
             page={page}
             size={size}
-            totalElements={totalElements}
-            totalPages={totalPages}
+            totalElements={
+              totalElements
+            }
+            totalPages={
+              totalPages
+            }
             first={first}
             last={last}
             tenDonVi="đơn"
-            onDoiTrang={setPage}
-            onDoiKichThuoc={(kichThuocMoi) => {
-              setSize(kichThuocMoi);
+            onDoiTrang={
+              setPage
+            }
+            onDoiKichThuoc={(
+              kichThuocMoi,
+            ) => {
+              setSize(
+                kichThuocMoi,
+              );
 
               setPage(0);
             }}
@@ -407,19 +589,33 @@ export default function QuanLyDonHangPage() {
           <table className="dh-table">
             <thead>
               <tr>
-                <th>Mã đơn</th>
+                <th>
+                  Mã đơn
+                </th>
 
-                <th>Khách hàng</th>
+                <th>
+                  Khách hàng
+                </th>
 
-                <th>Ngày tạo</th>
+                <th>
+                  Ngày tạo
+                </th>
 
-                <th>Tổng tiền</th>
+                <th>
+                  Tổng tiền
+                </th>
 
-                <th>Thanh toán</th>
+                <th>
+                  Thanh toán
+                </th>
 
-                <th>Đơn hàng</th>
+                <th>
+                  Đơn hàng
+                </th>
 
-                <th>Kiểm duyệt</th>
+                <th>
+                  Kiểm duyệt
+                </th>
 
                 <th />
               </tr>
@@ -428,83 +624,127 @@ export default function QuanLyDonHangPage() {
             <tbody>
               {dangTai ? (
                 <tr>
-                  <td colSpan={8} className="dh-table-message">
-                    <AdminLoading noiDung="Đang tải danh sách đơn hàng..." />
+                  <td
+                    colSpan={8}
+                    className="dh-table-message"
+                  >
+                    <AdminLoading
+                      noiDung="Đang tải danh sách đơn hàng..."
+                    />
                   </td>
                 </tr>
-              ) : danhSachDonHang.length === 0 ? (
+              ) : danhSachDonHang.length ===
+                0 ? (
                 <tr>
-                  <td colSpan={8} className="dh-table-message">
+                  <td
+                    colSpan={8}
+                    className="dh-table-message"
+                  >
                     Chưa có đơn hàng phù hợp
                   </td>
                 </tr>
               ) : (
-                danhSachDonHang.map((donHang) => (
-                  <tr key={donHang.maDonHang}>
-                    <td>
-                      <strong>#{donHang.maDonHang}</strong>
+                danhSachDonHang.map(
+                  (donHang) => (
+                    <tr
+                      key={
+                        donHang.maDonHang
+                      }
+                    >
+                      <td>
+                        <strong>
+                          #
+                          {
+                            donHang.maDonHang
+                          }
+                        </strong>
 
-                      <small>{hienThiLoaiKhach(donHang.loaiKhach)}</small>
-                    </td>
-
-                    <td>
-                      <strong>
-                        {donHang.tenKhachHang || "Khách vãng lai"}
-                      </strong>
-
-                      <small>
-                        {donHang.soDienThoaiKhachHang || "Không có SĐT"}
-                      </small>
-                    </td>
-
-                    <td>{dinhDangNgay(donHang.ngayDatHang)}</td>
-
-                    <td>
-                      <strong>{dinhDangTien(donHang.tongThanhToan)}</strong>
-
-                      {donHang.coThuocKeDon && (
-                        <small className="dh-prescription-text">
-                          Thuốc kê đơn
+                        <small>
+                          {hienThiLoaiKhach(
+                            donHang.loaiKhach,
+                          )}
                         </small>
-                      )}
-                    </td>
+                      </td>
 
-                    <td>
-                      <span
-                        className={`dh-badge dh-badge-${donHang.trangThaiThanhToan.toLowerCase()}`}
-                      >
-                        {hienThiTrangThaiThanhToan(donHang.trangThaiThanhToan)}
-                      </span>
-                    </td>
+                      <td>
+                        <strong>
+                          {donHang.tenKhachHang ||
+                            "Khách vãng lai"}
+                        </strong>
 
-                    <td>
-                      <span
-                        className={`dh-badge dh-badge-${donHang.trangThaiDonHang.toLowerCase()}`}
-                      >
-                        {hienThiTrangThaiDonHang(donHang.trangThaiDonHang)}
-                      </span>
-                    </td>
+                        <small>
+                          {donHang.soDienThoaiKhachHang ||
+                            "Không có SĐT"}
+                        </small>
+                      </td>
 
-                    <td>
-                      <span
-                        className={`dh-badge dh-badge-${donHang.trangThaiKiemDuyet.toLowerCase()}`}
-                      >
-                        {hienThiTrangThaiKiemDuyet(donHang.trangThaiKiemDuyet)}
-                      </span>
-                    </td>
+                      <td>
+                        {dinhDangNgay(
+                          donHang.ngayDatHang,
+                        )}
+                      </td>
 
-                    <td>
-                      <button
-                        type="button"
-                        className="dh-table-action"
-                        onClick={() => void moChiTiet(donHang.maDonHang)}
-                        title="Xem chi tiết"
-                      >
-                        <i className="bi bi-eye" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                      <td>
+                        <strong>
+                          {dinhDangTien(
+                            donHang.tongThanhToan,
+                          )}
+                        </strong>
+
+                        {donHang.coThuocKeDon && (
+                          <small className="dh-prescription-text">
+                            Thuốc kê đơn
+                          </small>
+                        )}
+                      </td>
+
+                      <td>
+                        <span
+                          className={`dh-badge dh-badge-${donHang.trangThaiThanhToan.toLowerCase()}`}
+                        >
+                          {hienThiTrangThaiThanhToan(
+                            donHang.trangThaiThanhToan,
+                          )}
+                        </span>
+                      </td>
+
+                      <td>
+                        <span
+                          className={`dh-badge dh-badge-${donHang.trangThaiDonHang.toLowerCase()}`}
+                        >
+                          {hienThiTrangThaiDonHang(
+                            donHang.trangThaiDonHang,
+                          )}
+                        </span>
+                      </td>
+
+                      <td>
+                        <span
+                          className={`dh-badge dh-badge-${donHang.trangThaiKiemDuyet.toLowerCase()}`}
+                        >
+                          {hienThiTrangThaiKiemDuyet(
+                            donHang.trangThaiKiemDuyet,
+                          )}
+                        </span>
+                      </td>
+
+                      <td>
+                        <button
+                          type="button"
+                          className="dh-table-action"
+                          onClick={() =>
+                            void moChiTiet(
+                              donHang.maDonHang,
+                            )
+                          }
+                          title="Xem chi tiết"
+                        >
+                          <i className="bi bi-eye" />
+                        </button>
+                      </td>
+                    </tr>
+                  ),
+                )
               )}
             </tbody>
           </table>
@@ -513,10 +753,14 @@ export default function QuanLyDonHangPage() {
 
       <DonHangChiTietModal
         donHang={chiTiet}
-        dangTai={dangTaiChiTiet}
+        dangTai={
+          dangTaiChiTiet
+        }
         onDong={() => {
           setChiTiet(null);
-          setDangTaiChiTiet(false);
+          setDangTaiChiTiet(
+            false,
+          );
         }}
       />
     </div>

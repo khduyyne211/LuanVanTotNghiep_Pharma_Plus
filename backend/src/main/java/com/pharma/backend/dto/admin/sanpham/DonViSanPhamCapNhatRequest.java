@@ -26,6 +26,9 @@ public class DonViSanPhamCapNhatRequest {
     private Boolean laDonViCoSo;
 
     @NotNull
+    private Boolean laDonViBanMacDinh;
+
+    @NotNull
     private Boolean choPhepBan;
 
     @NotNull

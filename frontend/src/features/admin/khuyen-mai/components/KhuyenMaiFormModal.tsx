@@ -1,24 +1,45 @@
 import { useState } from "react";
-import type {  FormEvent } from "react";
+
+import type {
+  ChangeEvent,
+  FormEvent,
+} from "react";
+
 import { isAxiosError } from "axios";
 
-import { themKhuyenMai, capNhatKhuyenMai } from "../api/khuyenMaiApi";
-import type { KhuyenMai, KhuyenMaiRequest } from "../types/KhuyenMai";
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+
+import {
+  capNhatKhuyenMai,
+  themKhuyenMai,
+} from "../api/khuyenMaiApi";
+
+import type {
+  KhuyenMai,
+  KhuyenMaiRequest,
+  KieuGiamGia,
+} from "../types/KhuyenMai";
 
 type KhuyenMaiFormData = {
   tenChuongTrinh: string;
-  loaiKhuyenMai: "PHAN_TRAM" | "SO_TIEN";
-  giamGia: string;
+  kieuGiamGia: KieuGiamGia;
   giaTriGiam: string;
   thoiGianBatDau: string;
   thoiGianKetThuc: string;
 };
+
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
 
 type KhuyenMaiFormModalProps = {
   isOpen: boolean;
   khuyenMaiCanSua: KhuyenMai | null;
   onClose: () => void;
   onSuccess: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
@@ -30,37 +51,51 @@ const taoDuLieuForm = (
 ): KhuyenMaiFormData => {
   if (khuyenMaiCanSua) {
     return {
-      tenChuongTrinh: khuyenMaiCanSua.tenChuongTrinh,
-      loaiKhuyenMai: khuyenMaiCanSua.loaiKhuyenMai,
-      giamGia:
-        khuyenMaiCanSua.giamGia !== null ? String(khuyenMaiCanSua.giamGia) : "",
+      tenChuongTrinh:
+        khuyenMaiCanSua.tenChuongTrinh,
+
+      kieuGiamGia:
+        khuyenMaiCanSua.kieuGiamGia,
+
       giaTriGiam:
-        khuyenMaiCanSua.giaTriGiam !== null
-          ? String(khuyenMaiCanSua.giaTriGiam)
-          : "",
-      thoiGianBatDau: khuyenMaiCanSua.thoiGianBatDau.slice(0, 16),
-      thoiGianKetThuc: khuyenMaiCanSua.thoiGianKetThuc.slice(0, 16),
+        String(khuyenMaiCanSua.giaTriGiam),
+
+      thoiGianBatDau:
+        khuyenMaiCanSua.thoiGianBatDau.slice(
+          0,
+          16,
+        ),
+
+      thoiGianKetThuc:
+        khuyenMaiCanSua.thoiGianKetThuc.slice(
+          0,
+          16,
+        ),
     };
   }
 
   return {
     tenChuongTrinh: "",
-    loaiKhuyenMai: "PHAN_TRAM",
-    giamGia: "",
+    kieuGiamGia: "PHAN_TRAM",
     giaTriGiam: "",
     thoiGianBatDau: "",
     thoiGianKetThuc: "",
   };
 };
 
-function KhuyenMaiFormModal(props: KhuyenMaiFormModalProps) {
+function KhuyenMaiFormModal(
+  props: KhuyenMaiFormModalProps,
+) {
   if (!props.isOpen) {
     return null;
   }
 
   return (
     <KhuyenMaiFormNoiDung
-      key={props.khuyenMaiCanSua?.maKhuyenMai ?? "them-moi"}
+      key={
+        props.khuyenMaiCanSua?.maKhuyenMai ??
+        "them-moi"
+      }
       {...props}
     />
   );
@@ -70,24 +105,28 @@ function KhuyenMaiFormNoiDung({
   khuyenMaiCanSua,
   onClose,
   onSuccess,
+  onThongBao,
 }: KhuyenMaiFormModalProps) {
-  const [formData, setFormData] = useState<KhuyenMaiFormData>(() =>
-    taoDuLieuForm(khuyenMaiCanSua),
-  );
+  const [formData, setFormData] =
+    useState<KhuyenMaiFormData>(
+      () => taoDuLieuForm(khuyenMaiCanSua),
+    );
 
-  const [dangLuu, setDangLuu] = useState(false);
+  const [dangLuu, setDangLuu] =
+    useState(false);
 
   const xuLyThayDoiInput = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    event: ChangeEvent<
+      HTMLInputElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = event.target;
 
     setFormData((duLieuCu) => {
-      if (name === "loaiKhuyenMai") {
+      if (name === "kieuGiamGia") {
         return {
           ...duLieuCu,
-          loaiKhuyenMai: value as KhuyenMaiFormData["loaiKhuyenMai"],
-          giamGia: "",
+          kieuGiamGia: value as KieuGiamGia,
           giaTriGiam: "",
         };
       }
@@ -99,49 +138,86 @@ function KhuyenMaiFormNoiDung({
     });
   };
 
-  const xuLySubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const xuLySubmit = async (
+    event: FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
-    const tenChuongTrinh = formData.tenChuongTrinh.trim();
+    const tenChuongTrinh =
+      formData.tenChuongTrinh.trim();
 
     if (!tenChuongTrinh) {
-      alert("Tên chương trình không được để trống");
+      onThongBao(
+        "Tên chương trình không được để trống.",
+        "CANH_BAO",
+        "Dữ liệu chưa hợp lệ",
+      );
+
       return;
     }
 
     const request: KhuyenMaiRequest = {
       tenChuongTrinh,
-      loaiKhuyenMai: formData.loaiKhuyenMai,
-      giamGia:
-        formData.loaiKhuyenMai === "PHAN_TRAM"
-          ? Number(formData.giamGia)
-          : null,
+
+      loaiKhuyenMai: "SAN_PHAM",
+
+      kieuGiamGia:
+        formData.kieuGiamGia,
+
       giaTriGiam:
-        formData.loaiKhuyenMai === "SO_TIEN"
-          ? Number(formData.giaTriGiam)
-          : null,
-      thoiGianBatDau: formData.thoiGianBatDau,
-      thoiGianKetThuc: formData.thoiGianKetThuc,
+        Number(formData.giaTriGiam),
+
+      thoiGianBatDau:
+        formData.thoiGianBatDau,
+
+      thoiGianKetThuc:
+        formData.thoiGianKetThuc,
     };
 
     try {
       setDangLuu(true);
 
       if (khuyenMaiCanSua) {
-        await capNhatKhuyenMai(khuyenMaiCanSua.maKhuyenMai, request);
+        await capNhatKhuyenMai(
+          khuyenMaiCanSua.maKhuyenMai,
+          request,
+        );
+
+        onSuccess();
+
+        onThongBao(
+          "Cập nhật khuyến mãi thành công.",
+          "THANH_CONG",
+          "Thành công",
+        );
       } else {
         await themKhuyenMai(request);
+
+        onSuccess();
+
+        onThongBao(
+          "Thêm khuyến mãi thành công.",
+          "THANH_CONG",
+          "Thành công",
+        );
       }
-
-      onSuccess();
     } catch (error) {
-      console.error("Không thể lưu nhà sản xuất:", error);
+      console.error(
+        "Không thể lưu khuyến mãi:",
+        error,
+      );
 
-      const message = isAxiosError<ApiErrorResponse>(error)
-        ? error.response?.data?.message
-        : null;
+      const message =
+        isAxiosError<ApiErrorResponse>(error)
+          ? error.response?.data?.message
+          : null;
 
-      alert(message ?? "Không thể lưu nhà sản xuất.");
+      onThongBao(
+        message ??
+          "Không thể lưu khuyến mãi.",
+        "LOI",
+        "Không thể lưu dữ liệu",
+      );
     } finally {
       setDangLuu(false);
     }
@@ -153,12 +229,14 @@ function KhuyenMaiFormNoiDung({
         <div className="modal-header">
           <div>
             <h2>
-              {khuyenMaiCanSua ? "Cập nhật khuyến mãi" : "Thêm khuyến mãi"}
+              {khuyenMaiCanSua
+                ? "Cập nhật khuyến mãi"
+                : "Thêm khuyến mãi"}
             </h2>
 
             <p>
-              Khai báo tên chương trình, loại giảm giá và thời gian áp dụng
-              khuyến mãi.
+              Khai báo tên chương trình, kiểu giảm
+              giá và thời gian áp dụng khuyến mãi.
             </p>
           </div>
 
@@ -176,7 +254,9 @@ function KhuyenMaiFormNoiDung({
         <form onSubmit={xuLySubmit}>
           <div className="modal-body">
             <div className="form-group">
-              <label htmlFor="tenChuongTrinh">Tên chương trình</label>
+              <label htmlFor="tenChuongTrinh">
+                Tên chương trình
+              </label>
 
               <input
                 id="tenChuongTrinh"
@@ -191,58 +271,60 @@ function KhuyenMaiFormNoiDung({
             </div>
 
             <div className="form-group">
-              <label htmlFor="loaiKhuyenMai">Loại khuyến mãi</label>
+              <label htmlFor="kieuGiamGia">
+                Kiểu giảm giá
+              </label>
 
               <select
-                id="loaiKhuyenMai"
-                name="loaiKhuyenMai"
-                value={formData.loaiKhuyenMai}
+                id="kieuGiamGia"
+                name="kieuGiamGia"
+                value={formData.kieuGiamGia}
                 onChange={xuLyThayDoiInput}
                 required
               >
-                <option value="PHAN_TRAM">Giảm theo phần trăm</option>
+                <option value="PHAN_TRAM">
+                  Giảm theo phần trăm
+                </option>
 
-                <option value="SO_TIEN">Giảm theo số tiền</option>
+                <option value="SO_TIEN">
+                  Giảm theo số tiền
+                </option>
               </select>
             </div>
 
-            {formData.loaiKhuyenMai === "PHAN_TRAM" ? (
-              <div className="form-group">
-                <label htmlFor="giamGia">Phần trăm giảm</label>
+            <div className="form-group">
+              <label htmlFor="giaTriGiam">
+                {formData.kieuGiamGia === "PHAN_TRAM"
+                  ? "Phần trăm giảm"
+                  : "Số tiền giảm"}
+              </label>
 
-                <input
-                  id="giamGia"
-                  type="number"
-                  name="giamGia"
-                  value={formData.giamGia}
-                  onChange={xuLyThayDoiInput}
-                  min="0.01"
-                  max="100"
-                  step="0.01"
-                  placeholder="Ví dụ: 10"
-                  required
-                />
-              </div>
-            ) : (
-              <div className="form-group">
-                <label htmlFor="giaTriGiam">Số tiền giảm</label>
-
-                <input
-                  id="giaTriGiam"
-                  type="number"
-                  name="giaTriGiam"
-                  value={formData.giaTriGiam}
-                  onChange={xuLyThayDoiInput}
-                  min="0.01"
-                  step="0.01"
-                  placeholder="Ví dụ: 50000"
-                  required
-                />
-              </div>
-            )}
+              <input
+                id="giaTriGiam"
+                type="number"
+                name="giaTriGiam"
+                value={formData.giaTriGiam}
+                onChange={xuLyThayDoiInput}
+                min="0.01"
+                max={
+                  formData.kieuGiamGia === "PHAN_TRAM"
+                    ? "100"
+                    : undefined
+                }
+                step="0.01"
+                placeholder={
+                  formData.kieuGiamGia === "PHAN_TRAM"
+                    ? "Ví dụ: 10"
+                    : "Ví dụ: 50000"
+                }
+                required
+              />
+            </div>
 
             <div className="form-group">
-              <label htmlFor="thoiGianBatDau">Thời gian bắt đầu</label>
+              <label htmlFor="thoiGianBatDau">
+                Thời gian bắt đầu
+              </label>
 
               <input
                 id="thoiGianBatDau"
@@ -255,7 +337,9 @@ function KhuyenMaiFormNoiDung({
             </div>
 
             <div className="form-group">
-              <label htmlFor="thoiGianKetThuc">Thời gian kết thúc</label>
+              <label htmlFor="thoiGianKetThuc">
+                Thời gian kết thúc
+              </label>
 
               <input
                 id="thoiGianKetThuc"
@@ -278,7 +362,11 @@ function KhuyenMaiFormNoiDung({
               Hủy
             </button>
 
-            <button type="submit" className="primary-button" disabled={dangLuu}>
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={dangLuu}
+            >
               {dangLuu
                 ? "Đang lưu..."
                 : khuyenMaiCanSua

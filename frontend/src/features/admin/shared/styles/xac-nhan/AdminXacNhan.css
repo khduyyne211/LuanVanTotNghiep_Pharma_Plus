@@ -1,0 +1,129 @@
+.admin-xac-nhan-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background-color: rgba(15, 23, 42, 0.45);
+
+  z-index: 1500;
+}
+
+.admin-xac-nhan-hop {
+  width: 100%;
+  max-width: 430px;
+
+  padding: 28px;
+
+  border-radius: 14px;
+
+  background-color: #ffffff;
+
+  box-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.18);
+
+  text-align: center;
+}
+
+.admin-xac-nhan-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 52px;
+  height: 52px;
+
+  margin: 0 auto 16px;
+
+  border-radius: 50%;
+
+  background-color: #fff7ed;
+  color: #c2410c;
+
+  font-size: 24px;
+}
+
+.admin-xac-nhan-hop h2 {
+  margin: 0;
+
+  color: #101828;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.admin-xac-nhan-hop p {
+  margin: 12px 0 0;
+
+  color: #667085;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.admin-xac-nhan-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 24px;
+}
+
+.admin-xac-nhan-button {
+  min-width: 100px;
+  min-height: 40px;
+
+  padding: 9px 16px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.admin-xac-nhan-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.admin-xac-nhan-button-huy {
+  border: 1px solid #d0d5dd;
+
+  background-color: #ffffff;
+  color: #344054;
+}
+
+.admin-xac-nhan-button-huy:hover:not(:disabled) {
+  background-color: #f9fafb;
+}
+
+.admin-xac-nhan-button-dong-y {
+  border: 1px solid #078c67;
+
+  background-color: #078c67;
+  color: #ffffff;
+}
+
+.admin-xac-nhan-button-dong-y:hover:not(:disabled) {
+  background-color: #067457;
+}
+
+@media (max-width: 520px) {
+  .admin-xac-nhan-hop {
+    padding: 22px 18px;
+  }
+
+  .admin-xac-nhan-actions {
+    flex-direction: column-reverse;
+  }
+
+  .admin-xac-nhan-button {
+    width: 100%;
+  }
+}

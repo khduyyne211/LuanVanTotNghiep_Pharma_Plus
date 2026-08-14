@@ -1,4 +1,5 @@
 import AdminLoading from "../../shared/components/loading/AdminLoading";
+
 import type { KhuyenMai } from "../types/KhuyenMai";
 
 type KhuyenMaiTableProps = {
@@ -7,7 +8,9 @@ type KhuyenMaiTableProps = {
   onSua: (khuyenMai: KhuyenMai) => void;
 };
 
-const dinhDangTien = (giaTri: number) => {
+const dinhDangTien = (
+  giaTri: number,
+) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -15,7 +18,9 @@ const dinhDangTien = (giaTri: number) => {
   }).format(giaTri);
 };
 
-const dinhDangThoiGian = (thoiGian: string) => {
+const dinhDangThoiGian = (
+  thoiGian: string,
+) => {
   return new Intl.DateTimeFormat("vi-VN", {
     day: "2-digit",
     month: "2-digit",
@@ -26,42 +31,57 @@ const dinhDangThoiGian = (thoiGian: string) => {
   }).format(new Date(thoiGian));
 };
 
-const layTenLoaiKhuyenMai = (khuyenMai: KhuyenMai) => {
-  return khuyenMai.loaiKhuyenMai === "PHAN_TRAM"
+const layTenKieuGiamGia = (
+  khuyenMai: KhuyenMai,
+) => {
+  return khuyenMai.kieuGiamGia === "PHAN_TRAM"
     ? "Giảm theo phần trăm"
     : "Giảm theo số tiền";
 };
 
-const layGiaTriKhuyenMai = (khuyenMai: KhuyenMai) => {
-  if (khuyenMai.loaiKhuyenMai === "PHAN_TRAM") {
-    return khuyenMai.giamGia !== null
-      ? `${khuyenMai.giamGia}%`
-      : "Chưa cập nhật";
+const layGiaTriKhuyenMai = (
+  khuyenMai: KhuyenMai,
+) => {
+  if (khuyenMai.kieuGiamGia === "PHAN_TRAM") {
+    return `${khuyenMai.giaTriGiam}%`;
   }
 
-  return khuyenMai.giaTriGiam !== null
-    ? dinhDangTien(khuyenMai.giaTriGiam)
-    : "Chưa cập nhật";
+  return dinhDangTien(
+    khuyenMai.giaTriGiam,
+  );
 };
 
-const layThongTinTrangThai = (trangThai: KhuyenMai["trangThaiKhuyenMai"]) => {
-  if (trangThai === "DANG_DIEN_RA") {
+const layThongTinTrangThai = (
+  khuyenMai: KhuyenMai,
+) => {
+  const bayGio = new Date();
+
+  const thoiGianBatDau =
+    new Date(khuyenMai.thoiGianBatDau);
+
+  const thoiGianKetThuc =
+    new Date(khuyenMai.thoiGianKetThuc);
+
+  if (bayGio < thoiGianBatDau) {
     return {
-      tenTrangThai: "Đang diễn ra",
-      className: "ql-status ql-status-active",
+      tenTrangThai: "Chưa bắt đầu",
+      className:
+        "ql-status ql-status-pending",
     };
   }
 
-  if (trangThai === "DA_KET_THUC") {
+  if (bayGio > thoiGianKetThuc) {
     return {
       tenTrangThai: "Đã kết thúc",
-      className: "ql-status ql-status-inactive",
+      className:
+        "ql-status ql-status-inactive",
     };
   }
 
   return {
-    tenTrangThai: "Chưa bắt đầu",
-    className: "ql-status ql-status-pending",
+    tenTrangThai: "Đang diễn ra",
+    className:
+      "ql-status ql-status-active",
   };
 };
 
@@ -71,7 +91,11 @@ function KhuyenMaiTable({
   onSua,
 }: KhuyenMaiTableProps) {
   if (loading) {
-    return <AdminLoading noiDung="Đang tải danh sách khuyến mãi..." />;
+    return (
+      <AdminLoading
+        noiDung="Đang tải danh sách khuyến mãi..."
+      />
+    );
   }
 
   return (
@@ -81,7 +105,7 @@ function KhuyenMaiTable({
           <tr>
             <th>Mã</th>
             <th>Tên chương trình</th>
-            <th>Loại khuyến mãi</th>
+            <th>Kiểu giảm giá</th>
             <th>Giá trị giảm</th>
             <th>Thời gian bắt đầu</th>
             <th>Thời gian kết thúc</th>
@@ -93,55 +117,89 @@ function KhuyenMaiTable({
         <tbody>
           {danhSachKhuyenMai.length === 0 ? (
             <tr>
-              <td colSpan={8} className="ql-table-message">
+              <td
+                colSpan={8}
+                className="ql-table-message"
+              >
                 Chưa có chương trình khuyến mãi
               </td>
             </tr>
           ) : (
-            danhSachKhuyenMai.map((khuyenMai) => {
-              const thongTinTrangThai = layThongTinTrangThai(
-                khuyenMai.trangThaiKhuyenMai,
-              );
+            danhSachKhuyenMai.map(
+              (khuyenMai) => {
+                const thongTinTrangThai =
+                  layThongTinTrangThai(
+                    khuyenMai,
+                  );
 
-              return (
-                <tr key={khuyenMai.maKhuyenMai}>
-                  <td>
-                    <strong>#{khuyenMai.maKhuyenMai}</strong>
-                  </td>
+                return (
+                  <tr key={khuyenMai.maKhuyenMai}>
+                    <td>
+                      <strong>
+                        #{khuyenMai.maKhuyenMai}
+                      </strong>
+                    </td>
 
-                  <td>
-                    <strong>{khuyenMai.tenChuongTrinh}</strong>
-                  </td>
+                    <td>
+                      <strong>
+                        {khuyenMai.tenChuongTrinh}
+                      </strong>
+                    </td>
 
-                  <td>{layTenLoaiKhuyenMai(khuyenMai)}</td>
+                    <td>
+                      {layTenKieuGiamGia(
+                        khuyenMai,
+                      )}
+                    </td>
 
-                  <td>{layGiaTriKhuyenMai(khuyenMai)}</td>
+                    <td>
+                      {layGiaTriKhuyenMai(
+                        khuyenMai,
+                      )}
+                    </td>
 
-                  <td>{dinhDangThoiGian(khuyenMai.thoiGianBatDau)}</td>
+                    <td>
+                      {dinhDangThoiGian(
+                        khuyenMai.thoiGianBatDau,
+                      )}
+                    </td>
 
-                  <td>{dinhDangThoiGian(khuyenMai.thoiGianKetThuc)}</td>
+                    <td>
+                      {dinhDangThoiGian(
+                        khuyenMai.thoiGianKetThuc,
+                      )}
+                    </td>
 
-                  <td>
-                    <span className={thongTinTrangThai.className}>
-                      {thongTinTrangThai.tenTrangThai}
-                    </span>
-                  </td>
-
-                  <td>
-                    <div className="ql-action-group">
-                      <button
-                        type="button"
-                        className="ql-action-button"
-                        onClick={() => onSua(khuyenMai)}
+                    <td>
+                      <span
+                        className={
+                          thongTinTrangThai.className
+                        }
                       >
-                        <i className="bi bi-pencil-square" />
-                        Sửa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })
+                        {
+                          thongTinTrangThai.tenTrangThai
+                        }
+                      </span>
+                    </td>
+
+                    <td>
+                      <div className="ql-action-group">
+                        <button
+                          type="button"
+                          className="ql-action-button"
+                          onClick={() =>
+                            onSua(khuyenMai)
+                          }
+                        >
+                          <i className="bi bi-pencil-square" />
+                          Sửa
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              },
+            )
           )}
         </tbody>
       </table>

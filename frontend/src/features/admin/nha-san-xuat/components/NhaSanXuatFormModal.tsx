@@ -1,14 +1,19 @@
 import { useState } from "react";
+
 import type {
   ChangeEvent,
   FormEvent,
 } from "react";
+
 import { isAxiosError } from "axios";
+
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
 
 import {
   capNhatNhaSanXuat,
   themNhaSanXuat,
 } from "../api/nhaSanXuatApi";
+
 import type {
   NhaSanXuat,
   NhaSanXuatRequest,
@@ -20,11 +25,18 @@ type NhaSanXuatFormData = {
   diaChi: string;
 };
 
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
+
 type NhaSanXuatFormModalProps = {
   isOpen: boolean;
   nhaSanXuatCanSua: NhaSanXuat | null;
   onClose: () => void;
   onSuccess: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
@@ -32,14 +44,16 @@ type ApiErrorResponse = {
 };
 
 const taoDuLieuForm = (
-  nhaSanXuatCanSua: NhaSanXuat | null
+  nhaSanXuatCanSua: NhaSanXuat | null,
 ): NhaSanXuatFormData => {
   if (nhaSanXuatCanSua) {
     return {
       tenNhaSanXuat:
         nhaSanXuatCanSua.tenNhaSanXuat,
-      quocGia: nhaSanXuatCanSua.quocGia ?? "",
-      diaChi: nhaSanXuatCanSua.diaChi ?? "",
+      quocGia:
+        nhaSanXuatCanSua.quocGia ?? "",
+      diaChi:
+        nhaSanXuatCanSua.diaChi ?? "",
     };
   }
 
@@ -51,7 +65,7 @@ const taoDuLieuForm = (
 };
 
 function NhaSanXuatFormModal(
-  props: NhaSanXuatFormModalProps
+  props: NhaSanXuatFormModalProps,
 ) {
   if (!props.isOpen) {
     return null;
@@ -72,10 +86,11 @@ function NhaSanXuatFormNoiDung({
   nhaSanXuatCanSua,
   onClose,
   onSuccess,
+  onThongBao,
 }: NhaSanXuatFormModalProps) {
   const [formData, setFormData] =
     useState<NhaSanXuatFormData>(
-      () => taoDuLieuForm(nhaSanXuatCanSua)
+      () => taoDuLieuForm(nhaSanXuatCanSua),
     );
 
   const [dangLuu, setDangLuu] =
@@ -84,7 +99,7 @@ function NhaSanXuatFormNoiDung({
   const xuLyThayDoiInput = (
     event: ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
 
@@ -95,7 +110,7 @@ function NhaSanXuatFormNoiDung({
   };
 
   const xuLySubmit = async (
-    event: FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
@@ -103,9 +118,12 @@ function NhaSanXuatFormNoiDung({
       formData.tenNhaSanXuat.trim();
 
     if (!tenNhaSanXuat) {
-      alert(
-        "Tên nhà sản xuất không được để trống"
+      onThongBao(
+        "Tên nhà sản xuất không được để trống.",
+        "CANH_BAO",
+        "Dữ liệu chưa hợp lệ",
       );
+
       return;
     }
 
@@ -123,17 +141,31 @@ function NhaSanXuatFormNoiDung({
       if (nhaSanXuatCanSua) {
         await capNhatNhaSanXuat(
           nhaSanXuatCanSua.maNhaSanXuat,
-          request
+          request,
+        );
+
+        onSuccess();
+
+        onThongBao(
+          "Cập nhật nhà sản xuất thành công.",
+          "THANH_CONG",
+          "Thành công",
         );
       } else {
         await themNhaSanXuat(request);
-      }
 
-      onSuccess();
+        onSuccess();
+
+        onThongBao(
+          "Thêm nhà sản xuất thành công.",
+          "THANH_CONG",
+          "Thành công",
+        );
+      }
     } catch (error) {
       console.error(
         "Không thể lưu nhà sản xuất:",
-        error
+        error,
       );
 
       const message =
@@ -141,9 +173,11 @@ function NhaSanXuatFormNoiDung({
           ? error.response?.data?.message
           : null;
 
-      alert(
+      onThongBao(
         message ??
-          "Không thể lưu nhà sản xuất."
+          "Không thể lưu nhà sản xuất.",
+        "LOI",
+        "Không thể lưu dữ liệu",
       );
     } finally {
       setDangLuu(false);

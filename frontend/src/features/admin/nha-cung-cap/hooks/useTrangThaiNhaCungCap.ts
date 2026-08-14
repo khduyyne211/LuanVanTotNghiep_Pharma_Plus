@@ -1,43 +1,104 @@
 import { useState } from "react";
+
 import { isAxiosError } from "axios";
+
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+
 import { doiTrangThaiHopTac } from "../api/nhaCungCapApi";
+
 import type { NhaCungCap } from "../types/NhaCungCap";
+
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
 
 type UseTrangThaiNhaCungCapProps = {
   onTaiLaiDanhSach: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
   message?: string;
 };
 
-function useTrangThaiNhaCungCap({ onTaiLaiDanhSach }: UseTrangThaiNhaCungCapProps) {
-  const [maNhaCungCapDangXuLy, setMaNhaCungCapDangXuLy] = useState<number | null>(null);
+function useTrangThaiNhaCungCap({
+  onTaiLaiDanhSach,
+  onThongBao,
+}: UseTrangThaiNhaCungCapProps) {
+  const [
+    maNhaCungCapDangXuLy,
+    setMaNhaCungCapDangXuLy,
+  ] = useState<number | null>(null);
 
-  const xuLyDoiTrangThai = async (nhaCungCap: NhaCungCap) => {
-    const hanhDong = nhaCungCap.trangThaiHopTac;
-    const daXacNhan = window.confirm(
-      `Bạn có chắc muốn ${hanhDong} nhà cung cấp "${nhaCungCap.tenNhaCungCap}"?`
-    );
+  const [
+    nhaCungCapChoXuLy,
+    setNhaCungCapChoXuLy,
+  ] = useState<NhaCungCap | null>(null);
 
-    if (!daXacNhan) {
+  const moXacNhanDoiTrangThai = (
+    nhaCungCap: NhaCungCap,
+  ) => {
+    setNhaCungCapChoXuLy(nhaCungCap);
+  };
+
+  const dongXacNhanDoiTrangThai = () => {
+    if (maNhaCungCapDangXuLy !== null) {
       return;
     }
 
-    try {
-      setMaNhaCungCapDangXuLy(nhaCungCap.maNhaCungCap);
+    setNhaCungCapChoXuLy(null);
+  };
 
-      await doiTrangThaiHopTac(nhaCungCap.maNhaCungCap);
+  const xacNhanDoiTrangThai = async () => {
+    if (!nhaCungCapChoXuLy) {
+      return;
+    }
+
+    const nhaCungCap = nhaCungCapChoXuLy;
+    const dangHopTac =
+      nhaCungCap.trangThaiHopTac;
+
+    try {
+      setMaNhaCungCapDangXuLy(
+        nhaCungCap.maNhaCungCap,
+      );
+
+      await doiTrangThaiHopTac(
+        nhaCungCap.maNhaCungCap,
+      );
+
+      setNhaCungCapChoXuLy(null);
 
       onTaiLaiDanhSach();
+
+      onThongBao(
+        dangHopTac
+          ? "Ngừng hợp tác với nhà cung cấp thành công."
+          : "Hợp tác lại với nhà cung cấp thành công.",
+        "THANH_CONG",
+        "Thành công",
+      );
     } catch (error) {
-      console.error("Không thể cập nhật trạng thái nhà cung cấp:", error);
+      console.error(
+        "Không thể cập nhật trạng thái nhà cung cấp:",
+        error,
+      );
 
-      const message = isAxiosError<ApiErrorResponse>(error)
-        ? error.response?.data?.message
-        : null;
+      const message =
+        isAxiosError<ApiErrorResponse>(error)
+          ? error.response?.data?.message
+          : null;
 
-      alert(message ?? "Không thể cập nhật trạng thái nhà cung cấp.");
+      setNhaCungCapChoXuLy(null);
+
+      onThongBao(
+        message ??
+          "Không thể cập nhật trạng thái nhà cung cấp.",
+        "LOI",
+        "Không thể cập nhật trạng thái",
+      );
     } finally {
       setMaNhaCungCapDangXuLy(null);
     }
@@ -45,7 +106,10 @@ function useTrangThaiNhaCungCap({ onTaiLaiDanhSach }: UseTrangThaiNhaCungCapProp
 
   return {
     maNhaCungCapDangXuLy,
-    xuLyDoiTrangThai,
+    nhaCungCapChoXuLy,
+    moXacNhanDoiTrangThai,
+    dongXacNhanDoiTrangThai,
+    xacNhanDoiTrangThai,
   };
 }
 

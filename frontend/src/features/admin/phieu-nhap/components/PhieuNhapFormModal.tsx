@@ -4,6 +4,8 @@ import type { ChangeEvent, FormEvent } from "react";
 
 import { isAxiosError } from "axios";
 
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+
 import AdminLoading from "../../shared/components/loading/AdminLoading";
 
 import { layTuyChonNhapKho, taoPhieuNhap } from "../api/phieuNhapApi";
@@ -21,10 +23,17 @@ import type {
 
 import type { NhaCungCap } from "../../nha-cung-cap/types/NhaCungCap";
 
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
+
 type PhieuNhapFormModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (phieuNhap: PhieuNhap) => void;
+  onThongBao: HienThongBao;
 };
 
 type DongSanPhamForm = {
@@ -108,7 +117,11 @@ function PhieuNhapFormModal(props: PhieuNhapFormModalProps) {
   return <PhieuNhapFormNoiDung {...props} />;
 }
 
-function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
+function PhieuNhapFormNoiDung({
+  onClose,
+  onSuccess,
+  onThongBao,
+}: PhieuNhapFormModalProps) {
   const { nguoiDungDangNhap } = useXacThucContext();
 
   const [danhSachNhaCungCap, setDanhSachNhaCungCap] = useState<NhaCungCap[]>(
@@ -249,24 +262,28 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
     });
   };
 
+  const hienCanhBao = (noiDung: string) => {
+    onThongBao(noiDung, "CANH_BAO", "Dữ liệu chưa hợp lệ");
+  };
+
   const kiemTraDuLieu = () => {
     if (
       nguoiDungDangNhap?.maNhanVien == null ||
       nguoiDungDangNhap.vaiTro !== "ADMIN"
     ) {
-      alert("Không xác định được tài khoản Admin đang đăng nhập.");
+      hienCanhBao("Không xác định được tài khoản Admin đang đăng nhập.");
 
       return false;
     }
 
     if (!maNhaCungCap) {
-      alert("Vui lòng chọn nhà cung cấp.");
+      hienCanhBao("Vui lòng chọn nhà cung cấp.");
 
       return false;
     }
 
     if (danhSachDong.length === 0) {
-      alert("Phiếu nhập phải có ít nhất một sản phẩm.");
+      hienCanhBao("Phiếu nhập phải có ít nhất một sản phẩm.");
 
       return false;
     }
@@ -279,7 +296,7 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
       const donGiaNhap = Number(dong.donGiaNhap);
 
       if (!dong.maSanPham || !dong.maDonViSanPham) {
-        alert(
+        hienCanhBao(
           `Vui lòng chọn đầy đủ sản phẩm và đơn vị nhập tại dòng ${chiSo + 1}.`,
         );
 
@@ -287,25 +304,27 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
       }
 
       if (!Number.isFinite(soLuongNhap) || soLuongNhap <= 0) {
-        alert(`Số lượng nhập tại dòng ${chiSo + 1} phải lớn hơn 0.`);
+        hienCanhBao(`Số lượng nhập tại dòng ${chiSo + 1} phải lớn hơn 0.`);
 
         return false;
       }
 
       if (!Number.isFinite(donGiaNhap) || donGiaNhap <= 0) {
-        alert(`Đơn giá nhập tại dòng ${chiSo + 1} phải lớn hơn 0.`);
+        hienCanhBao(`Đơn giá nhập tại dòng ${chiSo + 1} phải lớn hơn 0.`);
 
         return false;
       }
 
       if (!dong.hanSuDung) {
-        alert(`Vui lòng chọn hạn sử dụng tại dòng ${chiSo + 1}.`);
+        hienCanhBao(`Vui lòng chọn hạn sử dụng tại dòng ${chiSo + 1}.`);
 
         return false;
       }
 
       if (dong.hanSuDung < ngayToiThieu) {
-        alert(`Hạn sử dụng tại dòng ${chiSo + 1} phải lớn hơn ngày hiện tại.`);
+        hienCanhBao(
+          `Hạn sử dụng tại dòng ${chiSo + 1} phải lớn hơn ngày hiện tại.`,
+        );
 
         return false;
       }
@@ -319,7 +338,9 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
       );
 
       if (khoaDaChon.has(khoa)) {
-        alert("Không được nhập trùng cùng sản phẩm, đơn vị và hạn sử dụng.");
+        hienCanhBao(
+          "Không được nhập trùng cùng sản phẩm, đơn vị và hạn sử dụng.",
+        );
 
         return false;
       }
@@ -361,6 +382,8 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
       const response = await taoPhieuNhap(request);
 
       onSuccess(response.data);
+
+      onThongBao("Tạo phiếu nhập thành công.", "THANH_CONG", "Thành công");
     } catch (error) {
       console.error("Không thể tạo phiếu nhập:", error);
 
@@ -368,7 +391,11 @@ function PhieuNhapFormNoiDung({ onClose, onSuccess }: PhieuNhapFormModalProps) {
         ? error.response?.data?.message
         : null;
 
-      alert(message ?? "Không thể tạo phiếu nhập.");
+      onThongBao(
+        message ?? "Không thể tạo phiếu nhập.",
+        "LOI",
+        "Không thể tạo phiếu nhập",
+      );
     } finally {
       setDangLuu(false);
     }

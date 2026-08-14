@@ -1,9 +1,17 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+
 import { capNhatQuyDoiDonVi, themQuyDoiDonVi } from "../api/sanPhamApi";
 
 import type { DonViSanPham, QuyDoiDonVi } from "../types/SanPham";
+
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
 
 type QuyDoiDonViForm = {
   maDonViNguon: string;
@@ -19,6 +27,7 @@ type QuyDoiDonViFormModalProps = {
   quyDoiCanSua: QuyDoiDonVi | null;
   onClose: () => void;
   onSuccess: () => Promise<void>;
+  onThongBao: HienThongBao;
 };
 
 const taoDuLieuFormQuyDoi = (
@@ -60,6 +69,7 @@ function QuyDoiDonViFormNoiDung({
   quyDoiCanSua,
   onClose,
   onSuccess,
+  onThongBao,
 }: QuyDoiDonViFormModalProps) {
   const [formData, setFormData] = useState<QuyDoiDonViForm>(() =>
     taoDuLieuFormQuyDoi(quyDoiCanSua),
@@ -78,31 +88,39 @@ function QuyDoiDonViFormNoiDung({
     });
   };
 
+  const hienCanhBao = (noiDung: string) => {
+    onThongBao(
+      noiDung,
+      "CANH_BAO",
+      "Dữ liệu chưa hợp lệ",
+    );
+  };
+
   const xuLySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!formData.maDonViNguon) {
-      alert("Vui lòng chọn đơn vị nguồn");
+      hienCanhBao("Vui lòng chọn đơn vị nguồn.");
       return;
     }
 
     if (!formData.maDonViDich) {
-      alert("Vui lòng chọn đơn vị đích");
+      hienCanhBao("Vui lòng chọn đơn vị đích.");
       return;
     }
 
     if (formData.maDonViNguon === formData.maDonViDich) {
-      alert("Đơn vị nguồn và đơn vị đích không được giống nhau");
+      hienCanhBao("Đơn vị nguồn và đơn vị đích không được giống nhau.");
       return;
     }
 
     if (!formData.soLuongNguon || Number(formData.soLuongNguon) <= 0) {
-      alert("Số lượng nguồn phải lớn hơn 0");
+      hienCanhBao("Số lượng nguồn phải lớn hơn 0.");
       return;
     }
 
     if (!formData.soLuongDich || Number(formData.soLuongDich) <= 0) {
-      alert("Số lượng đích phải lớn hơn 0");
+      hienCanhBao("Số lượng đích phải lớn hơn 0.");
       return;
     }
 
@@ -118,18 +136,34 @@ function QuyDoiDonViFormNoiDung({
       setDangLuu(true);
 
       if (quyDoiCanSua) {
-        await capNhatQuyDoiDonVi(quyDoiCanSua.maQuyDoi, duLieuGuiLen);
+        await capNhatQuyDoiDonVi(
+          quyDoiCanSua.maQuyDoi,
+          duLieuGuiLen,
+        );
       } else {
         await themQuyDoiDonVi(duLieuGuiLen);
       }
 
       await onSuccess();
       onClose();
-    } catch (error) {
-      console.error("Lỗi khi lưu quy đổi đơn vị:", error);
 
-      alert(
+      onThongBao(
+        quyDoiCanSua
+          ? "Cập nhật quy đổi đơn vị thành công."
+          : "Thêm quy đổi đơn vị thành công.",
+        "THANH_CONG",
+        "Thành công",
+      );
+    } catch (error) {
+      console.error(
+        "Lỗi khi lưu quy đổi đơn vị:",
+        error,
+      );
+
+      onThongBao(
         "Lưu quy đổi đơn vị thất bại. Có thể quy đổi này đã tồn tại hoặc đơn vị không thuộc sản phẩm đang chọn.",
+        "LOI",
+        "Không thể lưu quy đổi đơn vị",
       );
     } finally {
       setDangLuu(false);

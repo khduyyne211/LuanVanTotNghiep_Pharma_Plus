@@ -1,47 +1,108 @@
 import { useState } from "react";
+
 import { isAxiosError } from "axios";
-import { anHoatChat, hienHoatChat } from "../api/hoatChatApi";
+
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+
+import {
+  anHoatChat,
+  hienHoatChat,
+} from "../api/hoatChatApi";
+
 import type { HoatChat } from "../types/HoatChat";
+
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
 
 type UseTrangThaiHoatChatProps = {
   onTaiLaiDanhSach: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
   message?: string;
 };
 
-function useTrangThaiHoatChat({ onTaiLaiDanhSach }: UseTrangThaiHoatChatProps) {
-  const [maHoatChatDangXuLy, setMaHoatChatDangXuLy] = useState<number | null>(null);
+function useTrangThaiHoatChat({
+  onTaiLaiDanhSach,
+  onThongBao,
+}: UseTrangThaiHoatChatProps) {
+  const [maHoatChatDangXuLy, setMaHoatChatDangXuLy] =
+    useState<number | null>(null);
 
-  const xuLyDoiTrangThai = async (hoatChat: HoatChat) => {
-    const hanhDong = hoatChat.trangThai ? "ẩn" : "hiển thị";
-    const daXacNhan = window.confirm(
-      `Bạn có chắc muốn ${hanhDong} hoạt chất "${hoatChat.tenHoatChat}"?`
-    );
+  const [hoatChatChoXuLy, setHoatChatChoXuLy] =
+    useState<HoatChat | null>(null);
 
-    if (!daXacNhan) {
+  const moXacNhanDoiTrangThai = (
+    hoatChat: HoatChat,
+  ) => {
+    setHoatChatChoXuLy(hoatChat);
+  };
+
+  const dongXacNhanDoiTrangThai = () => {
+    if (maHoatChatDangXuLy !== null) {
       return;
     }
 
-    try {
-      setMaHoatChatDangXuLy(hoatChat.maHoatChat);
+    setHoatChatChoXuLy(null);
+  };
 
-      if (hoatChat.trangThai) {
-        await anHoatChat(hoatChat.maHoatChat);
+  const xacNhanDoiTrangThai = async () => {
+    if (!hoatChatChoXuLy) {
+      return;
+    }
+
+    const hoatChat = hoatChatChoXuLy;
+    const dangHienThi = hoatChat.trangThai;
+
+    try {
+      setMaHoatChatDangXuLy(
+        hoatChat.maHoatChat,
+      );
+
+      if (dangHienThi) {
+        await anHoatChat(
+          hoatChat.maHoatChat,
+        );
       } else {
-        await hienHoatChat(hoatChat.maHoatChat);
+        await hienHoatChat(
+          hoatChat.maHoatChat,
+        );
       }
 
+      setHoatChatChoXuLy(null);
+
       onTaiLaiDanhSach();
+
+      onThongBao(
+        dangHienThi
+          ? "Ẩn hoạt chất thành công."
+          : "Hiển thị hoạt chất thành công.",
+        "THANH_CONG",
+        "Thành công",
+      );
     } catch (error) {
-      console.error("Không thể cập nhật trạng thái hoạt chất:", error);
+      console.error(
+        "Không thể cập nhật trạng thái hoạt chất:",
+        error,
+      );
 
-      const message = isAxiosError<ApiErrorResponse>(error)
-        ? error.response?.data?.message
-        : null;
+      const message =
+        isAxiosError<ApiErrorResponse>(error)
+          ? error.response?.data?.message
+          : null;
 
-      alert(message ?? "Không thể cập nhật trạng thái hoạt chất.");
+      setHoatChatChoXuLy(null);
+
+      onThongBao(
+        message ??
+          "Không thể cập nhật trạng thái hoạt chất.",
+        "LOI",
+        "Không thể cập nhật trạng thái",
+      );
     } finally {
       setMaHoatChatDangXuLy(null);
     }
@@ -49,7 +110,10 @@ function useTrangThaiHoatChat({ onTaiLaiDanhSach }: UseTrangThaiHoatChatProps) {
 
   return {
     maHoatChatDangXuLy,
-    xuLyDoiTrangThai,
+    hoatChatChoXuLy,
+    moXacNhanDoiTrangThai,
+    dongXacNhanDoiTrangThai,
+    xacNhanDoiTrangThai,
   };
 }
 

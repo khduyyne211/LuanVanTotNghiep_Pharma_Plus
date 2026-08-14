@@ -1,21 +1,40 @@
 import { useState } from "react";
+
 import type { FormEvent } from "react";
+
 import { isAxiosError } from "axios";
 
-import { capNhatDonViTinh, themDonViTinh } from "../api/donViTinhApi";
-import type { DonViTinh, DonViTinhRequest } from "../types/DonViTinh";
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+
+import {
+  capNhatDonViTinh,
+  themDonViTinh,
+} from "../api/donViTinhApi";
+
+import type {
+  DonViTinh,
+  DonViTinhRequest,
+} from "../types/DonViTinh";
+
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
 
 type DonViTinhFormModalProps = {
   isOpen: boolean;
   donViTinhCanSua: DonViTinh | null;
   onClose: () => void;
   onSuccess: () => void;
+  onThongBao: HienThongBao;
 };
 
 type DonViTinhFormContentProps = {
   donViTinhCanSua: DonViTinh | null;
   onClose: () => void;
   onSuccess: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
@@ -27,14 +46,21 @@ function DonViTinhFormContent({
   donViTinhCanSua,
   onClose,
   onSuccess,
+  onThongBao,
 }: DonViTinhFormContentProps) {
   const [tenDonViTinh, setTenDonViTinh] = useState(
-    donViTinhCanSua?.tenDonViTinh ?? ""
+    donViTinhCanSua?.tenDonViTinh ?? "",
   );
-  const [kyHieu, setKyHieu] = useState(donViTinhCanSua?.kyHieu ?? "");
-  const [moTa, setMoTa] = useState(donViTinhCanSua?.moTa ?? "");
+
+  const [kyHieu, setKyHieu] = useState(
+    donViTinhCanSua?.kyHieu ?? "",
+  );
+
+  const [moTa, setMoTa] = useState(
+    donViTinhCanSua?.moTa ?? "",
+  );
+
   const [dangLuu, setDangLuu] = useState(false);
-  const [loi, setLoi] = useState<string | null>(null);
 
   const dangCapNhat = donViTinhCanSua !== null;
 
@@ -58,7 +84,9 @@ function DonViTinhFormContent({
     }
 
     if (responseData?.errors) {
-      const danhSachLoi = Object.values(responseData.errors);
+      const danhSachLoi = Object.values(
+        responseData.errors,
+      );
 
       if (danhSachLoi.length > 0) {
         return danhSachLoi[0];
@@ -68,7 +96,9 @@ function DonViTinhFormContent({
     return "Không thể lưu đơn vị tính.";
   };
 
-  const xuLySubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const xuLySubmit = async (
+    event: FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
     const tenDaChuanHoa = tenDonViTinh.trim();
@@ -76,7 +106,12 @@ function DonViTinhFormContent({
     const moTaDaChuanHoa = moTa.trim();
 
     if (!tenDaChuanHoa) {
-      setLoi("Tên đơn vị tính không được để trống.");
+      onThongBao(
+        "Tên đơn vị tính không được để trống.",
+        "CANH_BAO",
+        "Dữ liệu chưa hợp lệ",
+      );
+
       return;
     }
 
@@ -88,33 +123,67 @@ function DonViTinhFormContent({
 
     try {
       setDangLuu(true);
-      setLoi(null);
 
       if (donViTinhCanSua) {
-        await capNhatDonViTinh(donViTinhCanSua.maDonViTinh, request);
+        await capNhatDonViTinh(
+          donViTinhCanSua.maDonViTinh,
+          request,
+        );
+
+        onSuccess();
+
+        onThongBao(
+          "Cập nhật đơn vị tính thành công.",
+          "THANH_CONG",
+          "Thành công",
+        );
       } else {
         await themDonViTinh(request);
-      }
 
-      onSuccess();
+        onSuccess();
+
+        onThongBao(
+          "Thêm đơn vị tính thành công.",
+          "THANH_CONG",
+          "Thành công",
+        );
+      }
     } catch (error) {
-      console.error("Không thể lưu đơn vị tính:", error);
-      setLoi(layThongBaoLoi(error));
+      console.error(
+        "Không thể lưu đơn vị tính:",
+        error,
+      );
+
+      onThongBao(
+        layThongBaoLoi(error),
+        "LOI",
+        "Không thể lưu dữ liệu",
+      );
     } finally {
       setDangLuu(false);
     }
   };
 
   return (
-    <div className="modal-overlay" onMouseDown={xuLyDongForm}>
+    <div
+      className="modal-overlay"
+      onMouseDown={xuLyDongForm}
+    >
       <div
         className="modal-card"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="modal-header">
           <div>
-            <h2>{dangCapNhat ? "Cập nhật đơn vị tính" : "Thêm đơn vị tính"}</h2>
-            <p>Nhập tên, ký hiệu và mô tả của đơn vị tính.</p>
+            <h2>
+              {dangCapNhat
+                ? "Cập nhật đơn vị tính"
+                : "Thêm đơn vị tính"}
+            </h2>
+
+            <p>
+              Nhập tên, ký hiệu và mô tả của đơn vị tính.
+            </p>
           </div>
 
           <button
@@ -130,18 +199,19 @@ function DonViTinhFormContent({
 
         <form onSubmit={xuLySubmit}>
           <div className="modal-body">
-            {loi && <div className="error-message">{loi}</div>}
-
             <div className="form-group">
               <label htmlFor="tenDonViTinh">
-                Tên đơn vị tính <span aria-hidden="true">*</span>
+                Tên đơn vị tính{" "}
+                <span aria-hidden="true">*</span>
               </label>
 
               <input
                 id="tenDonViTinh"
                 type="text"
                 value={tenDonViTinh}
-                onChange={(event) => setTenDonViTinh(event.target.value)}
+                onChange={(event) =>
+                  setTenDonViTinh(event.target.value)
+                }
                 maxLength={50}
                 placeholder="Ví dụ: Hộp"
                 disabled={dangLuu}
@@ -150,13 +220,17 @@ function DonViTinhFormContent({
             </div>
 
             <div className="form-group">
-              <label htmlFor="kyHieu">Ký hiệu</label>
+              <label htmlFor="kyHieu">
+                Ký hiệu
+              </label>
 
               <input
                 id="kyHieu"
                 type="text"
                 value={kyHieu}
-                onChange={(event) => setKyHieu(event.target.value)}
+                onChange={(event) =>
+                  setKyHieu(event.target.value)
+                }
                 maxLength={20}
                 placeholder="Ví dụ: hộp"
                 disabled={dangLuu}
@@ -164,12 +238,16 @@ function DonViTinhFormContent({
             </div>
 
             <div className="form-group">
-              <label htmlFor="moTa">Mô tả</label>
+              <label htmlFor="moTa">
+                Mô tả
+              </label>
 
               <textarea
                 id="moTa"
                 value={moTa}
-                onChange={(event) => setMoTa(event.target.value)}
+                onChange={(event) =>
+                  setMoTa(event.target.value)
+                }
                 maxLength={255}
                 rows={4}
                 placeholder="Nhập mô tả đơn vị tính"
@@ -188,7 +266,11 @@ function DonViTinhFormContent({
               Hủy
             </button>
 
-            <button type="submit" className="primary-button" disabled={dangLuu}>
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={dangLuu}
+            >
               {dangLuu
                 ? "Đang lưu..."
                 : dangCapNhat
@@ -207,6 +289,7 @@ function DonViTinhFormModal({
   donViTinhCanSua,
   onClose,
   onSuccess,
+  onThongBao,
 }: DonViTinhFormModalProps) {
   if (!isOpen) {
     return null;
@@ -222,6 +305,7 @@ function DonViTinhFormModal({
       donViTinhCanSua={donViTinhCanSua}
       onClose={onClose}
       onSuccess={onSuccess}
+      onThongBao={onThongBao}
     />
   );
 }

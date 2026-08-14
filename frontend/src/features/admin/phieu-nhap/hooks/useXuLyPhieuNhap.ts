@@ -1,6 +1,8 @@
 import { useCallback, useState } from "react";
 import { isAxiosError } from "axios";
 
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+
 import {
   huyPhieuNhap,
   xacNhanNhapKho,
@@ -10,98 +12,173 @@ type ApiErrorResponse = {
   message?: string;
 };
 
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
+
+type LoaiThaoTacPhieuNhap =
+  | "XAC_NHAN_NHAP_KHO"
+  | "HUY_PHIEU";
+
+type PhieuNhapChoXuLy = {
+  maPhieuNhap: number;
+  loaiThaoTac: LoaiThaoTacPhieuNhap;
+};
+
 type UseXuLyPhieuNhapProps = {
   onTaiLaiDanhSach: () => void;
-  onTaiLaiChiTiet: (maPhieuNhap: number) => Promise<void>;
+  onTaiLaiChiTiet: (
+    maPhieuNhap: number,
+  ) => Promise<void>;
+  onThongBao: HienThongBao;
 };
 
 function useXuLyPhieuNhap({
   onTaiLaiDanhSach,
   onTaiLaiChiTiet,
+  onThongBao,
 }: UseXuLyPhieuNhapProps) {
-  const [maPhieuNhapDangXuLy, setMaPhieuNhapDangXuLy] =
-    useState<number | null>(null);
+  const [
+    maPhieuNhapDangXuLy,
+    setMaPhieuNhapDangXuLy,
+  ] = useState<number | null>(null);
 
-  const xuLyXacNhan = useCallback(
-    async (maPhieuNhap: number) => {
-      const dongY = window.confirm(
-        `Xác nhận nhập kho cho phiếu #${maPhieuNhap}? Sau khi xác nhận, số lượng sản phẩm sẽ được tính vào tồn kho.`
-      );
-
-      if (!dongY) {
-        return;
-      }
-
-      try {
-        setMaPhieuNhapDangXuLy(maPhieuNhap);
-
-        await xacNhanNhapKho(maPhieuNhap);
-
-        onTaiLaiDanhSach();
-        await onTaiLaiChiTiet(maPhieuNhap);
-      } catch (error) {
-        console.error(
-          "Không thể xác nhận phiếu nhập:",
-          error
-        );
-
-        const message =
-          isAxiosError<ApiErrorResponse>(error)
-            ? error.response?.data?.message
-            : null;
-
-        alert(
-          message ?? "Không thể xác nhận phiếu nhập."
-        );
-      } finally {
-        setMaPhieuNhapDangXuLy(null);
-      }
-    },
-    [onTaiLaiChiTiet, onTaiLaiDanhSach]
+  const [
+    phieuNhapChoXuLy,
+    setPhieuNhapChoXuLy,
+  ] = useState<PhieuNhapChoXuLy | null>(
+    null,
   );
 
-  const xuLyHuy = useCallback(
-    async (maPhieuNhap: number) => {
-      const dongY = window.confirm(
-        `Hủy phiếu nhập #${maPhieuNhap}? Phiếu đã hủy sẽ không được tính vào tồn kho.`
-      );
+  const moXacNhanNhapKho = useCallback(
+    (maPhieuNhap: number) => {
+      setPhieuNhapChoXuLy({
+        maPhieuNhap,
+        loaiThaoTac: "XAC_NHAN_NHAP_KHO",
+      });
+    },
+    [],
+  );
 
-      if (!dongY) {
+  const moXacNhanHuyPhieu = useCallback(
+    (maPhieuNhap: number) => {
+      setPhieuNhapChoXuLy({
+        maPhieuNhap,
+        loaiThaoTac: "HUY_PHIEU",
+      });
+    },
+    [],
+  );
+
+  const dongXacNhanThaoTac =
+    useCallback(() => {
+      if (maPhieuNhapDangXuLy !== null) {
         return;
       }
 
-      try {
-        setMaPhieuNhapDangXuLy(maPhieuNhap);
+      setPhieuNhapChoXuLy(null);
+    }, [maPhieuNhapDangXuLy]);
 
-        await huyPhieuNhap(maPhieuNhap);
+  const xacNhanThaoTac = useCallback(
+    async () => {
+      if (!phieuNhapChoXuLy) {
+        return;
+      }
+
+      const {
+        maPhieuNhap,
+        loaiThaoTac,
+      } = phieuNhapChoXuLy;
+
+      try {
+        setMaPhieuNhapDangXuLy(
+          maPhieuNhap,
+        );
+
+        if (
+          loaiThaoTac ===
+          "XAC_NHAN_NHAP_KHO"
+        ) {
+          await xacNhanNhapKho(
+            maPhieuNhap,
+          );
+        } else {
+          await huyPhieuNhap(
+            maPhieuNhap,
+          );
+        }
 
         onTaiLaiDanhSach();
-        await onTaiLaiChiTiet(maPhieuNhap);
+
+        await onTaiLaiChiTiet(
+          maPhieuNhap,
+        );
+
+        setPhieuNhapChoXuLy(null);
+
+        if (
+          loaiThaoTac ===
+          "XAC_NHAN_NHAP_KHO"
+        ) {
+          onThongBao(
+            "Xác nhận nhập kho thành công.",
+            "THANH_CONG",
+            "Thành công",
+          );
+        } else {
+          onThongBao(
+            "Hủy phiếu nhập thành công.",
+            "THANH_CONG",
+            "Thành công",
+          );
+        }
       } catch (error) {
         console.error(
-          "Không thể hủy phiếu nhập:",
-          error
+          loaiThaoTac ===
+            "XAC_NHAN_NHAP_KHO"
+            ? "Không thể xác nhận phiếu nhập:"
+            : "Không thể hủy phiếu nhập:",
+          error,
         );
 
         const message =
-          isAxiosError<ApiErrorResponse>(error)
-            ? error.response?.data?.message
+          isAxiosError<ApiErrorResponse>(
+            error,
+          )
+            ? error.response?.data
+                ?.message
             : null;
 
-        alert(
-          message ?? "Không thể hủy phiếu nhập."
+        onThongBao(
+          message ??
+            (loaiThaoTac ===
+            "XAC_NHAN_NHAP_KHO"
+              ? "Không thể xác nhận phiếu nhập."
+              : "Không thể hủy phiếu nhập."),
+          "LOI",
+          "Không thể thực hiện thao tác",
         );
       } finally {
         setMaPhieuNhapDangXuLy(null);
       }
     },
-    [onTaiLaiChiTiet, onTaiLaiDanhSach]
+    [
+      onTaiLaiChiTiet,
+      onTaiLaiDanhSach,
+      onThongBao,
+      phieuNhapChoXuLy,
+    ],
   );
 
   return {
     maPhieuNhapDangXuLy,
-    xuLyXacNhan,
-    xuLyHuy,
+    phieuNhapChoXuLy,
+    moXacNhanNhapKho,
+    moXacNhanHuyPhieu,
+    dongXacNhanThaoTac,
+    xacNhanThaoTac,
   };
 }
 

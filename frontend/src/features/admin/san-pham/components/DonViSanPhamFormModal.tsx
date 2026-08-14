@@ -1,5 +1,14 @@
-import { useEffect, useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import type {
+  ChangeEvent,
+  FormEvent,
+} from "react";
+
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
 
 import {
   capNhatDonViSanPham,
@@ -7,7 +16,16 @@ import {
   themDonViSanPham,
 } from "../api/sanPhamApi";
 
-import type { DonViSanPham, DonViTinhOption } from "../types/SanPham";
+import type {
+  DonViSanPham,
+  DonViTinhOption,
+} from "../types/SanPham";
+
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
 
 type DonViSanPhamForm = {
   maDonViTinh: string;
@@ -23,6 +41,7 @@ type DonViSanPhamFormModalProps = {
   donViCanSua: DonViSanPham | null;
   onClose: () => void;
   onSuccess: () => Promise<void>;
+  onThongBao: HienThongBao;
 };
 
 const taoDuLieuFormDonVi = (
@@ -30,14 +49,26 @@ const taoDuLieuFormDonVi = (
 ): DonViSanPhamForm => {
   if (donViCanSua) {
     return {
-      maDonViTinh: String(donViCanSua.maDonViTinh),
+      maDonViTinh: String(
+        donViCanSua.maDonViTinh,
+      ),
+
       giaBanTheoDonVi:
-        donViCanSua.giaBanTheoDonVi !== null
-          ? String(donViCanSua.giaBanTheoDonVi)
+        donViCanSua.giaBanTheoDonVi !==
+        null
+          ? String(
+              donViCanSua.giaBanTheoDonVi,
+            )
           : "",
-      laDonViCoSo: donViCanSua.laDonViCoSo,
-      choPhepBan: donViCanSua.choPhepBan,
-      choPhepNhap: donViCanSua.choPhepNhap,
+
+      laDonViCoSo:
+        donViCanSua.laDonViCoSo,
+
+      choPhepBan:
+        donViCanSua.choPhepBan,
+
+      choPhepNhap:
+        donViCanSua.choPhepNhap,
     };
   }
 
@@ -50,14 +81,20 @@ const taoDuLieuFormDonVi = (
   };
 };
 
-function DonViSanPhamFormModal(props: DonViSanPhamFormModalProps) {
+function DonViSanPhamFormModal(
+  props: DonViSanPhamFormModalProps,
+) {
   if (!props.isOpen) {
     return null;
   }
 
   return (
     <DonViSanPhamFormNoiDung
-      key={props.donViCanSua?.maDonViSanPham ?? "them-moi"}
+      key={
+        props.donViCanSua
+          ?.maDonViSanPham
+        ?? "them-moi"
+      }
       {...props}
     />
   );
@@ -68,39 +105,63 @@ function DonViSanPhamFormNoiDung({
   donViCanSua,
   onClose,
   onSuccess,
+  onThongBao,
 }: DonViSanPhamFormModalProps) {
-  const [formData, setFormData] = useState<DonViSanPhamForm>(() =>
-    taoDuLieuFormDonVi(donViCanSua),
+  const [
+    formData,
+    setFormData,
+  ] = useState<DonViSanPhamForm>(
+    () =>
+      taoDuLieuFormDonVi(
+        donViCanSua,
+      ),
   );
 
-  const [danhSachDonViTinh, setDanhSachDonViTinh] = useState<DonViTinhOption[]>(
-    [],
-  );
+  const [
+    danhSachDonViTinh,
+    setDanhSachDonViTinh,
+  ] = useState<
+    DonViTinhOption[]
+  >([]);
 
-  const [dangLuu, setDangLuu] = useState(false);
+  const [
+    dangLuu,
+    setDangLuu,
+  ] = useState(false);
 
   useEffect(() => {
     let daHuy = false;
 
-    const taiDanhSachDonViTinh = async () => {
-      try {
-        const response = await layDanhSachDonViTinh();
+    const taiDanhSachDonViTinh =
+      async () => {
+        try {
+          const response =
+            await layDanhSachDonViTinh();
 
-        if (daHuy) {
-          return;
+          if (daHuy) {
+            return;
+          }
+
+          setDanhSachDonViTinh(
+            response.data,
+          );
+        } catch (error) {
+          if (daHuy) {
+            return;
+          }
+
+          console.error(
+            "Lỗi khi lấy danh sách đơn vị tính:",
+            error,
+          );
+
+          onThongBao(
+            "Không thể tải danh sách đơn vị tính.",
+            "LOI",
+            "Không thể tải dữ liệu",
+          );
         }
-
-        setDanhSachDonViTinh(response.data);
-      } catch (error) {
-        if (daHuy) {
-          return;
-        }
-
-        console.error("Lỗi khi lấy danh sách đơn vị tính:", error);
-
-        alert("Không thể tải danh sách đơn vị tính");
-      }
-    };
+      };
 
     void taiDanhSachDonViTinh();
 
@@ -110,9 +171,16 @@ function DonViSanPhamFormNoiDung({
   }, []);
 
   const xuLyThayDoiInput = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    event:
+      ChangeEvent<
+        | HTMLInputElement
+        | HTMLSelectElement
+      >,
   ) => {
-    const { name, value } = event.target;
+    const {
+      name,
+      value,
+    } = event.target;
 
     setFormData({
       ...formData,
@@ -120,8 +188,14 @@ function DonViSanPhamFormNoiDung({
     });
   };
 
-  const xuLyThayDoiCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target;
+  const xuLyThayDoiCheckbox = (
+    event:
+      ChangeEvent<HTMLInputElement>,
+  ) => {
+    const {
+      name,
+      checked,
+    } = event.target;
 
     setFormData({
       ...formData,
@@ -129,46 +203,103 @@ function DonViSanPhamFormNoiDung({
     });
   };
 
-  const xuLySubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const hienCanhBao = (
+    noiDung: string,
+  ) => {
+    onThongBao(
+      noiDung,
+      "CANH_BAO",
+      "Dữ liệu chưa hợp lệ",
+    );
+  };
+
+  const xuLySubmit = async (
+    event:
+      FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
     if (!formData.maDonViTinh) {
-      alert("Vui lòng chọn đơn vị tính");
+      hienCanhBao(
+        "Vui lòng chọn đơn vị tính.",
+      );
+
       return;
     }
 
-    if (formData.giaBanTheoDonVi && Number(formData.giaBanTheoDonVi) < 0) {
-      alert("Giá bán theo đơn vị không được nhỏ hơn 0");
+    if (
+      formData.giaBanTheoDonVi
+      && Number(
+        formData.giaBanTheoDonVi,
+      ) < 0
+    ) {
+      hienCanhBao(
+        "Giá bán theo đơn vị không được nhỏ hơn 0.",
+      );
+
       return;
     }
 
     const duLieuGuiLen = {
       maSanPham,
-      maDonViTinh: Number(formData.maDonViTinh),
-      giaBanTheoDonVi: formData.giaBanTheoDonVi
-        ? Number(formData.giaBanTheoDonVi)
-        : null,
-      laDonViCoSo: formData.laDonViCoSo,
-      choPhepBan: formData.choPhepBan,
-      choPhepNhap: formData.choPhepNhap,
+
+      maDonViTinh:
+        Number(
+          formData.maDonViTinh,
+        ),
+
+      giaBanTheoDonVi:
+        formData.giaBanTheoDonVi
+          ? Number(
+              formData.giaBanTheoDonVi,
+            )
+          : null,
+
+      laDonViCoSo:
+        formData.laDonViCoSo,
+
+      choPhepBan:
+        formData.choPhepBan,
+
+      choPhepNhap:
+        formData.choPhepNhap,
     };
 
     try {
       setDangLuu(true);
 
       if (donViCanSua) {
-        await capNhatDonViSanPham(donViCanSua.maDonViSanPham, duLieuGuiLen);
+        await capNhatDonViSanPham(
+          donViCanSua.maDonViSanPham,
+          duLieuGuiLen,
+        );
       } else {
-        await themDonViSanPham(duLieuGuiLen);
+        await themDonViSanPham(
+          duLieuGuiLen,
+        );
       }
 
       await onSuccess();
-      onClose();
-    } catch (error) {
-      console.error("Lỗi khi lưu đơn vị sản phẩm:", error);
 
-      alert(
+      onClose();
+
+      onThongBao(
+        donViCanSua
+          ? "Cập nhật đơn vị sản phẩm thành công."
+          : "Thêm đơn vị sản phẩm thành công.",
+        "THANH_CONG",
+        "Thành công",
+      );
+    } catch (error) {
+      console.error(
+        "Lỗi khi lưu đơn vị sản phẩm:",
+        error,
+      );
+
+      onThongBao(
         "Lưu đơn vị sản phẩm thất bại. Có thể sản phẩm đã có đơn vị này hoặc đã có đơn vị cơ sở.",
+        "LOI",
+        "Không thể lưu đơn vị sản phẩm",
       );
     } finally {
       setDangLuu(false);
@@ -187,7 +318,9 @@ function DonViSanPhamFormNoiDung({
             </h2>
 
             <p>
-              Cấu hình đơn vị bán, đơn vị nhập và đơn vị cơ sở cho sản phẩm.
+              Cấu hình đơn vị bán,
+              đơn vị nhập và đơn vị
+              cơ sở cho sản phẩm.
             </p>
           </div>
 
@@ -202,38 +335,66 @@ function DonViSanPhamFormNoiDung({
 
         <form onSubmit={xuLySubmit}>
           <div className="form-group">
-            <label>Đơn vị tính</label>
+            <label>
+              Đơn vị tính
+            </label>
 
             <select
               name="maDonViTinh"
-              value={formData.maDonViTinh}
-              onChange={xuLyThayDoiInput}
+              value={
+                formData.maDonViTinh
+              }
+              onChange={
+                xuLyThayDoiInput
+              }
               required
             >
-              <option value="">-- Chọn đơn vị tính --</option>
+              <option value="">
+                -- Chọn đơn vị tính --
+              </option>
 
               {danhSachDonViTinh
-                .filter((donViTinh) => donViTinh.trangThai)
-                .map((donViTinh) => (
-                  <option
-                    key={donViTinh.maDonViTinh}
-                    value={donViTinh.maDonViTinh}
-                  >
-                    {donViTinh.tenDonViTinh}
-                    {donViTinh.kyHieu ? ` (${donViTinh.kyHieu})` : ""}
-                  </option>
-                ))}
+                .filter(
+                  (donViTinh) =>
+                    donViTinh.trangThai,
+                )
+                .map(
+                  (donViTinh) => (
+                    <option
+                      key={
+                        donViTinh.maDonViTinh
+                      }
+                      value={
+                        donViTinh.maDonViTinh
+                      }
+                    >
+                      {
+                        donViTinh.tenDonViTinh
+                      }
+
+                      {donViTinh.kyHieu
+                        ? ` (${donViTinh.kyHieu})`
+                        : ""}
+                    </option>
+                  ),
+                )}
             </select>
           </div>
 
           <div className="form-group">
-            <label>Giá bán theo đơn vị</label>
+            <label>
+              Giá bán theo đơn vị
+            </label>
 
             <input
               type="number"
               name="giaBanTheoDonVi"
-              value={formData.giaBanTheoDonVi}
-              onChange={xuLyThayDoiInput}
+              value={
+                formData.giaBanTheoDonVi
+              }
+              onChange={
+                xuLyThayDoiInput
+              }
               placeholder="Có thể để trống nếu đơn vị này không bán trực tiếp"
               min={0}
             />
@@ -243,37 +404,59 @@ function DonViSanPhamFormNoiDung({
             <input
               type="checkbox"
               name="laDonViCoSo"
-              checked={formData.laDonViCoSo}
-              onChange={xuLyThayDoiCheckbox}
+              checked={
+                formData.laDonViCoSo
+              }
+              onChange={
+                xuLyThayDoiCheckbox
+              }
             />
 
-            <label>Là đơn vị cơ sở</label>
+            <label>
+              Là đơn vị cơ sở
+            </label>
           </div>
 
           <div className="checkbox-group">
             <input
               type="checkbox"
               name="choPhepBan"
-              checked={formData.choPhepBan}
-              onChange={xuLyThayDoiCheckbox}
+              checked={
+                formData.choPhepBan
+              }
+              onChange={
+                xuLyThayDoiCheckbox
+              }
             />
 
-            <label>Cho phép bán theo đơn vị này</label>
+            <label>
+              Cho phép bán theo đơn vị này
+            </label>
           </div>
 
           <div className="checkbox-group">
             <input
               type="checkbox"
               name="choPhepNhap"
-              checked={formData.choPhepNhap}
-              onChange={xuLyThayDoiCheckbox}
+              checked={
+                formData.choPhepNhap
+              }
+              onChange={
+                xuLyThayDoiCheckbox
+              }
             />
 
-            <label>Cho phép nhập kho theo đơn vị này</label>
+            <label>
+              Cho phép nhập kho theo đơn vị này
+            </label>
           </div>
 
           <div className="form-actions">
-            <button type="submit" className="primary-button" disabled={dangLuu}>
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={dangLuu}
+            >
               {dangLuu
                 ? "Đang lưu..."
                 : donViCanSua

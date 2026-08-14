@@ -1,18 +1,42 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+
 import {
   anSanPham as anSanPhamApi,
   hienSanPham as hienSanPhamApi,
   layDanhSachSanPhamPhanTrang,
 } from "../api/sanPhamApi";
+
 import type { SanPham } from "../types/SanPham";
 
-function useDanhSachSanPham() {
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
+
+type UseDanhSachSanPhamProps = {
+  onThongBao: HienThongBao;
+};
+
+function useDanhSachSanPham({
+  onThongBao,
+}: UseDanhSachSanPhamProps) {
+  const onThongBaoRef = useRef(onThongBao);
+
+  useEffect(() => {
+    onThongBaoRef.current = onThongBao;
+  }, [onThongBao]);
+
   const [danhSachSanPham, setDanhSachSanPham] =
     useState<SanPham[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
+
   const [totalElements, setTotalElements] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [first, setFirst] = useState(true);
@@ -23,14 +47,27 @@ function useDanhSachSanPham() {
 
   const [laThuocKeDonFilter, setLaThuocKeDonFilter] =
     useState("");
+
   const [
     trangThaiSanPhamFilter,
     setTrangThaiSanPhamFilter,
   ] = useState("");
+
   const [maDanhMucFilter, setMaDanhMucFilter] =
     useState("");
+
   const [maNhaSanXuatFilter, setMaNhaSanXuatFilter] =
     useState("");
+
+  const [
+    maSanPhamChoAn,
+    setMaSanPhamChoAn,
+  ] = useState<number | null>(null);
+
+  const [
+    maSanPhamDangXuLy,
+    setMaSanPhamDangXuLy,
+  ] = useState<number | null>(null);
 
   const layDanhSachSanPham = useCallback(async () => {
     try {
@@ -71,9 +108,14 @@ function useDanhSachSanPham() {
     } catch (error) {
       console.error(
         "Lỗi khi lấy danh sách sản phẩm:",
-        error
+        error,
       );
-      alert("Không thể tải danh sách sản phẩm");
+
+      onThongBaoRef.current(
+        "Không thể tải danh sách sản phẩm.",
+        "LOI",
+        "Không thể tải dữ liệu",
+      );
     } finally {
       setLoading(false);
     }
@@ -109,35 +151,82 @@ function useDanhSachSanPham() {
     setMaNhaSanXuatFilter("");
     setPage(0);
   };
-  const anSanPham = async (
-    maSanPham: number
-  ) => {
-    const dongY = confirm(
-      "Bạn có chắc muốn ẩn sản phẩm này không?"
-    );
 
-    if (!dongY) {
+  const anSanPham = (maSanPham: number) => {
+    setMaSanPhamChoAn(maSanPham);
+  };
+
+  const dongXacNhanAnSanPham = () => {
+    if (maSanPhamDangXuLy !== null) {
       return;
     }
 
+    setMaSanPhamChoAn(null);
+  };
+
+  const xacNhanAnSanPham = async () => {
+    if (maSanPhamChoAn === null) {
+      return;
+    }
+
+    const maSanPham = maSanPhamChoAn;
+
     try {
+      setMaSanPhamDangXuLy(maSanPham);
+
       await anSanPhamApi(maSanPham);
       await layDanhSachSanPham();
+
+      setMaSanPhamChoAn(null);
+
+      onThongBaoRef.current(
+        "Ẩn sản phẩm thành công.",
+        "THANH_CONG",
+        "Thành công",
+      );
     } catch (error) {
-      console.error("Lỗi khi ẩn sản phẩm:", error);
-      alert("Ẩn sản phẩm thất bại");
+      console.error(
+        "Lỗi khi ẩn sản phẩm:",
+        error,
+      );
+
+      onThongBaoRef.current(
+        "Ẩn sản phẩm thất bại.",
+        "LOI",
+        "Không thể ẩn sản phẩm",
+      );
+    } finally {
+      setMaSanPhamDangXuLy(null);
     }
   };
 
   const hienSanPham = async (
-    maSanPham: number
+    maSanPham: number,
   ) => {
     try {
+      setMaSanPhamDangXuLy(maSanPham);
+
       await hienSanPhamApi(maSanPham);
       await layDanhSachSanPham();
+
+      onThongBaoRef.current(
+        "Hiện sản phẩm thành công.",
+        "THANH_CONG",
+        "Thành công",
+      );
     } catch (error) {
-      console.error("Lỗi khi hiện sản phẩm:", error);
-      alert("Hiện sản phẩm thất bại");
+      console.error(
+        "Lỗi khi hiện sản phẩm:",
+        error,
+      );
+
+      onThongBaoRef.current(
+        "Hiện sản phẩm thất bại.",
+        "LOI",
+        "Không thể hiện sản phẩm",
+      );
+    } finally {
+      setMaSanPhamDangXuLy(null);
     }
   };
 
@@ -158,6 +247,9 @@ function useDanhSachSanPham() {
     maDanhMucFilter,
     maNhaSanXuatFilter,
 
+    maSanPhamChoAn,
+    maSanPhamDangXuLy,
+
     setPage,
     setSize,
     setKeywordInput,
@@ -169,9 +261,12 @@ function useDanhSachSanPham() {
     layDanhSachSanPham,
     timKiemSanPham,
     xoaTatCaBoLoc,
+
     anSanPham,
+    dongXacNhanAnSanPham,
+    xacNhanAnSanPham,
     hienSanPham,
-  };  
+  };
 }
 
 export default useDanhSachSanPham;

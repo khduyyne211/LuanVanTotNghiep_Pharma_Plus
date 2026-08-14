@@ -1,11 +1,19 @@
 import { useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
+
+import type {
+  ChangeEvent,
+  FormEvent,
+} from "react";
+
 import { isAxiosError } from "axios";
+
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
 
 import {
   capNhatHoatChat,
   themHoatChat,
 } from "../api/hoatChatApi";
+
 import type {
   HoatChat,
   HoatChatRequest,
@@ -17,11 +25,18 @@ type HoatChatFormData = {
   moTa: string;
 };
 
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
+
 type HoatChatFormModalProps = {
   isOpen: boolean;
   hoatChatCanSua: HoatChat | null;
   onClose: () => void;
   onSuccess: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
@@ -29,7 +44,7 @@ type ApiErrorResponse = {
 };
 
 const taoDuLieuForm = (
-  hoatChatCanSua: HoatChat | null
+  hoatChatCanSua: HoatChat | null,
 ): HoatChatFormData => {
   if (hoatChatCanSua) {
     return {
@@ -47,7 +62,7 @@ const taoDuLieuForm = (
 };
 
 function HoatChatFormModal(
-  props: HoatChatFormModalProps
+  props: HoatChatFormModalProps,
 ) {
   if (!props.isOpen) {
     return null;
@@ -68,10 +83,11 @@ function HoatChatFormNoiDung({
   hoatChatCanSua,
   onClose,
   onSuccess,
+  onThongBao,
 }: HoatChatFormModalProps) {
   const [formData, setFormData] =
     useState<HoatChatFormData>(
-      () => taoDuLieuForm(hoatChatCanSua)
+      () => taoDuLieuForm(hoatChatCanSua),
     );
 
   const [dangLuu, setDangLuu] = useState(false);
@@ -79,7 +95,7 @@ function HoatChatFormNoiDung({
   const xuLyThayDoiInput = (
     event: ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
 
@@ -90,7 +106,7 @@ function HoatChatFormNoiDung({
   };
 
   const xuLySubmit = async (
-    event: FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
@@ -98,9 +114,12 @@ function HoatChatFormNoiDung({
       formData.tenHoatChat.trim();
 
     if (!tenHoatChat) {
-      alert(
-        "Tên hoạt chất không được để trống"
+      onThongBao(
+        "Tên hoạt chất không được để trống.",
+        "CANH_BAO",
+        "Dữ liệu chưa hợp lệ",
       );
+
       return;
     }
 
@@ -116,17 +135,31 @@ function HoatChatFormNoiDung({
       if (hoatChatCanSua) {
         await capNhatHoatChat(
           hoatChatCanSua.maHoatChat,
-          request
+          request,
+        );
+
+        onSuccess();
+
+        onThongBao(
+          "Cập nhật hoạt chất thành công.",
+          "THANH_CONG",
+          "Thành công",
         );
       } else {
         await themHoatChat(request);
-      }
 
-      onSuccess();
+        onSuccess();
+
+        onThongBao(
+          "Thêm hoạt chất thành công.",
+          "THANH_CONG",
+          "Thành công",
+        );
+      }
     } catch (error) {
       console.error(
         "Không thể lưu hoạt chất:",
-        error
+        error,
       );
 
       const message =
@@ -134,9 +167,10 @@ function HoatChatFormNoiDung({
           ? error.response?.data?.message
           : null;
 
-      alert(
-        message ??
-          "Không thể lưu hoạt chất."
+      onThongBao(
+        message ?? "Không thể lưu hoạt chất.",
+        "LOI",
+        "Không thể lưu dữ liệu",
       );
     } finally {
       setDangLuu(false);

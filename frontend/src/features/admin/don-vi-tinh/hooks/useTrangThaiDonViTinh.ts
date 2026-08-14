@@ -1,11 +1,25 @@
 import { useState } from "react";
+
 import { isAxiosError } from "axios";
 
-import { anDonViTinh, hienDonViTinh } from "../api/donViTinhApi";
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+
+import {
+  anDonViTinh,
+  hienDonViTinh,
+} from "../api/donViTinhApi";
+
 import type { DonViTinh } from "../types/DonViTinh";
+
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
 
 type UseTrangThaiDonViTinhProps = {
   onTaiLaiDanhSach: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
@@ -14,39 +28,80 @@ type ApiErrorResponse = {
 
 function useTrangThaiDonViTinh({
   onTaiLaiDanhSach,
+  onThongBao,
 }: UseTrangThaiDonViTinhProps) {
   const [maDonViTinhDangXuLy, setMaDonViTinhDangXuLy] =
     useState<number | null>(null);
 
-  const xuLyDoiTrangThai = async (donViTinh: DonViTinh) => {
-    const hanhDong = donViTinh.trangThai ? "ẩn" : "hiển thị";
+  const [donViTinhChoXuLy, setDonViTinhChoXuLy] =
+    useState<DonViTinh | null>(null);
 
-    const daXacNhan = window.confirm(
-      `Bạn có chắc muốn ${hanhDong} đơn vị tính "${donViTinh.tenDonViTinh}"?`
-    );
+  const moXacNhanDoiTrangThai = (
+    donViTinh: DonViTinh,
+  ) => {
+    setDonViTinhChoXuLy(donViTinh);
+  };
 
-    if (!daXacNhan) {
+  const dongXacNhanDoiTrangThai = () => {
+    if (maDonViTinhDangXuLy !== null) {
       return;
     }
 
-    try {
-      setMaDonViTinhDangXuLy(donViTinh.maDonViTinh);
+    setDonViTinhChoXuLy(null);
+  };
 
-      if (donViTinh.trangThai) {
-        await anDonViTinh(donViTinh.maDonViTinh);
+  const xacNhanDoiTrangThai = async () => {
+    if (!donViTinhChoXuLy) {
+      return;
+    }
+
+    const donViTinh = donViTinhChoXuLy;
+    const dangHienThi = donViTinh.trangThai;
+
+    try {
+      setMaDonViTinhDangXuLy(
+        donViTinh.maDonViTinh,
+      );
+
+      if (dangHienThi) {
+        await anDonViTinh(
+          donViTinh.maDonViTinh,
+        );
       } else {
-        await hienDonViTinh(donViTinh.maDonViTinh);
+        await hienDonViTinh(
+          donViTinh.maDonViTinh,
+        );
       }
 
+      setDonViTinhChoXuLy(null);
+
       onTaiLaiDanhSach();
+
+      onThongBao(
+        dangHienThi
+          ? "Ẩn đơn vị tính thành công."
+          : "Hiển thị đơn vị tính thành công.",
+        "THANH_CONG",
+        "Thành công",
+      );
     } catch (error) {
-      console.error("Không thể cập nhật trạng thái đơn vị tính:", error);
+      console.error(
+        "Không thể cập nhật trạng thái đơn vị tính:",
+        error,
+      );
 
       const message = isAxiosError<ApiErrorResponse>(error)
         ? error.response?.data?.message
         : null;
 
-      alert(message ?? "Không thể cập nhật trạng thái đơn vị tính.");
+      setDonViTinhChoXuLy(null);
+
+      onThongBao(
+        message ??
+          "Không thể cập nhật trạng thái đơn vị tính.",
+        "LOI",
+        "Không thể cập nhật trạng thái",
+      );
     } finally {
       setMaDonViTinhDangXuLy(null);
     }
@@ -54,7 +109,10 @@ function useTrangThaiDonViTinh({
 
   return {
     maDonViTinhDangXuLy,
-    xuLyDoiTrangThai,
+    donViTinhChoXuLy,
+    moXacNhanDoiTrangThai,
+    dongXacNhanDoiTrangThai,
+    xacNhanDoiTrangThai,
   };
 }
 

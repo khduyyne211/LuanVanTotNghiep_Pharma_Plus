@@ -1,3 +1,6 @@
+import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
+
 import PhieuNhapChiTietModal from "../components/PhieuNhapChiTietModal";
 import PhieuNhapFormModal from "../components/PhieuNhapFormModal";
 import PhieuNhapTable from "../components/PhieuNhapTable";
@@ -9,6 +12,7 @@ import useXuLyPhieuNhap from "../hooks/useXuLyPhieuNhap";
 
 import type { TrangThaiPhieuNhap } from "../types/PhieuNhap";
 
+import AdminXacNhan from "../../shared/components/xac-nhan/AdminXacNhan";
 import KhungDanhSachQuanLy from "../../shared/components/quan-ly/KhungDanhSachQuanLy";
 import NutThaoTacChinh from "../../shared/components/quan-ly/NutThaoTacChinh";
 import PhanTrangQuanLy from "../../shared/components/quan-ly/PhanTrangQuanLy";
@@ -17,6 +21,9 @@ import TieuDeTrangQuanLy from "../../shared/components/quan-ly/TieuDeTrangQuanLy
 import "../../shared/styles/quan-ly/QuanLyCommon.css";
 
 function QuanLyPhieuNhapPage() {
+  const thongBao =
+    useThongBaoHeThong();
+
   const {
     danhSachPhieuNhap,
     loading,
@@ -52,17 +59,26 @@ function QuanLyPhieuNhapPage() {
     dongForm,
     xuLyTaoThanhCong,
   } = useFormPhieuNhap({
-    onTaiLaiDanhSach: taiLaiDanhSach,
-    onMoChiTiet: moChiTiet,
+    onTaiLaiDanhSach:
+      taiLaiDanhSach,
+    onMoChiTiet:
+      moChiTiet,
   });
 
   const {
     maPhieuNhapDangXuLy,
-    xuLyXacNhan,
-    xuLyHuy,
+    phieuNhapChoXuLy,
+    moXacNhanNhapKho,
+    moXacNhanHuyPhieu,
+    dongXacNhanThaoTac,
+    xacNhanThaoTac,
   } = useXuLyPhieuNhap({
-    onTaiLaiDanhSach: taiLaiDanhSach,
-    onTaiLaiChiTiet: moChiTiet,
+    onTaiLaiDanhSach:
+      taiLaiDanhSach,
+    onTaiLaiChiTiet:
+      moChiTiet,
+    onThongBao:
+      thongBao.hienThongBao,
   });
 
   const dangXuLyPhieuDangXem =
@@ -70,8 +86,55 @@ function QuanLyPhieuNhapPage() {
     && maPhieuNhapDangXuLy
       === phieuNhapChiTiet.maPhieuNhap;
 
+  const laXacNhanNhapKho =
+    phieuNhapChoXuLy?.loaiThaoTac
+      === "XAC_NHAN_NHAP_KHO";
+
+  const noiDungXacNhan =
+    phieuNhapChoXuLy
+      ? laXacNhanNhapKho
+        ? `Xác nhận nhập kho cho phiếu #${phieuNhapChoXuLy.maPhieuNhap}? Sau khi xác nhận, số lượng sản phẩm sẽ được tính vào tồn kho.`
+        : `Hủy phiếu nhập #${phieuNhapChoXuLy.maPhieuNhap}? Phiếu đã hủy sẽ không được tính vào tồn kho.`
+      : "";
+
   return (
     <div className="ql-page">
+      <ThongBaoHeThong
+        dangHien={thongBao.dangHien}
+        noiDung={thongBao.noiDung}
+        tieuDe={thongBao.tieuDe}
+        loai={thongBao.loai}
+        dongThongBao={
+          thongBao.dongThongBao
+        }
+      />
+
+      <AdminXacNhan
+        dangHien={
+          phieuNhapChoXuLy !== null
+        }
+        tieuDe={
+          laXacNhanNhapKho
+            ? "Xác nhận nhập kho"
+            : "Xác nhận hủy phiếu"
+        }
+        noiDung={noiDungXacNhan}
+        nhanXacNhan={
+          laXacNhanNhapKho
+            ? "Xác nhận nhập kho"
+            : "Hủy phiếu"
+        }
+        dangXuLy={
+          maPhieuNhapDangXuLy !== null
+        }
+        onXacNhan={() =>
+          void xacNhanThaoTac()
+        }
+        onHuy={
+          dongXacNhanThaoTac
+        }
+      />
+
       <TieuDeTrangQuanLy
         tieuDe="Quản lý phiếu nhập"
         moTa="Theo dõi phiếu nhập, nhà cung cấp, giá trị nhập kho và trạng thái xử lý"
@@ -86,22 +149,39 @@ function QuanLyPhieuNhapPage() {
       <PhieuNhapFormModal
         isOpen={hienForm}
         onClose={dongForm}
-        onSuccess={xuLyTaoThanhCong}
+        onSuccess={
+          xuLyTaoThanhCong
+        }
+        onThongBao={
+          thongBao.hienThongBao
+        }
       />
 
       <PhieuNhapChiTietModal
         isOpen={hienChiTiet}
-        phieuNhap={phieuNhapChiTiet}
-        loading={dangTaiChiTiet}
+        phieuNhap={
+          phieuNhapChiTiet
+        }
+        loading={
+          dangTaiChiTiet
+        }
         loi={loiChiTiet}
-        dangXuLy={dangXuLyPhieuDangXem}
+        dangXuLy={
+          dangXuLyPhieuDangXem
+        }
         onClose={dongChiTiet}
-        onXacNhan={xuLyXacNhan}
-        onHuy={xuLyHuy}
+        onXacNhan={
+          moXacNhanNhapKho
+        }
+        onHuy={
+          moXacNhanHuyPhieu
+        }
       />
 
       <KhungDanhSachQuanLy
-        thongBaoLoi={loi ?? undefined}
+        thongBaoLoi={
+          loi ?? undefined
+        }
         thanhCongCu={
           <div className="ql-filter-grid">
             <div className="ql-filter-search">
@@ -110,7 +190,9 @@ function QuanLyPhieuNhapPage() {
                 className="ql-filter-control"
                 value={tuKhoa}
                 onChange={(event) =>
-                  doiTuKhoa(event.target.value)
+                  doiTuKhoa(
+                    event.target.value,
+                  )
                 }
                 placeholder="Tìm theo mã phiếu, nhà cung cấp, nhân viên..."
               />
@@ -121,9 +203,10 @@ function QuanLyPhieuNhapPage() {
               value={trangThai}
               onChange={(event) =>
                 doiTrangThai(
-                  event.target.value as
+                  event.target
+                    .value as
                     | TrangThaiPhieuNhap
-                    | ""
+                    | "",
                 )
               }
             >
@@ -160,21 +243,31 @@ function QuanLyPhieuNhapPage() {
           <PhanTrangQuanLy
             page={page}
             size={size}
-            totalElements={totalElements}
-            totalPages={totalPages}
+            totalElements={
+              totalElements
+            }
+            totalPages={
+              totalPages
+            }
             first={first}
             last={last}
             tenDonVi="phiếu nhập"
             onDoiTrang={doiTrang}
-            onDoiKichThuoc={doiKichThuoc}
+            onDoiKichThuoc={
+              doiKichThuoc
+            }
           />
         }
       >
         {!loi && (
           <PhieuNhapTable
-            danhSachPhieuNhap={danhSachPhieuNhap}
+            danhSachPhieuNhap={
+              danhSachPhieuNhap
+            }
             loading={loading}
-            onXemChiTiet={moChiTiet}
+            onXemChiTiet={
+              moChiTiet
+            }
           />
         )}
       </KhungDanhSachQuanLy>

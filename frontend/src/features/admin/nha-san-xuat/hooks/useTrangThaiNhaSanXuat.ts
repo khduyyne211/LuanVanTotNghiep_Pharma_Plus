@@ -1,14 +1,25 @@
 import { useState } from "react";
+
 import { isAxiosError } from "axios";
+
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
 
 import {
   anNhaSanXuat,
   hienNhaSanXuat,
 } from "../api/nhaSanXuatApi";
+
 import type { NhaSanXuat } from "../types/NhaSanXuat";
+
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
 
 type UseTrangThaiNhaSanXuatProps = {
   onTaiLaiDanhSach: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
@@ -17,47 +28,71 @@ type ApiErrorResponse = {
 
 function useTrangThaiNhaSanXuat({
   onTaiLaiDanhSach,
+  onThongBao,
 }: UseTrangThaiNhaSanXuatProps) {
   const [
     maNhaSanXuatDangXuLy,
     setMaNhaSanXuatDangXuLy,
   ] = useState<number | null>(null);
 
-  const xuLyDoiTrangThai = async (
-    nhaSanXuat: NhaSanXuat
+  const [
+    nhaSanXuatChoXuLy,
+    setNhaSanXuatChoXuLy,
+  ] = useState<NhaSanXuat | null>(null);
+
+  const moXacNhanDoiTrangThai = (
+    nhaSanXuat: NhaSanXuat,
   ) => {
-    const hanhDong = nhaSanXuat.trangThai
-      ? "ẩn"
-      : "hiển thị";
+    setNhaSanXuatChoXuLy(nhaSanXuat);
+  };
 
-    const daXacNhan = window.confirm(
-      `Bạn có chắc muốn ${hanhDong} nhà sản xuất "${nhaSanXuat.tenNhaSanXuat}"?`
-    );
-
-    if (!daXacNhan) {
+  const dongXacNhanDoiTrangThai = () => {
+    if (maNhaSanXuatDangXuLy !== null) {
       return;
     }
 
+    setNhaSanXuatChoXuLy(null);
+  };
+
+  const xacNhanDoiTrangThai = async () => {
+    if (!nhaSanXuatChoXuLy) {
+      return;
+    }
+
+    const nhaSanXuat = nhaSanXuatChoXuLy;
+    const dangHienThi =
+      nhaSanXuat.trangThai;
+
     try {
       setMaNhaSanXuatDangXuLy(
-        nhaSanXuat.maNhaSanXuat
+        nhaSanXuat.maNhaSanXuat,
       );
 
-      if (nhaSanXuat.trangThai) {
+      if (dangHienThi) {
         await anNhaSanXuat(
-          nhaSanXuat.maNhaSanXuat
+          nhaSanXuat.maNhaSanXuat,
         );
       } else {
         await hienNhaSanXuat(
-          nhaSanXuat.maNhaSanXuat
+          nhaSanXuat.maNhaSanXuat,
         );
       }
 
+      setNhaSanXuatChoXuLy(null);
+
       onTaiLaiDanhSach();
+
+      onThongBao(
+        dangHienThi
+          ? "Ẩn nhà sản xuất thành công."
+          : "Hiển thị nhà sản xuất thành công.",
+        "THANH_CONG",
+        "Thành công",
+      );
     } catch (error) {
       console.error(
         "Không thể cập nhật trạng thái nhà sản xuất:",
-        error
+        error,
       );
 
       const message =
@@ -65,9 +100,13 @@ function useTrangThaiNhaSanXuat({
           ? error.response?.data?.message
           : null;
 
-      alert(
+      setNhaSanXuatChoXuLy(null);
+
+      onThongBao(
         message ??
-          "Không thể cập nhật trạng thái nhà sản xuất."
+          "Không thể cập nhật trạng thái nhà sản xuất.",
+        "LOI",
+        "Không thể cập nhật trạng thái",
       );
     } finally {
       setMaNhaSanXuatDangXuLy(null);
@@ -76,7 +115,10 @@ function useTrangThaiNhaSanXuat({
 
   return {
     maNhaSanXuatDangXuLy,
-    xuLyDoiTrangThai,
+    nhaSanXuatChoXuLy,
+    moXacNhanDoiTrangThai,
+    dongXacNhanDoiTrangThai,
+    xacNhanDoiTrangThai,
   };
 }
 

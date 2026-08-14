@@ -1,14 +1,19 @@
 import { useState } from "react";
+
 import type {
   ChangeEvent,
   FormEvent,
 } from "react";
+
 import { isAxiosError } from "axios";
+
+import type { LoaiThongBao } from "../../../../shared/components/thong-bao/ThongBaoHeThong";
 
 import {
   capNhatDanhMucSanPham,
   themDanhMucSanPham,
 } from "../api/danhMucSanPhamApi";
+
 import type {
   DanhMucSanPham,
   DanhMucSanPhamRequest,
@@ -21,12 +26,19 @@ type DanhMucSanPhamFormData = {
   thuTuHienThi: string;
 };
 
+type HienThongBao = (
+  noiDung: string,
+  loai?: LoaiThongBao,
+  tieuDe?: string,
+) => void;
+
 type DanhMucSanPhamFormModalProps = {
   isOpen: boolean;
   danhMucCanSua: DanhMucSanPham | null;
   danhSachDanhMuc: DanhMucSanPham[];
   onClose: () => void;
   onSuccess: () => void;
+  onThongBao: HienThongBao;
 };
 
 type ApiErrorResponse = {
@@ -34,7 +46,7 @@ type ApiErrorResponse = {
 };
 
 const taoDuLieuForm = (
-  danhMucCanSua: DanhMucSanPham | null
+  danhMucCanSua: DanhMucSanPham | null,
 ): DanhMucSanPhamFormData => {
   if (danhMucCanSua) {
     return {
@@ -60,7 +72,7 @@ const taoDuLieuForm = (
 };
 
 function DanhMucSanPhamFormModal(
-  props: DanhMucSanPhamFormModalProps
+  props: DanhMucSanPhamFormModalProps,
 ) {
   if (!props.isOpen) {
     return null;
@@ -79,11 +91,13 @@ function DanhMucSanPhamFormNoiDung({
   danhSachDanhMuc,
   onClose,
   onSuccess,
+  onThongBao,
 }: DanhMucSanPhamFormModalProps) {
   const [formData, setFormData] =
     useState<DanhMucSanPhamFormData>(
-      () => taoDuLieuForm(danhMucCanSua)
+      () => taoDuLieuForm(danhMucCanSua),
     );
+
   const [dangLuu, setDangLuu] = useState(false);
 
   const xuLyThayDoiInput = (
@@ -91,7 +105,7 @@ function DanhMucSanPhamFormNoiDung({
       HTMLInputElement |
       HTMLTextAreaElement |
       HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
 
@@ -102,14 +116,19 @@ function DanhMucSanPhamFormNoiDung({
   };
 
   const xuLySubmit = async (
-    event: FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
     const tenDanhMuc = formData.tenDanhMuc.trim();
 
     if (!tenDanhMuc) {
-      alert("Tên danh mục sản phẩm không được để trống");
+      onThongBao(
+        "Tên danh mục sản phẩm không được để trống.",
+        "CANH_BAO",
+        "Dữ liệu chưa hợp lệ",
+      );
+
       return;
     }
 
@@ -130,26 +149,41 @@ function DanhMucSanPhamFormNoiDung({
       if (danhMucCanSua) {
         await capNhatDanhMucSanPham(
           danhMucCanSua.maDanhMuc,
-          request
+          request,
+        );
+
+        onSuccess();
+
+        onThongBao(
+          "Cập nhật danh mục sản phẩm thành công.",
+          "THANH_CONG",
+          "Thành công",
         );
       } else {
         await themDanhMucSanPham(request);
-      }
 
-      onSuccess();
+        onSuccess();
+
+        onThongBao(
+          "Thêm danh mục sản phẩm thành công.",
+          "THANH_CONG",
+          "Thành công",
+        );
+      }
     } catch (error) {
       console.error(
         "Không thể lưu danh mục sản phẩm:",
-        error
+        error,
       );
 
       const message = isAxiosError<ApiErrorResponse>(error)
         ? error.response?.data?.message
         : null;
 
-      alert(
-        message ??
-          "Không thể lưu danh mục sản phẩm."
+      onThongBao(
+        message ?? "Không thể lưu danh mục sản phẩm.",
+        "LOI",
+        "Không thể lưu dữ liệu",
       );
     } finally {
       setDangLuu(false);
@@ -160,7 +194,7 @@ function DanhMucSanPhamFormNoiDung({
     danhSachDanhMuc.filter(
       (danhMuc) =>
         danhMuc.maDanhMuc !==
-        danhMucCanSua?.maDanhMuc
+        danhMucCanSua?.maDanhMuc,
     );
 
   return (
