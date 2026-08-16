@@ -9,7 +9,6 @@ const TEN_TRANG_THAI_YEU_CAU: Record<
   CHO_TIEP_NHAN: "Chờ tư vấn",
   DA_TU_VAN: "Đã tư vấn",
   KHONG_THE_LIEN_HE: "Chưa thể liên lạc",
-  DA_HUY: "Đã hủy",
 };
 
 export default function TrangThaiYeuCauTuVan({
