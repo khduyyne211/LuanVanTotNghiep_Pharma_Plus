@@ -30,11 +30,8 @@ const KICH_THUOC_TRANG = 10;
 
 const TEN_TRANG_THAI: Record<TrangThaiTuVan, string> = {
   CHO_TIEP_NHAN: "Chờ tiếp nhận",
-
   DANG_TU_VAN: "Đang tư vấn",
-
   DA_TU_VAN: "Đã tư vấn",
-
   KHONG_THE_LIEN_HE: "Không thể liên hệ",
 };
 
@@ -330,7 +327,10 @@ function QuanLyYeuCauTuVanDuocSiPage() {
 
                   <td>
                     <span
-                      className={`ds-tv-status ds-tv-status--${yeuCau.trangThaiTuVan}`}
+                      className={
+                        `ds-tv-status ` +
+                        `ds-tv-status--${yeuCau.trangThaiTuVan}`
+                      }
                     >
                       {TEN_TRANG_THAI[yeuCau.trangThaiTuVan]}
                     </span>
@@ -394,7 +394,9 @@ function QuanLyYeuCauTuVanDuocSiPage() {
                 <h2>Yêu cầu tư vấn #{chiTiet.maYeuCauTuVan}</h2>
 
                 <span
-                  className={`ds-tv-status ds-tv-status--${chiTiet.trangThaiTuVan}`}
+                  className={
+                    `ds-tv-status ` + `ds-tv-status--${chiTiet.trangThaiTuVan}`
+                  }
                 >
                   {TEN_TRANG_THAI[chiTiet.trangThaiTuVan]}
                 </span>
@@ -418,16 +420,19 @@ function QuanLyYeuCauTuVanDuocSiPage() {
                   <div className="ds-tv-detail-grid">
                     <div>
                       <span>Khách hàng</span>
+
                       <strong>{chiTiet.tenKhachHang}</strong>
                     </div>
 
                     <div>
                       <span>Số điện thoại</span>
+
                       <strong>{chiTiet.soDienThoai}</strong>
                     </div>
 
                     <div>
                       <span>Hình thức</span>
+
                       <strong>
                         {chiTiet.hinhThucLienHe === "GOI_DIEN"
                           ? "Gọi điện"
@@ -437,11 +442,51 @@ function QuanLyYeuCauTuVanDuocSiPage() {
 
                     <div>
                       <span>Dược sĩ tiếp nhận</span>
+
                       <strong>
                         {chiTiet.tenNhanVienTiepNhan || "Chưa tiếp nhận"}
                       </strong>
                     </div>
                   </div>
+
+                  {chiTiet.maSanPham !== null && (
+                    <div className="ds-tv-product-box">
+                      <strong className="ds-tv-product-title">
+                        Sản phẩm cần tư vấn
+                      </strong>
+
+                      <div className="ds-tv-product">
+                        <div className="ds-tv-product-image-wrap">
+                          {chiTiet.hinhAnh ? (
+                            <img
+                              className="ds-tv-product-image"
+                              src={chiTiet.hinhAnh}
+                              alt={chiTiet.tenSanPham || "Sản phẩm cần tư vấn"}
+                            />
+                          ) : (
+                            <span className="ds-tv-product-no-image">
+                              Không có ảnh
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="ds-tv-product-info">
+                          <strong>
+                            {chiTiet.tenSanPham ||
+                              `Sản phẩm #${chiTiet.maSanPham}`}
+                          </strong>
+
+                          <span>Mã sản phẩm: #{chiTiet.maSanPham}</span>
+
+                          {chiTiet.laThuocKeDon && (
+                            <span className="ds-tv-product-rx">
+                              Thuốc kê đơn
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="ds-tv-content-box">
                     <strong>Nội dung cần tư vấn</strong>

@@ -16,6 +16,10 @@ public record YeuCauTuVanDuocSiChiTietResponseDto(
         String tenNhanVienTiepNhan,
         String ketQuaTuVan,
         TrangThaiTuVan trangThaiTuVan,
-        LocalDateTime ngayTao
+        LocalDateTime ngayTao,
+        Long maSanPham,
+        String tenSanPham,
+        String hinhAnh,
+        Boolean laThuocKeDon
 ) {
 }

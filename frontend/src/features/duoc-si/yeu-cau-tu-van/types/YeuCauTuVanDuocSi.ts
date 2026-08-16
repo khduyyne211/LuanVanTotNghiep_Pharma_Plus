@@ -30,6 +30,11 @@ export type YeuCauTuVanDuocSiChiTiet = {
   ketQuaTuVan: string | null;
   trangThaiTuVan: TrangThaiTuVan;
   ngayTao: string;
+
+  maSanPham: number | null;
+  tenSanPham: string | null;
+  hinhAnh: string | null;
+  laThuocKeDon: boolean | null;
 };
 
 export type PageResponse<T> = {
