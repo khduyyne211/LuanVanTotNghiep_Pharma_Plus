@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class SanPhamBanChayService {
 
     private static final int GIOI_HAN_TOI_DA = 24;
+    private static final int SO_NGAY_THONG_KE = 30;
 
     private final ChiTietDonHangRepository
             chiTietDonHangRepository;
@@ -57,18 +58,32 @@ public class SanPhamBanChayService {
             ) {
         kiemTraGioiHan(gioiHan);
 
+        LocalDateTime thoiDiemHienTai =
+                LocalDateTime.now();
+
+        LocalDateTime tuThoiDiem =
+                thoiDiemHienTai.minusDays(
+                        SO_NGAY_THONG_KE
+                );
+
         /*
-         * Lấy toàn bộ thứ hạng trước.
+         * Xếp hạng sản phẩm dựa trên các đơn hàng
+         * đã hoàn thành và được đặt trong 30 ngày gần nhất.
          *
-         * Không giới hạn ngay trong database vì có thể có sản phẩm
-         * bán chạy nhưng không còn đủ điều kiện hiển thị cho khách.
-         * Sau khi loại sản phẩm không hợp lệ mới lấy đúng số lượng
-         * mà giao diện yêu cầu.
+         * Thứ tự ưu tiên:
+         * 1. Số đơn hàng khác nhau có sản phẩm.
+         * 2. Số khách hàng khác nhau đã mua.
+         * 3. Giao dịch gần nhất.
+         *
+         * Không giới hạn ngay trong database vì một sản phẩm
+         * nằm trong nhóm bán chạy vẫn có thể không còn đủ
+         * điều kiện hiển thị cho khách hàng.
          */
         List<SanPhamBanChayProjection> danhSachXepHang =
                 chiTietDonHangRepository
                         .timSanPhamBanChay(
                                 TrangThaiDonHang.HOAN_THANH,
+                                tuThoiDiem,
                                 Pageable.unpaged()
                         );
 
@@ -78,7 +93,10 @@ public class SanPhamBanChayService {
 
         List<Long> danhSachMaSanPhamXepHang =
                 danhSachXepHang.stream()
-                        .map(SanPhamBanChayProjection::getMaSanPham)
+                        .map(
+                                SanPhamBanChayProjection
+                                        ::getMaSanPham
+                        )
                         .distinct()
                         .toList();
 
@@ -110,8 +128,9 @@ public class SanPhamBanChayService {
                         ));
 
         /*
-         * Giữ nguyên thứ tự bán chạy, loại sản phẩm không hợp lệ,
-         * rồi mới giới hạn số lượng trả về.
+         * Giữ nguyên thứ tự bán chạy.
+         * Loại các sản phẩm không còn đủ điều kiện
+         * hiển thị cho khách rồi mới lấy đúng giới hạn.
          */
         List<SanPhamBanChayProjection>
                 danhSachBanChayHopLe =
@@ -126,10 +145,12 @@ public class SanPhamBanChayService {
                                 return false;
                             }
 
-                            List<DonViSanPham> danhSachDonViBan =
+                            List<DonViSanPham>
+                                    danhSachDonViBan =
                                     donViBanTheoSanPham
                                             .getOrDefault(
-                                                    thongKe.getMaSanPham(),
+                                                    thongKe
+                                                            .getMaSanPham(),
                                                     List.of()
                                             );
 
@@ -148,7 +169,10 @@ public class SanPhamBanChayService {
 
         List<Long> danhSachMaSanPhamHopLe =
                 danhSachBanChayHopLe.stream()
-                        .map(SanPhamBanChayProjection::getMaSanPham)
+                        .map(
+                                SanPhamBanChayProjection
+                                        ::getMaSanPham
+                        )
                         .toList();
 
         Map<Long, List<QuyDoiDonVi>>
@@ -176,15 +200,12 @@ public class SanPhamBanChayService {
                         )
                         .toList();
 
-        LocalDateTime thoiDiemTinhGia =
-                LocalDateTime.now();
-
         Map<Long, KetQuaTinhGiaSanPham>
                 ketQuaGiaTheoDonVi =
                 tinhGiaSanPhamService
                         .tinhGiaTheoDanhSachDonVi(
                                 tatCaDonViBan,
-                                thoiDiemTinhGia
+                                thoiDiemHienTai
                         );
 
         return danhSachBanChayHopLe.stream()
@@ -248,7 +269,7 @@ public class SanPhamBanChayService {
                         ketQuaGiaTheoDonVi,
                         soLuongToiDaTheoDonVi
                 ),
-                thongKe.getTongSoLuongDaBan()
+                thongKe.getSoLuotMua()
         );
     }
 
