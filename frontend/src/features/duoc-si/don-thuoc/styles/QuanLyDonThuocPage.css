@@ -1,0 +1,447 @@
+.ds-dt-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px 24px 24px;
+}
+
+.ds-dt-page-header h1 {
+  margin: 0;
+  color: #172033;
+  font-size: 26px;
+}
+
+.ds-dt-page-header p {
+  margin: 6px 0 0;
+  color: #667085;
+}
+
+.ds-dt-filter-panel {
+  display: grid;
+  grid-template-columns:
+    minmax(240px, 1fr)
+    190px
+    120px
+    auto;
+  align-items: end;
+  gap: 14px;
+
+  padding: 16px;
+
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+
+  background: #ffffff;
+}
+
+.ds-dt-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ds-dt-form-group label {
+  color: #344054;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ds-dt-form-group input,
+.ds-dt-form-group select,
+.ds-dt-form-group textarea {
+  box-sizing: border-box;
+  width: 100%;
+
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #344054;
+
+  font: inherit;
+
+  outline: none;
+}
+
+.ds-dt-form-group input,
+.ds-dt-form-group select {
+  min-height: 40px;
+  padding: 8px 10px;
+}
+
+.ds-dt-form-group textarea {
+  min-height: 92px;
+  padding: 10px 12px;
+
+  resize: vertical;
+}
+
+.ds-dt-form-group input:focus,
+.ds-dt-form-group select:focus,
+.ds-dt-form-group textarea:focus {
+  border-color: #98a2b3;
+}
+
+.ds-dt-filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-dt-button {
+  min-height: 38px;
+  padding: 8px 13px;
+
+  border: 0;
+  border-radius: 7px;
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.ds-dt-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ds-dt-button--primary {
+  background: #1570ef;
+  color: #ffffff;
+}
+
+.ds-dt-button--secondary {
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  color: #344054;
+}
+
+.ds-dt-button--danger {
+  background: #d92d20;
+  color: #ffffff;
+}
+
+.ds-dt-summary {
+  display: flex;
+  justify-content: flex-end;
+
+  margin: 0;
+
+  color: #475467;
+  font-size: 14px;
+}
+
+.ds-dt-summary strong {
+  color: #101828;
+}
+
+.ds-dt-table-wrap {
+  overflow-x: auto;
+
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+
+  background: #ffffff;
+}
+
+.ds-dt-table {
+  width: 100%;
+  min-width: 980px;
+
+  border-collapse: collapse;
+}
+
+.ds-dt-table th,
+.ds-dt-table td {
+  padding: 13px 14px;
+
+  border-bottom: 1px solid #eaecf0;
+
+  text-align: left;
+  vertical-align: middle;
+}
+
+.ds-dt-table th {
+  background: #f8fafc;
+  color: #475467;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ds-dt-table td {
+  color: #344054;
+  font-size: 14px;
+}
+
+.ds-dt-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ds-dt-empty {
+  padding: 30px !important;
+
+  color: #667085 !important;
+  text-align: center !important;
+}
+
+.ds-dt-status {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.ds-dt-status--CHO_DUYET {
+  background: #fff7e8;
+  color: #b54708;
+}
+
+.ds-dt-status--DA_DUYET {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.ds-dt-status--TU_CHOI {
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.ds-dt-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+}
+
+.ds-dt-pagination span {
+  color: #475467;
+  font-size: 14px;
+}
+
+.ds-dt-modal-overlay {
+  position: fixed;
+  z-index: 1300;
+
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.ds-dt-modal {
+  width: min(820px, 100%);
+  max-height: calc(100vh - 40px);
+
+  overflow-y: auto;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.ds-dt-modal--loading {
+  width: min(420px, 100%);
+
+  padding: 30px;
+
+  color: #667085;
+  text-align: center;
+}
+
+.ds-dt-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 20px;
+
+  border-bottom: 1px solid #eaecf0;
+}
+
+.ds-dt-modal-header h2 {
+  margin: 0;
+
+  color: #101828;
+  font-size: 22px;
+}
+
+.ds-dt-modal-header p {
+  margin: 6px 0 0;
+
+  color: #667085;
+}
+
+.ds-dt-modal-close {
+  width: 36px;
+  height: 36px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: #f2f4f7;
+  color: #475467;
+
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+.ds-dt-modal-close:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ds-dt-modal-body {
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+
+  padding: 20px;
+}
+
+.ds-dt-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.ds-dt-detail-item {
+  padding: 12px;
+
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+.ds-dt-detail-item span,
+.ds-dt-detail-item strong {
+  display: block;
+}
+
+.ds-dt-detail-item span {
+  margin-bottom: 5px;
+
+  color: #667085;
+  font-size: 12px;
+}
+
+.ds-dt-detail-item strong {
+  color: #101828;
+}
+
+.ds-dt-section {
+  padding: 14px;
+
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+
+  background: #f9fafb;
+}
+
+.ds-dt-section h3 {
+  margin: 0 0 12px;
+
+  color: #101828;
+  font-size: 16px;
+}
+
+.ds-dt-prescription-image-wrap {
+  display: flex;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+
+  background: #ffffff;
+}
+
+.ds-dt-prescription-image {
+  display: block;
+
+  max-width: 100%;
+  max-height: 520px;
+
+  object-fit: contain;
+}
+
+.ds-dt-review-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.ds-dt-review-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+}
+
+.ds-dt-result p {
+  margin: 7px 0 0;
+
+  color: #344054;
+
+  white-space: pre-wrap;
+}
+
+@media (max-width: 1000px) {
+  .ds-dt-filter-panel {
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  }
+
+  .ds-dt-filter-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 700px) {
+  .ds-dt-page {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .ds-dt-filter-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .ds-dt-filter-actions {
+    flex-wrap: wrap;
+  }
+
+  .ds-dt-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ds-dt-review-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

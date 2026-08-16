@@ -5,11 +5,14 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.pharma.backend.dto.duocsi.donthuoc.DonThuocDanhSachProjection;
 import com.pharma.backend.entity.DonThuoc;
+
+import jakarta.persistence.LockModeType;
 
 public interface DonThuocRepository
         extends JpaRepository<DonThuoc, Long> {
@@ -20,8 +23,7 @@ public interface DonThuocRepository
      * =========================================================
      */
 
-    @Query(
-        value = """
+    @Query(value = """
             SELECT
                 dt.ma_don_thuoc AS maDonThuoc,
                 dt.ma_khach_hang AS maKhachHang,
@@ -57,8 +59,7 @@ public interface DonThuocRepository
                     LIKE CONCAT('%', :keyword, '%')
             )
             ORDER BY dt.ngay_upload DESC
-            """,
-        countQuery = """
+            """, countQuery = """
             SELECT COUNT(*)
             FROM don_thuoc dt
             JOIN khach_hang kh
@@ -80,17 +81,15 @@ public interface DonThuocRepository
                 OR tk.so_dien_thoai
                     LIKE CONCAT('%', :keyword, '%')
             )
-            """,
-        nativeQuery = true
-    )
+            """, nativeQuery = true)
     Page<DonThuocDanhSachProjection> timKiemDonThuoc(
             @Param("trangThai") String trangThai,
-            @Param("keyword") String keyword,
-            Pageable pageable
-    );
 
-    @Query(
-        value = """
+            @Param("keyword") String keyword,
+
+            Pageable pageable);
+
+    @Query(value = """
             SELECT
                 dt.ma_don_thuoc AS maDonThuoc,
                 dt.ma_khach_hang AS maKhachHang,
@@ -111,14 +110,26 @@ public interface DonThuocRepository
             LEFT JOIN nhan_vien_noi_bo nv
                 ON nv.ma_nhan_vien = dt.ma_nhan_vien_duyet
             WHERE dt.ma_don_thuoc = :maDonThuoc
-            """,
-        nativeQuery = true
-    )
-    Optional<DonThuocDanhSachProjection>
-            timChiTietDonThuoc(
-                    @Param("maDonThuoc")
-                    long maDonThuoc
-            );
+            """, nativeQuery = true)
+    Optional<DonThuocDanhSachProjection> timChiTietDonThuoc(
+            @Param("maDonThuoc") long maDonThuoc);
+
+    /*
+     * Khóa bản ghi trong lúc kiểm duyệt.
+     *
+     * Nếu hai Dược sĩ cùng mở một đơn thuốc và cùng
+     * thao tác duyệt/từ chối, chỉ transaction lấy khóa
+     * trước được cập nhật trước.
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+            SELECT dt
+            FROM DonThuoc dt
+            LEFT JOIN FETCH dt.nhanVienDuyet
+            WHERE dt.maDonThuoc = :maDonThuoc
+            """)
+    Optional<DonThuoc> timTheoMaDeKiemDuyet(
+            @Param("maDonThuoc") Long maDonThuoc);
 
     /*
      * =========================================================
@@ -126,28 +137,23 @@ public interface DonThuocRepository
      * =========================================================
      */
 
-    @Query(
-        value = """
-                SELECT dt
-                FROM DonThuoc dt
-                LEFT JOIN FETCH dt.nhanVienDuyet
-                WHERE dt.khachHang.maKhachHang = :maKhachHang
-                ORDER BY
-                    dt.ngayUpload DESC,
-                    dt.maDonThuoc DESC
-                """,
-        countQuery = """
-                SELECT COUNT(dt)
-                FROM DonThuoc dt
-                WHERE dt.khachHang.maKhachHang = :maKhachHang
-                """
-    )
-    Page<DonThuoc>
-            timDanhSachCuaKhachHang(
-                    @Param("maKhachHang")
-                    Long maKhachHang,
-                    Pageable pageable
-            );
+    @Query(value = """
+            SELECT dt
+            FROM DonThuoc dt
+            LEFT JOIN FETCH dt.nhanVienDuyet
+            WHERE dt.khachHang.maKhachHang = :maKhachHang
+            ORDER BY
+                dt.ngayUpload DESC,
+                dt.maDonThuoc DESC
+            """, countQuery = """
+            SELECT COUNT(dt)
+            FROM DonThuoc dt
+            WHERE dt.khachHang.maKhachHang = :maKhachHang
+            """)
+    Page<DonThuoc> timDanhSachCuaKhachHang(
+            @Param("maKhachHang") Long maKhachHang,
+
+            Pageable pageable);
 
     @Query("""
             SELECT dt
@@ -156,12 +162,8 @@ public interface DonThuocRepository
             WHERE dt.maDonThuoc = :maDonThuoc
               AND dt.khachHang.maKhachHang = :maKhachHang
             """)
-    Optional<DonThuoc>
-            timChiTietCuaKhachHang(
-                    @Param("maDonThuoc")
-                    Long maDonThuoc,
+    Optional<DonThuoc> timChiTietCuaKhachHang(
+            @Param("maDonThuoc") Long maDonThuoc,
 
-                    @Param("maKhachHang")
-                    Long maKhachHang
-            );
+            @Param("maKhachHang") Long maKhachHang);
 }

@@ -1,0 +1,145 @@
+.duoc-si-xac-nhan-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background-color: rgba(15, 23, 42, 0.45);
+
+  z-index: 1600;
+}
+
+.duoc-si-xac-nhan-hop {
+  width: 100%;
+  max-width: 430px;
+
+  padding: 28px;
+
+  border-radius: 14px;
+
+  background-color: #ffffff;
+
+  box-shadow:
+    0 20px 45px rgba(15, 23, 42, 0.18);
+
+  text-align: center;
+}
+
+.duoc-si-xac-nhan-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 52px;
+  height: 52px;
+
+  margin: 0 auto 16px;
+
+  border-radius: 50%;
+
+  background-color: #fff7ed;
+  color: #c2410c;
+
+  font-size: 24px;
+}
+
+.duoc-si-xac-nhan-icon--nguy-hiem {
+  background-color: #fef3f2;
+  color: #b42318;
+}
+
+.duoc-si-xac-nhan-hop h2 {
+  margin: 0;
+
+  color: #101828;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.duoc-si-xac-nhan-hop p {
+  margin: 12px 0 0;
+
+  color: #667085;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.duoc-si-xac-nhan-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 24px;
+}
+
+.duoc-si-xac-nhan-button {
+  min-width: 100px;
+  min-height: 40px;
+
+  padding: 9px 16px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.duoc-si-xac-nhan-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.duoc-si-xac-nhan-button--huy {
+  border: 1px solid #d0d5dd;
+
+  background-color: #ffffff;
+  color: #344054;
+}
+
+.duoc-si-xac-nhan-button--huy:hover:not(:disabled) {
+  background-color: #f9fafb;
+}
+
+.duoc-si-xac-nhan-button--dong-y {
+  border: 1px solid #078c67;
+
+  background-color: #078c67;
+  color: #ffffff;
+}
+
+.duoc-si-xac-nhan-button--dong-y:hover:not(:disabled) {
+  background-color: #067457;
+}
+
+.duoc-si-xac-nhan-button--nguy-hiem {
+  border: 1px solid #d92d20;
+
+  background-color: #d92d20;
+  color: #ffffff;
+}
+
+.duoc-si-xac-nhan-button--nguy-hiem:hover:not(:disabled) {
+  background-color: #b42318;
+}
+
+@media (max-width: 520px) {
+  .duoc-si-xac-nhan-hop {
+    padding: 22px 18px;
+  }
+
+  .duoc-si-xac-nhan-actions {
+    flex-direction: column-reverse;
+  }
+
+  .duoc-si-xac-nhan-button {
+    width: 100%;
+  }
+}

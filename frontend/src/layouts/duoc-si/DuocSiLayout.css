@@ -1,46 +1,86 @@
 .duoc-si-shell {
-  min-height: 100vh;
   display: flex;
+
+  width: 100%;
+  min-height: 100vh;
+
   background: #f7f8fa;
 }
 
-.duoc-si-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
+.duoc-si-main-content {
+  flex: 1;
 
-  width: 250px;
+  min-width: 0;
+  min-height: 100vh;
+
+  overflow-x: auto;
+}
+
+
+/* =========================================
+   SIDEBAR
+   ========================================= */
+
+.duoc-si-sidebar {
+  position: sticky;
+  top: 0;
 
   display: flex;
   flex-direction: column;
 
+  height: 100vh;
+  min-width: 72px;
+
+  flex-shrink: 0;
+
   border-right: 1px solid #e4e7ec;
+
   background: #ffffff;
+
+  transition:
+    width 0.2s ease,
+    box-shadow 0.2s ease;
 
   z-index: 100;
 }
 
-.duoc-si-sidebar-brand {
-  min-height: 76px;
 
+/* =========================================
+   HEADER
+   ========================================= */
+
+.duoc-si-sidebar-header {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 82px;
+
+  padding: 16px;
+
+  border-bottom: 1px solid #eaecf0;
+}
+
+.duoc-si-sidebar-brand {
   display: flex;
   align-items: center;
 
   gap: 12px;
 
-  padding: 0 20px;
-
-  border-bottom: 1px solid #eaecf0;
+  min-width: 0;
 }
 
 .duoc-si-sidebar-logo {
-  width: 40px;
-  height: 40px;
-
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
 
   border-radius: 10px;
 
@@ -50,41 +90,112 @@
   font-size: 20px;
 }
 
-.duoc-si-sidebar-brand strong,
-.duoc-si-sidebar-brand span {
-  display: block;
+.duoc-si-sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
 }
 
-.duoc-si-sidebar-brand strong {
+.duoc-si-sidebar-brand-text strong {
   color: #101828;
+
   font-size: 18px;
+  font-weight: 700;
+
+  line-height: 1.25;
+
+  white-space: nowrap;
 }
 
-.duoc-si-sidebar-brand span {
-  margin-top: 2px;
+.duoc-si-sidebar-brand-text span {
+  margin-top: 3px;
 
   color: #667085;
+
   font-size: 12px;
+  font-weight: 500;
+
+  white-space: nowrap;
 }
+
+
+/* =========================================
+   COLLAPSE BUTTON
+   ========================================= */
+
+.duoc-si-sidebar-collapse-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  flex-shrink: 0;
+
+  padding: 0;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #6b7280;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.duoc-si-sidebar-collapse-button:hover {
+  border-color: #d1d5db;
+
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.duoc-si-sidebar-collapse-button i {
+  font-size: 14px;
+}
+
+
+/* =========================================
+   MENU
+   ========================================= */
 
 .duoc-si-sidebar-menu {
   display: flex;
+  flex: 1;
   flex-direction: column;
 
   gap: 5px;
 
-  padding: 18px 12px;
+  padding: 16px 12px;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.duoc-si-sidebar-menu::-webkit-scrollbar {
+  width: 5px;
+}
+
+.duoc-si-sidebar-menu::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+
+  background: #d1d5db;
 }
 
 .duoc-si-menu-item {
-  min-height: 44px;
-
   display: flex;
   align-items: center;
 
-  gap: 11px;
+  min-height: 44px;
 
-  padding: 0 13px;
+  padding: 10px 12px;
 
   border-radius: 8px;
 
@@ -94,13 +205,10 @@
   font-weight: 600;
 
   text-decoration: none;
-}
 
-.duoc-si-menu-item i {
-  width: 20px;
-
-  font-size: 17px;
-  text-align: center;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .duoc-si-menu-item:hover {
@@ -118,15 +226,287 @@
   color: #067647;
 }
 
-.duoc-si-main-content {
-  width: calc(
-    100% - 250px
-  );
+.duoc-si-menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  min-height: 100vh;
+  width: 22px;
+  min-width: 22px;
 
-  margin-left: 250px;
+  font-size: 17px;
 }
+
+.duoc-si-menu-label {
+  margin-left: 12px;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.duoc-si-sidebar-footer {
+  padding: 12px;
+
+  border-top: 1px solid #f0f1f3;
+}
+
+.duoc-si-sidebar-user {
+  display: flex;
+  align-items: center;
+
+  min-height: 52px;
+
+  margin-bottom: 6px;
+  padding: 8px;
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+}
+
+.duoc-si-sidebar-user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #ecfdf3;
+  color: #067647;
+
+  font-size: 17px;
+}
+
+.duoc-si-sidebar-user-info {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  margin-left: 10px;
+}
+
+.duoc-si-sidebar-user-info strong {
+  overflow: hidden;
+
+  color: #344054;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.duoc-si-sidebar-user-info span {
+  margin-top: 2px;
+
+  color: #98a2b3;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   COLLAPSED SIDEBAR
+   ========================================= */
+
+.duoc-si-sidebar-collapsed
+  .duoc-si-sidebar-header {
+  justify-content: center;
+
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.duoc-si-sidebar-collapsed
+  .duoc-si-sidebar-brand {
+  justify-content: center;
+}
+
+.duoc-si-sidebar-collapsed
+  .duoc-si-sidebar-logo {
+  width: 38px;
+  height: 38px;
+}
+
+.duoc-si-sidebar-collapsed
+  .duoc-si-sidebar-collapse-button {
+  position: absolute;
+
+  top: 64px;
+  right: -14px;
+
+  width: 28px;
+  height: 28px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 2px 7px rgba(15, 23, 42, 0.08);
+}
+
+.duoc-si-sidebar-collapsed
+  .duoc-si-sidebar-menu {
+  padding-top: 28px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.duoc-si-sidebar-collapsed
+  .duoc-si-menu-item {
+  justify-content: center;
+
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.duoc-si-sidebar-collapsed
+  .duoc-si-menu-icon {
+  width: 100%;
+  min-width: 0;
+}
+
+.duoc-si-sidebar-collapsed
+  .duoc-si-sidebar-footer {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.duoc-si-sidebar-collapsed
+  .duoc-si-sidebar-user {
+  justify-content: center;
+
+  padding-right: 0;
+  padding-left: 0;
+
+  background: transparent;
+}
+
+
+/* =========================================
+   RESIZE
+   ========================================= */
+
+.duoc-si-sidebar-resize-handle {
+  position: absolute;
+
+  top: 0;
+  right: -4px;
+  bottom: 0;
+
+  width: 8px;
+
+  cursor: col-resize;
+
+  z-index: 110;
+}
+
+.duoc-si-sidebar-resize-handle::after {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  right: 3px;
+  bottom: 0;
+
+  width: 2px;
+
+  background: transparent;
+
+  transition:
+    background-color 0.15s ease;
+}
+
+.duoc-si-sidebar-resize-handle:hover::after,
+.duoc-si-sidebar-resize-handle--active::after {
+  background: #cbd5e1;
+}
+
+body.duoc-si-sidebar-is-resizing {
+  cursor: col-resize;
+
+  user-select: none;
+}
+
+
+/* =========================================
+   TƯ VẤN & ĐƠN THUỐC
+   ========================================= */
+
+.duoc-si-feature-module {
+  min-height: 100vh;
+}
+
+.duoc-si-feature-tabs {
+  display: flex;
+
+  gap: 8px;
+
+  padding: 24px 24px 0;
+
+  border-bottom: 1px solid #eaecf0;
+
+  background: #ffffff;
+}
+
+.duoc-si-feature-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding: 0 16px;
+
+  border-bottom: 2px solid transparent;
+
+  color: #667085;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  text-decoration: none;
+}
+
+.duoc-si-feature-tab:hover {
+  color: #344054;
+}
+
+.duoc-si-feature-tab--active {
+  border-bottom-color: #067647;
+
+  color: #067647;
+}
+
+.duoc-si-feature-tab--active:hover {
+  color: #067647;
+}
+
+.duoc-si-feature-content
+  .ds-tv-page {
+  padding-top: 16px;
+}
+
+
+/* =========================================
+   PLACEHOLDER
+   ========================================= */
 
 .duoc-si-placeholder-page {
   padding: 24px;
@@ -145,6 +525,7 @@
   margin: 0;
 
   color: #101828;
+
   font-size: 24px;
 }
 
@@ -154,16 +535,216 @@
   color: #667085;
 }
 
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+.duoc-si-mobile-menu-button {
+  display: none;
+}
+
+.duoc-si-sidebar-mobile-close {
+  display: none;
+}
+
+.duoc-si-sidebar-overlay {
+  display: none;
+}
+
+
+/* =========================================
+   TABLET / MOBILE
+   ========================================= */
+
 @media (max-width: 900px) {
-  .duoc-si-sidebar {
-    width: 210px;
+  .duoc-si-shell {
+    display: block;
   }
 
   .duoc-si-main-content {
-    width: calc(
-      100% - 210px
-    );
+    width: 100%;
 
-    margin-left: 210px;
+    padding-top: 64px;
+  }
+
+  .duoc-si-sidebar {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: min(86vw, 320px) !important;
+    height: 100vh;
+
+    transform: translateX(-100%);
+
+    box-shadow:
+      12px 0 30px rgba(15, 23, 42, 0.12);
+
+    transition:
+      transform 0.22s ease;
+
+    z-index: 1001;
+  }
+
+  .duoc-si-sidebar-mobile-open {
+    transform: translateX(0);
+  }
+
+  .duoc-si-sidebar-collapsed {
+    width: min(86vw, 320px) !important;
+  }
+
+  .duoc-si-sidebar-collapsed
+    .duoc-si-sidebar-header {
+    justify-content: space-between;
+
+    padding: 16px;
+  }
+
+  .duoc-si-sidebar-collapsed
+    .duoc-si-sidebar-brand {
+    justify-content: flex-start;
+  }
+
+  .duoc-si-sidebar-collapsed
+    .duoc-si-sidebar-brand-text,
+  .duoc-si-sidebar-collapsed
+    .duoc-si-menu-label,
+  .duoc-si-sidebar-collapsed
+    .duoc-si-sidebar-user-info {
+    display: flex;
+  }
+
+  .duoc-si-sidebar-collapsed
+    .duoc-si-sidebar-menu {
+    padding:
+      16px
+      12px;
+  }
+
+  .duoc-si-sidebar-collapsed
+    .duoc-si-menu-item {
+    justify-content: flex-start;
+
+    padding:
+      10px
+      12px;
+  }
+
+  .duoc-si-sidebar-collapsed
+    .duoc-si-menu-icon {
+    width: 22px;
+    min-width: 22px;
+  }
+
+  .duoc-si-sidebar-collapsed
+    .duoc-si-sidebar-user {
+    justify-content: flex-start;
+
+    padding: 8px;
+
+    background: #f8fafc;
+  }
+
+  .duoc-si-sidebar-collapse-button {
+    display: none;
+  }
+
+  .duoc-si-sidebar-resize-handle {
+    display: none;
+  }
+
+  .duoc-si-sidebar-mobile-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    margin-left: auto;
+    padding: 0;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #667085;
+
+    cursor: pointer;
+  }
+
+  .duoc-si-mobile-menu-button {
+    position: fixed;
+
+    top: 16px;
+    left: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    background: #ffffff;
+    color: #344054;
+
+    font-size: 20px;
+
+    box-shadow:
+      0 3px 10px rgba(15, 23, 42, 0.08);
+
+    cursor: pointer;
+
+    z-index: 1000;
+  }
+
+  .duoc-si-sidebar-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    display: block;
+
+    padding: 0;
+
+    border: 0;
+
+    background:
+      rgba(15, 23, 42, 0.28);
+
+    cursor: default;
+
+    z-index: 1000;
+  }
+
+  .duoc-si-feature-tabs {
+    overflow-x: auto;
+
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .duoc-si-feature-tab {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .duoc-si-main-content {
+    padding-top: 60px;
+  }
+
+  .duoc-si-sidebar {
+    width: min(88vw, 300px) !important;
   }
 }

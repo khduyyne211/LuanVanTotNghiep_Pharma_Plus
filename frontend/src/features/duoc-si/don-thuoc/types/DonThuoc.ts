@@ -9,7 +9,6 @@ export interface DonThuoc {
 
   maKhachHang: number;
   tenKhachHang: string;
-  emailKhachHang: string;
   soDienThoaiKhachHang: string;
 
   maNhanVienDuyet: number | null;
@@ -20,12 +19,10 @@ export interface DonThuoc {
   trangThaiDonThuoc: Exclude<TrangThaiDonThuoc, "">;
 
   lyDoTuChoi: string | null;
-  ghiChuDuocSi: string | null;
-  ketQuaKiemDuyet: string | null;
+  ghiChu: string | null;
 }
 
 export interface DonThuocKiemDuyetRequest {
-  maNhanVienDuyet: number;
-  ghiChuDuocSi: string | null;
+  ghiChu: string | null;
   lyDoTuChoi?: string | null;
 }

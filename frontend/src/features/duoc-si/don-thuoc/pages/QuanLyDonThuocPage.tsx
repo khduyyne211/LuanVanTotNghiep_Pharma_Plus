@@ -1,43 +1,82 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { isAxiosError } from "axios";
+
+import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
+import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
+
+import DuocSiLoading from "../../shared/components/loading/DuocSiLoading";
+import DuocSiXacNhan from "../../shared/components/xac-nhan/DuocSiXacNhan";
+
 import {
   duyetDonThuoc,
   layChiTietDonThuoc,
   layDanhSachDonThuoc,
   tuChoiDonThuoc,
 } from "../api/donThuocApi";
-import type {
-  DonThuoc,
-  TrangThaiDonThuoc,
-} from "../types/DonThuoc";
 
-const MA_NHAN_VIEN_DUYET_TAM_THOI = 2;
+import type { DonThuoc, TrangThaiDonThuoc } from "../types/DonThuoc";
+
+import "../styles/QuanLyDonThuocPage.css";
+
+type ApiErrorResponse = {
+  detail?: string;
+  message?: string;
+  thongBao?: string;
+};
+
+type ThaoTacKiemDuyet = "DUYET" | "TU_CHOI" | null;
+
+function layThongBaoLoi(error: unknown, macDinh: string) {
+  if (isAxiosError<ApiErrorResponse>(error)) {
+    return (
+      error.response?.data?.detail ||
+      error.response?.data?.thongBao ||
+      error.response?.data?.message ||
+      macDinh
+    );
+  }
+
+  return macDinh;
+}
 
 function QuanLyDonThuocPage() {
-  const [danhSachDonThuoc, setDanhSachDonThuoc] = useState<
-    DonThuoc[]
-  >([]);
+  const thongBao = useThongBaoHeThong();
+
+  const [danhSachDonThuoc, setDanhSachDonThuoc] = useState<DonThuoc[]>([]);
+
   const [dangTaiDanhSach, setDangTaiDanhSach] = useState(true);
 
   const [page, setPage] = useState(0);
+
   const [size, setSize] = useState(10);
+
   const [totalElements, setTotalElements] = useState(0);
+
   const [totalPages, setTotalPages] = useState(0);
+
   const [first, setFirst] = useState(true);
+
   const [last, setLast] = useState(true);
 
   const [keywordInput, setKeywordInput] = useState("");
-  const [keyword, setKeyword] = useState("");
-  const [trangThai, setTrangThai] =
-    useState<TrangThaiDonThuoc>("");
 
-  const [donThuocChiTiet, setDonThuocChiTiet] =
-    useState<DonThuoc | null>(null);
+  const [keyword, setKeyword] = useState("");
+
+  const [trangThai, setTrangThai] = useState<TrangThaiDonThuoc>("");
+
+  const [donThuocChiTiet, setDonThuocChiTiet] = useState<DonThuoc | null>(null);
+
   const [dangTaiChiTiet, setDangTaiChiTiet] = useState(false);
 
-  const [ghiChuDuocSi, setGhiChuDuocSi] = useState("");
+  const [ghiChu, setGhiChu] = useState("");
+
   const [lyDoTuChoi, setLyDoTuChoi] = useState("");
+
   const [dangKiemDuyet, setDangKiemDuyet] = useState(false);
+
+  const [thaoTacChoXacNhan, setThaoTacChoXacNhan] =
+    useState<ThaoTacKiemDuyet>(null);
 
   const taiDanhSachDonThuoc = useCallback(async () => {
     try {
@@ -51,28 +90,36 @@ function QuanLyDonThuocPage() {
       });
 
       setDanhSachDonThuoc(data.content);
+
       setTotalElements(data.totalElements);
+
       setTotalPages(data.totalPages);
+
       setFirst(data.first);
+
       setLast(data.last);
     } catch (error) {
       console.error("Lỗi khi tải danh sách đơn thuốc:", error);
-      alert("Không thể tải danh sách đơn thuốc");
+
+      setDanhSachDonThuoc([]);
+
+      thongBao.hienThongBao(
+        layThongBaoLoi(error, "Không thể tải danh sách đơn thuốc."),
+        "LOI",
+        "Không thể tải dữ liệu",
+      );
     } finally {
       setDangTaiDanhSach(false);
     }
-  }, [page, size, keyword, trangThai]);
+  }, [page, size, keyword, trangThai, thongBao.hienThongBao]);
 
   useEffect(() => {
-    const timerId = window.setTimeout(() => {
-      void taiDanhSachDonThuoc();
-    }, 0);
-
-    return () => window.clearTimeout(timerId);
+    void taiDanhSachDonThuoc();
   }, [taiDanhSachDonThuoc]);
 
   const timKiem = () => {
     setPage(0);
+
     setKeyword(keywordInput.trim());
   };
 
@@ -86,25 +133,74 @@ function QuanLyDonThuocPage() {
   const xemChiTiet = async (maDonThuoc: number) => {
     try {
       setDangTaiChiTiet(true);
+
       setDonThuocChiTiet(null);
 
       const data = await layChiTietDonThuoc(maDonThuoc);
 
       setDonThuocChiTiet(data);
-      setGhiChuDuocSi(data.ghiChuDuocSi ?? "");
+
+      setGhiChu(data.ghiChu ?? "");
+
       setLyDoTuChoi(data.lyDoTuChoi ?? "");
     } catch (error) {
       console.error("Lỗi khi tải chi tiết đơn thuốc:", error);
-      alert("Không thể tải chi tiết đơn thuốc");
+
+      thongBao.hienThongBao(
+        layThongBaoLoi(error, "Không thể tải chi tiết đơn thuốc."),
+        "LOI",
+        "Không thể tải dữ liệu",
+      );
     } finally {
       setDangTaiChiTiet(false);
     }
   };
 
   const dongChiTiet = () => {
+    if (dangKiemDuyet) {
+      return;
+    }
+
     setDonThuocChiTiet(null);
-    setGhiChuDuocSi("");
+
+    setGhiChu("");
     setLyDoTuChoi("");
+
+    setThaoTacChoXacNhan(null);
+  };
+
+  const moXacNhanDuyet = () => {
+    if (!donThuocChiTiet) {
+      return;
+    }
+
+    setThaoTacChoXacNhan("DUYET");
+  };
+
+  const moXacNhanTuChoi = () => {
+    if (!donThuocChiTiet) {
+      return;
+    }
+
+    if (!lyDoTuChoi.trim()) {
+      thongBao.hienThongBao(
+        "Vui lòng nhập lý do từ chối đơn thuốc.",
+        "CANH_BAO",
+        "Dữ liệu chưa hợp lệ",
+      );
+
+      return;
+    }
+
+    setThaoTacChoXacNhan("TU_CHOI");
+  };
+
+  const dongXacNhan = () => {
+    if (dangKiemDuyet) {
+      return;
+    }
+
+    setThaoTacChoXacNhan(null);
   };
 
   const xuLyDuyet = async () => {
@@ -112,28 +208,36 @@ function QuanLyDonThuocPage() {
       return;
     }
 
-    const dongY = confirm("Xác nhận duyệt đơn thuốc này?");
-    if (!dongY) {
-      return;
-    }
-
     try {
       setDangKiemDuyet(true);
 
-      const data = await duyetDonThuoc(
-        donThuocChiTiet.maDonThuoc,
-        {
-          maNhanVienDuyet: MA_NHAN_VIEN_DUYET_TAM_THOI,
-          ghiChuDuocSi: ghiChuDuocSi.trim() || null,
-        }
-      );
+      const data = await duyetDonThuoc(donThuocChiTiet.maDonThuoc, {
+        ghiChu: ghiChu.trim() || null,
+      });
 
       setDonThuocChiTiet(data);
+
+      setGhiChu(data.ghiChu ?? "");
+
+      setLyDoTuChoi("");
+
+      setThaoTacChoXacNhan(null);
+
       await taiDanhSachDonThuoc();
-      alert("Duyệt đơn thuốc thành công");
+
+      thongBao.hienThongBao(
+        `Đơn thuốc #${data.maDonThuoc} đã được duyệt thành công.`,
+        "THANH_CONG",
+        "Duyệt đơn thuốc thành công",
+      );
     } catch (error) {
       console.error("Lỗi khi duyệt đơn thuốc:", error);
-      alert("Duyệt đơn thuốc thất bại");
+
+      thongBao.hienThongBao(
+        layThongBaoLoi(error, "Không thể duyệt đơn thuốc."),
+        "LOI",
+        "Duyệt đơn thuốc thất bại",
+      );
     } finally {
       setDangKiemDuyet(false);
     }
@@ -144,41 +248,81 @@ function QuanLyDonThuocPage() {
       return;
     }
 
-    if (!lyDoTuChoi.trim()) {
-      alert("Vui lòng nhập lý do từ chối");
-      return;
-    }
+    const lyDo = lyDoTuChoi.trim();
 
-    const dongY = confirm("Xác nhận từ chối đơn thuốc này?");
-    if (!dongY) {
+    if (!lyDo) {
+      setThaoTacChoXacNhan(null);
+
+      thongBao.hienThongBao(
+        "Vui lòng nhập lý do từ chối đơn thuốc.",
+        "CANH_BAO",
+        "Dữ liệu chưa hợp lệ",
+      );
+
       return;
     }
 
     try {
       setDangKiemDuyet(true);
 
-      const data = await tuChoiDonThuoc(
-        donThuocChiTiet.maDonThuoc,
-        {
-          maNhanVienDuyet: MA_NHAN_VIEN_DUYET_TAM_THOI,
-          ghiChuDuocSi: ghiChuDuocSi.trim() || null,
-          lyDoTuChoi: lyDoTuChoi.trim(),
-        }
-      );
+      const data = await tuChoiDonThuoc(donThuocChiTiet.maDonThuoc, {
+        ghiChu: ghiChu.trim() || null,
+
+        lyDoTuChoi: lyDo,
+      });
 
       setDonThuocChiTiet(data);
+
+      setGhiChu(data.ghiChu ?? "");
+
+      setLyDoTuChoi(data.lyDoTuChoi ?? "");
+
+      setThaoTacChoXacNhan(null);
+
       await taiDanhSachDonThuoc();
-      alert("Từ chối đơn thuốc thành công");
+
+      thongBao.hienThongBao(
+        `Đơn thuốc #${data.maDonThuoc} đã được từ chối.`,
+        "THANH_CONG",
+        "Đã cập nhật đơn thuốc",
+      );
     } catch (error) {
       console.error("Lỗi khi từ chối đơn thuốc:", error);
-      alert("Từ chối đơn thuốc thất bại");
+
+      thongBao.hienThongBao(
+        layThongBaoLoi(error, "Không thể từ chối đơn thuốc."),
+        "LOI",
+        "Từ chối đơn thuốc thất bại",
+      );
     } finally {
       setDangKiemDuyet(false);
     }
   };
 
+  const xacNhanKiemDuyet = () => {
+    if (thaoTacChoXacNhan === "DUYET") {
+      void xuLyDuyet();
+
+      return;
+    }
+
+    if (thaoTacChoXacNhan === "TU_CHOI") {
+      void xuLyTuChoi();
+    }
+  };
+
   const dinhDangNgayGio = (giaTri: string) => {
-    return new Date(giaTri).toLocaleString("vi-VN");
+    const ngay = new Date(giaTri);
+
+    if (Number.isNaN(ngay.getTime())) {
+      return giaTri;
+    }
+
+    return new Intl.DateTimeFormat("vi-VN", {
+      dateStyle: "short",
+
+      timeStyle: "short",
+    }).format(ngay);
   };
 
   const hienThiTrangThai = (giaTri: string) => {
@@ -197,73 +341,111 @@ function QuanLyDonThuocPage() {
     return giaTri;
   };
 
+  const tieuDeXacNhan =
+    thaoTacChoXacNhan === "TU_CHOI"
+      ? "Xác nhận từ chối đơn thuốc"
+      : "Xác nhận duyệt đơn thuốc";
+
+  const noiDungXacNhan = donThuocChiTiet
+    ? thaoTacChoXacNhan === "TU_CHOI"
+      ? `Bạn có chắc muốn từ chối đơn thuốc #${donThuocChiTiet.maDonThuoc} không?`
+      : `Bạn có chắc muốn duyệt đơn thuốc #${donThuocChiTiet.maDonThuoc} không?`
+    : "";
+
   return (
-    <div>
-      <div className="page-header">
-        <div>
-          <h1>Quản lý đơn thuốc</h1>
-          <p>
-            Dược sĩ xem ảnh đơn thuốc, kiểm tra thông tin và
-            cập nhật kết quả kiểm duyệt.
-          </p>
-        </div>
+    <div className="ds-dt-page">
+      <ThongBaoHeThong
+        dangHien={thongBao.dangHien}
+        tieuDe={thongBao.tieuDe}
+        noiDung={thongBao.noiDung}
+        loai={thongBao.loai}
+        dongThongBao={thongBao.dongThongBao}
+      />
+
+      <DuocSiXacNhan
+        dangHien={thaoTacChoXacNhan !== null}
+        tieuDe={tieuDeXacNhan}
+        noiDung={noiDungXacNhan}
+        nhanXacNhan={thaoTacChoXacNhan === "TU_CHOI" ? "Từ chối" : "Duyệt"}
+        loai={thaoTacChoXacNhan === "TU_CHOI" ? "NGUY_HIEM" : "BINH_THUONG"}
+        dangXuLy={dangKiemDuyet}
+        onXacNhan={xacNhanKiemDuyet}
+        onHuy={dongXacNhan}
+      />
+
+      <div className="ds-dt-page-header">
+        <h1>Quản lý đơn thuốc</h1>
+
+        <p>
+          Dược sĩ xem ảnh đơn thuốc, kiểm tra thông tin và cập nhật kết quả kiểm
+          duyệt.
+        </p>
       </div>
 
-      <div className="filter-panel">
-        <div className="form-group">
-          <label>Tìm khách hàng</label>
+      <div className="ds-dt-filter-panel">
+        <div className="ds-dt-form-group">
+          <label htmlFor="timDonThuoc">Tìm đơn thuốc</label>
+
           <input
+            id="timDonThuoc"
             type="text"
             value={keywordInput}
-            onChange={(event) =>
-              setKeywordInput(event.target.value)
-            }
+            onChange={(event) => setKeywordInput(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
                 timKiem();
               }
             }}
-            placeholder="Tên, email hoặc số điện thoại"
+            placeholder="Mã đơn, tên hoặc số điện thoại"
           />
         </div>
 
-        <div className="form-group">
-          <label>Trạng thái</label>
+        <div className="ds-dt-form-group">
+          <label htmlFor="trangThaiDonThuoc">Trạng thái</label>
+
           <select
+            id="trangThaiDonThuoc"
             value={trangThai}
             onChange={(event) => {
-              setTrangThai(
-                event.target.value as TrangThaiDonThuoc
-              );
+              setTrangThai(event.target.value as TrangThaiDonThuoc);
+
               setPage(0);
             }}
           >
             <option value="">Tất cả trạng thái</option>
+
             <option value="CHO_DUYET">Chờ duyệt</option>
+
             <option value="DA_DUYET">Đã duyệt</option>
+
             <option value="TU_CHOI">Từ chối</option>
           </select>
         </div>
 
-        <div className="form-group">
-          <label>Số dòng</label>
+        <div className="ds-dt-form-group">
+          <label htmlFor="soDongDonThuoc">Số dòng</label>
+
           <select
+            id="soDongDonThuoc"
             value={size}
             onChange={(event) => {
               setSize(Number(event.target.value));
+
               setPage(0);
             }}
           >
             <option value={5}>5</option>
+
             <option value={10}>10</option>
+
             <option value={20}>20</option>
           </select>
         </div>
 
-        <div className="action-buttons">
+        <div className="ds-dt-filter-actions">
           <button
             type="button"
-            className="primary-button"
+            className="ds-dt-button ds-dt-button--primary"
             onClick={timKiem}
           >
             Tìm kiếm
@@ -271,7 +453,7 @@ function QuanLyDonThuocPage() {
 
           <button
             type="button"
-            className="secondary-button"
+            className="ds-dt-button ds-dt-button--secondary"
             onClick={xoaBoLoc}
           >
             Xóa bộ lọc
@@ -279,101 +461,105 @@ function QuanLyDonThuocPage() {
         </div>
       </div>
 
-      <p>Tổng số đơn thuốc: {totalElements}</p>
+      <p className="ds-dt-summary">
+        Tổng số đơn thuốc:&nbsp;
+        <strong>{totalElements}</strong>
+      </p>
 
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>Mã đơn</th>
-            <th>Khách hàng</th>
-            <th>Liên hệ</th>
-            <th>Ngày tải lên</th>
-            <th>Trạng thái</th>
-            <th>Nhân viên duyệt</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {dangTaiDanhSach ? (
+      <div className="ds-dt-table-wrap">
+        <table className="ds-dt-table">
+          <thead>
             <tr>
-              <td colSpan={7} className="empty-cell">
-                Đang tải danh sách đơn thuốc...
-              </td>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>Số điện thoại</th>
+              <th>Ngày tải lên</th>
+              <th>Trạng thái</th>
+              <th>Dược sĩ duyệt</th>
+              <th>Thao tác</th>
             </tr>
-          ) : (
-            danhSachDonThuoc.map((donThuoc) => (
-              <tr key={donThuoc.maDonThuoc}>
-                <td>{donThuoc.maDonThuoc}</td>
+          </thead>
 
-                <td>
-                  <strong>{donThuoc.tenKhachHang}</strong>
-                </td>
-
-                <td>
-                  <div>{donThuoc.emailKhachHang}</div>
-                  <div>{donThuoc.soDienThoaiKhachHang}</div>
-                </td>
-
-                <td>
-                  {dinhDangNgayGio(donThuoc.ngayUpload)}
-                </td>
-
-                <td>
-                  {hienThiTrangThai(
-                    donThuoc.trangThaiDonThuoc
-                  )}
-                </td>
-
-                <td>
-                  {donThuoc.tenNhanVienDuyet ||
-                    "Chưa có người duyệt"}
-                </td>
-
-                <td>
-                  <button
-                    type="button"
-                    className="small-button"
-                    onClick={() =>
-                      void xemChiTiet(donThuoc.maDonThuoc)
-                    }
-                  >
-                    Xem chi tiết
-                  </button>
+          <tbody>
+            {dangTaiDanhSach ? (
+              <tr>
+                <td colSpan={7} className="ds-dt-empty">
+                  <DuocSiLoading
+                    gon
+                    noiDung="Đang tải danh sách đơn thuốc..."
+                  />
                 </td>
               </tr>
-            ))
-          )}
+            ) : (
+              danhSachDonThuoc.map((donThuoc) => (
+                <tr key={donThuoc.maDonThuoc}>
+                  <td>#{donThuoc.maDonThuoc}</td>
 
-          {!dangTaiDanhSach &&
-            danhSachDonThuoc.length === 0 && (
+                  <td>
+                    <strong>{donThuoc.tenKhachHang}</strong>
+                  </td>
+
+                  <td>{donThuoc.soDienThoaiKhachHang}</td>
+
+                  <td>{dinhDangNgayGio(donThuoc.ngayUpload)}</td>
+
+                  <td>
+                    <span
+                      className={
+                        `ds-dt-status ` +
+                        `ds-dt-status--${donThuoc.trangThaiDonThuoc}`
+                      }
+                    >
+                      {hienThiTrangThai(donThuoc.trangThaiDonThuoc)}
+                    </span>
+                  </td>
+
+                  <td>{donThuoc.tenNhanVienDuyet || "Chưa có người duyệt"}</td>
+
+                  <td>
+                    <button
+                      type="button"
+                      className="ds-dt-button ds-dt-button--secondary"
+                      onClick={() => void xemChiTiet(donThuoc.maDonThuoc)}
+                    >
+                      Xem chi tiết
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+
+            {!dangTaiDanhSach && danhSachDonThuoc.length === 0 && (
               <tr>
-                <td colSpan={7} className="empty-cell">
+                <td colSpan={7} className="ds-dt-empty">
                   Không có đơn thuốc phù hợp.
                 </td>
               </tr>
             )}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
 
-      <div className="pagination">
+      <div className="ds-dt-pagination">
         <button
           type="button"
-          className="secondary-button"
-          disabled={first}
-          onClick={() => setPage(page - 1)}
+          className="ds-dt-button ds-dt-button--secondary"
+          disabled={first || dangTaiDanhSach}
+          onClick={() => setPage(Math.max(page - 1, 0))}
         >
           Trang trước
         </button>
 
         <span>
-          Trang {totalPages === 0 ? 0 : page + 1}/{totalPages}
+          Trang <strong>{totalPages === 0 ? 0 : page + 1}</strong>
+          {" / "}
+          <strong>{totalPages}</strong>
         </span>
 
         <button
           type="button"
-          className="secondary-button"
-          disabled={last}
+          className="ds-dt-button ds-dt-button--secondary"
+          disabled={last || dangTaiDanhSach}
           onClick={() => setPage(page + 1)}
         >
           Trang sau
@@ -381,178 +567,152 @@ function QuanLyDonThuocPage() {
       </div>
 
       {dangTaiChiTiet && (
-        <div className="modal-overlay">
-          <div className="modal-card">
-            <p>Đang tải chi tiết đơn thuốc...</p>
+        <div className="ds-dt-modal-overlay">
+          <div className="ds-dt-modal ds-dt-modal--loading">
+            <DuocSiLoading noiDung="Đang tải chi tiết đơn thuốc..." />
           </div>
         </div>
       )}
 
       {donThuocChiTiet && !dangTaiChiTiet && (
-        <div className="modal-overlay">
-          <div className="modal-card product-detail-modal">
-            <div className="modal-header">
+        <div className="ds-dt-modal-overlay">
+          <div className="ds-dt-modal">
+            <div className="ds-dt-modal-header">
               <div>
-                <h2>
-                  Chi tiết đơn thuốc #
-                  {donThuocChiTiet.maDonThuoc}
-                </h2>
+                <h2>Chi tiết đơn thuốc #{donThuocChiTiet.maDonThuoc}</h2>
+
                 <p>{donThuocChiTiet.tenKhachHang}</p>
               </div>
 
               <button
                 type="button"
-                className="modal-close-button"
+                className="ds-dt-modal-close"
                 onClick={dongChiTiet}
+                disabled={dangKiemDuyet}
               >
                 ×
               </button>
             </div>
 
-            <div className="detail-grid">
-              <div>
-                <span>Email</span>
-                <strong>
-                  {donThuocChiTiet.emailKhachHang}
-                </strong>
+            <div className="ds-dt-modal-body">
+              <div className="ds-dt-detail-grid">
+                <div className="ds-dt-detail-item">
+                  <span>Mã khách hàng</span>
+
+                  <strong>#{donThuocChiTiet.maKhachHang}</strong>
+                </div>
+
+                <div className="ds-dt-detail-item">
+                  <span>Số điện thoại</span>
+
+                  <strong>{donThuocChiTiet.soDienThoaiKhachHang}</strong>
+                </div>
+
+                <div className="ds-dt-detail-item">
+                  <span>Ngày tải lên</span>
+
+                  <strong>{dinhDangNgayGio(donThuocChiTiet.ngayUpload)}</strong>
+                </div>
+
+                <div className="ds-dt-detail-item">
+                  <span>Trạng thái</span>
+
+                  <strong>
+                    {hienThiTrangThai(donThuocChiTiet.trangThaiDonThuoc)}
+                  </strong>
+                </div>
+
+                <div className="ds-dt-detail-item">
+                  <span>Dược sĩ duyệt</span>
+
+                  <strong>
+                    {donThuocChiTiet.tenNhanVienDuyet || "Chưa có"}
+                  </strong>
+                </div>
               </div>
 
-              <div>
-                <span>Số điện thoại</span>
-                <strong>
-                  {donThuocChiTiet.soDienThoaiKhachHang}
-                </strong>
-              </div>
+              <div className="ds-dt-section">
+                <h3>Ảnh đơn thuốc</h3>
 
-              <div>
-                <span>Ngày tải lên</span>
-                <strong>
-                  {dinhDangNgayGio(
-                    donThuocChiTiet.ngayUpload
-                  )}
-                </strong>
-              </div>
-
-              <div>
-                <span>Trạng thái</span>
-                <strong>
-                  {hienThiTrangThai(
-                    donThuocChiTiet.trangThaiDonThuoc
-                  )}
-                </strong>
-              </div>
-
-              <div>
-                <span>Nhân viên duyệt</span>
-                <strong>
-                  {donThuocChiTiet.tenNhanVienDuyet ||
-                    "Chưa có"}
-                </strong>
-              </div>
-
-              <div>
-                <span>Kết quả kiểm duyệt</span>
-                <strong>
-                  {donThuocChiTiet.ketQuaKiemDuyet ||
-                    "Chưa có"}
-                </strong>
-              </div>
-            </div>
-
-            <div className="detail-section">
-              <h3>Ảnh đơn thuốc</h3>
-
-              <img
-                src={donThuocChiTiet.anhDonThuoc}
-                alt={`Đơn thuốc ${donThuocChiTiet.maDonThuoc}`}
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "520px",
-                  objectFit: "contain",
-                  border: "1px solid #ddd",
-                }}
-              />
-            </div>
-
-            {donThuocChiTiet.trangThaiDonThuoc ===
-              "CHO_DUYET" && (
-              <div className="detail-section">
-                <div className="form-group">
-                  <label>Ghi chú của dược sĩ</label>
-                  <textarea
-                    value={ghiChuDuocSi}
-                    onChange={(event) =>
-                      setGhiChuDuocSi(event.target.value)
-                    }
-                    rows={3}
-                    placeholder="Ghi chú thêm khi kiểm duyệt"
+                <div className="ds-dt-prescription-image-wrap">
+                  <img
+                    className="ds-dt-prescription-image"
+                    src={donThuocChiTiet.anhDonThuoc}
+                    alt={`Đơn thuốc ${donThuocChiTiet.maDonThuoc}`}
                   />
                 </div>
-
-                <div className="form-group">
-                  <label>Lý do từ chối</label>
-                  <textarea
-                    value={lyDoTuChoi}
-                    onChange={(event) =>
-                      setLyDoTuChoi(event.target.value)
-                    }
-                    rows={3}
-                    placeholder="Bắt buộc khi từ chối đơn thuốc"
-                  />
-                </div>
-
-                <p>
-                  Nhân viên duyệt tạm thời: mã{" "}
-                  {MA_NHAN_VIEN_DUYET_TAM_THOI}. Sau khi tích
-                  hợp đăng nhập, mã này sẽ lấy từ tài khoản
-                  đang đăng nhập.
-                </p>
-
-                <div className="form-actions">
-                  <button
-                    type="button"
-                    className="primary-button"
-                    disabled={dangKiemDuyet}
-                    onClick={() => void xuLyDuyet()}
-                  >
-                    {dangKiemDuyet
-                      ? "Đang xử lý..."
-                      : "Duyệt đơn thuốc"}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="warning-button"
-                    disabled={dangKiemDuyet}
-                    onClick={() => void xuLyTuChoi()}
-                  >
-                    Từ chối đơn thuốc
-                  </button>
-                </div>
               </div>
-            )}
 
-            {donThuocChiTiet.trangThaiDonThuoc !==
-              "CHO_DUYET" && (
-              <div className="detail-section">
-                <h3>Kết quả xử lý</h3>
+              {donThuocChiTiet.trangThaiDonThuoc === "CHO_DUYET" && (
+                <div className="ds-dt-section">
+                  <div className="ds-dt-review-form">
+                    <div className="ds-dt-form-group">
+                      <label htmlFor="ghiChuDonThuoc">
+                        Ghi chú của dược sĩ
+                      </label>
 
-                <p>
-                  <strong>Ghi chú:</strong>{" "}
-                  {donThuocChiTiet.ghiChuDuocSi ||
-                    "Không có"}
-                </p>
+                      <textarea
+                        id="ghiChuDonThuoc"
+                        value={ghiChu}
+                        onChange={(event) => setGhiChu(event.target.value)}
+                        placeholder="Ghi chú thêm khi kiểm duyệt"
+                        disabled={dangKiemDuyet}
+                      />
+                    </div>
 
-                {donThuocChiTiet.trangThaiDonThuoc ===
-                  "TU_CHOI" && (
+                    <div className="ds-dt-form-group">
+                      <label htmlFor="lyDoTuChoiDonThuoc">Lý do từ chối</label>
+
+                      <textarea
+                        id="lyDoTuChoiDonThuoc"
+                        value={lyDoTuChoi}
+                        onChange={(event) => setLyDoTuChoi(event.target.value)}
+                        placeholder="Bắt buộc khi từ chối đơn thuốc"
+                        disabled={dangKiemDuyet}
+                      />
+                    </div>
+
+                    <div className="ds-dt-review-actions">
+                      <button
+                        type="button"
+                        className="ds-dt-button ds-dt-button--primary"
+                        disabled={dangKiemDuyet}
+                        onClick={moXacNhanDuyet}
+                      >
+                        Duyệt đơn thuốc
+                      </button>
+
+                      <button
+                        type="button"
+                        className="ds-dt-button ds-dt-button--danger"
+                        disabled={dangKiemDuyet}
+                        onClick={moXacNhanTuChoi}
+                      >
+                        Từ chối đơn thuốc
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {donThuocChiTiet.trangThaiDonThuoc !== "CHO_DUYET" && (
+                <div className="ds-dt-section ds-dt-result">
+                  <h3>Kết quả xử lý</h3>
+
                   <p>
-                    <strong>Lý do từ chối:</strong>{" "}
-                    {donThuocChiTiet.lyDoTuChoi ||
-                      "Không có"}
+                    <strong>Ghi chú:</strong>{" "}
+                    {donThuocChiTiet.ghiChu || "Không có"}
                   </p>
-                )}
-              </div>
-            )}
+
+                  {donThuocChiTiet.trangThaiDonThuoc === "TU_CHOI" && (
+                    <p>
+                      <strong>Lý do từ chối:</strong>{" "}
+                      {donThuocChiTiet.lyDoTuChoi || "Không có"}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

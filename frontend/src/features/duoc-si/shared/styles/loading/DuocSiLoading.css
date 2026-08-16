@@ -1,0 +1,95 @@
+.duoc-si-loading {
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 180px;
+
+  padding: 24px;
+}
+
+.duoc-si-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  color: #667085;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.duoc-si-loading-spinner {
+  width: 36px;
+  height: 36px;
+
+  border: 4px solid #e4e7ec;
+  border-top-color: #078c67;
+  border-radius: 50%;
+
+  animation:
+    duoc-si-loading-spin
+    0.75s
+    linear
+    infinite;
+}
+
+.duoc-si-loading--compact {
+  box-sizing: border-box;
+
+  min-height: 82px;
+
+  padding: 12px;
+}
+
+.duoc-si-loading--compact
+  .duoc-si-loading-content {
+  gap: 8px;
+
+  font-size: 13px;
+}
+
+.duoc-si-loading--compact
+  .duoc-si-loading-spinner {
+  width: 26px;
+  height: 26px;
+
+  border-width: 3px;
+}
+
+.duoc-si-loading--overlay {
+  position: fixed;
+
+  inset: 0;
+
+  min-height: 100vh;
+
+  background-color:
+    rgba(255, 255, 255, 0.78);
+
+  z-index: 1400;
+}
+
+@keyframes duoc-si-loading-spin {
+  from {
+    transform:
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .duoc-si-loading-spinner {
+    animation-duration: 1.5s;
+  }
+}

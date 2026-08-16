@@ -23,196 +23,162 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter
-            jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-        HttpSecurity http
-    ) throws Exception {
+            HttpSecurity http) throws Exception {
 
         http
-            /*
-             * Hệ thống dùng JWT trong Authorization header,
-             * không dùng phiên đăng nhập bằng cookie.
-             */
-            .csrf(
-                AbstractHttpConfigurer::disable
-            )
+                /*
+                 * Hệ thống dùng JWT trong Authorization header,
+                 * không dùng phiên đăng nhập bằng cookie.
+                 */
+                .csrf(
+                        AbstractHttpConfigurer::disable)
 
-            /*
-             * Sử dụng CorsConfigurationSource
-             * trong CorsConfig.
-             */
-            .cors(
-                Customizer.withDefaults()
-            )
+                /*
+                 * Sử dụng CorsConfigurationSource
+                 * trong CorsConfig.
+                 */
+                .cors(
+                        Customizer.withDefaults())
 
-            /*
-             * Không lưu SecurityContext
-             * trong HTTP Session.
-             */
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(
-                    SessionCreationPolicy.STATELESS
-                )
-            )
+                /*
+                 * Không lưu SecurityContext
+                 * trong HTTP Session.
+                 */
+                .sessionManagement(session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS))
 
-            /*
-             * Tắt màn hình đăng nhập mặc định.
-             */
-            .formLogin(
-                AbstractHttpConfigurer::disable
-            )
+                /*
+                 * Tắt màn hình đăng nhập mặc định.
+                 */
+                .formLogin(
+                        AbstractHttpConfigurer::disable)
 
-            /*
-             * Không dùng HTTP Basic
-             * cho xác thực người dùng Pharma+.
-             *
-             * Lưu ý:
-             * Basic Auth Cloudinary được gọi
-             * từ RestClient ra dịch vụ bên ngoài,
-             * không liên quan cấu hình này.
-             */
-            .httpBasic(
-                AbstractHttpConfigurer::disable
-            )
+                /*
+                 * Không dùng HTTP Basic
+                 * cho xác thực người dùng Pharma+.
+                 */
+                .httpBasic(
+                        AbstractHttpConfigurer::disable)
 
-            .authorizeHttpRequests(authorize ->
-                authorize
+                .authorizeHttpRequests(authorize -> authorize
 
-                    /*
-                     * Cho phép request kiểm tra CORS.
-                     */
-                    .requestMatchers(
-                        HttpMethod.OPTIONS,
-                        "/**"
-                    )
-                    .permitAll()
+                        /*
+                         * Cho phép request kiểm tra CORS.
+                         */
+                        .requestMatchers(
+                                HttpMethod.OPTIONS,
+                                "/**")
+                        .permitAll()
 
-                    /*
-                     * API đăng nhập.
-                     */
-                    .requestMatchers(
-                        "/api/xac-thuc/**"
-                    )
-                    .permitAll()
+                        /*
+                         * API đăng nhập.
+                         */
+                        .requestMatchers(
+                                "/api/xac-thuc/**")
+                        .permitAll()
 
-                    /*
-                     * ZaloPay callback không có JWT.
-                     */
-                    .requestMatchers(
-                        HttpMethod.POST,
-                        "/api/thanh-toan/zalopay/callback"
-                    )
-                    .permitAll()
+                        /*
+                         * ZaloPay callback không có JWT.
+                         */
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/thanh-toan/zalopay/callback")
+                        .permitAll()
 
-                    /*
-                     * API chỉ dành cho KHÁCH HÀNG.
-                     */
-                    .requestMatchers(
-                        "/api/gio-hang/**",
-                        "/api/thong-tin-ca-nhan/**",
-                        "/api/dia-chi-giao-hang/**",
-                        "/api/don-hang/khach-hang/**",
-                        "/api/yeu-cau-tu-van/khach-hang/**",
-                        "/api/don-thuoc/khach-hang/**",
-                        "/api/thanh-toan/zalopay/**"
-                    )
-                    .hasRole(
-                        "KHACH_HANG"
-                    )
+                        /*
+                         * API dành cho DƯỢC SĨ.
+                         */
+                        .requestMatchers(
+                                "/api/duoc-si/**")
+                        .hasRole(
+                                "DUOC_SI")
 
-                    /*
-                     * Giai đoạn hiện tại,
-                     * các API còn lại vẫn công khai
-                     */
-                    .anyRequest()
-                    .permitAll()
-            )
+                        /*
+                         * API chỉ dành cho KHÁCH HÀNG.
+                         */
+                        .requestMatchers(
+                                "/api/gio-hang/**",
+                                "/api/thong-tin-ca-nhan/**",
+                                "/api/dia-chi-giao-hang/**",
+                                "/api/don-hang/khach-hang/**",
+                                "/api/yeu-cau-tu-van/khach-hang/**",
+                                "/api/don-thuoc/khach-hang/**",
+                                "/api/thanh-toan/zalopay/**")
+                        .hasRole(
+                                "KHACH_HANG")
 
-            .exceptionHandling(exception ->
-                exception
-                    .authenticationEntryPoint(
-                        (
-                            request,
-                            response,
-                            authException
-                        ) ->
-                            traVeChuaDangNhap(
-                                response
-                            )
-                    )
+                        /*
+                         * Các API còn lại giữ nguyên theo
+                         * cấu hình hiện tại của hệ thống.
+                         */
+                        .anyRequest()
+                        .permitAll())
 
-                    .accessDeniedHandler(
-                        (
-                            request,
-                            response,
-                            accessDeniedException
-                        ) ->
-                            traVeKhongCoQuyen(
-                                response
-                            )
-                    )
-            )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(
+                                (
+                                        request,
+                                        response,
+                                        authException) -> traVeChuaDangNhap(
+                                                response))
 
-            .addFilterBefore(
-                jwtAuthenticationFilter,
-                UsernamePasswordAuthenticationFilter.class
-            );
+                        .accessDeniedHandler(
+                                (
+                                        request,
+                                        response,
+                                        accessDeniedException) -> traVeKhongCoQuyen(
+                                                response)))
+
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     private void traVeChuaDangNhap(
-        HttpServletResponse response
-    ) throws IOException {
+            HttpServletResponse response) throws IOException {
 
         response.setStatus(
-            HttpServletResponse.SC_UNAUTHORIZED
-        );
+                HttpServletResponse.SC_UNAUTHORIZED);
 
         response.setCharacterEncoding(
-            StandardCharsets.UTF_8.name()
-        );
+                StandardCharsets.UTF_8.name());
 
         response.setContentType(
-            MediaType.APPLICATION_JSON_VALUE
-        );
+                MediaType.APPLICATION_JSON_VALUE);
 
         response.getWriter().write(
-            """
-            {
-              "trangThai": 401,
-              "thongBao": "Bạn cần đăng nhập để sử dụng chức năng này."
-            }
-            """
-        );
+                """
+                        {
+                          "trangThai": 401,
+                          "thongBao": "Bạn cần đăng nhập để sử dụng chức năng này."
+                        }
+                        """);
     }
 
     private void traVeKhongCoQuyen(
-        HttpServletResponse response
-    ) throws IOException {
+            HttpServletResponse response) throws IOException {
 
         response.setStatus(
-            HttpServletResponse.SC_FORBIDDEN
-        );
+                HttpServletResponse.SC_FORBIDDEN);
 
         response.setCharacterEncoding(
-            StandardCharsets.UTF_8.name()
-        );
+                StandardCharsets.UTF_8.name());
 
         response.setContentType(
-            MediaType.APPLICATION_JSON_VALUE
-        );
+                MediaType.APPLICATION_JSON_VALUE);
 
         response.getWriter().write(
-            """
-            {
-              "trangThai": 403,
-              "thongBao": "Tài khoản không có quyền thực hiện chức năng này."
-            }
-            """
-        );
+                """
+                        {
+                          "trangThai": 403,
+                          "thongBao": "Tài khoản không có quyền thực hiện chức năng này."
+                        }
+                        """);
     }
 }

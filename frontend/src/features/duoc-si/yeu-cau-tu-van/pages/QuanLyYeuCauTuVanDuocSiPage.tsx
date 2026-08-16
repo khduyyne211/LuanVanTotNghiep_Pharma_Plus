@@ -3,8 +3,9 @@ import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { isAxiosError } from "axios";
 
 import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
-
 import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
+
+import DuocSiLoading from "../../shared/components/loading/DuocSiLoading";
 
 import {
   hoanTatYeuCauTuVanDuocSi,
@@ -24,21 +25,28 @@ import "../styles/QuanLyYeuCauTuVanDuocSi.css";
 type ApiErrorResponse = {
   detail?: string;
   message?: string;
+  thongBao?: string;
 };
 
 const KICH_THUOC_TRANG = 10;
 
 const TEN_TRANG_THAI: Record<TrangThaiTuVan, string> = {
   CHO_TIEP_NHAN: "Chờ tiếp nhận",
+
   DANG_TU_VAN: "Đang tư vấn",
+
   DA_TU_VAN: "Đã tư vấn",
+
   KHONG_THE_LIEN_HE: "Không thể liên hệ",
 };
 
 function layThongBaoLoi(error: unknown, macDinh: string) {
   if (isAxiosError<ApiErrorResponse>(error)) {
     return (
-      error.response?.data?.detail || error.response?.data?.message || macDinh
+      error.response?.data?.detail ||
+      error.response?.data?.thongBao ||
+      error.response?.data?.message ||
+      macDinh
     );
   }
 
@@ -73,8 +81,6 @@ function QuanLyYeuCauTuVanDuocSiPage() {
 
   const [dangTai, setDangTai] = useState(true);
 
-  const [loiDanhSach, setLoiDanhSach] = useState("");
-
   const [chiTiet, setChiTiet] = useState<YeuCauTuVanDuocSiChiTiet | null>(null);
 
   const [dangTaiChiTiet, setDangTaiChiTiet] = useState(false);
@@ -90,7 +96,6 @@ function QuanLyYeuCauTuVanDuocSiPage() {
   const taiDanhSach = useCallback(async () => {
     try {
       setDangTai(true);
-      setLoiDanhSach("");
 
       const duLieu = await layDanhSachYeuCauTuVanDuocSi(
         trangHienTai,
@@ -107,14 +112,18 @@ function QuanLyYeuCauTuVanDuocSiPage() {
       console.error("Không thể tải yêu cầu tư vấn:", error);
 
       setDanhSach([]);
+      setTongSoTrang(0);
+      setTongSoPhanTu(0);
 
-      setLoiDanhSach(
+      thongBao.hienThongBao(
         layThongBaoLoi(error, "Không thể tải danh sách yêu cầu tư vấn."),
+        "LOI",
+        "Không thể tải dữ liệu",
       );
     } finally {
       setDangTai(false);
     }
-  }, [trangHienTai, trangThaiLoc]);
+  }, [trangHienTai, trangThaiLoc, thongBao.hienThongBao]);
 
   useEffect(() => {
     void taiDanhSach();
@@ -122,6 +131,8 @@ function QuanLyYeuCauTuVanDuocSiPage() {
 
   const moChiTiet = async (maYeuCauTuVan: number) => {
     try {
+      setChiTiet(null);
+
       setDangTaiChiTiet(true);
 
       const duLieu = await layChiTietYeuCauTuVanDuocSi(maYeuCauTuVan);
@@ -154,6 +165,7 @@ function QuanLyYeuCauTuVanDuocSiPage() {
     }
 
     setChiTiet(null);
+
     setKetQuaTuVan("");
   };
 
@@ -249,6 +261,14 @@ function QuanLyYeuCauTuVanDuocSiPage() {
 
   return (
     <div className="ds-tv-page">
+      <ThongBaoHeThong
+        dangHien={thongBao.dangHien}
+        tieuDe={thongBao.tieuDe}
+        noiDung={thongBao.noiDung}
+        loai={thongBao.loai}
+        dongThongBao={thongBao.dongThongBao}
+      />
+
       <div className="ds-tv-header">
         <div>
           <h1>Quản lý yêu cầu tư vấn</h1>
@@ -278,8 +298,6 @@ function QuanLyYeuCauTuVanDuocSiPage() {
         </span>
       </div>
 
-      {loiDanhSach && <div className="ds-tv-error">{loiDanhSach}</div>}
-
       <div className="ds-tv-table-wrap">
         <table className="ds-tv-table">
           <thead>
@@ -299,7 +317,10 @@ function QuanLyYeuCauTuVanDuocSiPage() {
             {dangTai ? (
               <tr>
                 <td colSpan={8} className="ds-tv-message">
-                  Đang tải danh sách...
+                  <DuocSiLoading
+                    gon
+                    noiDung="Đang tải danh sách yêu cầu tư vấn..."
+                  />
                 </td>
               </tr>
             ) : danhSach.length === 0 ? (
@@ -386,200 +407,201 @@ function QuanLyYeuCauTuVanDuocSiPage() {
         </button>
       </div>
 
-      {chiTiet && (
+      {(chiTiet || dangTaiChiTiet) && (
         <div className="ds-tv-modal-overlay">
           <div className="ds-tv-modal">
-            <div className="ds-tv-modal-header">
-              <div>
-                <h2>Yêu cầu tư vấn #{chiTiet.maYeuCauTuVan}</h2>
-
-                <span
-                  className={
-                    `ds-tv-status ` + `ds-tv-status--${chiTiet.trangThaiTuVan}`
-                  }
-                >
-                  {TEN_TRANG_THAI[chiTiet.trangThaiTuVan]}
-                </span>
+            {dangTaiChiTiet && !chiTiet ? (
+              <div className="ds-tv-modal-body">
+                <DuocSiLoading noiDung="Đang tải chi tiết yêu cầu tư vấn..." />
               </div>
-
-              <button
-                type="button"
-                className="ds-tv-close"
-                onClick={dongChiTiet}
-                disabled={dangXuLy}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="ds-tv-modal-body">
-              {dangTaiChiTiet ? (
-                <div className="ds-tv-message">Đang tải...</div>
-              ) : (
+            ) : (
+              chiTiet && (
                 <>
-                  <div className="ds-tv-detail-grid">
+                  <div className="ds-tv-modal-header">
                     <div>
-                      <span>Khách hàng</span>
+                      <h2>Yêu cầu tư vấn #{chiTiet.maYeuCauTuVan}</h2>
 
-                      <strong>{chiTiet.tenKhachHang}</strong>
-                    </div>
-
-                    <div>
-                      <span>Số điện thoại</span>
-
-                      <strong>{chiTiet.soDienThoai}</strong>
-                    </div>
-
-                    <div>
-                      <span>Hình thức</span>
-
-                      <strong>
-                        {chiTiet.hinhThucLienHe === "GOI_DIEN"
-                          ? "Gọi điện"
-                          : "Zalo"}
-                      </strong>
-                    </div>
-
-                    <div>
-                      <span>Dược sĩ tiếp nhận</span>
-
-                      <strong>
-                        {chiTiet.tenNhanVienTiepNhan || "Chưa tiếp nhận"}
-                      </strong>
-                    </div>
-                  </div>
-
-                  {chiTiet.maSanPham !== null && (
-                    <div className="ds-tv-product-box">
-                      <strong className="ds-tv-product-title">
-                        Sản phẩm cần tư vấn
-                      </strong>
-
-                      <div className="ds-tv-product">
-                        <div className="ds-tv-product-image-wrap">
-                          {chiTiet.hinhAnh ? (
-                            <img
-                              className="ds-tv-product-image"
-                              src={chiTiet.hinhAnh}
-                              alt={chiTiet.tenSanPham || "Sản phẩm cần tư vấn"}
-                            />
-                          ) : (
-                            <span className="ds-tv-product-no-image">
-                              Không có ảnh
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="ds-tv-product-info">
-                          <strong>
-                            {chiTiet.tenSanPham ||
-                              `Sản phẩm #${chiTiet.maSanPham}`}
-                          </strong>
-
-                          <span>Mã sản phẩm: #{chiTiet.maSanPham}</span>
-
-                          {chiTiet.laThuocKeDon && (
-                            <span className="ds-tv-product-rx">
-                              Thuốc kê đơn
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="ds-tv-content-box">
-                    <strong>Nội dung cần tư vấn</strong>
-
-                    <p>{chiTiet.noiDungCanTuVan}</p>
-                  </div>
-
-                  {chiTiet.trangThaiTuVan === "CHO_TIEP_NHAN" && (
-                    <div className="ds-tv-modal-actions">
-                      <button
-                        type="button"
-                        className="ds-tv-button ds-tv-button--primary"
-                        disabled={dangXuLy}
-                        onClick={() => void xuLyTiepNhan()}
+                      <span
+                        className={
+                          `ds-tv-status ` +
+                          `ds-tv-status--${chiTiet.trangThaiTuVan}`
+                        }
                       >
-                        {dangXuLy ? "Đang tiếp nhận..." : "Tiếp nhận yêu cầu"}
-                      </button>
+                        {TEN_TRANG_THAI[chiTiet.trangThaiTuVan]}
+                      </span>
                     </div>
-                  )}
 
-                  {chiTiet.trangThaiTuVan === "DANG_TU_VAN" && (
-                    <form noValidate onSubmit={xuLyHoanTat}>
-                      <div className="ds-tv-form-group">
-                        <label htmlFor="trangThaiHoanTat">Kết quả xử lý</label>
+                    <button
+                      type="button"
+                      className="ds-tv-close"
+                      onClick={dongChiTiet}
+                      disabled={dangXuLy}
+                    >
+                      ×
+                    </button>
+                  </div>
 
-                        <select
-                          id="trangThaiHoanTat"
-                          value={trangThaiHoanTat}
-                          onChange={(event) =>
-                            setTrangThaiHoanTat(
-                              event.target.value as
-                                | "DA_TU_VAN"
-                                | "KHONG_THE_LIEN_HE",
-                            )
-                          }
-                          disabled={dangXuLy}
-                        >
-                          <option value="DA_TU_VAN">Đã tư vấn</option>
+                  <div className="ds-tv-modal-body">
+                    <div className="ds-tv-detail-grid">
+                      <div>
+                        <span>Khách hàng</span>
 
-                          <option value="KHONG_THE_LIEN_HE">
-                            Không thể liên hệ
-                          </option>
-                        </select>
+                        <strong>{chiTiet.tenKhachHang}</strong>
                       </div>
 
-                      <div className="ds-tv-form-group">
-                        <label htmlFor="ketQuaTuVan">Nội dung kết quả</label>
+                      <div>
+                        <span>Số điện thoại</span>
 
-                        <textarea
-                          id="ketQuaTuVan"
-                          value={ketQuaTuVan}
-                          onChange={(event) =>
-                            setKetQuaTuVan(event.target.value)
-                          }
-                          disabled={dangXuLy}
-                          placeholder="Nhập kết quả tư vấn hoặc lý do không thể liên hệ..."
-                        />
+                        <strong>{chiTiet.soDienThoai}</strong>
                       </div>
 
+                      <div>
+                        <span>Hình thức</span>
+
+                        <strong>
+                          {chiTiet.hinhThucLienHe === "GOI_DIEN"
+                            ? "Gọi điện"
+                            : "Zalo"}
+                        </strong>
+                      </div>
+
+                      <div>
+                        <span>Dược sĩ tiếp nhận</span>
+
+                        <strong>
+                          {chiTiet.tenNhanVienTiepNhan || "Chưa tiếp nhận"}
+                        </strong>
+                      </div>
+                    </div>
+
+                    {chiTiet.maSanPham !== null && (
+                      <div className="ds-tv-product-box">
+                        <strong className="ds-tv-product-title">
+                          Sản phẩm cần tư vấn
+                        </strong>
+
+                        <div className="ds-tv-product">
+                          <div className="ds-tv-product-image-wrap">
+                            {chiTiet.hinhAnh ? (
+                              <img
+                                className="ds-tv-product-image"
+                                src={chiTiet.hinhAnh}
+                                alt={
+                                  chiTiet.tenSanPham || "Sản phẩm cần tư vấn"
+                                }
+                              />
+                            ) : (
+                              <span className="ds-tv-product-no-image">
+                                Không có ảnh
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="ds-tv-product-info">
+                            <strong>
+                              {chiTiet.tenSanPham ||
+                                `Sản phẩm #${chiTiet.maSanPham}`}
+                            </strong>
+
+                            <span>Mã sản phẩm: #{chiTiet.maSanPham}</span>
+
+                            {chiTiet.laThuocKeDon && (
+                              <span className="ds-tv-product-rx">
+                                Thuốc kê đơn
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="ds-tv-content-box">
+                      <strong>Nội dung cần tư vấn</strong>
+
+                      <p>{chiTiet.noiDungCanTuVan}</p>
+                    </div>
+
+                    {chiTiet.trangThaiTuVan === "CHO_TIEP_NHAN" && (
                       <div className="ds-tv-modal-actions">
                         <button
-                          type="submit"
+                          type="button"
                           className="ds-tv-button ds-tv-button--primary"
                           disabled={dangXuLy}
+                          onClick={() => void xuLyTiepNhan()}
                         >
-                          {dangXuLy ? "Đang lưu..." : "Hoàn tất xử lý"}
+                          {dangXuLy ? "Đang tiếp nhận..." : "Tiếp nhận yêu cầu"}
                         </button>
                       </div>
-                    </form>
-                  )}
+                    )}
 
-                  {(chiTiet.trangThaiTuVan === "DA_TU_VAN" ||
-                    chiTiet.trangThaiTuVan === "KHONG_THE_LIEN_HE") && (
-                    <div className="ds-tv-content-box">
-                      <strong>Kết quả tư vấn</strong>
+                    {chiTiet.trangThaiTuVan === "DANG_TU_VAN" && (
+                      <form noValidate onSubmit={xuLyHoanTat}>
+                        <div className="ds-tv-form-group">
+                          <label htmlFor="trangThaiHoanTat">
+                            Kết quả xử lý
+                          </label>
 
-                      <p>{chiTiet.ketQuaTuVan || "Chưa có nội dung."}</p>
-                    </div>
-                  )}
+                          <select
+                            id="trangThaiHoanTat"
+                            value={trangThaiHoanTat}
+                            onChange={(event) =>
+                              setTrangThaiHoanTat(
+                                event.target.value as
+                                  | "DA_TU_VAN"
+                                  | "KHONG_THE_LIEN_HE",
+                              )
+                            }
+                            disabled={dangXuLy}
+                          >
+                            <option value="DA_TU_VAN">Đã tư vấn</option>
+
+                            <option value="KHONG_THE_LIEN_HE">
+                              Không thể liên hệ
+                            </option>
+                          </select>
+                        </div>
+
+                        <div className="ds-tv-form-group">
+                          <label htmlFor="ketQuaTuVan">Nội dung kết quả</label>
+
+                          <textarea
+                            id="ketQuaTuVan"
+                            value={ketQuaTuVan}
+                            onChange={(event) =>
+                              setKetQuaTuVan(event.target.value)
+                            }
+                            disabled={dangXuLy}
+                            placeholder="Nhập kết quả tư vấn hoặc lý do không thể liên hệ..."
+                          />
+                        </div>
+
+                        <div className="ds-tv-modal-actions">
+                          <button
+                            type="submit"
+                            className="ds-tv-button ds-tv-button--primary"
+                            disabled={dangXuLy}
+                          >
+                            {dangXuLy ? "Đang lưu..." : "Hoàn tất xử lý"}
+                          </button>
+                        </div>
+                      </form>
+                    )}
+
+                    {(chiTiet.trangThaiTuVan === "DA_TU_VAN" ||
+                      chiTiet.trangThaiTuVan === "KHONG_THE_LIEN_HE") && (
+                      <div className="ds-tv-content-box">
+                        <strong>Kết quả tư vấn</strong>
+
+                        <p>{chiTiet.ketQuaTuVan || "Chưa có nội dung."}</p>
+                      </div>
+                    )}
+                  </div>
                 </>
-              )}
-            </div>
+              )
+            )}
           </div>
         </div>
       )}
-
-      <ThongBaoHeThong
-        dangHien={thongBao.dangHien}
-        tieuDe={thongBao.tieuDe}
-        noiDung={thongBao.noiDung}
-        loai={thongBao.loai}
-        dongThongBao={thongBao.dongThongBao}
-      />
     </div>
   );
 }
