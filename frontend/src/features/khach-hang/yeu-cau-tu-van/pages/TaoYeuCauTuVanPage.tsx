@@ -1,26 +1,48 @@
-import type { FormEvent } from "react";
+import {
+  type FormEvent,
+  useState,
+} from "react";
+
 import {
   Link,
   useNavigate,
 } from "react-router-dom";
 
-import { useTaoYeuCauTuVan } from "../../yeu-cau-tu-van/hooks/useTaoYeuCauTuVan";
+import ChonSanPhamTuVanModal
+  from "../../yeu-cau-tu-van/components/ChonSanPhamTuVanModal";
+
+import {
+  useTaoYeuCauTuVan,
+} from "../../yeu-cau-tu-van/hooks/useTaoYeuCauTuVan";
 
 import "../../yeu-cau-tu-van/styles/TaoYeuCauTuVan.css";
 
 export default function TaoYeuCauTuVanPage() {
   const navigate = useNavigate();
 
+  const [
+    dangMoChonSanPham,
+    setDangMoChonSanPham,
+  ] = useState(false);
+
   const {
     duLieuForm,
 
+    sanPhamDaChon,
+
     dangTaiThongTin,
+    dangTaiSanPhamTuVan,
     dangGuiYeuCau,
 
     loiTaiThongTin,
+    loiTaiSanPhamTuVan,
     loiGuiYeuCau,
 
     capNhatTruong,
+
+    chonSanPhamTuVan,
+    xoaSanPhamTuVan,
+
     taiThongTinTaoMoi,
     guiYeuCauTuVan,
   } = useTaoYeuCauTuVan();
@@ -57,17 +79,21 @@ export default function TaoYeuCauTuVanPage() {
       </div>
 
       <div className="tao-yeu-cau-khoi tao-yeu-cau-khoi-dau">
-        <h1>Tạo yêu cầu tư vấn</h1>
+        <h1>
+          Tạo yêu cầu tư vấn
+        </h1>
 
         <p>
-          Cung cấp thông tin để nhà thuốc liên hệ và
-          hỗ trợ bạn.
+          Cung cấp thông tin để nhà thuốc
+          liên hệ và hỗ trợ bạn.
         </p>
       </div>
 
       {loiTaiThongTin && (
         <div className="tao-yeu-cau-canh-bao">
-          <span>{loiTaiThongTin}</span>
+          <span>
+            {loiTaiThongTin}
+          </span>
 
           <button
             type="button"
@@ -85,7 +111,9 @@ export default function TaoYeuCauTuVanPage() {
         onSubmit={xuLyGuiYeuCau}
       >
         <div className="tao-yeu-cau-khoi">
-          <h2>Thông tin liên hệ</h2>
+          <h2>
+            Thông tin liên hệ
+          </h2>
 
           {dangTaiThongTin ? (
             <div className="tao-yeu-cau-dang-tai">
@@ -110,7 +138,9 @@ export default function TaoYeuCauTuVanPage() {
                   }
                   maxLength={100}
                   autoComplete="name"
-                  disabled={dangGuiYeuCau}
+                  disabled={
+                    dangGuiYeuCau
+                  }
                   onChange={(event) =>
                     capNhatTruong(
                       "tenKhachHang",
@@ -133,7 +163,9 @@ export default function TaoYeuCauTuVanPage() {
                   }
                   maxLength={20}
                   autoComplete="tel"
-                  disabled={dangGuiYeuCau}
+                  disabled={
+                    dangGuiYeuCau
+                  }
                   onChange={(event) =>
                     capNhatTruong(
                       "soDienThoai",
@@ -147,7 +179,9 @@ export default function TaoYeuCauTuVanPage() {
         </div>
 
         <div className="tao-yeu-cau-khoi">
-          <h2>Hình thức liên hệ</h2>
+          <h2>
+            Hình thức liên hệ
+          </h2>
 
           <div className="tao-yeu-cau-lua-chon">
             <label
@@ -166,7 +200,9 @@ export default function TaoYeuCauTuVanPage() {
                   duLieuForm.hinhThucLienHe ===
                   "GOI_DIEN"
                 }
-                disabled={dangGuiYeuCau}
+                disabled={
+                  dangGuiYeuCau
+                }
                 onChange={() =>
                   capNhatTruong(
                     "hinhThucLienHe",
@@ -175,14 +211,16 @@ export default function TaoYeuCauTuVanPage() {
                 }
               />
 
-              <i className="bi bi-telephone"></i>
+              <i className="bi bi-telephone" />
 
               <div>
-                <strong>Gọi điện thoại</strong>
+                <strong>
+                  Gọi điện thoại
+                </strong>
 
                 <span>
-                  Nhà thuốc sẽ gọi lại theo số điện
-                  thoại đã nhập.
+                  Nhà thuốc sẽ gọi lại theo số
+                  điện thoại đã nhập.
                 </span>
               </div>
             </label>
@@ -203,7 +241,9 @@ export default function TaoYeuCauTuVanPage() {
                   duLieuForm.hinhThucLienHe ===
                   "ZALO"
                 }
-                disabled={dangGuiYeuCau}
+                disabled={
+                  dangGuiYeuCau
+                }
                 onChange={() =>
                   capNhatTruong(
                     "hinhThucLienHe",
@@ -212,14 +252,16 @@ export default function TaoYeuCauTuVanPage() {
                 }
               />
 
-              <i className="bi bi-chat-dots"></i>
+              <i className="bi bi-chat-dots" />
 
               <div>
-                <strong>Liên hệ qua Zalo</strong>
+                <strong>
+                  Liên hệ qua Zalo
+                </strong>
 
                 <span>
-                  Nhà thuốc sẽ liên hệ Zalo bằng số
-                  điện thoại đã nhập.
+                  Nhà thuốc sẽ liên hệ Zalo bằng
+                  số điện thoại đã nhập.
                 </span>
               </div>
             </label>
@@ -227,7 +269,116 @@ export default function TaoYeuCauTuVanPage() {
         </div>
 
         <div className="tao-yeu-cau-khoi">
-          <h2>Nội dung cần tư vấn</h2>
+          <div className="tao-yeu-cau-san-pham-header">
+            <div>
+              <h2>
+                Sản phẩm cần tư vấn
+              </h2>
+
+              <p>
+                Không bắt buộc. Bạn có thể chọn một
+                sản phẩm cụ thể cần được tư vấn.
+              </p>
+            </div>
+
+            {!sanPhamDaChon &&
+              !dangTaiSanPhamTuVan && (
+                <button
+                  type="button"
+                  className="tao-yeu-cau-chon-san-pham"
+                  disabled={
+                    dangGuiYeuCau
+                  }
+                  onClick={() =>
+                    setDangMoChonSanPham(
+                      true
+                    )
+                  }
+                >
+                  <i className="bi bi-plus-lg" />
+
+                  Chọn sản phẩm
+                </button>
+              )}
+          </div>
+
+          {dangTaiSanPhamTuVan ? (
+            <div className="tao-yeu-cau-dang-tai-san-pham">
+              <div className="tao-yeu-cau-vong-xoay" />
+
+              <span>
+                Đang tải sản phẩm cần tư vấn...
+              </span>
+            </div>
+          ) : sanPhamDaChon ? (
+            <div className="tao-yeu-cau-san-pham-da-chon">
+              <div className="tao-yeu-cau-san-pham-anh">
+                {sanPhamDaChon.hinhAnh ? (
+                  <img
+                    src={
+                      sanPhamDaChon.hinhAnh
+                    }
+                    alt={
+                      sanPhamDaChon.tenSanPham
+                    }
+                  />
+                ) : (
+                  <i className="bi bi-capsule" />
+                )}
+              </div>
+
+              <div className="tao-yeu-cau-san-pham-thong-tin">
+                <strong>
+                  {
+                    sanPhamDaChon.tenSanPham
+                  }
+                </strong>
+
+                {sanPhamDaChon.laThuocKeDon && (
+                  <span>
+                    Thuốc kê đơn
+                  </span>
+                )}
+              </div>
+
+              <div className="tao-yeu-cau-san-pham-hanh-dong">
+                <button
+                  type="button"
+                  className="tao-yeu-cau-xoa-san-pham-icon"
+                  disabled={
+                    dangGuiYeuCau
+                  }
+                  onClick={
+                    xoaSanPhamTuVan
+                  }
+                  title="Xóa sản phẩm"
+                  aria-label="Xóa sản phẩm"
+                >
+                  <i className="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="tao-yeu-cau-chua-chon-san-pham">
+              <i className="bi bi-capsule" />
+
+              <span>
+                Chưa chọn sản phẩm cụ thể.
+              </span>
+            </div>
+          )}
+
+          {loiTaiSanPhamTuVan && (
+            <div className="tao-yeu-cau-loi-san-pham">
+              {loiTaiSanPhamTuVan}
+            </div>
+          )}
+        </div>
+
+        <div className="tao-yeu-cau-khoi">
+          <h2>
+            Nội dung cần tư vấn
+          </h2>
 
           <label className="tao-yeu-cau-truong">
             <span>
@@ -241,8 +392,10 @@ export default function TaoYeuCauTuVanPage() {
               }
               maxLength={2000}
               rows={7}
-              disabled={dangGuiYeuCau}
-              placeholder="Ví dụ: Tôi cần tư vấn về cách sử dụng sản phẩm hỗ trợ tiêu hóa..."
+              disabled={
+                dangGuiYeuCau
+              }
+              placeholder="Ví dụ: Tôi cần tư vấn về cách sử dụng sản phẩm..."
               onChange={(event) =>
                 capNhatTruong(
                   "noiDungCanTuVan",
@@ -283,23 +436,42 @@ export default function TaoYeuCauTuVanPage() {
             className="tao-yeu-cau-gui"
             disabled={
               dangGuiYeuCau ||
-              dangTaiThongTin
+              dangTaiThongTin ||
+              dangTaiSanPhamTuVan
             }
           >
             {dangGuiYeuCau ? (
               <>
                 <span className="tao-yeu-cau-nut-vong-xoay" />
+
                 Đang gửi...
               </>
             ) : (
               <>
-                <i className="bi bi-send"></i>
+                <i className="bi bi-send" />
+
                 Gửi yêu cầu tư vấn
               </>
             )}
           </button>
         </div>
       </form>
+
+      {dangMoChonSanPham && (
+        <ChonSanPhamTuVanModal
+          sanPhamDangChon={
+            sanPhamDaChon
+          }
+          onChonSanPham={
+            chonSanPhamTuVan
+          }
+          onDong={() =>
+            setDangMoChonSanPham(
+              false
+            )
+          }
+        />
+      )}
     </section>
   );
 }

@@ -43,6 +43,7 @@ public interface YeuCauTuVanRepository
             SELECT yctv
             FROM YeuCauTuVan yctv
             LEFT JOIN FETCH yctv.nhanVienTiepNhan
+            LEFT JOIN FETCH yctv.sanPham
             WHERE yctv.maYeuCauTuVan = :maYeuCauTuVan
               AND yctv.khachHang.maKhachHang = :maKhachHang
             """)

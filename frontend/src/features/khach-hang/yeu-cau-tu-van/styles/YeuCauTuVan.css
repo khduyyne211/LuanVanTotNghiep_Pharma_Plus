@@ -134,7 +134,9 @@
   margin-top: 2px;
 }
 
-/* Trạng thái */
+/* =========================
+   TRẠNG THÁI
+========================= */
 
 .trang-thai-yeu-cau-tu-van {
   display: inline-flex;
@@ -158,7 +160,7 @@
   border-radius: 50%;
 }
 
-/* Chờ tiếp nhận */
+/* Chờ tư vấn */
 
 .trang-thai-yeu-cau-tu-van--cho-tiep-nhan {
   border-color: #fde047;
@@ -169,19 +171,6 @@
 .trang-thai-yeu-cau-tu-van--cho-tiep-nhan
   .trang-thai-yeu-cau-tu-van-cham {
   background-color: #eab308;
-}
-
-/* Đang xử lý */
-
-.trang-thai-yeu-cau-tu-van--dang-xu-ly {
-  border-color: #93c5fd;
-  background-color: #eff6ff;
-  color: #1d4ed8;
-}
-
-.trang-thai-yeu-cau-tu-van--dang-xu-ly
-  .trang-thai-yeu-cau-tu-van-cham {
-  background-color: #2563eb;
 }
 
 /* Đã tư vấn */
@@ -197,15 +186,15 @@
   background-color: #16a34a;
 }
 
-/* Không liên hệ được */
+/* Chưa thể liên lạc */
 
-.trang-thai-yeu-cau-tu-van--khong-lien-he-duoc {
+.trang-thai-yeu-cau-tu-van--khong-the-lien-he {
   border-color: #fdba74;
   background-color: #fff7ed;
   color: #c2410c;
 }
 
-.trang-thai-yeu-cau-tu-van--khong-lien-he-duoc
+.trang-thai-yeu-cau-tu-van--khong-the-lien-he
   .trang-thai-yeu-cau-tu-van-cham {
   background-color: #f97316;
 }
@@ -223,7 +212,9 @@
   background-color: #dc2626;
 }
 
-/* Thông báo */
+/* =========================
+   THÔNG BÁO
+========================= */
 
 .yeu-cau-tu-van-thong-bao {
   display: flex;

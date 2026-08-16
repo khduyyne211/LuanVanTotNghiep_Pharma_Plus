@@ -103,6 +103,81 @@
   overflow-wrap: anywhere;
 }
 
+/* ==============================
+   SẢN PHẨM CẦN TƯ VẤN
+============================== */
+
+.chi-tiet-yeu-cau-san-pham {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+.chi-tiet-yeu-cau-san-pham-anh {
+  display: flex;
+  width: 82px;
+  height: 82px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.chi-tiet-yeu-cau-san-pham-anh img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.chi-tiet-yeu-cau-san-pham-anh i {
+  color: #94a3b8;
+  font-size: 30px;
+}
+
+.chi-tiet-yeu-cau-san-pham-thong-tin {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.chi-tiet-yeu-cau-san-pham-thong-tin strong {
+  color: #0f172a;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.chi-tiet-yeu-cau-san-pham-thong-tin span {
+  width: fit-content;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chi-tiet-yeu-cau-san-pham-rong {
+  padding: 17px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 14px;
+  font-style: italic;
+  text-align: left;
+}
+
+/* ============================== */
+
 .chi-tiet-yeu-cau-noi-dung {
   min-height: 90px;
   padding: 18px;
@@ -155,9 +230,7 @@
   border-radius: 50%;
   animation:
     chi-tiet-yeu-cau-xoay
-    0.8s
-    linear
-    infinite;
+    0.8s linear infinite;
 }
 
 .chi-tiet-yeu-cau-thu-lai {
@@ -203,5 +276,9 @@
 
   .chi-tiet-yeu-cau-dong strong {
     text-align: left;
+  }
+
+  .chi-tiet-yeu-cau-san-pham {
+    align-items: flex-start;
   }
 }

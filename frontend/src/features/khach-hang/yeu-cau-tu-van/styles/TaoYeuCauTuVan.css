@@ -125,6 +125,10 @@
   text-align: right;
 }
 
+/* ==============================
+   HÌNH THỨC LIÊN HỆ
+============================== */
+
 .tao-yeu-cau-lua-chon {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -160,13 +164,11 @@
 .tao-yeu-cau-lua-chon-muc input[type="radio"] {
   appearance: none;
   -webkit-appearance: none;
-
   display: grid;
   width: 20px;
   height: 20px;
   flex-shrink: 0;
   place-content: center;
-
   margin: 0;
   border: 2px solid #334155;
   border-radius: 50%;
@@ -186,21 +188,10 @@
 
 .tao-yeu-cau-lua-chon-muc input[type="radio"]:checked {
   border-color: #2563eb;
-  background-color: #ffffff;
 }
 
 .tao-yeu-cau-lua-chon-muc input[type="radio"]:checked::before {
   transform: scale(1);
-}
-
-.tao-yeu-cau-lua-chon-muc input[type="radio"]:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, 0.2);
-  outline-offset: 2px;
-}
-
-.tao-yeu-cau-lua-chon-muc input[type="radio"]:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
 }
 
 .tao-yeu-cau-lua-chon-muc > i {
@@ -225,6 +216,436 @@
   font-size: 13px;
   line-height: 1.5;
 }
+
+/* ==============================
+   SẢN PHẨM CẦN TƯ VẤN
+============================== */
+
+.tao-yeu-cau-san-pham-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.tao-yeu-cau-san-pham-header h2 {
+  margin-bottom: 6px;
+}
+
+.tao-yeu-cau-san-pham-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.tao-yeu-cau-chon-san-pham {
+  display: inline-flex;
+  min-height: 42px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 18px;
+  border: 1px solid #2563eb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tao-yeu-cau-chon-san-pham:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+.tao-yeu-cau-san-pham-da-chon {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+.tao-yeu-cau-san-pham-anh {
+  display: flex;
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.tao-yeu-cau-san-pham-anh img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.tao-yeu-cau-san-pham-anh i {
+  color: #94a3b8;
+  font-size: 30px;
+}
+
+.tao-yeu-cau-san-pham-thong-tin {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 7px;
+  text-align: left;
+}
+
+.tao-yeu-cau-san-pham-thong-tin strong {
+  color: #0f172a;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.tao-yeu-cau-san-pham-thong-tin span {
+  width: fit-content;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tao-yeu-cau-san-pham-hanh-dong {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+ * Giữ cách hiển thị nút xóa giống trang giỏ hàng:
+ * icon thùng rác, không viền, nền trong suốt.
+ */
+.tao-yeu-cau-xoa-san-pham-icon {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: #64748b;
+
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.tao-yeu-cau-xoa-san-pham-icon:hover:not(:disabled) {
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.tao-yeu-cau-xoa-san-pham-icon:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.tao-yeu-cau-chua-chon-san-pham {
+  display: flex;
+  min-height: 90px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.tao-yeu-cau-chua-chon-san-pham i {
+  font-size: 22px;
+}
+
+.tao-yeu-cau-dang-tai-san-pham {
+  display: flex;
+  min-height: 90px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+  color: #64748b;
+}
+
+.tao-yeu-cau-loi-san-pham {
+  margin-top: 12px;
+  color: #b91c1c;
+  font-size: 14px;
+  text-align: left;
+}
+
+/* ==============================
+   POPUP CHỌN SẢN PHẨM
+============================== */
+
+.chon-san-pham-tu-van-lop-phu {
+  position: fixed;
+  z-index: 3000;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.48);
+}
+
+.chon-san-pham-tu-van-hop-thoai {
+  width: min(760px, 100%);
+  max-height: 86vh;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+}
+
+.chon-san-pham-tu-van-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.chon-san-pham-tu-van-header h2 {
+  margin: 0 0 5px;
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.chon-san-pham-tu-van-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.chon-san-pham-tu-van-dong {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #475569;
+  cursor: pointer;
+}
+
+.chon-san-pham-tu-van-dong:hover {
+  background: #e2e8f0;
+}
+
+.chon-san-pham-tu-van-tim-kiem {
+  display: flex;
+  gap: 10px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.chon-san-pham-tu-van-o-tim {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+}
+
+.chon-san-pham-tu-van-o-tim:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.chon-san-pham-tu-van-o-tim i {
+  color: #94a3b8;
+}
+
+.chon-san-pham-tu-van-o-tim input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #0f172a;
+  font: inherit;
+  outline: 0;
+}
+
+.chon-san-pham-tu-van-tim-kiem > button {
+  min-width: 110px;
+  border: 0;
+  border-radius: 10px;
+  background: #075eea;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chon-san-pham-tu-van-tim-kiem
+  > button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.chon-san-pham-tu-van-noi-dung {
+  max-height: 520px;
+  overflow-y: auto;
+  padding: 14px 24px 24px;
+}
+
+.chon-san-pham-tu-van-danh-sach {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chon-san-pham-tu-van-muc {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.chon-san-pham-tu-van-muc--dang-chon {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.chon-san-pham-tu-van-anh {
+  display: flex;
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.chon-san-pham-tu-van-anh img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.chon-san-pham-tu-van-anh i {
+  color: #94a3b8;
+  font-size: 27px;
+}
+
+.chon-san-pham-tu-van-thong-tin {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+}
+
+.chon-san-pham-tu-van-thong-tin strong {
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.chon-san-pham-tu-van-thong-tin > span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.chon-san-pham-tu-van-nhan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chon-san-pham-tu-van-nhan span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.chon-san-pham-tu-van-nhan
+  .chon-san-pham-tu-van-nhan-het-hang {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.chon-san-pham-tu-van-chon {
+  min-width: 74px;
+  min-height: 38px;
+  flex-shrink: 0;
+  border: 1px solid #2563eb;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chon-san-pham-tu-van-chon:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+.chon-san-pham-tu-van-chon.dang-chon {
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+.chon-san-pham-tu-van-thong-bao {
+  display: flex;
+  min-height: 180px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #64748b;
+  text-align: center;
+}
+
+.chon-san-pham-tu-van-thong-bao--loi {
+  color: #b91c1c;
+}
+
+.chon-san-pham-tu-van-vong-xoay {
+  width: 25px;
+  height: 25px;
+  border: 2px solid #dbeafe;
+  border-top-color: #075eea;
+  border-radius: 50%;
+  animation:
+    tao-yeu-cau-xoay
+    0.8s linear infinite;
+}
+
+/* ==============================
+   HÀNH ĐỘNG FORM
+============================== */
 
 .tao-yeu-cau-hanh-dong {
   display: flex;
@@ -252,11 +673,6 @@
   border: 1px solid #cbd5e1;
   background: #ffffff;
   color: #475569;
-}
-
-.tao-yeu-cau-huy:hover {
-  border-color: #94a3b8;
-  background: #f8fafc;
 }
 
 .tao-yeu-cau-gui {
@@ -323,9 +739,7 @@
   border-radius: 50%;
   animation:
     tao-yeu-cau-xoay
-    0.8s
-    linear
-    infinite;
+    0.8s linear infinite;
 }
 
 .tao-yeu-cau-vong-xoay {
@@ -355,6 +769,36 @@
   .tao-yeu-cau-hai-cot,
   .tao-yeu-cau-lua-chon {
     grid-template-columns: 1fr;
+  }
+
+  .tao-yeu-cau-san-pham-header {
+    flex-direction: column;
+  }
+
+  .tao-yeu-cau-san-pham-da-chon {
+    align-items: center;
+  }
+
+  .chon-san-pham-tu-van-lop-phu {
+    padding: 12px;
+  }
+
+  .chon-san-pham-tu-van-tim-kiem {
+    flex-direction: column;
+  }
+
+  .chon-san-pham-tu-van-tim-kiem
+    > button {
+    min-height: 44px;
+  }
+
+  .chon-san-pham-tu-van-muc {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .chon-san-pham-tu-van-chon {
+    width: 100%;
   }
 
   .tao-yeu-cau-hanh-dong {

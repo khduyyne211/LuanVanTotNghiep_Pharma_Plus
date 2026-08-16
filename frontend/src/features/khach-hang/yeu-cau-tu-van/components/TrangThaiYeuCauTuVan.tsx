@@ -2,11 +2,13 @@ interface TrangThaiYeuCauTuVanProps {
   trangThai: string;
 }
 
-const TEN_TRANG_THAI_YEU_CAU: Record<string, string> = {
-  CHO_TIEP_NHAN: "Chờ tiếp nhận",
-  DANG_XU_LY: "Đang xử lý",
+const TEN_TRANG_THAI_YEU_CAU: Record<
+  string,
+  string
+> = {
+  CHO_TIEP_NHAN: "Chờ tư vấn",
   DA_TU_VAN: "Đã tư vấn",
-  KHONG_LIEN_HE_DUOC: "Không liên hệ được",
+  KHONG_THE_LIEN_HE: "Chưa thể liên lạc",
   DA_HUY: "Đã hủy",
 };
 
@@ -26,8 +28,9 @@ export default function TrangThaiYeuCauTuVan({
     >
       <span className="trang-thai-yeu-cau-tu-van-cham" />
 
-      {TEN_TRANG_THAI_YEU_CAU[trangThai] ||
-        trangThai}
+      {TEN_TRANG_THAI_YEU_CAU[
+        trangThai
+      ] || trangThai}
     </span>
   );
 }
