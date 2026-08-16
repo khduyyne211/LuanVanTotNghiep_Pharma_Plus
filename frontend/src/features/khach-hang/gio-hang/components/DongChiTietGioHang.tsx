@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChiTietGioHangHienThi } from "../types/GioHangHienThi";
+import { useNavigate } from "react-router-dom";
+import { taoSlug } from "../../../../shared/utils/taoSlug";
 
 interface DongChiTietGioHangProps {
   chiTiet: ChiTietGioHangHienThi;
@@ -23,6 +25,7 @@ function DongChiTietGioHang({
   chonDonViBan,
   xoaSanPhamKhoiGioHang,
 }: DongChiTietGioHangProps) {
+  const navigate = useNavigate();
   const [soLuongDangNhap, setSoLuongDangNhap] = useState(
     String(chiTiet.soLuong)
   );
@@ -51,6 +54,11 @@ function DongChiTietGioHang({
     };
   }, []);
 
+  const chuyenDenChiTietSanPham = () => {
+    navigate(
+      `/san-pham/${chiTiet.maSanPham}/${taoSlug(chiTiet.tenSanPham)}`
+    );
+  };
   const dinhDangTien = (giaTri: number) => {
     return giaTri.toLocaleString("vi-VN") + "đ";
   };
@@ -115,7 +123,7 @@ function DongChiTietGioHang({
   return (
     <div className="gio-hang-dong">
       <div className="gio-hang-cot gio-hang-cot-san-pham">
-        <div className="gio-hang-anh-san-pham">
+        <div className="gio-hang-anh-san-pham" onClick={chuyenDenChiTietSanPham}>
           {chiTiet.hinhAnh ? (
             <img src={chiTiet.hinhAnh} alt={chiTiet.tenSanPham} />
           ) : (
@@ -123,7 +131,7 @@ function DongChiTietGioHang({
           )}
         </div>
 
-        <div className="gio-hang-thong-tin-san-pham">
+        <div className="gio-hang-thong-tin-san-pham" onClick={chuyenDenChiTietSanPham}>
           <h3>{chiTiet.tenSanPham}</h3>
         </div>
       </div>
