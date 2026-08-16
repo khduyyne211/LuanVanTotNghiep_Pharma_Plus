@@ -1,3 +1,10 @@
+export interface SanPhamTuVan {
+  maSanPham: number;
+  tenSanPham: string;
+  hinhAnh: string | null;
+  laThuocKeDon: boolean;
+}
+
 export interface YeuCauTuVanDanhSach {
   maYeuCauTuVan: number;
   ngayTao: string;
@@ -13,6 +20,8 @@ export interface YeuCauTuVanChiTiet {
   ketQuaTuVan: string | null;
   trangThaiTuVan: string;
   ngayTao: string;
+
+  sanPham: SanPhamTuVan | null;
 }
 
 export interface ThongTinTaoYeuCauTuVan {
@@ -25,4 +34,10 @@ export interface TaoYeuCauTuVanRequest {
   soDienThoai: string;
   noiDungCanTuVan: string;
   hinhThucLienHe: "GOI_DIEN" | "ZALO";
+
+  /**
+   * Không bắt buộc.
+   * Một yêu cầu tư vấn chỉ gắn tối đa một sản phẩm.
+   */
+  maSanPham: number | null;
 }

@@ -5,19 +5,26 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import { useXacThucContext } from "../../../xac-thuc/context/XacThucContext";
+import {
+  useXacThucContext,
+} from "../../../xac-thuc/context/XacThucContext";
+
 import "../styles/TaiKhoan.css";
 
 function KhungTaiKhoan() {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate =
+    useNavigate();
+
+  const location =
+    useLocation();
 
   const {
     nguoiDungDangNhap,
     dangXuat,
   } = useXacThucContext();
 
-  const duongDan = location.pathname;
+  const duongDan =
+    location.pathname;
 
   const dangOSoDiaChi =
     duongDan.startsWith(
@@ -25,7 +32,8 @@ function KhungTaiKhoan() {
     );
 
   const dangODanhSachDonHang =
-    duongDan === "/tai-khoan/don-hang";
+    duongDan ===
+    "/tai-khoan/don-hang";
 
   const dangOChiTietDonHang =
     duongDan.startsWith(
@@ -46,20 +54,40 @@ function KhungTaiKhoan() {
     ) &&
     !dangOTaoYeuCauTuVan;
 
+  const dangODanhSachDonThuoc =
+    duongDan ===
+    "/tai-khoan/don-thuoc";
+
+  const dangOGuiDonThuoc =
+    duongDan ===
+    "/tai-khoan/don-thuoc/gui-moi";
+
+  const dangOChiTietDonThuoc =
+    duongDan.startsWith(
+      "/tai-khoan/don-thuoc/"
+    ) &&
+    !dangOGuiDonThuoc;
+
   const tenTrangHienTai =
-    dangOChiTietYeuCauTuVan
-      ? "Chi tiết yêu cầu tư vấn"
-      : dangOTaoYeuCauTuVan
-        ? "Tạo yêu cầu tư vấn"
-        : dangODanhSachYeuCauTuVan
-          ? "Yêu cầu tư vấn của tôi"
-          : dangOChiTietDonHang
-            ? "Chi tiết đơn hàng"
-            : dangODanhSachDonHang
-              ? "Đơn hàng của tôi"
-              : dangOSoDiaChi
-                ? "Quản lý sổ địa chỉ"
-                : "Thông tin cá nhân";
+    dangOChiTietDonThuoc
+      ? "Chi tiết đơn thuốc"
+      : dangOGuiDonThuoc
+        ? "Gửi đơn thuốc"
+        : dangODanhSachDonThuoc
+          ? "Đơn thuốc của tôi"
+          : dangOChiTietYeuCauTuVan
+            ? "Chi tiết yêu cầu tư vấn"
+            : dangOTaoYeuCauTuVan
+              ? "Tạo yêu cầu tư vấn"
+              : dangODanhSachYeuCauTuVan
+                ? "Yêu cầu tư vấn của tôi"
+                : dangOChiTietDonHang
+                  ? "Chi tiết đơn hàng"
+                  : dangODanhSachDonHang
+                    ? "Đơn hàng của tôi"
+                    : dangOSoDiaChi
+                      ? "Quản lý sổ địa chỉ"
+                      : "Thông tin cá nhân";
 
   const dangOTrangConDonHang =
     dangOChiTietDonHang;
@@ -68,8 +96,13 @@ function KhungTaiKhoan() {
     dangOChiTietYeuCauTuVan ||
     dangOTaoYeuCauTuVan;
 
+  const dangOTrangConDonThuoc =
+    dangOChiTietDonThuoc ||
+    dangOGuiDonThuoc;
+
   const xuLyDangXuat = () => {
     dangXuat();
+
     navigate("/");
   };
 
@@ -103,6 +136,16 @@ function KhungTaiKhoan() {
             <>
               <NavLink to="/tai-khoan/yeu-cau-tu-van">
                 Yêu cầu tư vấn của tôi
+              </NavLink>
+
+              <span>/</span>
+            </>
+          )}
+
+          {dangOTrangConDonThuoc && (
+            <>
+              <NavLink to="/tai-khoan/don-thuoc">
+                Đơn thuốc của tôi
               </NavLink>
 
               <span>/</span>
@@ -202,14 +245,35 @@ function KhungTaiKhoan() {
                 <i className="bi bi-chevron-right tai-khoan-menu-mui-ten"></i>
               </NavLink>
 
+              <NavLink
+                to="/tai-khoan/don-thuoc"
+                className={({ isActive }) =>
+                  isActive
+                    ? "tai-khoan-menu-muc dang-chon"
+                    : "tai-khoan-menu-muc"
+                }
+              >
+                <i className="bi bi-file-earmark-medical"></i>
+
+                <span>
+                  Đơn thuốc của tôi
+                </span>
+
+                <i className="bi bi-chevron-right tai-khoan-menu-mui-ten"></i>
+              </NavLink>
+
               <button
                 type="button"
                 className="tai-khoan-menu-muc tai-khoan-menu-dang-xuat"
-                onClick={xuLyDangXuat}
+                onClick={
+                  xuLyDangXuat
+                }
               >
                 <i className="bi bi-box-arrow-right"></i>
 
-                <span>Đăng xuất</span>
+                <span>
+                  Đăng xuất
+                </span>
 
                 <i className="bi bi-chevron-right tai-khoan-menu-mui-ten"></i>
               </button>

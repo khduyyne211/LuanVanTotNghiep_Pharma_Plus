@@ -12,7 +12,8 @@ import org.springframework.stereotype.Repository;
 import com.pharma.backend.entity.YeuCauTuVan;
 
 @Repository
-public interface YeuCauTuVanRepository extends JpaRepository<YeuCauTuVan, Long> {
+public interface YeuCauTuVanRepository
+        extends JpaRepository<YeuCauTuVan, Long> {
 
     @Query(
         value = """
@@ -36,6 +37,7 @@ public interface YeuCauTuVanRepository extends JpaRepository<YeuCauTuVan, Long> 
             SELECT yctv
             FROM YeuCauTuVan yctv
             LEFT JOIN FETCH yctv.nhanVienTiepNhan
+            LEFT JOIN FETCH yctv.sanPham
             WHERE yctv.maYeuCauTuVan = :maYeuCauTuVan
               AND yctv.khachHang.maKhachHang = :maKhachHang
             """)

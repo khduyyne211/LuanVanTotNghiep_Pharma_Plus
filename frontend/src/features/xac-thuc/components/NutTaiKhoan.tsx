@@ -36,6 +36,10 @@ function NutTaiKhoan() {
     navigate("/tai-khoan/yeu-cau-tu-van");
   };
 
+  const chuyenDenDonThuocCuaToi = () => {
+    navigate("/tai-khoan/don-thuoc");
+  };
+
   const xuLyDangXuat = () => {
     dangXuat();
     navigate("/");
@@ -97,6 +101,15 @@ function NutTaiKhoan() {
             >
               <i className="bi bi-chat-left-text"></i>
               <span>Yêu cầu tư vấn</span>
+            </button>
+
+            <button
+              type="button"
+              className="nut-tai-khoan-menu-muc"
+              onClick={chuyenDenDonThuocCuaToi}
+            >
+              <i className="bi bi-file-earmark-medical"></i>
+              <span>Đơn thuốc của tôi</span>
             </button>
 
             <button

@@ -10,7 +10,12 @@ import lombok.Setter;
 public class TaoYeuCauTuVanRequestDto {
 
     private String tenKhachHang;
+
     private String soDienThoai;
+
     private String noiDungCanTuVan;
+
     private HinhThucLienHe hinhThucLienHe;
+
+    private Long maSanPham;
 }

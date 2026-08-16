@@ -1,28 +1,42 @@
-import { Link } from "react-router-dom";
+import {
+  Link,
+} from "react-router-dom";
 
-import TrangThaiYeuCauTuVan from "../../yeu-cau-tu-van/components/TrangThaiYeuCauTuVan";
-import { useChiTietYeuCauTuVan } from "../../yeu-cau-tu-van/hooks/useChiTietYeuCauTuVan";
+import TrangThaiYeuCauTuVan
+  from "../../yeu-cau-tu-van/components/TrangThaiYeuCauTuVan";
+
+import {
+  useChiTietYeuCauTuVan,
+} from "../../yeu-cau-tu-van/hooks/useChiTietYeuCauTuVan";
 
 import "../../yeu-cau-tu-van/styles/YeuCauTuVan.css";
 import "../../yeu-cau-tu-van/styles/ChiTietYeuCauTuVan.css";
 
 const dinhDangNgayGio =
-  new Intl.DateTimeFormat("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  new Intl.DateTimeFormat(
+    "vi-VN",
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
 
 function layTenHinhThucLienHe(
   hinhThucLienHe: string
 ) {
-  if (hinhThucLienHe === "DIEN_THOAI") {
+  if (
+    hinhThucLienHe ===
+    "GOI_DIEN"
+  ) {
     return "Gọi điện thoại";
   }
 
-  if (hinhThucLienHe === "ZALO") {
+  if (
+    hinhThucLienHe === "ZALO"
+  ) {
     return "Liên hệ qua Zalo";
   }
 
@@ -55,7 +69,9 @@ export default function ChiTietYeuCauTuVanPage() {
     return (
       <section className="chi-tiet-yeu-cau-trang">
         <div className="chi-tiet-yeu-cau-thong-bao chi-tiet-yeu-cau-thong-bao--loi">
-          <p>{loi}</p>
+          <p>
+            {loi}
+          </p>
 
           <button
             type="button"
@@ -83,12 +99,15 @@ export default function ChiTietYeuCauTuVanPage() {
 
   const ngayTaoHienThi =
     dinhDangNgayGio.format(
-      new Date(chiTietYeuCau.ngayTao)
+      new Date(
+        chiTietYeuCau.ngayTao
+      )
     );
 
   const tenHinhThucLienHe =
     layTenHinhThucLienHe(
-      chiTietYeuCau.hinhThucLienHe
+      chiTietYeuCau
+        .hinhThucLienHe
     );
 
   return (
@@ -121,7 +140,8 @@ export default function ChiTietYeuCauTuVanPage() {
 
             <TrangThaiYeuCauTuVan
               trangThai={
-                chiTietYeuCau.trangThaiTuVan
+                chiTietYeuCau
+                  .trangThaiTuVan
               }
             />
           </div>
@@ -136,26 +156,40 @@ export default function ChiTietYeuCauTuVanPage() {
 
           <div className="chi-tiet-yeu-cau-danh-sach-thong-tin">
             <div className="chi-tiet-yeu-cau-dong">
-              <span>Họ và tên</span>
+              <span>
+                Họ và tên
+              </span>
 
               <strong>
-                {chiTietYeuCau.tenKhachHang}
+                {
+                  chiTietYeuCau
+                    .tenKhachHang
+                }
               </strong>
             </div>
 
             <div className="chi-tiet-yeu-cau-dong">
-              <span>Số điện thoại</span>
+              <span>
+                Số điện thoại
+              </span>
 
               <strong>
-                {chiTietYeuCau.soDienThoai}
+                {
+                  chiTietYeuCau
+                    .soDienThoai
+                }
               </strong>
             </div>
 
             <div className="chi-tiet-yeu-cau-dong">
-              <span>Hình thức liên hệ</span>
+              <span>
+                Hình thức liên hệ
+              </span>
 
               <strong>
-                {tenHinhThucLienHe}
+                {
+                  tenHinhThucLienHe
+                }
               </strong>
             </div>
           </div>
@@ -168,7 +202,9 @@ export default function ChiTietYeuCauTuVanPage() {
 
           <div className="chi-tiet-yeu-cau-danh-sach-thong-tin">
             <div className="chi-tiet-yeu-cau-dong">
-              <span>Nhân viên tiếp nhận</span>
+              <span>
+                Nhân viên tiếp nhận
+              </span>
 
               <strong>
                 {chiTietYeuCau
@@ -182,11 +218,68 @@ export default function ChiTietYeuCauTuVanPage() {
 
       <div className="chi-tiet-yeu-cau-khoi">
         <h2 className="chi-tiet-yeu-cau-khoi-tieu-de">
+          Sản phẩm cần tư vấn
+        </h2>
+
+        {chiTietYeuCau.sanPham ? (
+          <div className="chi-tiet-yeu-cau-san-pham">
+            <div className="chi-tiet-yeu-cau-san-pham-anh">
+              {chiTietYeuCau
+                .sanPham
+                .hinhAnh ? (
+                <img
+                  src={
+                    chiTietYeuCau
+                      .sanPham
+                      .hinhAnh
+                  }
+                  alt={
+                    chiTietYeuCau
+                      .sanPham
+                      .tenSanPham
+                  }
+                />
+              ) : (
+                <i className="bi bi-capsule" />
+              )}
+            </div>
+
+            <div className="chi-tiet-yeu-cau-san-pham-thong-tin">
+              <strong>
+                {
+                  chiTietYeuCau
+                    .sanPham
+                    .tenSanPham
+                }
+              </strong>
+
+              {chiTietYeuCau
+                .sanPham
+                .laThuocKeDon && (
+                <span>
+                  Thuốc kê đơn
+                </span>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="chi-tiet-yeu-cau-san-pham-rong">
+            Yêu cầu này không gắn với
+            sản phẩm cụ thể.
+          </div>
+        )}
+      </div>
+
+      <div className="chi-tiet-yeu-cau-khoi">
+        <h2 className="chi-tiet-yeu-cau-khoi-tieu-de">
           Nội dung cần tư vấn
         </h2>
 
         <div className="chi-tiet-yeu-cau-noi-dung">
-          {chiTietYeuCau.noiDungCanTuVan}
+          {
+            chiTietYeuCau
+              .noiDungCanTuVan
+          }
         </div>
       </div>
 
@@ -197,12 +290,14 @@ export default function ChiTietYeuCauTuVanPage() {
 
         <div
           className={
-            chiTietYeuCau.ketQuaTuVan
+            chiTietYeuCau
+              .ketQuaTuVan
               ? "chi-tiet-yeu-cau-noi-dung"
               : "chi-tiet-yeu-cau-noi-dung chi-tiet-yeu-cau-noi-dung--rong"
           }
         >
-          {chiTietYeuCau.ketQuaTuVan ||
+          {chiTietYeuCau
+            .ketQuaTuVan ||
             "Chưa có kết quả tư vấn."}
         </div>
       </div>

@@ -13,11 +13,24 @@ import lombok.Getter;
 public class YeuCauTuVanChiTietResponseDto {
 
     private String tenKhachHang;
+
     private String soDienThoai;
+
     private String noiDungCanTuVan;
+
     private HinhThucLienHe hinhThucLienHe;
+
     private String tenNhanVienTiepNhan;
+
     private String ketQuaTuVan;
+
     private TrangThaiTuVan trangThaiTuVan;
+
     private LocalDateTime ngayTao;
+
+    /**
+     * Sản phẩm khách hàng cần tư vấn.
+     * Null nếu yêu cầu không gắn với sản phẩm cụ thể.
+     */
+    private SanPhamTuVanResponseDto sanPham;
 }
