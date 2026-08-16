@@ -60,6 +60,15 @@ import ChiTietYeuCauTuVanPage
 import TaoYeuCauTuVanPage
   from "../features/khach-hang/yeu-cau-tu-van/pages/TaoYeuCauTuVanPage";
 
+import DanhSachDonThuocPage
+  from "../features/khach-hang/don-thuoc/pages/DanhSachDonThuocPage";
+
+import GuiDonThuocPage
+  from "../features/khach-hang/don-thuoc/pages/GuiDonThuocPage";
+
+import ChiTietDonThuocPage
+  from "../features/khach-hang/don-thuoc/pages/ChiTietDonThuocPage";
+
 export const CustomerRoutes = (
   <Route
     element={
@@ -168,6 +177,27 @@ export const CustomerRoutes = (
           path="yeu-cau-tu-van/:maYeuCauTuVan"
           element={
             <ChiTietYeuCauTuVanPage />
+          }
+        />
+
+        <Route
+          path="don-thuoc"
+          element={
+            <DanhSachDonThuocPage />
+          }
+        />
+
+        <Route
+          path="don-thuoc/gui-moi"
+          element={
+            <GuiDonThuocPage />
+          }
+        />
+
+        <Route
+          path="don-thuoc/:maDonThuoc"
+          element={
+            <ChiTietDonThuocPage />
           }
         />
       </Route>
