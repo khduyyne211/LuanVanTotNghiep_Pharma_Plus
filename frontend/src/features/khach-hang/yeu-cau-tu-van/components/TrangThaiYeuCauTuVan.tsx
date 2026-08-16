@@ -7,7 +7,7 @@ const TEN_TRANG_THAI_YEU_CAU: Record<
   string
 > = {
   CHO_TIEP_NHAN: "Chờ tư vấn",
-  DANG_TU_VAN: "Đang tư vấn",
+  DANG_TU_VAN: "Chờ tư vấn",
   DA_TU_VAN: "Đã tư vấn",
   KHONG_THE_LIEN_HE: "Chưa thể liên lạc",
 };
