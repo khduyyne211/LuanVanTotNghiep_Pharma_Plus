@@ -8,5 +8,10 @@ import lombok.Getter;
 public class SanPhamBanChayResponseDto {
 
     private SanPhamResponseDto sanPham;
-    private Long tongSoLuongDaBan;
+
+    /**
+     * Số đơn hàng hoàn thành khác nhau có chứa sản phẩm
+     * trong khoảng thời gian thống kê bán chạy.
+     */
+    private Long soLuotMua;
 }

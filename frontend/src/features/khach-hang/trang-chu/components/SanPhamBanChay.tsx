@@ -1,5 +1,9 @@
 import { useRef } from "react";
-import { faChevronLeft, faChevronRight, faFire } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronLeft,
+  faChevronRight,
+  faFire,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import TheSanPham from "../../san-pham/components/TheSanPham";
@@ -12,17 +16,36 @@ const dinhDangSoLuong = new Intl.NumberFormat("vi-VN");
 
 function SanPhamBanChay() {
   const danhSachRef = useRef<HTMLDivElement>(null);
-  const { danhSachSanPhamBanChay, dangTaiSanPhamBanChay, loiTaiSanPhamBanChay } = useSanPhamBanChay(12);
 
-  const truotDanhSach = (huong: "TRAI" | "PHAI") => {
+  const {
+    danhSachSanPhamBanChay,
+    dangTaiSanPhamBanChay,
+    loiTaiSanPhamBanChay,
+  } = useSanPhamBanChay(12);
+
+  const truotDanhSach = (
+    huong: "TRAI" | "PHAI"
+  ) => {
     const danhSach = danhSachRef.current;
-    if (!danhSach) return;
 
-    const khoangTruot = danhSach.clientWidth * 0.85;
-    danhSach.scrollBy({ left: huong === "PHAI" ? khoangTruot : -khoangTruot, behavior: "smooth" });
+    if (!danhSach) {
+      return;
+    }
+
+    const khoangTruot =
+      danhSach.clientWidth * 0.85;
+
+    danhSach.scrollBy({
+      left:
+        huong === "PHAI"
+          ? khoangTruot
+          : -khoangTruot,
+      behavior: "smooth",
+    });
   };
 
-  const coHienThiNutDieuHuong = danhSachSanPhamBanChay.length > 4;
+  const coHienThiNutDieuHuong =
+    danhSachSanPhamBanChay.length > 4;
 
   return (
     <section className="san-pham-ban-chay">
@@ -36,36 +59,69 @@ function SanPhamBanChay() {
           type="button"
           className="san-pham-ban-chay-dieu-huong san-pham-ban-chay-dieu-huong--trai"
           aria-label="Xem sản phẩm phía trước"
-          onClick={() => truotDanhSach("TRAI")}
+          onClick={() =>
+            truotDanhSach("TRAI")
+          }
         >
-          <FontAwesomeIcon icon={faChevronLeft} />
+          <FontAwesomeIcon
+            icon={faChevronLeft}
+          />
         </button>
       )}
 
-      <div ref={danhSachRef} className="san-pham-ban-chay-danh-sach">
+      <div
+        ref={danhSachRef}
+        className="san-pham-ban-chay-danh-sach"
+      >
         {dangTaiSanPhamBanChay && (
-          <p className="san-pham-ban-chay-trang-thai">Đang tải sản phẩm bán chạy...</p>
-        )}
-
-        {!dangTaiSanPhamBanChay && loiTaiSanPhamBanChay && (
-          <p className="san-pham-ban-chay-trang-thai san-pham-ban-chay-trang-thai--loi" role="alert">
-            {loiTaiSanPhamBanChay}
+          <p className="san-pham-ban-chay-trang-thai">
+            Đang tải sản phẩm bán chạy...
           </p>
         )}
 
-        {!dangTaiSanPhamBanChay && !loiTaiSanPhamBanChay && danhSachSanPhamBanChay.length === 0 && (
-          <p className="san-pham-ban-chay-trang-thai">Hiện chưa có dữ liệu sản phẩm bán chạy.</p>
-        )}
+        {!dangTaiSanPhamBanChay &&
+          loiTaiSanPhamBanChay && (
+            <p
+              className="san-pham-ban-chay-trang-thai san-pham-ban-chay-trang-thai--loi"
+              role="alert"
+            >
+              {loiTaiSanPhamBanChay}
+            </p>
+          )}
 
-        {!dangTaiSanPhamBanChay && !loiTaiSanPhamBanChay && danhSachSanPhamBanChay.map((sanPhamBanChay) => (
-          <div key={sanPhamBanChay.sanPham.maSanPham} className="san-pham-ban-chay-the">
-            <span className="san-pham-ban-chay-da-ban">
-              Đã bán {dinhDangSoLuong.format(sanPhamBanChay.tongSoLuongDaBan)}
-            </span>
+        {!dangTaiSanPhamBanChay &&
+          !loiTaiSanPhamBanChay &&
+          danhSachSanPhamBanChay.length === 0 && (
+            <p className="san-pham-ban-chay-trang-thai">
+              Hiện chưa có dữ liệu sản phẩm bán chạy.
+            </p>
+          )}
 
-            <TheSanPham sanPham={sanPhamBanChay.sanPham} />
-          </div>
-        ))}
+        {!dangTaiSanPhamBanChay &&
+          !loiTaiSanPhamBanChay &&
+          danhSachSanPhamBanChay.map(
+            (sanPhamBanChay) => (
+              <div
+                key={
+                  sanPhamBanChay.sanPham.maSanPham
+                }
+                className="san-pham-ban-chay-the"
+              >
+                <span className="san-pham-ban-chay-da-ban">
+                  {dinhDangSoLuong.format(
+                    sanPhamBanChay.soLuotMua
+                  )}{" "}
+                  lượt mua / 30 ngày
+                </span>
+
+                <TheSanPham
+                  sanPham={
+                    sanPhamBanChay.sanPham
+                  }
+                />
+              </div>
+            )
+          )}
       </div>
 
       {coHienThiNutDieuHuong && (
@@ -73,9 +129,13 @@ function SanPhamBanChay() {
           type="button"
           className="san-pham-ban-chay-dieu-huong san-pham-ban-chay-dieu-huong--phai"
           aria-label="Xem thêm sản phẩm"
-          onClick={() => truotDanhSach("PHAI")}
+          onClick={() =>
+            truotDanhSach("PHAI")
+          }
         >
-          <FontAwesomeIcon icon={faChevronRight} />
+          <FontAwesomeIcon
+            icon={faChevronRight}
+          />
         </button>
       )}
     </section>

@@ -1,5 +1,6 @@
 package com.pharma.backend.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -49,23 +50,30 @@ public interface ChiTietDonHangRepository
     );
 
     @Query("""
-            SELECT sp.maSanPham AS maSanPham,
-                   SUM(ctdh.soLuong) AS tongSoLuongDaBan
+            SELECT
+                sp.maSanPham AS maSanPham,
+                COUNT(DISTINCT dh.maDonHang) AS soLuotMua
             FROM ChiTietDonHang ctdh
             JOIN ctdh.donHang dh
             JOIN ctdh.sanPham sp
+            LEFT JOIN dh.khachHang kh
             WHERE dh.trangThaiDonHang = :trangThaiDonHang
+              AND dh.ngayDatHang >= :tuThoiDiem
               AND sp.trangThaiSanPham = true
             GROUP BY sp.maSanPham
-            ORDER BY SUM(ctdh.soLuong) DESC,
-                     sp.maSanPham ASC
+            ORDER BY
+                COUNT(DISTINCT dh.maDonHang) DESC,
+                COUNT(DISTINCT kh.maKhachHang) DESC,
+                MAX(dh.ngayDatHang) DESC,
+                sp.maSanPham ASC
             """)
     List<SanPhamBanChayProjection> timSanPhamBanChay(
             @Param("trangThaiDonHang")
             TrangThaiDonHang trangThaiDonHang,
+            @Param("tuThoiDiem")
+            LocalDateTime tuThoiDiem,
             Pageable pageable
     );
-
 
     @Query("""
             SELECT ctdh
@@ -101,6 +109,6 @@ public interface ChiTietDonHangRepository
 
         Long getMaSanPham();
 
-        Long getTongSoLuongDaBan();
+        Long getSoLuotMua();
     }
 }
