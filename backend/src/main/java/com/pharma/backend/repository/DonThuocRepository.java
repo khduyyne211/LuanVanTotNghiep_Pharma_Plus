@@ -11,7 +11,14 @@ import org.springframework.data.repository.query.Param;
 import com.pharma.backend.dto.duocsi.donthuoc.DonThuocDanhSachProjection;
 import com.pharma.backend.entity.DonThuoc;
 
-public interface DonThuocRepository extends JpaRepository<DonThuoc, Long> {
+public interface DonThuocRepository
+        extends JpaRepository<DonThuoc, Long> {
+
+    /*
+     * =========================================================
+     * DƯỢC SĨ
+     * =========================================================
+     */
 
     @Query(
         value = """
@@ -107,7 +114,54 @@ public interface DonThuocRepository extends JpaRepository<DonThuoc, Long> {
             """,
         nativeQuery = true
     )
-    Optional<DonThuocDanhSachProjection> timChiTietDonThuoc(
-            @Param("maDonThuoc") long maDonThuoc
-    );
+    Optional<DonThuocDanhSachProjection>
+            timChiTietDonThuoc(
+                    @Param("maDonThuoc")
+                    long maDonThuoc
+            );
+
+    /*
+     * =========================================================
+     * KHÁCH HÀNG
+     * =========================================================
+     */
+
+    @Query(
+        value = """
+                SELECT dt
+                FROM DonThuoc dt
+                LEFT JOIN FETCH dt.nhanVienDuyet
+                WHERE dt.khachHang.maKhachHang = :maKhachHang
+                ORDER BY
+                    dt.ngayUpload DESC,
+                    dt.maDonThuoc DESC
+                """,
+        countQuery = """
+                SELECT COUNT(dt)
+                FROM DonThuoc dt
+                WHERE dt.khachHang.maKhachHang = :maKhachHang
+                """
+    )
+    Page<DonThuoc>
+            timDanhSachCuaKhachHang(
+                    @Param("maKhachHang")
+                    Long maKhachHang,
+                    Pageable pageable
+            );
+
+    @Query("""
+            SELECT dt
+            FROM DonThuoc dt
+            LEFT JOIN FETCH dt.nhanVienDuyet
+            WHERE dt.maDonThuoc = :maDonThuoc
+              AND dt.khachHang.maKhachHang = :maKhachHang
+            """)
+    Optional<DonThuoc>
+            timChiTietCuaKhachHang(
+                    @Param("maDonThuoc")
+                    Long maDonThuoc,
+
+                    @Param("maKhachHang")
+                    Long maKhachHang
+            );
 }

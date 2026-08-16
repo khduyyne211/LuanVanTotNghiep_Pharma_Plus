@@ -23,7 +23,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter
+            jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -35,16 +36,21 @@ public class SecurityConfig {
              * Hệ thống dùng JWT trong Authorization header,
              * không dùng phiên đăng nhập bằng cookie.
              */
-            .csrf(AbstractHttpConfigurer::disable)
+            .csrf(
+                AbstractHttpConfigurer::disable
+            )
 
             /*
-             * Sử dụng CorsConfigurationSource trong CorsConfig.
+             * Sử dụng CorsConfigurationSource
+             * trong CorsConfig.
              */
-            .cors(Customizer.withDefaults())
+            .cors(
+                Customizer.withDefaults()
+            )
 
             /*
-             * Không lưu SecurityContext trong HTTP Session.
-             * Mỗi request phải tự gửi JWT.
+             * Không lưu SecurityContext
+             * trong HTTP Session.
              */
             .sessionManagement(session ->
                 session.sessionCreationPolicy(
@@ -53,17 +59,28 @@ public class SecurityConfig {
             )
 
             /*
-             * Tắt màn hình đăng nhập mặc định của Spring Security.
+             * Tắt màn hình đăng nhập mặc định.
              */
-            .formLogin(AbstractHttpConfigurer::disable)
+            .formLogin(
+                AbstractHttpConfigurer::disable
+            )
 
             /*
-             * Không dùng HTTP Basic Authentication.
+             * Không dùng HTTP Basic
+             * cho xác thực người dùng Pharma+.
+             *
+             * Lưu ý:
+             * Basic Auth Cloudinary được gọi
+             * từ RestClient ra dịch vụ bên ngoài,
+             * không liên quan cấu hình này.
              */
-            .httpBasic(AbstractHttpConfigurer::disable)
+            .httpBasic(
+                AbstractHttpConfigurer::disable
+            )
 
             .authorizeHttpRequests(authorize ->
                 authorize
+
                     /*
                      * Cho phép request kiểm tra CORS.
                      */
@@ -74,7 +91,7 @@ public class SecurityConfig {
                     .permitAll()
 
                     /*
-                     * API đăng nhập phải được gọi khi chưa có token.
+                     * API đăng nhập.
                      */
                     .requestMatchers(
                         "/api/xac-thuc/**"
@@ -82,11 +99,8 @@ public class SecurityConfig {
                     .permitAll()
 
                     /*
-                    * Máy chủ ZaloPay gọi callback nên không có
-                    * JWT của khách hàng.
-                    *
-                    * Payload được xác minh bằng Key 2.
-                    */
+                     * ZaloPay callback không có JWT.
+                     */
                     .requestMatchers(
                         HttpMethod.POST,
                         "/api/thanh-toan/zalopay/callback"
@@ -94,8 +108,7 @@ public class SecurityConfig {
                     .permitAll()
 
                     /*
-                     * Chỉ khách hàng đã đăng nhập mới được gọi
-                     * các API giỏ hàng và thanh toán.
+                     * API chỉ dành cho KHÁCH HÀNG.
                      */
                     .requestMatchers(
                         "/api/gio-hang/**",
@@ -103,12 +116,16 @@ public class SecurityConfig {
                         "/api/dia-chi-giao-hang/**",
                         "/api/don-hang/khach-hang/**",
                         "/api/yeu-cau-tu-van/khach-hang/**",
+                        "/api/don-thuoc/khach-hang/**",
                         "/api/thanh-toan/zalopay/**"
                     )
-                    .hasRole("KHACH_HANG")
+                    .hasRole(
+                        "KHACH_HANG"
+                    )
 
                     /*
-                     * Giai đoạn hiện tại, các API còn lại vẫn công khai.
+                     * Giai đoạn hiện tại,
+                     * các API còn lại vẫn công khai
                      */
                     .anyRequest()
                     .permitAll()
@@ -117,19 +134,28 @@ public class SecurityConfig {
             .exceptionHandling(exception ->
                 exception
                     .authenticationEntryPoint(
-                        (request, response, authException) ->
-                            traVeChuaDangNhap(response)
+                        (
+                            request,
+                            response,
+                            authException
+                        ) ->
+                            traVeChuaDangNhap(
+                                response
+                            )
                     )
+
                     .accessDeniedHandler(
-                        (request, response, accessDeniedException) ->
-                            traVeKhongCoQuyen(response)
+                        (
+                            request,
+                            response,
+                            accessDeniedException
+                        ) ->
+                            traVeKhongCoQuyen(
+                                response
+                            )
                     )
             )
 
-            /*
-             * JwtAuthenticationFilter phải chạy trước filter đăng nhập
-             * mặc định của Spring Security.
-             */
             .addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
@@ -141,6 +167,7 @@ public class SecurityConfig {
     private void traVeChuaDangNhap(
         HttpServletResponse response
     ) throws IOException {
+
         response.setStatus(
             HttpServletResponse.SC_UNAUTHORIZED
         );
@@ -166,6 +193,7 @@ public class SecurityConfig {
     private void traVeKhongCoQuyen(
         HttpServletResponse response
     ) throws IOException {
+
         response.setStatus(
             HttpServletResponse.SC_FORBIDDEN
         );
