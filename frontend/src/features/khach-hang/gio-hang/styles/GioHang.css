@@ -107,6 +107,7 @@
   max-width: 82px;
   max-height: 82px;
   object-fit: contain;
+  cursor: pointer;
 }
 
 .gio-hang-khong-co-anh {
@@ -130,6 +131,7 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.4;
+  cursor: pointer;
 }
 
 .gio-hang-cot-gia {
