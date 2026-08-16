@@ -2,20 +2,24 @@ package com.pharma.backend.repository;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.pharma.backend.entity.DanhMucSanPham;
 
-public interface DanhMucSanPhamRepository extends JpaRepository<DanhMucSanPham, Long> {
+public interface DanhMucSanPhamRepository
+        extends JpaRepository<DanhMucSanPham, Long> {
 
     List<DanhMucSanPham> findAllByOrderByThuTuHienThiAscTenDanhMucAsc();
 
     boolean existsByTenDanhMuc(String tenDanhMuc);
 
-    boolean existsByTenDanhMucAndMaDanhMucNot(String tenDanhMuc, Long maDanhMuc);
+    boolean existsByTenDanhMucAndMaDanhMucNot(
+            String tenDanhMuc,
+            Long maDanhMuc
+    );
 
     @EntityGraph(attributePaths = "danhMucCha")
     @Query("""
@@ -28,22 +32,24 @@ public interface DanhMucSanPhamRepository extends JpaRepository<DanhMucSanPham, 
     List<DanhMucSanPham> timDanhMucHienThiChoMenu();
 
     @Query("""
-            SELECT dm.maDanhMuc AS maDanhMuc,
-                   dm.tenDanhMuc AS tenDanhMuc,
-                   COUNT(sp.maSanPham) AS soLuongSanPham
+            SELECT
+                dm.maDanhMuc AS maDanhMuc,
+                dm.tenDanhMuc AS tenDanhMuc,
+                COUNT(DISTINCT sp.maSanPham) AS soLuongSanPham
             FROM SanPham sp
             JOIN sp.danhMuc dm
-            WHERE dm.danhMucCha IS NOT NULL
+            WHERE dm.maDanhMuc IN :danhSachMaDanhMuc
+              AND dm.danhMucCha IS NOT NULL
               AND dm.trangThaiHienThi = true
               AND sp.trangThaiSanPham = true
-            GROUP BY dm.maDanhMuc,
-                     dm.tenDanhMuc,
-                     dm.thuTuHienThi
-            ORDER BY COUNT(sp.maSanPham) DESC,
-                     COALESCE(dm.thuTuHienThi, 2147483647) ASC,
-                     dm.maDanhMuc ASC
+            GROUP BY
+                dm.maDanhMuc,
+                dm.tenDanhMuc
             """)
-    List<DanhMucNoiBatProjection> timDanhMucNoiBat(Pageable pageable);
+    List<DanhMucNoiBatProjection> timDanhMucNoiBatTheoDanhSachMa(
+            @Param("danhSachMaDanhMuc")
+            List<Long> danhSachMaDanhMuc
+    );
 
     interface DanhMucNoiBatProjection {
 
