@@ -1,0 +1,169 @@
+.duoc-si-shell {
+  min-height: 100vh;
+  display: flex;
+  background: #f7f8fa;
+}
+
+.duoc-si-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  width: 250px;
+
+  display: flex;
+  flex-direction: column;
+
+  border-right: 1px solid #e4e7ec;
+  background: #ffffff;
+
+  z-index: 100;
+}
+
+.duoc-si-sidebar-brand {
+  min-height: 76px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 0 20px;
+
+  border-bottom: 1px solid #eaecf0;
+}
+
+.duoc-si-sidebar-logo {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #ecfdf3;
+  color: #067647;
+
+  font-size: 20px;
+}
+
+.duoc-si-sidebar-brand strong,
+.duoc-si-sidebar-brand span {
+  display: block;
+}
+
+.duoc-si-sidebar-brand strong {
+  color: #101828;
+  font-size: 18px;
+}
+
+.duoc-si-sidebar-brand span {
+  margin-top: 2px;
+
+  color: #667085;
+  font-size: 12px;
+}
+
+.duoc-si-sidebar-menu {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  padding: 18px 12px;
+}
+
+.duoc-si-menu-item {
+  min-height: 44px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 0 13px;
+
+  border-radius: 8px;
+
+  color: #475467;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  text-decoration: none;
+}
+
+.duoc-si-menu-item i {
+  width: 20px;
+
+  font-size: 17px;
+  text-align: center;
+}
+
+.duoc-si-menu-item:hover {
+  background: #f2f4f7;
+  color: #101828;
+}
+
+.duoc-si-menu-item--active {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.duoc-si-menu-item--active:hover {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.duoc-si-main-content {
+  width: calc(
+    100% - 250px
+  );
+
+  min-height: 100vh;
+
+  margin-left: 250px;
+}
+
+.duoc-si-placeholder-page {
+  padding: 24px;
+}
+
+.duoc-si-placeholder-card {
+  padding: 28px;
+
+  border: 1px solid #e4e7ec;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.duoc-si-placeholder-card h1 {
+  margin: 0;
+
+  color: #101828;
+  font-size: 24px;
+}
+
+.duoc-si-placeholder-card p {
+  margin: 8px 0 0;
+
+  color: #667085;
+}
+
+@media (max-width: 900px) {
+  .duoc-si-sidebar {
+    width: 210px;
+  }
+
+  .duoc-si-main-content {
+    width: calc(
+      100% - 210px
+    );
+
+    margin-left: 210px;
+  }
+}

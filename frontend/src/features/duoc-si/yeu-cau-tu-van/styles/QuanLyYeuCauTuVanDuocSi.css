@@ -1,0 +1,274 @@
+.ds-tv-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+}
+
+.ds-tv-header h1 {
+  margin: 0;
+  color: #172033;
+  font-size: 26px;
+}
+
+.ds-tv-header p {
+  margin: 6px 0 0;
+  color: #667085;
+}
+
+.ds-tv-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ds-tv-toolbar select,
+.ds-tv-form-group select,
+.ds-tv-form-group textarea {
+  box-sizing: border-box;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  outline: none;
+}
+
+.ds-tv-toolbar select {
+  min-width: 220px;
+  min-height: 40px;
+  padding: 8px 10px;
+}
+
+.ds-tv-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.ds-tv-table {
+  width: 100%;
+  min-width: 1050px;
+  border-collapse: collapse;
+}
+
+.ds-tv-table th,
+.ds-tv-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid #eaecf0;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.ds-tv-table th {
+  background: #f8fafc;
+  color: #475467;
+  font-size: 13px;
+}
+
+.ds-tv-table td {
+  color: #344054;
+  font-size: 14px;
+}
+
+.ds-tv-message {
+  padding: 30px !important;
+  color: #667085 !important;
+  text-align: center !important;
+}
+
+.ds-tv-status {
+  display: inline-flex;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ds-tv-status--CHO_TIEP_NHAN {
+  background: #fff7e8;
+  color: #b54708;
+}
+
+.ds-tv-status--DANG_TU_VAN {
+  background: #eff8ff;
+  color: #175cd3;
+}
+
+.ds-tv-status--DA_TU_VAN {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.ds-tv-status--KHONG_THE_LIEN_HE {
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.ds-tv-button {
+  min-height: 36px;
+  padding: 7px 13px;
+  border: 0;
+  border-radius: 7px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ds-tv-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ds-tv-button--primary {
+  background: #1570ef;
+  color: #fff;
+}
+
+.ds-tv-button--secondary {
+  border: 1px solid #d0d5dd;
+  background: #fff;
+  color: #344054;
+}
+
+.ds-tv-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.ds-tv-error {
+  padding: 12px 14px;
+  border: 1px solid #fecdca;
+  border-radius: 8px;
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.ds-tv-modal-overlay {
+  position: fixed;
+  z-index: 1200;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.ds-tv-modal {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.ds-tv-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid #eaecf0;
+}
+
+.ds-tv-modal-header h2 {
+  margin: 0 0 8px;
+}
+
+.ds-tv-close {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: #f2f4f7;
+  color: #475467;
+  cursor: pointer;
+  font-size: 22px;
+}
+
+.ds-tv-modal-body {
+  padding: 20px;
+}
+
+.ds-tv-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ds-tv-detail-grid > div {
+  padding: 12px;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+}
+
+.ds-tv-detail-grid span,
+.ds-tv-detail-grid strong {
+  display: block;
+}
+
+.ds-tv-detail-grid span {
+  margin-bottom: 5px;
+  color: #667085;
+  font-size: 12px;
+}
+
+.ds-tv-content-box {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.ds-tv-content-box p {
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+}
+
+.ds-tv-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.ds-tv-form-group label {
+  font-weight: 600;
+}
+
+.ds-tv-form-group select {
+  min-height: 42px;
+  padding: 8px 10px;
+}
+
+.ds-tv-form-group textarea {
+  min-height: 120px;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
+.ds-tv-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+@media (max-width: 700px) {
+  .ds-tv-page {
+    padding: 16px;
+  }
+
+  .ds-tv-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ds-tv-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

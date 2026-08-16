@@ -1,0 +1,211 @@
+.ds-dh-page {
+  padding: 24px;
+}
+
+.ds-dh-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ds-dh-header h1,
+.ds-dh-modal h2,
+.ds-dh-modal h3 {
+  margin-top: 0;
+}
+
+.ds-dh-header p {
+  margin-bottom: 0;
+}
+
+.ds-dh-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ds-dh-filter form {
+  display: flex;
+  gap: 8px;
+  flex: 1 1 360px;
+}
+
+.ds-dh-filter input,
+.ds-dh-filter select,
+.ds-dh-filter button,
+.ds-dh-pagination select,
+.ds-dh-pagination button,
+.ds-dh-modal button {
+  min-height: 38px;
+  border: 1px solid #cfcfcf;
+  border-radius: 6px;
+  background: #fff;
+  padding: 8px 12px;
+}
+
+.ds-dh-filter input {
+  flex: 1;
+}
+
+.ds-dh-table-wrap {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+}
+
+.ds-dh-table,
+.ds-dh-products table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ds-dh-table th,
+.ds-dh-table td,
+.ds-dh-products th,
+.ds-dh-products td {
+  border-bottom: 1px solid #eeeeee;
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.ds-dh-table th,
+.ds-dh-products th {
+  background: #f7f7f7;
+  white-space: nowrap;
+}
+
+.ds-dh-table td small {
+  display: block;
+  margin-top: 4px;
+}
+
+.ds-dh-link-button {
+  border: 0;
+  background: transparent;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ds-dh-status {
+  display: inline-block;
+  border: 1px solid #cccccc;
+  border-radius: 999px;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.ds-dh-pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.ds-dh-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.ds-dh-modal {
+  width: min(1050px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 10px;
+  background: #fff;
+  padding: 20px;
+}
+
+.ds-dh-modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #eeeeee;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+}
+
+.ds-dh-modal-header p {
+  margin-bottom: 0;
+}
+
+.ds-dh-modal-header > button {
+  min-width: 40px;
+  font-size: 22px;
+}
+
+.ds-dh-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ds-dh-detail-grid section,
+.ds-dh-prescription,
+.ds-dh-products {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.ds-dh-detail-grid p,
+.ds-dh-prescription p {
+  margin: 6px 0;
+}
+
+.ds-dh-prescription,
+.ds-dh-products {
+  margin-top: 12px;
+}
+
+.ds-dh-products {
+  overflow-x: auto;
+}
+
+.ds-dh-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.ds-dh-primary {
+  font-weight: 600;
+}
+
+.ds-dh-danger {
+  font-weight: 600;
+}
+
+.ds-dh-modal button:disabled,
+.ds-dh-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 760px) {
+  .ds-dh-page {
+    padding: 16px;
+  }
+
+  .ds-dh-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ds-dh-pagination {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}

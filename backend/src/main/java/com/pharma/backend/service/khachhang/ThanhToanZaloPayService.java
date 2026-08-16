@@ -32,6 +32,7 @@ import com.pharma.backend.enums.donhang.PhuongThucThanhToan;
 import com.pharma.backend.enums.donhang.TrangThaiDonHang;
 import com.pharma.backend.enums.donhang.TrangThaiThanhToan;
 import com.pharma.backend.repository.DonHangRepository;
+import com.pharma.backend.service.common.XuLyTonKhoDonHangService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +67,8 @@ public class ThanhToanZaloPayService {
             );
 
     private final DonHangRepository donHangRepository;
+
+    private final XuLyTonKhoDonHangService xuLyTonKhoDonHangService;
 
     private final ChuanBiThanhToanZaloPayService
             chuanBiThanhToanZaloPayService;
@@ -336,6 +339,18 @@ public class ThanhToanZaloPayService {
                     donHang.getTrangThaiDonHang()
                             == TrangThaiDonHang.CHO_XU_LY
             ) {
+                /*
+                 * Trường hợp dữ liệu cũ/không đồng bộ:
+                 * thanh toán đã thành công nhưng đơn vẫn còn CHO_XU_LY.
+                 *
+                 * Phải xuất kho trước rồi mới đồng bộ trạng thái đơn.
+                 * Nếu xuất kho thất bại, transaction rollback và đơn vẫn
+                 * giữ nguyên CHO_XU_LY để không ghi nhận xử lý khi chưa đủ tồn.
+                 */
+                xuLyTonKhoDonHangService.truTonTheoDonHang(
+                        maDonHang
+                );
+
                 donHang.setTrangThaiDonHang(
                         TrangThaiDonHang.DANG_XU_LY
                 );
@@ -345,7 +360,7 @@ public class ThanhToanZaloPayService {
                 );
 
                 log.info(
-                        "Sửa trạng thái đơn ZaloPay đã thanh toán "
+                        "Đồng bộ đơn ZaloPay đã thanh toán và xuất kho "
                                 + "từ CHO_XU_LY sang DANG_XU_LY: "
                                 + "maDonHang={}",
                         maDonHang
@@ -429,6 +444,15 @@ public class ThanhToanZaloPayService {
          * Khi đã DA_THANH_TOAN + DANG_XU_LY,
          * khách hàng không còn được phép hủy đơn.
          */
+        /*
+         * Chỉ trừ tồn sau khi callback đã được xác minh đầy đủ.
+         * Xuất kho và cập nhật trạng thái cùng nằm trong transaction này.
+         * Nếu bất kỳ sản phẩm nào không đủ tồn, toàn bộ transaction rollback.
+         */
+        xuLyTonKhoDonHangService.truTonTheoDonHang(
+                maDonHang
+        );
+
         donHang.setTrangThaiThanhToan(
                 TrangThaiThanhToan.DA_THANH_TOAN
         );

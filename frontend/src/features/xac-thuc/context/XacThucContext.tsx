@@ -5,10 +5,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import { dangNhapApi } from "../api/XacThucApi";
+
 import HopThoaiDangNhap from "../components/HopThoaiDangNhap";
+
 import type {
   DangNhapRequest,
   DangNhapResponse,
@@ -24,12 +27,15 @@ interface MoHopThoaiDangNhapOptions {
 
 interface XacThucContextValue {
   nguoiDungDangNhap: NguoiDungDangNhap | null;
+
   daDangNhap: boolean;
+
   dangNhap: (request: DangNhapRequest) => Promise<void>;
+
   dangXuat: () => void;
-  moHopThoaiDangNhap: (
-    options?: MoHopThoaiDangNhapOptions,
-  ) => void;
+
+  moHopThoaiDangNhap: (options?: MoHopThoaiDangNhapOptions) => void;
+
   dongHopThoaiDangNhap: () => void;
 }
 
@@ -37,18 +43,14 @@ interface XacThucProviderProps {
   children: ReactNode;
 }
 
-const XacThucContext =
-  createContext<XacThucContextValue | undefined>(
-    undefined,
-  );
+const XacThucContext = createContext<XacThucContextValue | undefined>(
+  undefined,
+);
 
 function layNguoiDungDaLuu(): NguoiDungDangNhap | null {
-  const accessToken = localStorage.getItem(
-    "pharma_access_token",
-  );
-  const nguoiDungJson = localStorage.getItem(
-    "pharma_nguoi_dung",
-  );
+  const accessToken = localStorage.getItem("pharma_access_token");
+
+  const nguoiDungJson = localStorage.getItem("pharma_nguoi_dung");
 
   if (!accessToken || !nguoiDungJson) {
     return null;
@@ -59,35 +61,28 @@ function layNguoiDungDaLuu(): NguoiDungDangNhap | null {
       nguoiDungJson,
     ) as Partial<NguoiDungDangNhap>;
 
-    if (
-      nguoiDungDaLuu.maTaiKhoan == null ||
-      !nguoiDungDaLuu.vaiTro
-    ) {
-      throw new Error(
-        "Dữ liệu người dùng đã lưu không hợp lệ.",
-      );
+    if (nguoiDungDaLuu.maTaiKhoan == null || !nguoiDungDaLuu.vaiTro) {
+      throw new Error("Dữ liệu người dùng đã lưu không hợp lệ.");
     }
 
     return {
       maTaiKhoan: nguoiDungDaLuu.maTaiKhoan,
-      maKhachHang:
-        nguoiDungDaLuu.maKhachHang ?? null,
-      maNhanVien:
-        nguoiDungDaLuu.maNhanVien ?? null,
+
+      maKhachHang: nguoiDungDaLuu.maKhachHang ?? null,
+
+      maNhanVien: nguoiDungDaLuu.maNhanVien ?? null,
+
       hoTen: nguoiDungDaLuu.hoTen ?? "",
-      soDienThoai:
-        nguoiDungDaLuu.soDienThoai ?? "",
-      vaiTro: nguoiDungDaLuu.vaiTro
-        .trim()
-        .toUpperCase(),
+
+      soDienThoai: nguoiDungDaLuu.soDienThoai ?? "",
+
+      vaiTro: nguoiDungDaLuu.vaiTro.trim().toUpperCase(),
     };
   } catch {
-    localStorage.removeItem(
-      "pharma_access_token",
-    );
-    localStorage.removeItem(
-      "pharma_nguoi_dung",
-    );
+    localStorage.removeItem("pharma_access_token");
+
+    localStorage.removeItem("pharma_nguoi_dung");
+
     return null;
   }
 }
@@ -97,136 +92,140 @@ function chuyenSangNguoiDungDangNhap(
 ): NguoiDungDangNhap {
   return {
     maTaiKhoan: response.maTaiKhoan,
+
     maKhachHang: response.maKhachHang,
+
     maNhanVien: response.maNhanVien,
+
     hoTen: response.hoTen,
+
     soDienThoai: response.soDienThoai,
-    vaiTro: response.vaiTro
-      .trim()
-      .toUpperCase(),
+
+    vaiTro: response.vaiTro.trim().toUpperCase(),
   };
 }
 
-export function XacThucProvider({
-  children,
-}: XacThucProviderProps) {
+export function XacThucProvider({ children }: XacThucProviderProps) {
   const navigate = useNavigate();
 
-  const [
-    nguoiDungDangNhap,
-    setNguoiDungDangNhap,
-  ] = useState<NguoiDungDangNhap | null>(
-    layNguoiDungDaLuu,
+  const [nguoiDungDangNhap, setNguoiDungDangNhap] =
+    useState<NguoiDungDangNhap | null>(layNguoiDungDaLuu);
+
+  const [dangHienHopThoaiDangNhap, setDangHienHopThoaiDangNhap] =
+    useState(false);
+
+  const [soDienThoaiMacDinh, setSoDienThoaiMacDinh] = useState("");
+
+  const [duongDanSauDangNhap, setDuongDanSauDangNhap] = useState<string | null>(
+    null,
   );
 
-  const [
-    dangHienHopThoaiDangNhap,
-    setDangHienHopThoaiDangNhap,
-  ] = useState(false);
-
-  const [
-    soDienThoaiMacDinh,
-    setSoDienThoaiMacDinh,
-  ] = useState("");
-
-  const [
-    duongDanSauDangNhap,
-    setDuongDanSauDangNhap,
-  ] = useState<string | null>(null);
-const daDangNhap =
-    nguoiDungDangNhap !== null;
+  const daDangNhap = nguoiDungDangNhap !== null;
 
   const xoaDuLieuMoHopThoai = () => {
     setSoDienThoaiMacDinh("");
+
     setDuongDanSauDangNhap(null);
   };
 
-  const dangNhap = async (
-    request: DangNhapRequest,
-  ) => {
-    const duongDanCanChuyen =
-      duongDanSauDangNhap;
+  const dangNhap = async (request: DangNhapRequest) => {
+    const duongDanCanChuyen = duongDanSauDangNhap;
 
-    const duLieuDangNhap =
-      await dangNhapApi(request);
+    const duLieuDangNhap = await dangNhapApi(request);
 
-    const nguoiDungMoi =
-      chuyenSangNguoiDungDangNhap(
-        duLieuDangNhap,
-      );
+    const nguoiDungMoi = chuyenSangNguoiDungDangNhap(duLieuDangNhap);
 
-    localStorage.setItem(
-      "pharma_access_token",
-      duLieuDangNhap.accessToken,
-    );
+    localStorage.setItem("pharma_access_token", duLieuDangNhap.accessToken);
 
-    localStorage.setItem(
-      "pharma_nguoi_dung",
-      JSON.stringify(nguoiDungMoi),
-    );
+    localStorage.setItem("pharma_nguoi_dung", JSON.stringify(nguoiDungMoi));
 
-    setNguoiDungDangNhap(
-      nguoiDungMoi,
-    );
+    setNguoiDungDangNhap(nguoiDungMoi);
 
-    setDangHienHopThoaiDangNhap(
-      false,
-    );
+    setDangHienHopThoaiDangNhap(false);
 
     xoaDuLieuMoHopThoai();
 
+    /*
+     * ADMIN:
+     * luôn chuyển vào khu vực quản trị.
+     */
     if (nguoiDungMoi.vaiTro === "ADMIN") {
       navigate("/admin", {
         replace: true,
       });
+
       return;
     }
 
+    /*
+     * DƯỢC SĨ:
+     * luôn chuyển vào giao diện Dược sĩ.
+     */
+    if (nguoiDungMoi.vaiTro === "DUOC_SI") {
+      navigate("/duoc-si/yeu-cau-tu-van", {
+        replace: true,
+      });
+
+      return;
+    }
+
+    /*
+     * KHÁCH HÀNG:
+     * nếu trước đó có yêu cầu mở
+     * hộp thoại đăng nhập để tiếp tục
+     * một chức năng của khách hàng,
+     * quay lại đúng đường dẫn đó.
+     *
+     * Không cho khách bị chuyển nhầm
+     * sang khu vực ADMIN hoặc DƯỢC SĨ.
+     */
     if (
       nguoiDungMoi.vaiTro === "KHACH_HANG" &&
       duongDanCanChuyen &&
-      !duongDanCanChuyen.startsWith("/admin")
+      !duongDanCanChuyen.startsWith("/admin") &&
+      !duongDanCanChuyen.startsWith("/duoc-si")
     ) {
       navigate(duongDanCanChuyen, {
+        replace: true,
+      });
+
+      return;
+    }
+
+    /*
+     * Khách hàng đăng nhập bình thường
+     * từ trang chủ thì giữ ở khu vực
+     * khách hàng.
+     */
+    if (nguoiDungMoi.vaiTro === "KHACH_HANG") {
+      navigate("/", {
         replace: true,
       });
     }
   };
 
   const dangXuat = () => {
-    localStorage.removeItem(
-      "pharma_access_token",
-    );
+    localStorage.removeItem("pharma_access_token");
 
-    localStorage.removeItem(
-      "pharma_nguoi_dung",
-    );
+    localStorage.removeItem("pharma_nguoi_dung");
 
     setNguoiDungDangNhap(null);
+
     setDangHienHopThoaiDangNhap(false);
+
     xoaDuLieuMoHopThoai();
   };
 
-  const moHopThoaiDangNhap = (
-    options?: MoHopThoaiDangNhapOptions,
-  ) => {
-    setSoDienThoaiMacDinh(
-      options?.soDienThoaiMacDinh ?? "",
-    );
+  const moHopThoaiDangNhap = (options?: MoHopThoaiDangNhapOptions) => {
+    setSoDienThoaiMacDinh(options?.soDienThoaiMacDinh ?? "");
 
-    setDuongDanSauDangNhap(
-      options?.duongDanSauDangNhap ?? null,
-    );
+    setDuongDanSauDangNhap(options?.duongDanSauDangNhap ?? null);
 
-    setDangHienHopThoaiDangNhap(
-      true,
-    );
+    setDangHienHopThoaiDangNhap(true);
   };
 
   const dongHopThoaiDangNhap = () => {
-    setDangHienHopThoaiDangNhap(
-      false,
-    );
+    setDangHienHopThoaiDangNhap(false);
 
     xoaDuLieuMoHopThoai();
   };
@@ -234,21 +233,18 @@ const daDangNhap =
   useEffect(() => {
     const xuLyTokenKhongHopLe = () => {
       setNguoiDungDangNhap(null);
+
       setSoDienThoaiMacDinh("");
+
       setDuongDanSauDangNhap(null);
+
       setDangHienHopThoaiDangNhap(true);
     };
 
-    window.addEventListener(
-      "pharma:dang-xuat",
-      xuLyTokenKhongHopLe,
-    );
+    window.addEventListener("pharma:dang-xuat", xuLyTokenKhongHopLe);
 
     return () => {
-      window.removeEventListener(
-        "pharma:dang-xuat",
-        xuLyTokenKhongHopLe,
-      );
+      window.removeEventListener("pharma:dang-xuat", xuLyTokenKhongHopLe);
     };
   }, []);
 
@@ -269,9 +265,7 @@ const daDangNhap =
         dangHien={dangHienHopThoaiDangNhap}
         dongHopThoai={dongHopThoaiDangNhap}
         dangNhap={dangNhap}
-        soDienThoaiMacDinh={
-          soDienThoaiMacDinh
-        }
+        soDienThoaiMacDinh={soDienThoaiMacDinh}
       />
     </XacThucContext.Provider>
   );
@@ -279,14 +273,11 @@ const daDangNhap =
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useXacThucContext() {
-  const context = useContext(
-    XacThucContext,
-  );
+  const context = useContext(XacThucContext);
 
   if (!context) {
-    throw new Error(
-      "useXacThucContext phải được dùng trong XacThucProvider",
-    );
+    throw new Error("useXacThucContext phải được dùng trong XacThucProvider");
   }
-return context;
+
+  return context;
 }
