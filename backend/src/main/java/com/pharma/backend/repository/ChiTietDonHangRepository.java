@@ -16,7 +16,7 @@ public interface ChiTietDonHangRepository
         extends JpaRepository<ChiTietDonHang, Long> {
 
     @Query(
-        value = """
+            value = """
             SELECT
                 ctdh.ma_chi_tiet_don_hang AS maChiTietDonHang,
                 ctdh.ma_san_pham AS maSanPham,
@@ -43,7 +43,7 @@ public interface ChiTietDonHangRepository
             WHERE ctdh.ma_don_hang = :maDonHang
             ORDER BY ctdh.ma_chi_tiet_don_hang ASC
             """,
-        nativeQuery = true
+            nativeQuery = true
     )
     List<ChiTietDonHangProjection> timTheoMaDonHang(
             @Param("maDonHang") long maDonHang
@@ -61,6 +61,7 @@ public interface ChiTietDonHangRepository
               AND dh.ngayDatHang >= :tuThoiDiem
               AND sp.trangThaiSanPham = true
             GROUP BY sp.maSanPham
+            HAVING COUNT(DISTINCT dh.maDonHang) >= 5
             ORDER BY
                 COUNT(DISTINCT dh.maDonHang) DESC,
                 COUNT(DISTINCT kh.maKhachHang) DESC,
@@ -68,10 +69,8 @@ public interface ChiTietDonHangRepository
                 sp.maSanPham ASC
             """)
     List<SanPhamBanChayProjection> timSanPhamBanChay(
-            @Param("trangThaiDonHang")
-            TrangThaiDonHang trangThaiDonHang,
-            @Param("tuThoiDiem")
-            LocalDateTime tuThoiDiem,
+            @Param("trangThaiDonHang") TrangThaiDonHang trangThaiDonHang,
+            @Param("tuThoiDiem") LocalDateTime tuThoiDiem,
             Pageable pageable
     );
 
@@ -87,8 +86,7 @@ public interface ChiTietDonHangRepository
                      ctdh.maChiTietDonHang ASC
             """)
     List<ChiTietDonHang> layChiTietTheoDanhSachDonHang(
-            @Param("danhSachMaDonHang")
-            List<Long> danhSachMaDonHang
+            @Param("danhSachMaDonHang") List<Long> danhSachMaDonHang
     );
 
     @Query("""

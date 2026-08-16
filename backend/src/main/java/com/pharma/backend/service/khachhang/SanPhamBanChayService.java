@@ -32,193 +32,143 @@ public class SanPhamBanChayService {
     private static final int GIOI_HAN_TOI_DA = 24;
     private static final int SO_NGAY_THONG_KE = 30;
 
-    private final ChiTietDonHangRepository
-            chiTietDonHangRepository;
+    private final ChiTietDonHangRepository chiTietDonHangRepository;
 
     private final SanPhamRepository sanPhamRepository;
 
-    private final DonViSanPhamRepository
-            donViSanPhamRepository;
+    private final DonViSanPhamRepository donViSanPhamRepository;
 
-    private final DieuKienHienThiSanPhamKhachHangService
-            dieuKienHienThiSanPhamKhachHangService;
+    private final DieuKienHienThiSanPhamKhachHangService dieuKienHienThiSanPhamKhachHangService;
 
-    private final TonKhoSanPhamService
-            tonKhoSanPhamService;
+    private final TonKhoSanPhamService tonKhoSanPhamService;
 
-    private final TinhGiaSanPhamService
-            tinhGiaSanPhamService;
+    private final TinhGiaSanPhamService tinhGiaSanPhamService;
 
     private final SanPhamMapper sanPhamMapper;
 
     @Transactional(readOnly = true)
-    public List<SanPhamBanChayResponseDto>
-            laySanPhamBanChay(
-                    int gioiHan
-            ) {
+    public List<SanPhamBanChayResponseDto> laySanPhamBanChay(
+            int gioiHan) {
         kiemTraGioiHan(gioiHan);
 
-        LocalDateTime thoiDiemHienTai =
-                LocalDateTime.now();
+        LocalDateTime thoiDiemHienTai = LocalDateTime.now();
 
-        LocalDateTime tuThoiDiem =
-                thoiDiemHienTai.minusDays(
-                        SO_NGAY_THONG_KE
-                );
+        LocalDateTime tuThoiDiem = thoiDiemHienTai.minusDays(SO_NGAY_THONG_KE);
 
         /*
-         * Xếp hạng sản phẩm dựa trên các đơn hàng
-         * đã hoàn thành và được đặt trong 30 ngày gần nhất.
-         *
-         * Thứ tự ưu tiên:
-         * 1. Số đơn hàng khác nhau có sản phẩm.
-         * 2. Số khách hàng khác nhau đã mua.
-         * 3. Giao dịch gần nhất.
-         *
-         * Không giới hạn ngay trong database vì một sản phẩm
-         * nằm trong nhóm bán chạy vẫn có thể không còn đủ
-         * điều kiện hiển thị cho khách hàng.
+                 * Xếp hạng sản phẩm dựa trên các đơn hàng
+                 * đã hoàn thành và được đặt trong 30 ngày gần nhất.
+                 *
+                 * Thứ tự ưu tiên:
+                 * 1. Số đơn hàng khác nhau có sản phẩm.
+                 * 2. Số khách hàng khác nhau đã mua.
+                 * 3. Giao dịch gần nhất.
+                 *
+                 * Không giới hạn ngay trong database vì một sản phẩm
+                 * nằm trong nhóm bán chạy vẫn có thể không còn đủ
+                 * điều kiện hiển thị cho khách hàng.
          */
-        List<SanPhamBanChayProjection> danhSachXepHang =
-                chiTietDonHangRepository
-                        .timSanPhamBanChay(
-                                TrangThaiDonHang.HOAN_THANH,
-                                tuThoiDiem,
-                                Pageable.unpaged()
-                        );
+        List<SanPhamBanChayProjection> danhSachXepHang = chiTietDonHangRepository
+                .timSanPhamBanChay(
+                        TrangThaiDonHang.HOAN_THANH,
+                        tuThoiDiem,
+                        Pageable.unpaged());
 
         if (danhSachXepHang.isEmpty()) {
             return List.of();
         }
 
-        List<Long> danhSachMaSanPhamXepHang =
-                danhSachXepHang.stream()
-                        .map(
-                                SanPhamBanChayProjection
-                                        ::getMaSanPham
-                        )
-                        .distinct()
-                        .toList();
+        List<Long> danhSachMaSanPhamXepHang = danhSachXepHang.stream()
+                .map(
+                        SanPhamBanChayProjection::getMaSanPham)
+                .distinct()
+                .toList();
 
-        Map<Long, SanPham> sanPhamTheoMa =
-                sanPhamRepository
-                        .timSanPhamTheoDanhSachMa(
-                                danhSachMaSanPhamXepHang,
-                                true
-                        )
-                        .stream()
-                        .collect(Collectors.toMap(
-                                SanPham::getMaSanPham,
-                                sanPham -> sanPham
-                        ));
+        Map<Long, SanPham> sanPhamTheoMa = sanPhamRepository
+                .timSanPhamTheoDanhSachMa(
+                        danhSachMaSanPhamXepHang,
+                        true)
+                .stream()
+                .collect(Collectors.toMap(
+                        SanPham::getMaSanPham,
+                        sanPham -> sanPham));
 
-        Map<Long, List<DonViSanPham>>
-                donViBanTheoSanPham =
-                donViSanPhamRepository
-                        .findBySanPham_MaSanPhamInAndChoPhepBanTrueAndTrangThaiTrue(
-                                danhSachMaSanPhamXepHang
-                        )
-                        .stream()
-                        .collect(Collectors.groupingBy(
-                                donVi ->
-                                        donVi.getSanPham()
-                                                .getMaSanPham(),
-                                LinkedHashMap::new,
-                                Collectors.toList()
-                        ));
+        Map<Long, List<DonViSanPham>> donViBanTheoSanPham = donViSanPhamRepository
+                .findBySanPham_MaSanPhamInAndChoPhepBanTrueAndTrangThaiTrue(
+                        danhSachMaSanPhamXepHang)
+                .stream()
+                .collect(Collectors.groupingBy(
+                        donVi -> donVi.getSanPham()
+                                .getMaSanPham(),
+                        LinkedHashMap::new,
+                        Collectors.toList()));
 
         /*
-         * Giữ nguyên thứ tự bán chạy.
-         * Loại các sản phẩm không còn đủ điều kiện
-         * hiển thị cho khách rồi mới lấy đúng giới hạn.
+                 * Giữ nguyên thứ tự bán chạy.
+                 * Loại các sản phẩm không còn đủ điều kiện
+                 * hiển thị cho khách rồi mới lấy đúng giới hạn.
          */
-        List<SanPhamBanChayProjection>
-                danhSachBanChayHopLe =
-                danhSachXepHang.stream()
-                        .filter(thongKe -> {
-                            SanPham sanPham =
-                                    sanPhamTheoMa.get(
-                                            thongKe.getMaSanPham()
-                                    );
+        List<SanPhamBanChayProjection> danhSachBanChayHopLe = danhSachXepHang.stream()
+                .filter(thongKe -> {
+                    SanPham sanPham = sanPhamTheoMa.get(
+                            thongKe.getMaSanPham());
 
-                            if (sanPham == null) {
-                                return false;
-                            }
+                    if (sanPham == null) {
+                        return false;
+                    }
 
-                            List<DonViSanPham>
-                                    danhSachDonViBan =
-                                    donViBanTheoSanPham
-                                            .getOrDefault(
-                                                    thongKe
-                                                            .getMaSanPham(),
-                                                    List.of()
-                                            );
+                    List<DonViSanPham> danhSachDonViBan = donViBanTheoSanPham
+                            .getOrDefault(
+                                    thongKe
+                                            .getMaSanPham(),
+                                    List.of());
 
-                            return dieuKienHienThiSanPhamKhachHangService
-                                    .duDieuKienHienThi(
-                                            sanPham,
-                                            danhSachDonViBan
-                                    );
-                        })
-                        .limit(gioiHan)
-                        .toList();
+                    return dieuKienHienThiSanPhamKhachHangService
+                            .duDieuKienHienThi(
+                                    sanPham,
+                                    danhSachDonViBan);
+                })
+                .limit(gioiHan)
+                .toList();
 
         if (danhSachBanChayHopLe.isEmpty()) {
             return List.of();
         }
 
-        List<Long> danhSachMaSanPhamHopLe =
-                danhSachBanChayHopLe.stream()
-                        .map(
-                                SanPhamBanChayProjection
-                                        ::getMaSanPham
-                        )
-                        .toList();
+        List<Long> danhSachMaSanPhamHopLe = danhSachBanChayHopLe.stream()
+                .map(
+                        SanPhamBanChayProjection::getMaSanPham)
+                .toList();
 
-        Map<Long, List<QuyDoiDonVi>>
-                quyDoiTheoSanPham =
-                tonKhoSanPhamService
-                        .layQuyDoiTheoDanhSachSanPham(
-                                danhSachMaSanPhamHopLe
-                        );
+        Map<Long, List<QuyDoiDonVi>> quyDoiTheoSanPham = tonKhoSanPhamService
+                .layQuyDoiTheoDanhSachSanPham(
+                        danhSachMaSanPhamHopLe);
 
-        Map<Long, BigDecimal> tonTheoSanPham =
-                tonKhoSanPhamService
-                        .layTonKhaDungTheoDanhSachSanPham(
-                                danhSachMaSanPhamHopLe
-                        );
+        Map<Long, BigDecimal> tonTheoSanPham = tonKhoSanPhamService
+                .layTonKhaDungTheoDanhSachSanPham(
+                        danhSachMaSanPhamHopLe);
 
-        List<DonViSanPham> tatCaDonViBan =
-                danhSachMaSanPhamHopLe.stream()
-                        .flatMap(maSanPham ->
-                                donViBanTheoSanPham
-                                        .getOrDefault(
-                                                maSanPham,
-                                                List.of()
-                                        )
-                                        .stream()
-                        )
-                        .toList();
+        List<DonViSanPham> tatCaDonViBan = danhSachMaSanPhamHopLe.stream()
+                .flatMap(maSanPham -> donViBanTheoSanPham
+                .getOrDefault(
+                        maSanPham,
+                        List.of())
+                .stream())
+                .toList();
 
-        Map<Long, KetQuaTinhGiaSanPham>
-                ketQuaGiaTheoDonVi =
-                tinhGiaSanPhamService
-                        .tinhGiaTheoDanhSachDonVi(
-                                tatCaDonViBan,
-                                thoiDiemHienTai
-                        );
+        Map<Long, KetQuaTinhGiaSanPham> ketQuaGiaTheoDonVi = tinhGiaSanPhamService
+                .tinhGiaTheoDanhSachDonVi(
+                        tatCaDonViBan,
+                        thoiDiemHienTai);
 
         return danhSachBanChayHopLe.stream()
-                .map(thongKe ->
-                        chuyenSangResponse(
-                                thongKe,
-                                sanPhamTheoMa,
-                                donViBanTheoSanPham,
-                                quyDoiTheoSanPham,
-                                tonTheoSanPham,
-                                ketQuaGiaTheoDonVi
-                        )
-                )
+                .map(thongKe -> chuyenSangResponse(
+                thongKe,
+                sanPhamTheoMa,
+                donViBanTheoSanPham,
+                quyDoiTheoSanPham,
+                tonTheoSanPham,
+                ketQuaGiaTheoDonVi))
                 .toList();
     }
 
@@ -228,38 +178,27 @@ public class SanPhamBanChayService {
             Map<Long, List<DonViSanPham>> donViBanTheoSanPham,
             Map<Long, List<QuyDoiDonVi>> quyDoiTheoSanPham,
             Map<Long, BigDecimal> tonTheoSanPham,
-            Map<Long, KetQuaTinhGiaSanPham> ketQuaGiaTheoDonVi
-    ) {
-        Long maSanPham =
-                thongKe.getMaSanPham();
+            Map<Long, KetQuaTinhGiaSanPham> ketQuaGiaTheoDonVi) {
+        Long maSanPham = thongKe.getMaSanPham();
 
-        SanPham sanPham =
-                sanPhamTheoMa.get(maSanPham);
+        SanPham sanPham = sanPhamTheoMa.get(maSanPham);
 
-        List<DonViSanPham> danhSachDonViBan =
-                donViBanTheoSanPham.getOrDefault(
-                        maSanPham,
-                        List.of()
-                );
+        List<DonViSanPham> danhSachDonViBan = donViBanTheoSanPham.getOrDefault(
+                maSanPham,
+                List.of());
 
-        List<QuyDoiDonVi> danhSachQuyDoi =
-                quyDoiTheoSanPham.getOrDefault(
-                        maSanPham,
-                        List.of()
-                );
+        List<QuyDoiDonVi> danhSachQuyDoi = quyDoiTheoSanPham.getOrDefault(
+                maSanPham,
+                List.of());
 
-        BigDecimal tonKhaDung =
-                tonTheoSanPham.getOrDefault(
-                        maSanPham,
-                        BigDecimal.ZERO
-                );
+        BigDecimal tonKhaDung = tonTheoSanPham.getOrDefault(
+                maSanPham,
+                BigDecimal.ZERO);
 
-        Map<Long, Integer> soLuongToiDaTheoDonVi =
-                tinhSoLuongToiDaTheoDonVi(
-                        danhSachDonViBan,
-                        danhSachQuyDoi,
-                        tonKhaDung
-                );
+        Map<Long, Integer> soLuongToiDaTheoDonVi = tinhSoLuongToiDaTheoDonVi(
+                danhSachDonViBan,
+                danhSachQuyDoi,
+                tonKhaDung);
 
         return new SanPhamBanChayResponseDto(
                 sanPhamMapper.chuyenSangSanPhamResponseDto(
@@ -267,54 +206,42 @@ public class SanPhamBanChayService {
                         danhSachDonViBan,
                         danhSachQuyDoi,
                         ketQuaGiaTheoDonVi,
-                        soLuongToiDaTheoDonVi
-                ),
-                thongKe.getSoLuotMua()
-        );
+                        soLuongToiDaTheoDonVi),
+                thongKe.getSoLuotMua());
     }
 
     private Map<Long, Integer> tinhSoLuongToiDaTheoDonVi(
             List<DonViSanPham> danhSachDonViBan,
             List<QuyDoiDonVi> danhSachQuyDoi,
-            BigDecimal tonKhaDung
-    ) {
-        Map<Long, Integer> ketQua =
-                new LinkedHashMap<>();
+            BigDecimal tonKhaDung) {
+        Map<Long, Integer> ketQua = new LinkedHashMap<>();
 
-        for (DonViSanPham donViSanPham
-                : danhSachDonViBan) {
-            BigDecimal heSoVeDonViCoSo =
-                    tonKhoSanPhamService
-                            .tinhHeSoVeDonViCoSo(
-                                    donViSanPham,
-                                    danhSachQuyDoi
-                            );
+        for (DonViSanPham donViSanPham : danhSachDonViBan) {
+            BigDecimal heSoVeDonViCoSo = tonKhoSanPhamService
+                    .tinhHeSoVeDonViCoSo(
+                            donViSanPham,
+                            danhSachQuyDoi);
 
-            int soLuongToiDa =
-                    tonKhoSanPhamService
-                            .tinhSoLuongToiDaCoTheBan(
-                                    tonKhaDung,
-                                    heSoVeDonViCoSo
-                            );
+            int soLuongToiDa = tonKhoSanPhamService
+                    .tinhSoLuongToiDaCoTheBan(
+                            tonKhaDung,
+                            heSoVeDonViCoSo);
 
             ketQua.put(
                     donViSanPham.getMaDonViSanPham(),
-                    soLuongToiDa
-            );
+                    soLuongToiDa);
         }
 
         return ketQua;
     }
 
     private void kiemTraGioiHan(
-            int gioiHan
-    ) {
+            int gioiHan) {
         if (gioiHan < 1
                 || gioiHan > GIOI_HAN_TOI_DA) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Giới hạn sản phẩm bán chạy phải từ 1 đến 24."
-            );
+                    "Giới hạn sản phẩm bán chạy phải từ 1 đến 24.");
         }
     }
 }
