@@ -223,15 +223,6 @@ function HopThoaiDangNhap({
           <div className="xac-thuc-hanh-dong-phu">
             <button
               type="button"
-              className="xac-thuc-nut-phu"
-              disabled
-              title="Chức năng đang được phát triển"
-            >
-              Quên mật khẩu
-            </button>
-
-            <button
-              type="button"
               className="xac-thuc-nut-dang-ky"
               onClick={xuLyChuyenSangDangKy}
               disabled={dangXuLy}
