@@ -111,7 +111,7 @@ function SanPhamBanChay() {
                   {dinhDangSoLuong.format(
                     sanPhamBanChay.soLuotMua
                   )}{" "}
-                  lượt mua / 30 ngày
+                  lượt mua
                 </span>
 
                 <TheSanPham
