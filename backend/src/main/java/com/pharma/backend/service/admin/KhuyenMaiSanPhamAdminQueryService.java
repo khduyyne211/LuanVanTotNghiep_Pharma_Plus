@@ -40,6 +40,8 @@ public class KhuyenMaiSanPhamAdminQueryService {
             layDanhSachSanPhamCoTheGan(
                     Long maKhuyenMai,
                     String keyword,
+                    Long maDanhMuc,
+                    boolean baoGomDanhMucCon,
                     int page,
                     int size
             ) {
@@ -52,6 +54,12 @@ public class KhuyenMaiSanPhamAdminQueryService {
         kiemTraKhuyenMaiSanPham(
                 khuyenMai
         );
+
+        if (maDanhMuc != null && maDanhMuc <= 0) {
+            throw new IllegalArgumentException(
+                    "Mã danh mục sản phẩm không hợp lệ"
+            );
+        }
 
         int trangHopLe =
                 Math.max(
@@ -107,6 +115,8 @@ public class KhuyenMaiSanPhamAdminQueryService {
                         khuyenMai.getMaKhuyenMai(),
                         tuKhoa,
                         maSanPhamTimKiem,
+                        maDanhMuc,
+                        baoGomDanhMucCon,
                         khuyenMai.getThoiGianBatDau(),
                         khuyenMai.getThoiGianKetThuc(),
                         pageable

@@ -122,6 +122,16 @@ public class KhuyenMaiController {
                     String keyword,
 
                     @RequestParam(
+                            required = false
+                    )
+                    Long maDanhMuc,
+
+                    @RequestParam(
+                            defaultValue = "false"
+                    )
+                    boolean baoGomDanhMucCon,
+
+                    @RequestParam(
                             defaultValue = "0"
                     )
                     int page,
@@ -136,6 +146,8 @@ public class KhuyenMaiController {
                 .layDanhSachSanPhamCoTheGan(
                         maKhuyenMai,
                         keyword,
+                        maDanhMuc,
+                        baoGomDanhMucCon,
                         page,
                         size
                 );

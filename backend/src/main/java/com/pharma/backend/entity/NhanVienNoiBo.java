@@ -26,12 +26,9 @@ public class NhanVienNoiBo {
 
     @Column(name = "ho_ten", nullable = false, length = 100)
     private String hoTen;
-    
+
     @Column(name = "trang_thai_lam_viec", nullable = false)
     private Boolean trangThaiLamViec = true;
-
-    @OneToMany(mappedBy = "nhanVienCapNhat", fetch = FetchType.LAZY)
-    private List<CauHinhHeThong> danhSachCauHinhHeThongCapNhat = new ArrayList<>();
 
     @OneToMany(mappedBy = "nhanVienXuLy", fetch = FetchType.LAZY)
     private List<DonHang> danhSachDonHangXuLy = new ArrayList<>();
@@ -41,9 +38,6 @@ public class NhanVienNoiBo {
 
     @OneToMany(mappedBy = "nhanVienTao", fetch = FetchType.LAZY)
     private List<KhuyenMai> danhSachKhuyenMaiTao = new ArrayList<>();
-
-    @OneToMany(mappedBy = "nhanVienTao", fetch = FetchType.LAZY)
-    private List<NoiDungSo> danhSachNoiDungSoTao = new ArrayList<>();
 
     @OneToMany(mappedBy = "nhanVienLap", fetch = FetchType.LAZY)
     private List<PhieuNhapKho> danhSachPhieuNhapKhoLap = new ArrayList<>();

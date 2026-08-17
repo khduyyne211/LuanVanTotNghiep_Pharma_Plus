@@ -25,6 +25,16 @@ public interface KhuyenMaiSanPhamAdminRepository
                       AND sp.laThuocKeDon = false
 
                       AND (
+                            :maDanhMuc IS NULL
+                            OR sp.danhMuc.maDanhMuc = :maDanhMuc
+                            OR (
+                                :baoGomDanhMucCon = true
+                                AND sp.danhMuc.danhMucCha IS NOT NULL
+                                AND sp.danhMuc.danhMucCha.maDanhMuc = :maDanhMuc
+                            )
+                      )
+
+                      AND (
                             :keyword IS NULL
                             OR LOWER(sp.tenSanPham)
                                 LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -57,6 +67,16 @@ public interface KhuyenMaiSanPhamAdminRepository
                     FROM SanPham sp
                     WHERE sp.trangThaiSanPham = true
                       AND sp.laThuocKeDon = false
+
+                      AND (
+                            :maDanhMuc IS NULL
+                            OR sp.danhMuc.maDanhMuc = :maDanhMuc
+                            OR (
+                                :baoGomDanhMucCon = true
+                                AND sp.danhMuc.danhMucCha IS NOT NULL
+                                AND sp.danhMuc.danhMucCha.maDanhMuc = :maDanhMuc
+                            )
+                      )
 
                       AND (
                             :keyword IS NULL
@@ -96,6 +116,12 @@ public interface KhuyenMaiSanPhamAdminRepository
 
             @Param("maSanPhamTimKiem")
             Long maSanPhamTimKiem,
+
+            @Param("maDanhMuc")
+            Long maDanhMuc,
+
+            @Param("baoGomDanhMucCon")
+            boolean baoGomDanhMucCon,
 
             @Param("thoiGianBatDau")
             LocalDateTime thoiGianBatDau,

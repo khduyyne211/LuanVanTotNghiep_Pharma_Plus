@@ -44,6 +44,8 @@ export const layDanhSachSanPhamDangGan = (
 export const layDanhSachSanPhamCoTheGan = (
   maKhuyenMai: number,
   keyword = "",
+  maDanhMuc: number | null = null,
+  baoGomDanhMucCon = false,
   page = 0,
   size = 10
 ) => {
@@ -54,6 +56,8 @@ export const layDanhSachSanPhamCoTheGan = (
     {
       params: {
         keyword,
+        maDanhMuc,
+        baoGomDanhMucCon,
         page,
         size,
       },

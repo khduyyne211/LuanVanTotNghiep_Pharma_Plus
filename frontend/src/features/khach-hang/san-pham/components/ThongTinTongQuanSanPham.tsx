@@ -552,11 +552,6 @@ function ThongTinTongQuanSanPham({
                   +
                 </button>
               </div>
-
-              <span className="chi-tiet-san-pham-ton-kho">
-                Có thể mua tối đa{" "}
-                {soLuongToiDa}
-              </span>
             </div>
           )}
 

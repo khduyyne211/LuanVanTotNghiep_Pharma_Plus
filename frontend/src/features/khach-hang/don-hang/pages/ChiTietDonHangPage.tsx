@@ -326,7 +326,7 @@ function ChiTietDonHangPage() {
               >
                 {dangTaoThanhToanLai
                   ? "Đang tạo mã thanh toán..."
-                  : "Thanh toán lại"}
+                  : "Thanh toán"}
               </button>
             )}
 

@@ -2,9 +2,7 @@ package com.pharma.backend.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,7 +45,4 @@ public class TaiKhoan {
 
     @OneToOne(mappedBy = "taiKhoan", fetch = FetchType.LAZY)
     private NhanVienNoiBo nhanVienNoiBo;
-
-    @OneToMany(mappedBy = "taiKhoan", fetch = FetchType.LAZY)
-    private List<NhatKyHoatDong> danhSachNhatKyHoatDong = new ArrayList<>();
 }
