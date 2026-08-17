@@ -26,7 +26,8 @@ export interface DonHangDanhSach {
 
 export type PhuongThucThanhToan =
   | "COD"
-  | "ZALOPAY";
+  | "ZALOPAY"
+  | "TIEN_MAT";
 
 export type TrangThaiThanhToan =
   | "CHUA_THANH_TOAN"
@@ -38,7 +39,7 @@ export type TrangThaiThanhToan =
 
 export interface TaoDonHangRequest {
   maDiaChi: number;
-  phuongThucThanhToan: PhuongThucThanhToan;
+  phuongThucThanhToan: Exclude<PhuongThucThanhToan, "TIEN_MAT">;
   ghiChu: string | null;
 }
 

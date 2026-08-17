@@ -741,15 +741,22 @@ public class DonHangKhachHangService {
 
                 DiaChiGiaoHang diaChiGiaoHang = donHang.getDiaChiGiaoHang();
 
+                Long maDiaChi = diaChiGiaoHang != null ? diaChiGiaoHang.getMaDiaChi() : null;
+                String tenNguoiNhan = diaChiGiaoHang != null ? diaChiGiaoHang.getTenNguoiNhan() : null;
+                String soDienThoaiNhan = diaChiGiaoHang != null ? diaChiGiaoHang.getSoDienThoaiNhan() : null;
+                String thanhPho = diaChiGiaoHang != null ? diaChiGiaoHang.getThanhPho() : null;
+                String phuongKhuVuc = diaChiGiaoHang != null ? diaChiGiaoHang.getPhuongKhuVuc() : null;
+                String diaChiChiTiet = diaChiGiaoHang != null ? diaChiGiaoHang.getDiaChiChiTiet() : null;
+
                 return new DonHangResponseDto(
                                 donHang.getMaDonHang(),
                                 donHang.getKhachHang().getMaKhachHang(),
-                                diaChiGiaoHang.getMaDiaChi(),
-                                diaChiGiaoHang.getTenNguoiNhan(),
-                                diaChiGiaoHang.getSoDienThoaiNhan(),
-                                diaChiGiaoHang.getThanhPho(),
-                                diaChiGiaoHang.getPhuongKhuVuc(),
-                                diaChiGiaoHang.getDiaChiChiTiet(),
+                                maDiaChi,
+                                tenNguoiNhan,
+                                soDienThoaiNhan,
+                                thanhPho,
+                                phuongKhuVuc,
+                                diaChiChiTiet,
                                 donHang.getNgayDatHang(),
                                 donHang.getTongTienHang(),
                                 donHang.getPhiGiaoHang(),

@@ -111,7 +111,7 @@ function layTrangThaiThuGonDaLuu(): boolean {
 }
 
 function AdminSidebar() {
-  const { dangXuat } = useXacThucContext();
+  const { dangXuat, nguoiDungDangNhap } = useXacThucContext();
 
   const [chieuRong, setChieuRong] = useState<number>(layChieuRongSidebarDaLuu);
 
@@ -212,7 +212,7 @@ function AdminSidebar() {
   };
 
   const chieuRongDangHienThi = daThuGon ? SIDEBAR_COLLAPSED_WIDTH : chieuRong;
-
+  const tenAdmin = nguoiDungDangNhap?.hoTen?.trim() || "Admin";
   return (
     <>
       <button
@@ -323,7 +323,7 @@ function AdminSidebar() {
 
             {!daThuGon && (
               <div className="admin-sidebar-user-info">
-                <strong>Admin</strong>
+                <strong>{tenAdmin}</strong>
 
                 <span>Quản trị viên</span>
               </div>

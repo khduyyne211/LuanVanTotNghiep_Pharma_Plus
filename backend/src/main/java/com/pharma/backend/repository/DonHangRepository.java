@@ -202,7 +202,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             SELECT dh
             FROM DonHang dh
             JOIN FETCH dh.khachHang kh
-            JOIN FETCH dh.diaChiGiaoHang dc
+            LEFT JOIN FETCH dh.diaChiGiaoHang dc
             WHERE dh.maDonHang = :maDonHang
               AND kh.maKhachHang = :maKhachHang
             """)

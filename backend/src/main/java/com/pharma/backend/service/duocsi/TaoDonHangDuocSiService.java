@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.pharma.backend.dto.duocsi.donhang.ChiTietTaoDonHangDuocSiRequest;
 import com.pharma.backend.dto.duocsi.donhang.DonHangDuocSiChiTietResponse;
 import com.pharma.backend.dto.duocsi.donhang.TaoDonHangDuocSiRequest;
+import com.pharma.backend.dto.duocsi.donhang.TaoDonTaiQuayRequest;
 import com.pharma.backend.entity.ChiTietDonHang;
 import com.pharma.backend.entity.DiaChiGiaoHang;
 import com.pharma.backend.entity.DonHang;
@@ -51,6 +52,7 @@ import lombok.RequiredArgsConstructor;
 public class TaoDonHangDuocSiService {
 
     private static final BigDecimal PHI_GIAO_HANG_CO_DINH = new BigDecimal("30000.00");
+    private static final BigDecimal KHONG_DONG = new BigDecimal("0.00");
 
     private final DonHangRepository donHangRepository;
     private final ChiTietDonHangRepository chiTietDonHangRepository;
@@ -71,11 +73,11 @@ public class TaoDonHangDuocSiService {
             Long maYeuCauTuVan,
             Long maNhanVien,
             TaoDonHangDuocSiRequest request) {
+
         kiemTraMaNguon(maYeuCauTuVan, "Mã yêu cầu tư vấn không hợp lệ.");
         kiemTraYeuCauTaoDon(request);
 
-        YeuCauTuVan yeuCauTuVan = yeuCauTuVanRepository
-                .timTheoMaDeCapNhat(maYeuCauTuVan)
+        YeuCauTuVan yeuCauTuVan = yeuCauTuVanRepository.timTheoMaDeCapNhat(maYeuCauTuVan)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Không tìm thấy yêu cầu tư vấn."));
@@ -103,7 +105,7 @@ public class TaoDonHangDuocSiService {
         KhachHang khachHang = timKhachHangDangHoatDong(maKhachHang);
         NhanVienNoiBo nhanVien = timNhanVienXuLy(maNhanVien);
 
-        return taoDonHang(
+        return taoDonHangGiaoKhach(
                 khachHang,
                 nhanVien,
                 request,
@@ -116,11 +118,11 @@ public class TaoDonHangDuocSiService {
             Long maDonThuoc,
             Long maNhanVien,
             TaoDonHangDuocSiRequest request) {
+
         kiemTraMaNguon(maDonThuoc, "Mã đơn thuốc không hợp lệ.");
         kiemTraYeuCauTaoDon(request);
 
-        DonThuoc donThuoc = donThuocRepository
-                .timTheoMaDeKiemDuyet(maDonThuoc)
+        DonThuoc donThuoc = donThuocRepository.timTheoMaDeKiemDuyet(maDonThuoc)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Không tìm thấy đơn thuốc."));
@@ -148,7 +150,7 @@ public class TaoDonHangDuocSiService {
         KhachHang khachHang = timKhachHangDangHoatDong(maKhachHang);
         NhanVienNoiBo nhanVien = timNhanVienXuLy(maNhanVien);
 
-        return taoDonHang(
+        return taoDonHangGiaoKhach(
                 khachHang,
                 nhanVien,
                 request,
@@ -156,12 +158,62 @@ public class TaoDonHangDuocSiService {
                 donThuoc);
     }
 
-    private DonHangDuocSiChiTietResponse taoDonHang(
+    @Transactional
+    public DonHangDuocSiChiTietResponse taoDonHangTaiQuay(
+            Long maNhanVien,
+            TaoDonTaiQuayRequest request) {
+
+        kiemTraYeuCauTaoDonTaiQuay(request);
+
+        NhanVienNoiBo nhanVien = timNhanVienXuLy(maNhanVien);
+        KhachHang khachHang = xacDinhKhachHangTaiQuay(request);
+
+        LocalDateTime thoiDiemTaoDon = LocalDateTime.now();
+        Map<Long, Integer> soLuongTheoDonVi = chuanHoaDanhSachChiTiet(request.getDanhSachChiTiet());
+        List<DonViSanPham> danhSachDonVi = layDanhSachDonViHopLe(soLuongTheoDonVi);
+
+        kiemTraTonKho(danhSachDonVi, soLuongTheoDonVi);
+
+        Map<Long, KetQuaTinhGiaSanPham> ketQuaGiaTheoDonVi = tinhGiaSanPhamService
+                .tinhGiaTheoDanhSachDonVi(danhSachDonVi, thoiDiemTaoDon);
+
+        List<ChiTietDonHang> danhSachChiTietDonHang = taoDanhSachChiTietDonHang(
+                danhSachDonVi,
+                soLuongTheoDonVi,
+                ketQuaGiaTheoDonVi);
+
+        BigDecimal tongTienHang = tinhTongTienHang(danhSachChiTietDonHang);
+        BigDecimal tongGiamGiaSanPham = tinhTongGiamGiaSanPham(danhSachChiTietDonHang);
+
+        DonHang donHang = taoVaLuuDonHangTaiQuay(
+                khachHang,
+                nhanVien,
+                request.getLoaiKhach(),
+                tongTienHang,
+                tongGiamGiaSanPham,
+                request.getGhiChu(),
+                thoiDiemTaoDon);
+
+        ganDonHangChoChiTiet(danhSachChiTietDonHang, donHang);
+        chiTietDonHangRepository.saveAllAndFlush(danhSachChiTietDonHang);
+
+        /*
+         * Đơn tại quầy đã thu tiền ngay, vì vậy xuất kho FEFO ngay trong
+         * cùng transaction. Nếu không đủ tồn tại thời điểm xuất kho,
+         * toàn bộ transaction rollback và đơn không được ghi nhận.
+         */
+        xuLyTonKhoDonHangService.truTonTheoDonHang(donHang.getMaDonHang());
+
+        return donHangDuocSiService.layChiTietDonHang(donHang.getMaDonHang());
+    }
+
+    private DonHangDuocSiChiTietResponse taoDonHangGiaoKhach(
             KhachHang khachHang,
             NhanVienNoiBo nhanVien,
             TaoDonHangDuocSiRequest request,
             YeuCauTuVan yeuCauTuVan,
             DonThuoc donThuoc) {
+
         LocalDateTime thoiDiemTaoDon = LocalDateTime.now();
 
         Map<Long, Integer> soLuongTheoDonVi = chuanHoaDanhSachChiTiet(request.getDanhSachChiTiet());
@@ -184,7 +236,7 @@ public class TaoDonHangDuocSiService {
                 khachHang.getMaKhachHang(),
                 request.getDiaChiGiaoHang());
 
-        DonHang donHang = taoVaLuuDonHang(
+        DonHang donHang = taoVaLuuDonHangGiaoKhach(
                 khachHang,
                 nhanVien,
                 diaChiGiaoHang,
@@ -196,10 +248,7 @@ public class TaoDonHangDuocSiService {
                 request.getGhiChu(),
                 thoiDiemTaoDon);
 
-        for (ChiTietDonHang chiTiet : danhSachChiTietDonHang) {
-            chiTiet.setDonHang(donHang);
-        }
-
+        ganDonHangChoChiTiet(danhSachChiTietDonHang, donHang);
         chiTietDonHangRepository.saveAllAndFlush(danhSachChiTietDonHang);
 
         if (request.getPhuongThucThanhToan() == PhuongThucThanhToan.COD) {
@@ -238,8 +287,61 @@ public class TaoDonHangDuocSiService {
         }
     }
 
+    private void kiemTraYeuCauTaoDonTaiQuay(TaoDonTaiQuayRequest request) {
+        if (request == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Dữ liệu tạo đơn tại quầy không hợp lệ.");
+        }
+
+        if (request.getLoaiKhach() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Vui lòng chọn loại khách hàng.");
+        }
+
+        if (request.getDanhSachChiTiet() == null || request.getDanhSachChiTiet().isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Đơn hàng phải có ít nhất một sản phẩm.");
+        }
+
+        if (request.getLoaiKhach() == LoaiKhachHang.CO_TAI_KHOAN) {
+            if (request.getMaKhachHang() == null || request.getMaKhachHang() <= 0) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Vui lòng chọn khách hàng có tài khoản.");
+            }
+
+            return;
+        }
+
+        if (request.getLoaiKhach() == LoaiKhachHang.VANG_LAI) {
+            if (request.getMaKhachHang() != null) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Khách vãng lai không được liên kết với mã khách hàng.");
+            }
+
+            return;
+        }
+
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Loại khách hàng không hợp lệ.");
+    }
+
+    private KhachHang xacDinhKhachHangTaiQuay(TaoDonTaiQuayRequest request) {
+        if (request.getLoaiKhach() == LoaiKhachHang.VANG_LAI) {
+            return null;
+        }
+
+        return timKhachHangDangHoatDong(request.getMaKhachHang());
+    }
+
     private Map<Long, Integer> chuanHoaDanhSachChiTiet(
             List<ChiTietTaoDonHangDuocSiRequest> danhSachChiTiet) {
+
         Map<Long, Integer> soLuongTheoDonVi = new LinkedHashMap<>();
 
         for (ChiTietTaoDonHangDuocSiRequest chiTiet : danhSachChiTiet) {
@@ -330,6 +432,7 @@ public class TaoDonHangDuocSiService {
     private void kiemTraTonKho(
             List<DonViSanPham> danhSachDonVi,
             Map<Long, Integer> soLuongTheoDonVi) {
+
         List<Long> danhSachMaSanPham = danhSachDonVi.stream()
                 .map(donViSanPham -> donViSanPham.getSanPham().getMaSanPham())
                 .distinct()
@@ -367,6 +470,7 @@ public class TaoDonHangDuocSiService {
             List<DonViSanPham> danhSachDonVi,
             Map<Long, Integer> soLuongTheoDonVi,
             Map<Long, KetQuaTinhGiaSanPham> ketQuaGiaTheoDonVi) {
+
         List<ChiTietDonHang> danhSachChiTietDonHang = new ArrayList<>();
 
         for (DonViSanPham donViSanPham : danhSachDonVi) {
@@ -414,6 +518,15 @@ public class TaoDonHangDuocSiService {
         return danhSachChiTietDonHang;
     }
 
+    private void ganDonHangChoChiTiet(
+            List<ChiTietDonHang> danhSachChiTietDonHang,
+            DonHang donHang) {
+
+        for (ChiTietDonHang chiTiet : danhSachChiTietDonHang) {
+            chiTiet.setDonHang(donHang);
+        }
+    }
+
     private BigDecimal tinhTongTienHang(List<ChiTietDonHang> danhSachChiTietDonHang) {
         BigDecimal tongTienHang = BigDecimal.ZERO;
 
@@ -439,7 +552,7 @@ public class TaoDonHangDuocSiService {
         return tongGiamGiaSanPham;
     }
 
-    private DonHang taoVaLuuDonHang(
+    private DonHang taoVaLuuDonHangGiaoKhach(
             KhachHang khachHang,
             NhanVienNoiBo nhanVien,
             DiaChiGiaoHang diaChiGiaoHang,
@@ -450,6 +563,7 @@ public class TaoDonHangDuocSiService {
             PhuongThucThanhToan phuongThucThanhToan,
             String ghiChu,
             LocalDateTime thoiDiemTaoDon) {
+
         BigDecimal giamGiaDonHang = BigDecimal.ZERO;
         BigDecimal tongThanhToan = tongTienHang
                 .add(PHI_GIAO_HANG_CO_DINH)
@@ -487,9 +601,48 @@ public class TaoDonHangDuocSiService {
         return donHangRepository.saveAndFlush(donHang);
     }
 
+    private DonHang taoVaLuuDonHangTaiQuay(
+            KhachHang khachHang,
+            NhanVienNoiBo nhanVien,
+            LoaiKhachHang loaiKhach,
+            BigDecimal tongTienHang,
+            BigDecimal tongGiamGiaSanPham,
+            String ghiChu,
+            LocalDateTime thoiDiemTaoDon) {
+
+        BigDecimal tongThanhToan = tongTienHang.subtract(tongGiamGiaSanPham);
+
+        if (tongThanhToan.compareTo(BigDecimal.ZERO) < 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Tổng thanh toán tại quầy không hợp lệ.");
+        }
+
+        DonHang donHang = new DonHang();
+        donHang.setNgayDatHang(thoiDiemTaoDon);
+        donHang.setKhachHang(khachHang);
+        donHang.setDiaChiGiaoHang(null);
+        donHang.setVoucherDonHang(null);
+        donHang.setDonThuoc(null);
+        donHang.setYeuCauTuVan(null);
+        donHang.setGioHang(null);
+        donHang.setNhanVienXuLy(nhanVien);
+        donHang.setLoaiKhach(loaiKhach);
+        donHang.setTongTienHang(tongTienHang);
+        donHang.setPhiGiaoHang(KHONG_DONG);
+        donHang.setGiamGia(KHONG_DONG);
+        donHang.setTongThanhToan(tongThanhToan);
+        donHang.setPhuongThucThanhToan(PhuongThucThanhToan.TIEN_MAT);
+        donHang.setTrangThaiThanhToan(TrangThaiThanhToan.DA_THANH_TOAN);
+        donHang.setTrangThaiDonHang(TrangThaiDonHang.HOAN_THANH);
+        donHang.setTrangThaiKiemDuyet(TrangThaiKiemDuyetDonHang.KHONG_CAN_DUYET);
+        donHang.setGhiChu(chuanHoaGhiChu(ghiChu));
+
+        return donHangRepository.saveAndFlush(donHang);
+    }
+
     private KhachHang timKhachHangDangHoatDong(Long maKhachHang) {
-        return khachHangRepository
-                .timThongTinCaNhanDangHoatDong(maKhachHang)
+        return khachHangRepository.timThongTinCaNhanDangHoatDong(maKhachHang)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.CONFLICT,
                         "Khách hàng không còn ở trạng thái hoạt động."));
@@ -502,8 +655,7 @@ public class TaoDonHangDuocSiService {
                     "Không xác định được Dược sĩ đang đăng nhập.");
         }
 
-        return nhanVienNoiBoRepository
-                .findById(maNhanVien)
+        return nhanVienNoiBoRepository.findById(maNhanVien)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Không tìm thấy thông tin Dược sĩ."));

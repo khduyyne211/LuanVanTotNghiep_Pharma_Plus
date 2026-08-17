@@ -12,19 +12,9 @@ import QuanLyDonHangDuocSiPage from "../features/duoc-si/don-hang/pages/QuanLyDo
 
 import TuVanDonThuocDuocSiPage from "../features/duoc-si/tu-van-don-thuoc/pages/TuVanDonThuocDuocSiPage";
 
+import TaoDonTaiQuayPage from "../features/duoc-si/tao-don-tai-quay/pages/TaoDonTaiQuayPage";
+
 const DuocSiLayout = lazy(() => import("../layouts/duoc-si/DuocSiLayout"));
-
-function TrangTaoDonTaiQuayTam() {
-  return (
-    <div className="duoc-si-placeholder-page">
-      <div className="duoc-si-placeholder-card">
-        <h1>Tạo đơn tại quầy</h1>
-
-        <p>Chức năng tạo đơn bán tại quầy đang được triển khai.</p>
-      </div>
-    </div>
-  );
-}
 
 export const DuocSiRoutes = (
   <Route
@@ -71,7 +61,7 @@ export const DuocSiRoutes = (
 
     <Route path="don-hang" element={<QuanLyDonHangDuocSiPage />} />
 
-    <Route path="tao-don-tai-quay" element={<TrangTaoDonTaiQuayTam />} />
+    <Route path="tao-don-tai-quay" element={<TaoDonTaiQuayPage />} />
 
     <Route
       path="*"

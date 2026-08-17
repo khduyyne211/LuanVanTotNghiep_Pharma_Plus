@@ -42,6 +42,10 @@ function hienThiPhuongThucThanhToan(
     return "Thanh toán ZaloPay (QR)";
   }
 
+  if (phuongThuc === "TIEN_MAT") {
+    return "Tiền mặt tại quầy";
+  }
+
   return phuongThuc || "Chưa cập nhật";
 }
 
@@ -201,6 +205,9 @@ function ChiTietDonHangPage() {
     hienThiPhuongThucThanhToan(
       donHang.phuongThucThanhToan
     );
+
+  const laDonTaiQuay =
+    donHang.phuongThucThanhToan === "TIEN_MAT";
 
   const classTrangThai =
     donHang.trangThaiDonHang
@@ -465,38 +472,54 @@ function ChiTietDonHangPage() {
         </div>
       </div>
 
-      <div className="chi-tiet-don-hang-thong-tin-giao-hang">
-        <div className="chi-tiet-don-hang-khoi">
-          <h2 className="chi-tiet-don-hang-khoi-tieu-de">
-            Thông tin người nhận
-          </h2>
+      {laDonTaiQuay ? (
+        <div className="chi-tiet-don-hang-thong-tin-giao-hang">
+          <div className="chi-tiet-don-hang-khoi">
+            <h2 className="chi-tiet-don-hang-khoi-tieu-de">
+              Hình thức nhận hàng
+            </h2>
 
-          <div className="chi-tiet-don-hang-noi-dung">
-            <p className="chi-tiet-don-hang-ten-nguoi-nhan">
-              {donHang.tenNguoiNhan ||
-                "Không có thông tin người nhận"}
-            </p>
-
-            <p>
-              {donHang.soDienThoaiNhan ||
-                "Không có số điện thoại"}
-            </p>
+            <div className="chi-tiet-don-hang-noi-dung">
+              <p>
+                Mua và nhận hàng trực tiếp tại quầy.
+              </p>
+            </div>
           </div>
         </div>
+      ) : (
+        <div className="chi-tiet-don-hang-thong-tin-giao-hang">
+          <div className="chi-tiet-don-hang-khoi">
+            <h2 className="chi-tiet-don-hang-khoi-tieu-de">
+              Thông tin người nhận
+            </h2>
 
-        <div className="chi-tiet-don-hang-khoi">
-          <h2 className="chi-tiet-don-hang-khoi-tieu-de">
-            Địa chỉ nhận hàng
-          </h2>
+            <div className="chi-tiet-don-hang-noi-dung">
+              <p className="chi-tiet-don-hang-ten-nguoi-nhan">
+                {donHang.tenNguoiNhan ||
+                  "Không có thông tin người nhận"}
+              </p>
 
-          <div className="chi-tiet-don-hang-noi-dung">
-            <p>
-              {diaChiNhanHang ||
-                "Không có thông tin địa chỉ."}
-            </p>
+              <p>
+                {donHang.soDienThoaiNhan ||
+                  "Không có số điện thoại"}
+              </p>
+            </div>
+          </div>
+
+          <div className="chi-tiet-don-hang-khoi">
+            <h2 className="chi-tiet-don-hang-khoi-tieu-de">
+              Địa chỉ nhận hàng
+            </h2>
+
+            <div className="chi-tiet-don-hang-noi-dung">
+              <p>
+                {diaChiNhanHang ||
+                  "Không có thông tin địa chỉ."}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="chi-tiet-don-hang-khoi">
         <h2 className="chi-tiet-don-hang-khoi-tieu-de">
