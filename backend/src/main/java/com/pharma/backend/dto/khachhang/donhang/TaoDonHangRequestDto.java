@@ -13,5 +13,7 @@ public class TaoDonHangRequestDto {
 
     private PhuongThucThanhToan phuongThucThanhToan;
 
+    private Long maVoucher;
+
     private String ghiChu;
 }

@@ -13,6 +13,9 @@ import { dongBoGioHangApi } from "../../gio-hang/api/GioHangApi";
 import { useGioHangContext } from "../../gio-hang/context/GioHangContext";
 import { useKiemTraGioHangLocal } from "../../gio-hang/hooks/useKiemTraGioHangLocal";
 
+import ChonVoucherGioHang from "../../voucher-don-hang/components/ChonVoucherGioHang";
+import { useVoucherDonHang } from "../../voucher-don-hang/hooks/useVoucherDonHang";
+
 import type { ChiTietGioHangLocal } from "../../gio-hang/types/GioHangLocal";
 
 import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
@@ -50,6 +53,11 @@ function GioHangPage() {
     kiemTraDanhSachGioHang,
   } = useKiemTraGioHangLocal();
 
+  const voucher =
+    useVoucherDonHang(
+      danhSachChiTietGioHangLocal
+    );
+
   const [
     dangDoiDonVi,
     setDangDoiDonVi,
@@ -70,9 +78,13 @@ function GioHangPage() {
   const dangXuLy =
     dangTaiDuLieu ||
     dangDoiDonVi ||
-    dangDongBo;
+    dangDongBo ||
+    voucher.dangTaiDanhSach ||
+    voucher.dangApDung;
 
-  const giamGiaVoucher = 0;
+  const giamGiaVoucher =
+    voucher.voucherDaApDung
+      ?.soTienGiam ?? 0;
 
   const tietKiemDuoc =
     tongGiamGiaTrucTiep +
@@ -90,6 +102,55 @@ function GioHangPage() {
       giaTri.toLocaleString(
         "vi-VN"
       ) + "đ"
+    );
+  };
+
+  const xuLyApDungVoucher =
+    async () => {
+      const ketQua =
+        await voucher.apDungVoucher();
+
+      if (!ketQua) {
+        return;
+      }
+
+      thongBao.hienThongBao(
+        ketQua.thongBao ||
+          "Áp dụng voucher thành công.",
+        "THANH_CONG",
+        "Áp dụng voucher thành công"
+      );
+    };
+
+  const xuLyApDungVoucherTheoMa =
+    async (
+      maVoucher: number
+    ) => {
+      const ketQua =
+        await voucher
+          .apDungVoucherTheoMaVoucher(
+            maVoucher
+          );
+
+      if (!ketQua) {
+        return;
+      }
+
+      thongBao.hienThongBao(
+        ketQua.thongBao ||
+          "Áp dụng voucher thành công.",
+        "THANH_CONG",
+        "Áp dụng voucher thành công"
+      );
+    };
+
+  const xuLyBoVoucher = () => {
+    voucher.boVoucher();
+
+    thongBao.hienThongBao(
+      "Đã bỏ voucher khỏi đơn hàng tạm tính.",
+      "THANH_CONG",
+      "Đã bỏ voucher"
     );
   };
 
@@ -729,6 +790,52 @@ function GioHangPage() {
             <h2>
               Thông tin đơn hàng
             </h2>
+
+            <ChonVoucherGioHang
+              danhSachVoucher={
+                voucher.danhSachVoucher
+              }
+              voucherDaApDung={
+                voucher.voucherDaApDung
+              }
+              maGiamGiaDangNhap={
+                voucher.maGiamGiaDangNhap
+              }
+              dangMoDanhSachVoucher={
+                voucher.dangMoDanhSachVoucher
+              }
+              dangTaiDanhSach={
+                voucher.dangTaiDanhSach
+              }
+              dangApDung={
+                voucher.dangApDung
+              }
+              loiVoucher={
+                voucher.loiVoucher
+              }
+              thayDoiMaGiamGia={
+                voucher.setMaGiamGiaDangNhap
+              }
+              moDanhSachVoucher={() => {
+                void voucher.moDanhSachVoucher();
+              }}
+              dongDanhSachVoucher={
+                voucher.dongDanhSachVoucher
+              }
+              apDungVoucher={() => {
+                void xuLyApDungVoucher();
+              }}
+              apDungVoucherTheoMaVoucher={(
+                maVoucher
+              ) => {
+                void xuLyApDungVoucherTheoMa(
+                  maVoucher
+                );
+              }}
+              boVoucher={
+                xuLyBoVoucher
+              }
+            />
 
             <div className="gio-hang-tom-tat-dong">
               <span>

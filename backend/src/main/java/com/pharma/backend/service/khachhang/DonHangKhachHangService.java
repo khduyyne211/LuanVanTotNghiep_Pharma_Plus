@@ -51,6 +51,7 @@ public class DonHangKhachHangService {
 
         private final TonKhoSanPhamService tonKhoSanPhamService;
         private final TinhGiaSanPhamService tinhGiaSanPhamService;
+        private final VoucherDonHangKhachHangService voucherDonHangKhachHangService;
 
         @Transactional
         public DonHangResponseDto taoDonHang(
@@ -103,10 +104,32 @@ public class DonHangKhachHangService {
                 BigDecimal tongGiamGiaSanPham = tinhTongGiamGiaSanPham(
                                 danhSachChiTietDonHang);
 
+                /*
+                 * Voucher được xét trên tiền hàng sau khi
+                 * đã trừ khuyến mãi trực tiếp của sản phẩm.
+                 * Phí giao hàng không tham gia điều kiện
+                 * và cũng không bị voucher giảm.
+                 */
+                BigDecimal tienHangSauKhuyenMai = tinhTienHangSauKhuyenMai(
+                                tongTienHang,
+                                tongGiamGiaSanPham);
+
+                /*
+                 * Nếu request.maVoucher = null thì không áp dụng voucher.
+                 * Nếu có voucher, service sẽ khóa và kiểm tra lại voucher,
+                 * tính tiền giảm và giữ một lượt sử dụng trong cùng transaction.
+                 */
+                DuLieuVoucherDonHang duLieuVoucher = voucherDonHangKhachHangService
+                                .giuLuotVoucherKhiTaoDon(
+                                                request.getMaVoucher(),
+                                                tienHangSauKhuyenMai,
+                                                thoiDiemTaoDon);
+
                 DonHang donHang = taoVaLuuDonHang(
                                 duLieu,
                                 tongTienHang,
                                 tongGiamGiaSanPham,
+                                duLieuVoucher,
                                 request.getPhuongThucThanhToan(),
                                 thoiDiemTaoDon);
 
@@ -265,7 +288,24 @@ public class DonHangKhachHangService {
                 donHang.setTrangThaiThanhToan(
                                 TrangThaiThanhToan.DA_HUY);
 
+                /*
+                 * Voucher đã được giữ một lượt khi tạo đơn.
+                 * Chỉ hoàn khi đơn thực sự chuyển sang DA_HUY.
+                 */
+                hoanLuotVoucherNeuCo(donHang);
+
                 donHangRepository.save(donHang);
+        }
+
+        private void hoanLuotVoucherNeuCo(DonHang donHang) {
+                if (donHang == null
+                                || donHang.getVoucherDonHang() == null
+                                || donHang.getVoucherDonHang().getMaVoucher() == null) {
+                        return;
+                }
+
+                voucherDonHangKhachHangService.hoanLuotVoucherKhiHuyDon(
+                                donHang.getVoucherDonHang().getMaVoucher());
         }
 
         private DuLieuTaoDonHang chuanBiDuLieuTaoDonHang(
@@ -311,6 +351,13 @@ public class DonHangKhachHangService {
                         throw new ResponseStatusException(
                                         HttpStatus.BAD_REQUEST,
                                         "Vui lòng chọn địa chỉ nhận hàng.");
+                }
+
+                if (request.getMaVoucher() != null
+                                && request.getMaVoucher() <= 0) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "Mã voucher không hợp lệ.");
                 }
 
                 if (request.getPhuongThucThanhToan() == null) {
@@ -651,67 +698,92 @@ public class DonHangKhachHangService {
                 return tongGiamGiaSanPham;
         }
 
+        private BigDecimal tinhTienHangSauKhuyenMai(
+                        BigDecimal tongTienHang,
+                        BigDecimal tongGiamGiaSanPham) {
+                if (tongTienHang == null || tongGiamGiaSanPham == null) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.INTERNAL_SERVER_ERROR,
+                                        "Không xác định được giá trị đơn hàng.");
+                }
+
+                BigDecimal tienHangSauKhuyenMai = tongTienHang.subtract(tongGiamGiaSanPham);
+
+                if (tienHangSauKhuyenMai.compareTo(BigDecimal.ZERO) < 0) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.INTERNAL_SERVER_ERROR,
+                                        "Giá trị tiền hàng sau khuyến mãi không hợp lệ.");
+                }
+
+                return tienHangSauKhuyenMai;
+        }
+
         private DonHang taoVaLuuDonHang(
                         DuLieuTaoDonHang duLieu,
                         BigDecimal tongTienHang,
                         BigDecimal tongGiamGiaSanPham,
+                        DuLieuVoucherDonHang duLieuVoucher,
                         PhuongThucThanhToan phuongThucThanhToan,
                         LocalDateTime thoiDiemTaoDon) {
                 BigDecimal phiGiaoHang = PHI_GIAO_HANG_CO_DINH;
 
-                /*
-                 * Hiện chưa có voucher.
-                 * don_hang.giam_gia dành cho giảm cấp đơn hàng/voucher.
-                 */
-                BigDecimal giamGiaVoucher = BigDecimal.ZERO;
+                if (duLieuVoucher == null || duLieuVoucher.getSoTienGiam() == null) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.INTERNAL_SERVER_ERROR,
+                                        "Không xác định được kết quả voucher của đơn hàng.");
+                }
+
+                BigDecimal giamGiaVoucher = duLieuVoucher.getSoTienGiam();
+
+                if (giamGiaVoucher.compareTo(BigDecimal.ZERO) < 0) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.INTERNAL_SERVER_ERROR,
+                                        "Số tiền giảm voucher không hợp lệ.");
+                }
 
                 BigDecimal tongThanhToan = tongTienHang
                                 .add(phiGiaoHang)
                                 .subtract(tongGiamGiaSanPham)
                                 .subtract(giamGiaVoucher);
 
+                if (tongThanhToan.compareTo(BigDecimal.ZERO) < 0) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.INTERNAL_SERVER_ERROR,
+                                        "Tổng thanh toán của đơn hàng không hợp lệ.");
+                }
+
                 DonHang donHang = new DonHang();
 
-                donHang.setNgayDatHang(
-                                thoiDiemTaoDon);
+                donHang.setNgayDatHang(thoiDiemTaoDon);
+                donHang.setKhachHang(duLieu.getKhachHang());
+                donHang.setDiaChiGiaoHang(duLieu.getDiaChiGiaoHang());
 
-                donHang.setKhachHang(
-                                duLieu.getKhachHang());
+                /*
+                 * Một đơn hàng chỉ gắn tối đa một voucher.
+                 * Không sử dụng voucher thì giá trị này là null.
+                 */
+                donHang.setVoucherDonHang(duLieuVoucher.getVoucherDonHang());
 
-                donHang.setDiaChiGiaoHang(
-                                duLieu.getDiaChiGiaoHang());
-
-                donHang.setLoaiKhach(
-                                LoaiKhachHang.CO_TAI_KHOAN);
-
+                donHang.setLoaiKhach(LoaiKhachHang.CO_TAI_KHOAN);
                 donHang.setTongTienHang(tongTienHang);
                 donHang.setPhiGiaoHang(phiGiaoHang);
                 donHang.setGiamGia(giamGiaVoucher);
                 donHang.setTongThanhToan(tongThanhToan);
-
-                donHang.setPhuongThucThanhToan(
-                                phuongThucThanhToan);
+                donHang.setPhuongThucThanhToan(phuongThucThanhToan);
 
                 if (phuongThucThanhToan == PhuongThucThanhToan.COD) {
-                        donHang.setTrangThaiThanhToan(
-                                        TrangThaiThanhToan.CHUA_THANH_TOAN);
-
-                        donHang.setTrangThaiDonHang(
-                                        TrangThaiDonHang.CHO_XU_LY);
+                        donHang.setTrangThaiThanhToan(TrangThaiThanhToan.CHUA_THANH_TOAN);
+                        donHang.setTrangThaiDonHang(TrangThaiDonHang.CHO_XU_LY);
                 } else if (phuongThucThanhToan == PhuongThucThanhToan.ZALOPAY) {
-                        donHang.setTrangThaiThanhToan(
-                                        TrangThaiThanhToan.CHO_THANH_TOAN);
-
-                        donHang.setTrangThaiDonHang(
-                                        TrangThaiDonHang.CHO_XU_LY);
+                        donHang.setTrangThaiThanhToan(TrangThaiThanhToan.CHO_THANH_TOAN);
+                        donHang.setTrangThaiDonHang(TrangThaiDonHang.CHO_XU_LY);
                 } else {
                         throw new ResponseStatusException(
                                         HttpStatus.BAD_REQUEST,
                                         "Phương thức thanh toán không được hỗ trợ.");
                 }
 
-                donHang.setGhiChu(
-                                duLieu.getGhiChu());
+                donHang.setGhiChu(duLieu.getGhiChu());
 
                 return donHangRepository.save(donHang);
         }

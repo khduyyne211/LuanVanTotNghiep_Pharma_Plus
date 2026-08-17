@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class XuLyHetHanThanhToanZaloPayService {
 
     private final DonHangRepository donHangRepository;
+    private final VoucherDonHangKhachHangService voucherDonHangKhachHangService;
 
     @Transactional
     public boolean huyDonQuaHan(
@@ -35,8 +36,8 @@ public class XuLyHetHanThanhToanZaloPayService {
          * Khóa lại đơn hàng trước khi cập nhật để tránh
          * xung đột với callback và yêu cầu thanh toán lại.
          */
-        DonHang donHang =
-                donHangRepository
+        DonHang donHang
+                = donHangRepository
                         .timTheoMaDeCapNhat(maDonHang)
                         .orElse(null);
 
@@ -53,8 +54,11 @@ public class XuLyHetHanThanhToanZaloPayService {
         );
 
         donHang.setTrangThaiThanhToan(
-                TrangThaiThanhToan
-                        .THANH_TOAN_THAT_BAI
+                TrangThaiThanhToan.THANH_TOAN_THAT_BAI
+        );
+
+        hoanLuotVoucherNeuCo(
+                donHang
         );
 
         donHangRepository.save(donHang);
@@ -66,6 +70,23 @@ public class XuLyHetHanThanhToanZaloPayService {
         );
 
         return true;
+    }
+
+    private void hoanLuotVoucherNeuCo(
+            DonHang donHang
+    ) {
+        if (donHang == null
+                || donHang.getVoucherDonHang() == null
+                || donHang.getVoucherDonHang()
+                        .getMaVoucher() == null) {
+            return;
+        }
+
+        voucherDonHangKhachHangService
+                .hoanLuotVoucherKhiHuyDon(
+                        donHang.getVoucherDonHang()
+                                .getMaVoucher()
+                );
     }
 
     private boolean duDieuKienHuy(

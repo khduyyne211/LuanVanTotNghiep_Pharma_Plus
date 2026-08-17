@@ -670,8 +670,9 @@ export function useXacNhanDatHang() {
       );
     }, []);
 
-  async function hoanTatDatHang():
-    Promise<DonHangResponse | null> {
+  async function hoanTatDatHang(
+    maVoucher: number | null = null,
+  ): Promise<DonHangResponse | null> {
     if (dangTaoDonHang) {
       return null;
     }
@@ -706,6 +707,8 @@ export function useXacNhanDatHang() {
       return await taoDonHangApi({
         maDiaChi:
           maDiaChiDangChon,
+
+        maVoucher,
 
         phuongThucThanhToan,
 

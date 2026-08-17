@@ -105,6 +105,7 @@ public class SecurityConfig {
                                 "/api/thong-tin-ca-nhan/**",
                                 "/api/dia-chi-giao-hang/**",
                                 "/api/don-hang/khach-hang/**",
+                                "/api/voucher-don-hang/khach-hang/**",
                                 "/api/yeu-cau-tu-van/khach-hang/**",
                                 "/api/don-thuoc/khach-hang/**",
                                 "/api/thanh-toan/zalopay/**")

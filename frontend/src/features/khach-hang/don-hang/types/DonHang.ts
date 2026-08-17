@@ -39,6 +39,7 @@ export type TrangThaiThanhToan =
 
 export interface TaoDonHangRequest {
   maDiaChi: number;
+  maVoucher: number | null;
   phuongThucThanhToan: Exclude<PhuongThucThanhToan, "TIEN_MAT">;
   ghiChu: string | null;
 }
