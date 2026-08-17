@@ -2,6 +2,9 @@ interface TongKetXacNhanDatHangProps {
   tongTienGoc: number;
   tongGiamGiaTrucTiep: number;
   giamGiaVoucher: number;
+  maGiamGiaVoucher: string | null;
+  dangKiemTraVoucher: boolean;
+  thongBaoVoucher: string;
   phiGiaoHang: number;
 
   coTheHoanTat: boolean;
@@ -27,6 +30,9 @@ function TongKetXacNhanDatHang({
   tongTienGoc,
   tongGiamGiaTrucTiep,
   giamGiaVoucher,
+  maGiamGiaVoucher,
+  dangKiemTraVoucher,
+  thongBaoVoucher,
   phiGiaoHang,
   coTheHoanTat,
   dangTaoDonHang,
@@ -66,6 +72,16 @@ function TongKetXacNhanDatHang({
           )}
         </strong>
       </div>
+
+      {maGiamGiaVoucher && (
+        <div className="xac-nhan-tong-ket-dong">
+          <span>Voucher đã áp dụng</span>
+
+          <strong>
+            {maGiamGiaVoucher}
+          </strong>
+        </div>
+      )}
 
       <div className="xac-nhan-tong-ket-dong">
         <span>Giảm giá voucher</span>
@@ -107,12 +123,25 @@ function TongKetXacNhanDatHang({
         </strong>
       </div>
 
+      {dangKiemTraVoucher && (
+        <p className="xac-nhan-tong-ket-luu-y">
+          Đang kiểm tra lại voucher...
+        </p>
+      )}
+
+      {thongBaoVoucher && (
+        <p className="xac-nhan-loi-tao-don">
+          {thongBaoVoucher}
+        </p>
+      )}
+
       <button
         type="button"
         className="xac-nhan-nut-hoan-tat"
         disabled={
           !coTheHoanTat ||
-          dangTaoDonHang
+          dangTaoDonHang ||
+          dangKiemTraVoucher
         }
         onClick={hoanTatMuaHang}
       >
@@ -120,12 +149,6 @@ function TongKetXacNhanDatHang({
           ? "Đang tạo đơn hàng..."
           : "Hoàn tất mua hàng"}
       </button>
-
-      {!coTheHoanTat && (
-        <p className="xac-nhan-tong-ket-luu-y">
-          Vui lòng kiểm tra đầy đủ thông tin đặt hàng trước khi tiếp tục.
-        </p>
-      )}
 
       {loiTaoDonHang && (
         <p className="xac-nhan-loi-tao-don">

@@ -17,6 +17,8 @@ import TongKetXacNhanDatHang from "../../xac-nhan-dat-hang/components/TongKetXac
 
 import { useXacNhanDatHang } from "../../xac-nhan-dat-hang/hooks/useXacNhanDatHang";
 
+import { useVoucherXacNhanDatHang } from "../../voucher-don-hang/hooks/useVoucherXacNhanDatHang";
+
 import { useGioHangContext } from "../../gio-hang/context/GioHangContext";
 import { useKiemTraGioHangLocal } from "../../gio-hang/hooks/useKiemTraGioHangLocal";
 
@@ -33,8 +35,6 @@ const KHOA_THANH_TOAN_ZALOPAY =
 const PHI_GIAO_HANG_CO_DINH =
   30000;
 
-const GIAM_GIA_VOUCHER_HIEN_TAI =
-  0;
 
 function XacNhanDatHangPage() {
   const navigate = useNavigate();
@@ -46,6 +46,7 @@ function XacNhanDatHangPage() {
     useThongBaoHeThong();
 
   const {
+    danhSachChiTietGioHangLocal,
     xoaToanBoGioHangLocal,
   } = useGioHangContext();
 
@@ -61,6 +62,11 @@ function XacNhanDatHangPage() {
     thongBaoLoi:
       thongBaoLoiGioHang,
   } = useKiemTraGioHangLocal();
+
+  const voucherXacNhan =
+    useVoucherXacNhanDatHang(
+      danhSachChiTietGioHangLocal
+    );
 
   const [
     dangMoThanhToanZaloPay,
@@ -127,6 +133,8 @@ function XacNhanDatHangPage() {
     xacNhanDatHang.coTheHoanTat &&
     daKiemTraGioHangThanhCong &&
     gioHangHopLe &&
+    !voucherXacNhan
+      .dangKiemTraVoucher &&
     danhSachChiTietHienThi.length >
       0;
 
@@ -151,7 +159,11 @@ function XacNhanDatHangPage() {
 
     const donHangDaTao =
       await xacNhanDatHang
-        .hoanTatDatHang();
+        .hoanTatDatHang(
+          voucherXacNhan
+            .voucherDaXacNhan
+            ?.maVoucher ?? null
+        );
 
     if (!donHangDaTao) {
       if (laThanhToanQr) {
@@ -163,8 +175,15 @@ function XacNhanDatHangPage() {
       return;
     }
 
-    xoaToanBoGioHangLocal();
-
+    /*
+     * Không xóa giỏ hàng/voucher ngay sau khi backend tạo đơn thành công.
+     *
+     * Nếu xóa tại đây thì trang xác nhận sẽ render lại với giỏ rỗng
+     * trong lúc đang hiện thông báo thành công hoặc đang chờ mở ZaloPay,
+     * làm toàn bộ số tiền trên khối thanh toán bị về 0.
+     *
+     * Chỉ xóa dữ liệu tạm ngay trước khi rời khỏi trang xác nhận.
+     */
     if (
       donHangDaTao
         .phuongThucThanhToan ===
@@ -234,6 +253,15 @@ function XacNhanDatHangPage() {
           replace: true,
         }
       );
+
+      /*
+       * Đơn đã được tạo và trang đang rời khỏi màn hình xác nhận,
+       * lúc này mới xóa voucher/giỏ hàng tạm.
+       */
+      voucherXacNhan
+        .xoaVoucherSauKhiTaoDon();
+
+      xoaToanBoGioHangLocal();
     } catch (error) {
       console.error(
         "Không thể mở thanh toán ZaloPay:",
@@ -249,6 +277,15 @@ function XacNhanDatHangPage() {
           "nhưng chưa thể mở trang thanh toán ZaloPay. " +
           "Bạn có thể vào danh sách đơn hàng để thanh toán lại."
       );
+
+      /*
+       * Đơn hàng đã được tạo thành công dù chưa mở được ZaloPay.
+       * Xóa dữ liệu giỏ hàng cũ trước khi chuyển sang danh sách đơn.
+       */
+      voucherXacNhan
+        .xoaVoucherSauKhiTaoDon();
+
+      xoaToanBoGioHangLocal();
 
       window.location.replace(
         "/tai-khoan/don-hang"
@@ -281,12 +318,24 @@ function XacNhanDatHangPage() {
     }
 
     if (canChuyenTrang) {
+      /*
+       * Giữ nguyên dữ liệu giá trong suốt thời gian popup
+       * "Đặt hàng thành công" đang hiển thị.
+       *
+       * Chỉ khi khách đóng popup để rời trang mới dọn
+       * voucher và giỏ hàng tạm.
+       */
       navigate(
         "/tai-khoan/don-hang",
         {
           replace: true,
         }
       );
+
+      voucherXacNhan
+        .xoaVoucherSauKhiTaoDon();
+
+      xoaToanBoGioHangLocal();
     }
   }
 
@@ -452,7 +501,22 @@ function XacNhanDatHangPage() {
               tongGiamGiaTrucTiep
             }
             giamGiaVoucher={
-              GIAM_GIA_VOUCHER_HIEN_TAI
+              voucherXacNhan
+                .voucherDaXacNhan
+                ?.soTienGiam ?? 0
+            }
+            maGiamGiaVoucher={
+              voucherXacNhan
+                .voucherDaXacNhan
+                ?.maGiamGia ?? null
+            }
+            dangKiemTraVoucher={
+              voucherXacNhan
+                .dangKiemTraVoucher
+            }
+            thongBaoVoucher={
+              voucherXacNhan
+                .thongBaoVoucher
             }
             phiGiaoHang={
               PHI_GIAO_HANG_CO_DINH

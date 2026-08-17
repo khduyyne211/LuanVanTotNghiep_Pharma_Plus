@@ -41,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DonHangKhachHangService {
+
     private static final BigDecimal PHI_GIAO_HANG_CO_DINH = new BigDecimal("30000.00");
 
     private final GioHangRepository gioHangRepository;
@@ -51,82 +52,116 @@ public class DonHangKhachHangService {
 
     private final TonKhoSanPhamService tonKhoSanPhamService;
     private final TinhGiaSanPhamService tinhGiaSanPhamService;
+    private final VoucherDonHangKhachHangService voucherDonHangKhachHangService;
 
     @Transactional
     public DonHangResponseDto taoDonHang(
-                Long maKhachHang,
-                TaoDonHangRequestDto request
-        ) {
+            Long maKhachHang,
+            TaoDonHangRequestDto request
+    ) {
         /*
         * Một thời điểm chung được dùng để:
         * - tính khuyến mãi;
         * - ghi thời điểm đặt đơn;
         * - tạo toàn bộ snapshot giá.
-        */
-        LocalDateTime thoiDiemTaoDon =
-                LocalDateTime.now();
+         */
+        LocalDateTime thoiDiemTaoDon
+                = LocalDateTime.now();
 
-        DuLieuTaoDonHang duLieu =
-                chuanBiDuLieuTaoDonHang(
+        DuLieuTaoDonHang duLieu
+                = chuanBiDuLieuTaoDonHang(
                         maKhachHang,
                         request
                 );
 
-        List<ChiTietGioHang> danhSachChiTietGioHang =
-                duLieu.getDanhSachChiTietGioHang();
+        List<ChiTietGioHang> danhSachChiTietGioHang
+                = duLieu.getDanhSachChiTietGioHang();
 
         /*
         * Kiểm tra lại tồn kho ngay trước khi tạo đơn.
         * Bước này không trừ tồn.
-        */
+         */
         kiemTraTonKhoMoiNhat(
                 danhSachChiTietGioHang
         );
 
-        List<DonViSanPham> danhSachDonVi =
-                layDanhSachDonViKhongTrung(
+        List<DonViSanPham> danhSachDonVi
+                = layDanhSachDonViKhongTrung(
                         danhSachChiTietGioHang
                 );
 
-        Map<Long, KetQuaTinhGiaSanPham>
-                ketQuaGiaTheoDonVi =
-                tinhGiaSanPhamService
+        Map<Long, KetQuaTinhGiaSanPham> ketQuaGiaTheoDonVi
+                = tinhGiaSanPhamService
                         .tinhGiaTheoDanhSachDonVi(
                                 danhSachDonVi,
                                 thoiDiemTaoDon
                         );
 
-        List<ChiTietDonHang> danhSachChiTietDonHang =
-                taoDanhSachChiTietDonHang(
+        List<ChiTietDonHang> danhSachChiTietDonHang
+                = taoDanhSachChiTietDonHang(
                         danhSachChiTietGioHang,
                         ketQuaGiaTheoDonVi
                 );
 
-        BigDecimal tongTienHang =
-                tinhTongTienHang(
+        BigDecimal tongTienHang
+                = tinhTongTienHang(
                         danhSachChiTietDonHang
                 );
 
-        BigDecimal tongGiamGiaSanPham =
-                tinhTongGiamGiaSanPham(
+        BigDecimal tongGiamGiaSanPham
+                = tinhTongGiamGiaSanPham(
                         danhSachChiTietDonHang
                 );
+
+        /*
+         * Voucher được xét trên tiền hàng sau khi
+         * đã trừ khuyến mãi trực tiếp của sản phẩm.
+         *
+         * Phí giao hàng không tham gia điều kiện
+         * và cũng không bị voucher giảm.
+         */
+        BigDecimal tienHangSauKhuyenMai
+                = tinhTienHangSauKhuyenMai(
+                        tongTienHang,
+                        tongGiamGiaSanPham
+                );
+
+        /*
+         * Nếu request.maVoucher = null:
+         * - không áp dụng voucher.
+         *
+         * Nếu có:
+         * - khóa voucher;
+         * - kiểm tra lại điều kiện;
+         * - tính tiền giảm;
+         * - tăng một lượt sử dụng.
+         *
+         * Toàn bộ vẫn nằm trong transaction tạo đơn.
+         */
+        DuLieuVoucherDonHang duLieuVoucher
+                = voucherDonHangKhachHangService
+                        .giuLuotVoucherKhiTaoDon(
+                                request.getMaVoucher(),
+                                tienHangSauKhuyenMai,
+                                thoiDiemTaoDon
+                        );
 
         DonHang donHang = taoVaLuuDonHang(
                 duLieu,
                 tongTienHang,
                 tongGiamGiaSanPham,
+                duLieuVoucher,
                 request.getPhuongThucThanhToan(),
                 thoiDiemTaoDon
         );
 
         for (ChiTietDonHang chiTiet
                 : danhSachChiTietDonHang) {
-                chiTiet.setDonHang(donHang);
+            chiTiet.setDonHang(donHang);
         }
 
-        List<ChiTietDonHang> danhSachChiTietDaLuu =
-                chiTietDonHangRepository.saveAll(
+        List<ChiTietDonHang> danhSachChiTietDaLuu
+                = chiTietDonHangRepository.saveAll(
                         danhSachChiTietDonHang
                 );
 
@@ -146,8 +181,8 @@ public class DonHangKhachHangService {
     ) {
         kiemTraKhachHangDangNhap(maKhachHang);
 
-        List<DonHang> danhSachDonHang =
-                donHangRepository
+        List<DonHang> danhSachDonHang
+                = donHangRepository
                         .findByKhachHang_MaKhachHangOrderByNgayDatHangDesc(
                                 maKhachHang
                         );
@@ -160,20 +195,20 @@ public class DonHangKhachHangService {
                 .map(DonHang::getMaDonHang)
                 .toList();
 
-        List<ChiTietDonHang> danhSachChiTiet =
-                chiTietDonHangRepository
+        List<ChiTietDonHang> danhSachChiTiet
+                = chiTietDonHangRepository
                         .layChiTietTheoDanhSachDonHang(
                                 danhSachMaDonHang
                         );
 
-        Map<Long, List<ChiTietDonHang>> chiTietTheoMaDonHang =
-                gomChiTietTheoMaDonHang(danhSachChiTiet);
+        Map<Long, List<ChiTietDonHang>> chiTietTheoMaDonHang
+                = gomChiTietTheoMaDonHang(danhSachChiTiet);
 
         List<DonHangDanhSachDto> ketQua = new ArrayList<>();
 
         for (DonHang donHang : danhSachDonHang) {
-            List<ChiTietDonHang> chiTietCuaDon =
-                    chiTietTheoMaDonHang.getOrDefault(
+            List<ChiTietDonHang> chiTietCuaDon
+                    = chiTietTheoMaDonHang.getOrDefault(
                             donHang.getMaDonHang(),
                             List.of()
                     );
@@ -198,7 +233,7 @@ public class DonHangKhachHangService {
 
         if (maDonHang == null || maDonHang <= 0) {
             throw new ResponseStatusException(
-HttpStatus.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
                     "Mã đơn hàng không hợp lệ."
             );
         }
@@ -209,12 +244,12 @@ HttpStatus.BAD_REQUEST,
                         maKhachHang
                 )
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Không tìm thấy đơn hàng."
-                ));
+                HttpStatus.NOT_FOUND,
+                "Không tìm thấy đơn hàng."
+        ));
 
-        List<ChiTietDonHang> danhSachChiTiet =
-                chiTietDonHangRepository
+        List<ChiTietDonHang> danhSachChiTiet
+                = chiTietDonHangRepository
                         .layChiTietTheoMaDonHang(maDonHang);
 
         if (danhSachChiTiet.isEmpty()) {
@@ -230,95 +265,126 @@ HttpStatus.BAD_REQUEST,
         );
     }
 
-        @Transactional
-        public void huyDonHang(
-                Long maKhachHang,
-                Long maDonHang
-        ) {
-                kiemTraKhachHangDangNhap(maKhachHang);
+    @Transactional
+    public void huyDonHang(
+            Long maKhachHang,
+            Long maDonHang
+    ) {
+        kiemTraKhachHangDangNhap(maKhachHang);
 
-                if (maDonHang == null || maDonHang <= 0) {
-                        throw new ResponseStatusException(
-                                HttpStatus.BAD_REQUEST,
-                                "Mã đơn hàng không hợp lệ."
-                        );
-                }
+        if (maDonHang == null || maDonHang <= 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Mã đơn hàng không hợp lệ."
+            );
+        }
 
-                /*
+        /*
                 * Khóa đơn hàng để tránh xung đột giữa:
                 * - Khách hàng hủy đơn.
                 * - Callback ZaloPay.
                 * - Scheduler hủy đơn quá hạn.
                 * - Nhân viên tiếp nhận xử lý đơn.
-                */
-                DonHang donHang = donHangRepository
-                        .timTheoMaDeCapNhat(maDonHang)
-                        .orElseThrow(() -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Không tìm thấy đơn hàng."
-                        ));
+         */
+        DonHang donHang = donHangRepository
+                .timTheoMaDeCapNhat(maDonHang)
+                .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Không tìm thấy đơn hàng."
+        ));
 
-                if (donHang.getKhachHang() == null
-                        || donHang.getKhachHang().getMaKhachHang() == null
-                        || !maKhachHang.equals(
-                                donHang.getKhachHang().getMaKhachHang()
-                        )) {
-                        throw new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Không tìm thấy đơn hàng."
-                        );
-                }
-
-                if (donHang.getTrangThaiDonHang()
-                        == TrangThaiDonHang.DA_HUY) {
-                        throw new ResponseStatusException(
-                                HttpStatus.CONFLICT,
-                                "Đơn hàng đã được hủy trước đó."
-                        );
-                }
-
-                if (donHang.getTrangThaiThanhToan()
-                        == TrangThaiThanhToan.DA_THANH_TOAN) {
-                        throw new ResponseStatusException(
-                                HttpStatus.CONFLICT,
-                                "Đơn hàng đã thanh toán. "
-                                        + "Vui lòng liên hệ nhà thuốc để được hỗ trợ."
-                        );
-                }
-
-                boolean coTheHuyDonCod =
-                        donHang.getPhuongThucThanhToan()
-                                == PhuongThucThanhToan.COD
-                        && donHang.getTrangThaiDonHang()
-                                == TrangThaiDonHang.CHO_XU_LY
-                        && donHang.getTrangThaiThanhToan()
-                                == TrangThaiThanhToan.CHUA_THANH_TOAN;
-
-                boolean coTheHuyDonZaloPay =
-                        donHang.getPhuongThucThanhToan()
-                                == PhuongThucThanhToan.ZALOPAY
-                        && donHang.getTrangThaiDonHang()
-                                == TrangThaiDonHang.CHO_XU_LY
-                        && donHang.getTrangThaiThanhToan()
-                                == TrangThaiThanhToan.CHO_THANH_TOAN;
-
-                if (!coTheHuyDonCod && !coTheHuyDonZaloPay) {
-                        throw new ResponseStatusException(
-                                HttpStatus.CONFLICT,
-                                "Đơn hàng không còn ở trạng thái cho phép khách hàng hủy."
-                        );
-                }
-
-                donHang.setTrangThaiDonHang(
-                        TrangThaiDonHang.DA_HUY
-                );
-
-                donHang.setTrangThaiThanhToan(
-                        TrangThaiThanhToan.DA_HUY
-                );
-
-                donHangRepository.save(donHang);
+        if (donHang.getKhachHang() == null
+                || donHang.getKhachHang().getMaKhachHang() == null
+                || !maKhachHang.equals(
+                        donHang.getKhachHang().getMaKhachHang()
+                )) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Không tìm thấy đơn hàng."
+            );
         }
+
+        if (donHang.getTrangThaiDonHang()
+                == TrangThaiDonHang.DA_HUY) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Đơn hàng đã được hủy trước đó."
+            );
+        }
+
+        if (donHang.getTrangThaiThanhToan()
+                == TrangThaiThanhToan.DA_THANH_TOAN) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Đơn hàng đã thanh toán. "
+                    + "Vui lòng liên hệ nhà thuốc để được hỗ trợ."
+            );
+        }
+
+        boolean coTheHuyDonCod
+                = donHang.getPhuongThucThanhToan()
+                == PhuongThucThanhToan.COD
+                && donHang.getTrangThaiDonHang()
+                == TrangThaiDonHang.CHO_XU_LY
+                && donHang.getTrangThaiThanhToan()
+                == TrangThaiThanhToan.CHUA_THANH_TOAN;
+
+        boolean coTheHuyDonZaloPay
+                = donHang.getPhuongThucThanhToan()
+                == PhuongThucThanhToan.ZALOPAY
+                && donHang.getTrangThaiDonHang()
+                == TrangThaiDonHang.CHO_XU_LY
+                && donHang.getTrangThaiThanhToan()
+                == TrangThaiThanhToan.CHO_THANH_TOAN;
+
+        if (!coTheHuyDonCod && !coTheHuyDonZaloPay) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Đơn hàng không còn ở trạng thái cho phép khách hàng hủy."
+            );
+        }
+
+        donHang.setTrangThaiDonHang(
+                TrangThaiDonHang.DA_HUY
+        );
+
+        donHang.setTrangThaiThanhToan(
+                TrangThaiThanhToan.DA_HUY
+        );
+
+        /*
+                * Voucher đã được giữ một lượt khi tạo đơn.
+                *
+                * Chỉ hoàn khi đơn thực sự chuyển
+                * từ trạng thái có thể hủy sang DA_HUY.
+         */
+        hoanLuotVoucherNeuCo(
+                donHang
+        );
+
+        donHangRepository.save(
+                donHang
+        );
+    }
+
+    private void hoanLuotVoucherNeuCo(
+            DonHang donHang
+    ) {
+
+        if (donHang == null
+                || donHang.getVoucherDonHang()
+                == null
+                || donHang.getVoucherDonHang()
+                        .getMaVoucher() == null) {
+            return;
+        }
+
+        voucherDonHangKhachHangService
+                .hoanLuotVoucherKhiHuyDon(
+                        donHang.getVoucherDonHang()
+                                .getMaVoucher()
+                );
+    }
 
     private DuLieuTaoDonHang chuanBiDuLieuTaoDonHang(
             Long maKhachHang,
@@ -328,16 +394,16 @@ HttpStatus.BAD_REQUEST,
 
         GioHang gioHang = layGioHangCuaKhachHang(maKhachHang);
 
-        List<ChiTietGioHang> danhSachChiTiet =
-                chiTietGioHangRepository
+        List<ChiTietGioHang> danhSachChiTiet
+                = chiTietGioHangRepository
                         .layDanhSachChiTietDeTaoDonHang(
                                 gioHang.getMaGioHang()
                         );
 
         kiemTraGioHangKhongRong(danhSachChiTiet);
 
-        DiaChiGiaoHang diaChiGiaoHang =
-                layDiaChiGiaoHangHopLe(
+        DiaChiGiaoHang diaChiGiaoHang
+                = layDiaChiGiaoHangHopLe(
                         request.getMaDiaChi(),
                         maKhachHang
                 );
@@ -375,6 +441,14 @@ HttpStatus.BAD_REQUEST,
             );
         }
 
+        if (request.getMaVoucher() != null
+                && request.getMaVoucher() <= 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Mã voucher không hợp lệ."
+            );
+        }
+
         if (request.getPhuongThucThanhToan() == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -382,11 +456,11 @@ HttpStatus.BAD_REQUEST,
             );
         }
 
-        PhuongThucThanhToan phuongThucThanhToan =
-                request.getPhuongThucThanhToan();
+        PhuongThucThanhToan phuongThucThanhToan
+                = request.getPhuongThucThanhToan();
 
         if (phuongThucThanhToan != PhuongThucThanhToan.COD
-&& phuongThucThanhToan != PhuongThucThanhToan.ZALOPAY) {
+                && phuongThucThanhToan != PhuongThucThanhToan.ZALOPAY) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Phương thức thanh toán không được hỗ trợ."
@@ -407,9 +481,9 @@ HttpStatus.BAD_REQUEST,
         return gioHangRepository
                 .layGioHangDeTaoDonHang(maKhachHang)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Giỏ hàng chưa có sản phẩm."
-                ));
+                HttpStatus.BAD_REQUEST,
+                "Giỏ hàng chưa có sản phẩm."
+        ));
     }
 
     private void kiemTraGioHangKhongRong(
@@ -423,11 +497,11 @@ HttpStatus.BAD_REQUEST,
             );
         }
 
-        boolean coSoLuongKhongHopLe =
-                danhSachChiTiet.stream()
-                        .anyMatch(chiTiet ->
-                                chiTiet.getSoLuong() == null
-                                        || chiTiet.getSoLuong() <= 0
+        boolean coSoLuongKhongHopLe
+                = danhSachChiTiet.stream()
+                        .anyMatch(chiTiet
+                                -> chiTiet.getSoLuong() == null
+                        || chiTiet.getSoLuong() <= 0
                         );
 
         if (coSoLuongKhongHopLe) {
@@ -439,30 +513,30 @@ HttpStatus.BAD_REQUEST,
     }
 
     private DiaChiGiaoHang layDiaChiGiaoHangHopLe(
-                Long maDiaChi,
-                Long maKhachHang
-        ) {
-        DiaChiGiaoHang diaChiGiaoHang =
-                diaChiGiaoHangRepository
+            Long maDiaChi,
+            Long maKhachHang
+    ) {
+        DiaChiGiaoHang diaChiGiaoHang
+                = diaChiGiaoHangRepository
                         .findByMaDiaChiAndKhachHang_MaKhachHangAndTrangThaiSuDungTrue(
                                 maDiaChi,
                                 maKhachHang
                         )
-                        .orElseThrow(() ->
-                                new ResponseStatusException(
-                                        HttpStatus.BAD_REQUEST,
-                                        "Địa chỉ nhận hàng không hợp lệ."
-                                )
+                        .orElseThrow(()
+                                -> new ResponseStatusException(
+                                HttpStatus.BAD_REQUEST,
+                                "Địa chỉ nhận hàng không hợp lệ."
+                        )
                         );
 
         if (!TinhThanhGiaoHang.duocHoTro(
                 diaChiGiaoHang.getThanhPho()
         )) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Địa chỉ nhận hàng nằm ngoài "
-                                + "khu vực giao hàng được hỗ trợ."
-                );
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Địa chỉ nhận hàng nằm ngoài "
+                    + "khu vực giao hàng được hỗ trợ."
+            );
         }
 
         return diaChiGiaoHang;
@@ -490,142 +564,141 @@ HttpStatus.BAD_REQUEST,
     ) {
         if (donViBan == null
                 || donViBan.getSanPham() == null) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Thông tin đơn vị sản phẩm trong giỏ hàng không hợp lệ."
-                );
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Thông tin đơn vị sản phẩm trong giỏ hàng không hợp lệ."
+            );
         }
 
         if (!Boolean.TRUE.equals(
                 donViBan.getTrangThai()
         )) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Có đơn vị sản phẩm đã ngừng hoạt động."
-                );
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Có đơn vị sản phẩm đã ngừng hoạt động."
+            );
         }
 
         if (!Boolean.TRUE.equals(
                 donViBan.getChoPhepBan()
         )) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Có đơn vị sản phẩm không còn được phép bán."
-                );
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Có đơn vị sản phẩm không còn được phép bán."
+            );
         }
 
         if (donViBan.getGiaBanTheoDonVi() == null
                 || donViBan.getGiaBanTheoDonVi()
                         .compareTo(BigDecimal.ZERO) <= 0) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Giá bán của đơn vị sản phẩm không hợp lệ."
-                );
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Giá bán của đơn vị sản phẩm không hợp lệ."
+            );
         }
     }
 
     private void kiemTraTonKhoMoiNhat(
-                List<ChiTietGioHang> danhSachChiTiet
-        ) {
+            List<ChiTietGioHang> danhSachChiTiet
+    ) {
         for (ChiTietGioHang chiTiet
                 : danhSachChiTiet) {
-                kiemTraDonViBanHopLe(
-                        chiTiet.getDonViSanPham()
-                );
+            kiemTraDonViBanHopLe(
+                    chiTiet.getDonViSanPham()
+            );
         }
 
-        List<Long> danhSachMaSanPham =
-                danhSachChiTiet.stream()
+        List<Long> danhSachMaSanPham
+                = danhSachChiTiet.stream()
                         .map(ChiTietGioHang::getDonViSanPham)
                         .map(DonViSanPham::getSanPham)
-                        .map(sanPham ->
-                                sanPham.getMaSanPham()
+                        .map(sanPham
+                                -> sanPham.getMaSanPham()
                         )
                         .distinct()
                         .toList();
 
-        Map<Long, List<QuyDoiDonVi>>
-                quyDoiTheoSanPham =
-                tonKhoSanPhamService
+        Map<Long, List<QuyDoiDonVi>> quyDoiTheoSanPham
+                = tonKhoSanPhamService
                         .layQuyDoiTheoDanhSachSanPham(
                                 danhSachMaSanPham
                         );
 
-        Map<Long, BigDecimal> tonTheoSanPham =
-                tonKhoSanPhamService
+        Map<Long, BigDecimal> tonTheoSanPham
+                = tonKhoSanPhamService
                         .layTonKhaDungTheoDanhSachSanPham(
                                 danhSachMaSanPham
                         );
 
-        Map<Long, BigDecimal> tongCanTheoSanPham =
-                new LinkedHashMap<>();
+        Map<Long, BigDecimal> tongCanTheoSanPham
+                = new LinkedHashMap<>();
 
         for (ChiTietGioHang chiTiet
                 : danhSachChiTiet) {
-                DonViSanPham donViBan =
-                        chiTiet.getDonViSanPham();
+            DonViSanPham donViBan
+                    = chiTiet.getDonViSanPham();
 
-                Long maSanPham =
-                        donViBan.getSanPham()
-                                .getMaSanPham();
+            Long maSanPham
+                    = donViBan.getSanPham()
+                            .getMaSanPham();
 
-                List<QuyDoiDonVi> danhSachQuyDoi =
-                        quyDoiTheoSanPham.getOrDefault(
-                                maSanPham,
-                                List.of()
-                        );
+            List<QuyDoiDonVi> danhSachQuyDoi
+                    = quyDoiTheoSanPham.getOrDefault(
+                            maSanPham,
+                            List.of()
+                    );
 
-                BigDecimal heSoQuyDoi =
-                        tonKhoSanPhamService
-                                .tinhHeSoVeDonViCoSo(
-                                        donViBan,
-                                        danhSachQuyDoi
-                                );
+            BigDecimal heSoQuyDoi
+                    = tonKhoSanPhamService
+                            .tinhHeSoVeDonViCoSo(
+                                    donViBan,
+                                    danhSachQuyDoi
+                            );
 
-                BigDecimal soLuongCan =
-                        heSoQuyDoi.multiply(
-                                BigDecimal.valueOf(
-                                        chiTiet.getSoLuong()
-                                )
-                        );
+            BigDecimal soLuongCan
+                    = heSoQuyDoi.multiply(
+                            BigDecimal.valueOf(
+                                    chiTiet.getSoLuong()
+                            )
+                    );
 
-                tongCanTheoSanPham.merge(
-                        maSanPham,
-                        soLuongCan,
-                        BigDecimal::add
-                );
+            tongCanTheoSanPham.merge(
+                    maSanPham,
+                    soLuongCan,
+                    BigDecimal::add
+            );
         }
 
-        boolean duTon =
-                tonKhoSanPhamService.kiemTraDuTon(
+        boolean duTon
+                = tonKhoSanPhamService.kiemTraDuTon(
                         tongCanTheoSanPham,
                         tonTheoSanPham
                 );
 
         if (!duTon) {
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
-                        "Số lượng yêu cầu vượt quá tồn kho hiện có."
-                );
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Số lượng yêu cầu vượt quá tồn kho hiện có."
+            );
         }
     }
 
     private List<DonViSanPham>
-                layDanhSachDonViKhongTrung(
-                        List<ChiTietGioHang> danhSachChiTiet
-                ) {
-        Map<Long, DonViSanPham> donViTheoMa =
-                new LinkedHashMap<>();
+            layDanhSachDonViKhongTrung(
+                    List<ChiTietGioHang> danhSachChiTiet
+            ) {
+        Map<Long, DonViSanPham> donViTheoMa
+                = new LinkedHashMap<>();
 
         for (ChiTietGioHang chiTiet
                 : danhSachChiTiet) {
-                DonViSanPham donViSanPham =
-                        chiTiet.getDonViSanPham();
+            DonViSanPham donViSanPham
+                    = chiTiet.getDonViSanPham();
 
-                donViTheoMa.put(
-                        donViSanPham.getMaDonViSanPham(),
-                        donViSanPham
-                );
+            donViTheoMa.put(
+                    donViSanPham.getMaDonViSanPham(),
+                    donViSanPham
+            );
         }
 
         return new ArrayList<>(
@@ -634,251 +707,309 @@ HttpStatus.BAD_REQUEST,
     }
 
     private List<ChiTietDonHang>
-                taoDanhSachChiTietDonHang(
-                        List<ChiTietGioHang>
-                                danhSachChiTietGioHang,
-                        Map<Long, KetQuaTinhGiaSanPham>
-                                ketQuaGiaTheoDonVi
-                ) {
-        List<ChiTietDonHang>
-                danhSachChiTietDonHang =
-                new ArrayList<>();
+            taoDanhSachChiTietDonHang(
+                    List<ChiTietGioHang> danhSachChiTietGioHang,
+                    Map<Long, KetQuaTinhGiaSanPham> ketQuaGiaTheoDonVi
+            ) {
+        List<ChiTietDonHang> danhSachChiTietDonHang
+                = new ArrayList<>();
 
         for (ChiTietGioHang chiTietGioHang
                 : danhSachChiTietGioHang) {
-                DonViSanPham donViSanPham =
-                        chiTietGioHang.getDonViSanPham();
+            DonViSanPham donViSanPham
+                    = chiTietGioHang.getDonViSanPham();
 
-                KetQuaTinhGiaSanPham ketQuaGia =
-                        ketQuaGiaTheoDonVi.get(
-                                donViSanPham
-                                        .getMaDonViSanPham()
-                        );
+            KetQuaTinhGiaSanPham ketQuaGia
+                    = ketQuaGiaTheoDonVi.get(
+                            donViSanPham
+                                    .getMaDonViSanPham()
+                    );
 
-                if (ketQuaGia == null) {
+            if (ketQuaGia == null) {
                 throw new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         "Không tìm thấy kết quả tính giá khi tạo đơn hàng."
                 );
-                }
+            }
 
-                BigDecimal soLuong =
-                        BigDecimal.valueOf(
-                                chiTietGioHang.getSoLuong()
-                        );
+            BigDecimal soLuong
+                    = BigDecimal.valueOf(
+                            chiTietGioHang.getSoLuong()
+                    );
 
-                /*
+            /*
                 * donGia là giá gốc của một đơn vị.
-                */
-                BigDecimal donGia =
-                        ketQuaGia.giaGoc();
+             */
+            BigDecimal donGia
+                    = ketQuaGia.giaGoc();
 
-                /*
+            /*
                 * giamGia là tổng giảm giá của cả dòng.
-                */
-                BigDecimal giamGia =
-                        ketQuaGia
-                                .soTienGiamMoiDonVi()
-                                .multiply(soLuong);
+             */
+            BigDecimal giamGia
+                    = ketQuaGia
+                            .soTienGiamMoiDonVi()
+                            .multiply(soLuong);
 
-                /*
+            /*
                 * thanhTien = đơn giá gốc × số lượng
                 *             − tổng giảm giá dòng.
-                */
-                BigDecimal thanhTien =
-                        donGia.multiply(soLuong)
-                                .subtract(giamGia);
+             */
+            BigDecimal thanhTien
+                    = donGia.multiply(soLuong)
+                            .subtract(giamGia);
 
-                if (thanhTien.compareTo(
-                        BigDecimal.ZERO
-                ) < 0) {
+            if (thanhTien.compareTo(
+                    BigDecimal.ZERO
+            ) < 0) {
                 throw new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         "Kết quả tính giá đơn hàng không hợp lệ."
                 );
-                }
+            }
 
-                String cachTinhGia =
-                        ketQuaGia.cachTinhGia();
+            String cachTinhGia
+                    = ketQuaGia.cachTinhGia();
 
-                if (cachTinhGia != null
-                        && cachTinhGia.length() > 100) {
+            if (cachTinhGia != null
+                    && cachTinhGia.length() > 100) {
                 throw new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         "Mô tả cách tính giá vượt quá giới hạn lưu trữ."
                 );
-                }
+            }
 
-                ChiTietDonHang chiTietDonHang =
-                        new ChiTietDonHang();
+            ChiTietDonHang chiTietDonHang
+                    = new ChiTietDonHang();
 
-                chiTietDonHang.setSanPham(
-                        donViSanPham.getSanPham()
-                );
+            chiTietDonHang.setSanPham(
+                    donViSanPham.getSanPham()
+            );
 
-                chiTietDonHang.setDonViSanPham(
-                        donViSanPham
-                );
+            chiTietDonHang.setDonViSanPham(
+                    donViSanPham
+            );
 
-                chiTietDonHang.setSoLuong(
-                        chiTietGioHang.getSoLuong()
-                );
+            chiTietDonHang.setSoLuong(
+                    chiTietGioHang.getSoLuong()
+            );
 
-                chiTietDonHang.setDonGia(
-                        donGia
-                );
+            chiTietDonHang.setDonGia(
+                    donGia
+            );
 
-                chiTietDonHang.setGiamGia(
-                        giamGia
-                );
+            chiTietDonHang.setGiamGia(
+                    giamGia
+            );
 
-                chiTietDonHang.setThanhTien(
-                        thanhTien
-                );
+            chiTietDonHang.setThanhTien(
+                    thanhTien
+            );
 
-                chiTietDonHang.setCachTinhGia(
-                        cachTinhGia
-                );
+            chiTietDonHang.setCachTinhGia(
+                    cachTinhGia
+            );
 
-                danhSachChiTietDonHang.add(
-                        chiTietDonHang
-                );
+            danhSachChiTietDonHang.add(
+                    chiTietDonHang
+            );
         }
 
         return danhSachChiTietDonHang;
     }
 
     private BigDecimal tinhTongTienHang(
-                List<ChiTietDonHang> danhSachChiTietDonHang
-        ) {
-                BigDecimal tongTienHang = BigDecimal.ZERO;
+            List<ChiTietDonHang> danhSachChiTietDonHang
+    ) {
+        BigDecimal tongTienHang = BigDecimal.ZERO;
 
         for (ChiTietDonHang chiTiet
                 : danhSachChiTietDonHang) {
-                BigDecimal tongGiaGocDong =
-                        chiTiet.getDonGia().multiply(
-                                BigDecimal.valueOf(
-                                        chiTiet.getSoLuong()
-                                )
-                        );
+            BigDecimal tongGiaGocDong
+                    = chiTiet.getDonGia().multiply(
+                            BigDecimal.valueOf(
+                                    chiTiet.getSoLuong()
+                            )
+                    );
 
-                tongTienHang =
-                        tongTienHang.add(
-                                tongGiaGocDong
-                        );
+            tongTienHang
+                    = tongTienHang.add(
+                            tongGiaGocDong
+                    );
         }
 
         return tongTienHang;
     }
 
     private BigDecimal tinhTongGiamGiaSanPham(
-                List<ChiTietDonHang> danhSachChiTietDonHang
-        ) {
-                BigDecimal tongGiamGiaSanPham =
-                BigDecimal.ZERO;
+            List<ChiTietDonHang> danhSachChiTietDonHang
+    ) {
+        BigDecimal tongGiamGiaSanPham
+                = BigDecimal.ZERO;
 
         for (ChiTietDonHang chiTiet
                 : danhSachChiTietDonHang) {
-                if (chiTiet.getGiamGia() != null) {
-                tongGiamGiaSanPham =
-                        tongGiamGiaSanPham.add(
+            if (chiTiet.getGiamGia() != null) {
+                tongGiamGiaSanPham
+                        = tongGiamGiaSanPham.add(
                                 chiTiet.getGiamGia()
                         );
-                }
+            }
         }
 
         return tongGiamGiaSanPham;
     }
-        private DonHang taoVaLuuDonHang(
-                DuLieuTaoDonHang duLieu,
-                BigDecimal tongTienHang,
-                BigDecimal tongGiamGiaSanPham,
-                PhuongThucThanhToan phuongThucThanhToan,
-                LocalDateTime thoiDiemTaoDon
-        ) {
-                BigDecimal phiGiaoHang =
-                        PHI_GIAO_HANG_CO_DINH;
 
-                /*
-                * Hiện chưa có voucher.
-                * don_hang.giam_gia dành cho giảm cấp đơn hàng/voucher.
-                */
-                BigDecimal giamGiaVoucher =
-                        BigDecimal.ZERO;
-
-                BigDecimal tongThanhToan =
-                        tongTienHang
-                                .add(phiGiaoHang)
-                                .subtract(tongGiamGiaSanPham)
-                                .subtract(giamGiaVoucher);
-
-                DonHang donHang = new DonHang();
-
-                donHang.setNgayDatHang(
-                        thoiDiemTaoDon
-                );
-
-                donHang.setKhachHang(
-                        duLieu.getKhachHang()
-                );
-
-                donHang.setDiaChiGiaoHang(
-                        duLieu.getDiaChiGiaoHang()
-                );
-
-                donHang.setLoaiKhach(
-                        LoaiKhachHang.CO_TAI_KHOAN
-                );
-
-                donHang.setTongTienHang(tongTienHang);
-                donHang.setPhiGiaoHang(phiGiaoHang);
-                donHang.setGiamGia(giamGiaVoucher);
-                donHang.setTongThanhToan(tongThanhToan);
-
-                donHang.setPhuongThucThanhToan(
-                        phuongThucThanhToan
-                );
-
-                if (phuongThucThanhToan == PhuongThucThanhToan.COD) {
-                        donHang.setTrangThaiThanhToan(
-                                TrangThaiThanhToan.CHUA_THANH_TOAN
-                        );
-
-                        donHang.setTrangThaiDonHang(
-                                TrangThaiDonHang.CHO_XU_LY
-                        );
-                } else if (phuongThucThanhToan == PhuongThucThanhToan.ZALOPAY) {
-                        donHang.setTrangThaiThanhToan(
-                                TrangThaiThanhToan.CHO_THANH_TOAN
-                        );
-
-                        donHang.setTrangThaiDonHang(
-                                TrangThaiDonHang.CHO_XU_LY
-                        );
-                } else {
-                        throw new ResponseStatusException(
-                                HttpStatus.BAD_REQUEST,
-                                "Phương thức thanh toán không được hỗ trợ."
-                        );
-                }
-
-                donHang.setGhiChu(
-                        duLieu.getGhiChu()
-                );
-
-                return donHangRepository.save(donHang);
+    private BigDecimal tinhTienHangSauKhuyenMai(
+            BigDecimal tongTienHang,
+            BigDecimal tongGiamGiaSanPham
+    ) {
+        if (tongTienHang == null
+                || tongGiamGiaSanPham == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Không xác định được giá trị đơn hàng."
+            );
         }
+
+        BigDecimal tienHangSauKhuyenMai
+                = tongTienHang.subtract(
+                        tongGiamGiaSanPham
+                );
+
+        if (tienHangSauKhuyenMai.compareTo(
+                BigDecimal.ZERO
+        ) < 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Giá trị tiền hàng sau khuyến mãi không hợp lệ."
+            );
+        }
+
+        return tienHangSauKhuyenMai;
+    }
+
+    private DonHang taoVaLuuDonHang(
+            DuLieuTaoDonHang duLieu,
+            BigDecimal tongTienHang,
+            BigDecimal tongGiamGiaSanPham,
+            DuLieuVoucherDonHang duLieuVoucher,
+            PhuongThucThanhToan phuongThucThanhToan,
+            LocalDateTime thoiDiemTaoDon
+    ) {
+        BigDecimal phiGiaoHang
+                = PHI_GIAO_HANG_CO_DINH;
+
+        if (duLieuVoucher == null
+                || duLieuVoucher.getSoTienGiam() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Không xác định được kết quả voucher của đơn hàng."
+            );
+        }
+
+        BigDecimal giamGiaVoucher
+                = duLieuVoucher.getSoTienGiam();
+
+        if (giamGiaVoucher.compareTo(
+                BigDecimal.ZERO
+        ) < 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Số tiền giảm voucher không hợp lệ."
+            );
+        }
+
+        BigDecimal tongThanhToan
+                = tongTienHang
+                        .add(phiGiaoHang)
+                        .subtract(tongGiamGiaSanPham)
+                        .subtract(giamGiaVoucher);
+
+        if (tongThanhToan.compareTo(
+                BigDecimal.ZERO
+        ) < 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Tổng thanh toán của đơn hàng không hợp lệ."
+            );
+        }
+
+        DonHang donHang = new DonHang();
+
+        donHang.setNgayDatHang(
+                thoiDiemTaoDon
+        );
+
+        donHang.setKhachHang(
+                duLieu.getKhachHang()
+        );
+
+        donHang.setDiaChiGiaoHang(
+                duLieu.getDiaChiGiaoHang()
+        );
+
+        /*
+         * Một đơn hàng chỉ gắn tối đa một voucher.
+         * Không sử dụng voucher thì giá trị này là null.
+         */
+        donHang.setVoucherDonHang(
+                duLieuVoucher.getVoucherDonHang()
+        );
+
+        donHang.setLoaiKhach(
+                LoaiKhachHang.CO_TAI_KHOAN
+        );
+
+        donHang.setTongTienHang(tongTienHang);
+        donHang.setPhiGiaoHang(phiGiaoHang);
+        donHang.setGiamGia(giamGiaVoucher);
+        donHang.setTongThanhToan(tongThanhToan);
+
+        donHang.setPhuongThucThanhToan(
+                phuongThucThanhToan
+        );
+
+        if (phuongThucThanhToan == PhuongThucThanhToan.COD) {
+            donHang.setTrangThaiThanhToan(
+                    TrangThaiThanhToan.CHUA_THANH_TOAN
+            );
+
+            donHang.setTrangThaiDonHang(
+                    TrangThaiDonHang.CHO_XU_LY
+            );
+        } else if (phuongThucThanhToan == PhuongThucThanhToan.ZALOPAY) {
+            donHang.setTrangThaiThanhToan(
+                    TrangThaiThanhToan.CHO_THANH_TOAN
+            );
+
+            donHang.setTrangThaiDonHang(
+                    TrangThaiDonHang.CHO_XU_LY
+            );
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Phương thức thanh toán không được hỗ trợ."
+            );
+        }
+
+        donHang.setGhiChu(
+                duLieu.getGhiChu()
+        );
+
+        return donHangRepository.save(donHang);
+    }
 
     private DonHangResponseDto taoDonHangResponse(
             DonHang donHang,
             List<ChiTietDonHang> danhSachChiTiet
     ) {
-        List<ChiTietDonHangResponseDto> danhSachResponse =
-                new ArrayList<>();
+        List<ChiTietDonHangResponseDto> danhSachResponse
+                = new ArrayList<>();
 
         for (ChiTietDonHang chiTiet : danhSachChiTiet) {
-            DonViSanPham donViSanPham =
-                    chiTiet.getDonViSanPham();
+            DonViSanPham donViSanPham
+                    = chiTiet.getDonViSanPham();
 
             danhSachResponse.add(
                     new ChiTietDonHangResponseDto(
@@ -897,13 +1028,13 @@ HttpStatus.BAD_REQUEST,
             );
         }
 
-        DiaChiGiaoHang diaChiGiaoHang =
-                donHang.getDiaChiGiaoHang();
+        DiaChiGiaoHang diaChiGiaoHang
+                = donHang.getDiaChiGiaoHang();
 
         return new DonHangResponseDto(
                 donHang.getMaDonHang(),
                 donHang.getKhachHang().getMaKhachHang(),
-diaChiGiaoHang.getMaDiaChi(),
+                diaChiGiaoHang.getMaDiaChi(),
                 diaChiGiaoHang.getTenNguoiNhan(),
                 diaChiGiaoHang.getSoDienThoaiNhan(),
                 diaChiGiaoHang.getThanhPho(),
@@ -926,12 +1057,12 @@ diaChiGiaoHang.getMaDiaChi(),
             gomChiTietTheoMaDonHang(
                     List<ChiTietDonHang> danhSachChiTiet
             ) {
-        Map<Long, List<ChiTietDonHang>> ketQua =
-                new HashMap<>();
+        Map<Long, List<ChiTietDonHang>> ketQua
+                = new HashMap<>();
 
         for (ChiTietDonHang chiTiet : danhSachChiTiet) {
-            Long maDonHang =
-                    chiTiet.getDonHang().getMaDonHang();
+            Long maDonHang
+                    = chiTiet.getDonHang().getMaDonHang();
 
             ketQua.computeIfAbsent(
                     maDonHang,
@@ -950,16 +1081,16 @@ diaChiGiaoHang.getMaDiaChi(),
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     "Đơn hàng mã "
-                            + donHang.getMaDonHang()
-                            + " không có chi tiết đơn hàng."
+                    + donHang.getMaDonHang()
+                    + " không có chi tiết đơn hàng."
             );
         }
 
-        ChiTietDonHang chiTietDauTien =
-                danhSachChiTiet.get(0);
+        ChiTietDonHang chiTietDauTien
+                = danhSachChiTiet.get(0);
 
-        SanPhamDonHangTomTatDto sanPhamDauTien =
-                new SanPhamDonHangTomTatDto(
+        SanPhamDonHangTomTatDto sanPhamDauTien
+                = new SanPhamDonHangTomTatDto(
                         chiTietDauTien.getSanPham()
                                 .getMaSanPham(),
                         chiTietDauTien.getSanPham()
@@ -974,8 +1105,8 @@ diaChiGiaoHang.getMaDiaChi(),
                         chiTietDauTien.getThanhTien()
                 );
 
-        int soSanPhamKhac =
-                danhSachChiTiet.size() - 1;
+        int soSanPhamKhac
+                = danhSachChiTiet.size() - 1;
 
         return new DonHangDanhSachDto(
                 donHang.getMaDonHang(),

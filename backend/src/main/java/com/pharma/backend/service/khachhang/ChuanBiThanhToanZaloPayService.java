@@ -32,6 +32,8 @@ public class ChuanBiThanhToanZaloPayService {
 
     private final ZaloPayProperties zaloPayProperties;
 
+    private final VoucherDonHangKhachHangService voucherDonHangKhachHangService;
+
     @Transactional
     public DuLieuChuanBiThanhToanZaloPay chuanBiThanhToan(
             Long maDonHang,
@@ -110,6 +112,8 @@ public class ChuanBiThanhToanZaloPayService {
                             .THANH_TOAN_THAT_BAI
             );
 
+            hoanLuotVoucherNeuCo(donHang);
+
             donHangRepository.save(donHang);
 
             return new DuLieuChuanBiThanhToanZaloPay(
@@ -165,6 +169,23 @@ public class ChuanBiThanhToanZaloPayService {
                 false
         );
     }
+
+    private void hoanLuotVoucherNeuCo(
+                DonHang donHang
+        ) {
+        if (donHang == null
+                || donHang.getVoucherDonHang() == null
+                || donHang.getVoucherDonHang()
+                        .getMaVoucher() == null) {
+                return;
+        }
+
+        voucherDonHangKhachHangService
+                .hoanLuotVoucherKhiHuyDon(
+                        donHang.getVoucherDonHang()
+                                .getMaVoucher()
+                );
+        }
 
     private void kiemTraMaDonHang(
             Long maDonHang
