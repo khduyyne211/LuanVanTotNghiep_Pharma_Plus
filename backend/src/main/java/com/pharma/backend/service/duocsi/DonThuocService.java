@@ -259,6 +259,8 @@ public class DonThuocService {
                 .builder()
                 .maDonThuoc(
                         donThuoc.getMaDonThuoc())
+                .maDonHang(
+                        donThuoc.getMaDonHang())
                 .maKhachHang(
                         donThuoc.getMaKhachHang())
                 .tenKhachHang(

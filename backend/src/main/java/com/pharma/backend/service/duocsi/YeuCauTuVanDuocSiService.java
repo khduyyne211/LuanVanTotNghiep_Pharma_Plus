@@ -278,6 +278,12 @@ public class YeuCauTuVanDuocSiService {
                                                 .getKhachHang()
                                                 .getMaKhachHang();
 
+                Long maDonHang = yeuCau.getDonHang() == null
+                                ? null
+                                : yeuCau
+                                                .getDonHang()
+                                                .getMaDonHang();
+
                 Long maNhanVien = yeuCau.getNhanVienTiepNhan() == null
                                 ? null
                                 : yeuCau
@@ -311,6 +317,7 @@ public class YeuCauTuVanDuocSiService {
                 return new YeuCauTuVanDuocSiChiTietResponseDto(
                                 yeuCau.getMaYeuCauTuVan(),
                                 maKhachHang,
+                                maDonHang,
                                 yeuCau.getTenKhachHang(),
                                 yeuCau.getSoDienThoai(),
                                 yeuCau.getNoiDungCanTuVan(),

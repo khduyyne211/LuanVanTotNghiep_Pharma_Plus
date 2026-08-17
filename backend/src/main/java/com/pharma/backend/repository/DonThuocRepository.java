@@ -26,6 +26,7 @@ public interface DonThuocRepository
     @Query(value = """
             SELECT
                 dt.ma_don_thuoc AS maDonThuoc,
+                dh.ma_don_hang AS maDonHang,
                 dt.ma_khach_hang AS maKhachHang,
                 kh.ho_ten AS tenKhachHang,
                 tk.so_dien_thoai AS soDienThoaiKhachHang,
@@ -43,6 +44,8 @@ public interface DonThuocRepository
                 ON tk.ma_tai_khoan = kh.ma_tai_khoan
             LEFT JOIN nhan_vien_noi_bo nv
                 ON nv.ma_nhan_vien = dt.ma_nhan_vien_duyet
+            LEFT JOIN don_hang dh
+                ON dh.ma_don_thuoc = dt.ma_don_thuoc
             WHERE (
                 :trangThai IS NULL
                 OR :trangThai = ''
@@ -92,6 +95,7 @@ public interface DonThuocRepository
     @Query(value = """
             SELECT
                 dt.ma_don_thuoc AS maDonThuoc,
+                dh.ma_don_hang AS maDonHang,
                 dt.ma_khach_hang AS maKhachHang,
                 kh.ho_ten AS tenKhachHang,
                 tk.so_dien_thoai AS soDienThoaiKhachHang,
@@ -109,6 +113,8 @@ public interface DonThuocRepository
                 ON tk.ma_tai_khoan = kh.ma_tai_khoan
             LEFT JOIN nhan_vien_noi_bo nv
                 ON nv.ma_nhan_vien = dt.ma_nhan_vien_duyet
+            LEFT JOIN don_hang dh
+                ON dh.ma_don_thuoc = dt.ma_don_thuoc
             WHERE dt.ma_don_thuoc = :maDonThuoc
             """, nativeQuery = true)
     Optional<DonThuocDanhSachProjection> timChiTietDonThuoc(

@@ -23,8 +23,13 @@ import jakarta.persistence.LockModeType;
 
 public interface DonHangRepository extends JpaRepository<DonHang, Long> {
 
-    @Query(
-        value = """
+    boolean existsByYeuCauTuVan_MaYeuCauTuVan(
+            Long maYeuCauTuVan);
+
+    boolean existsByDonThuoc_MaDonThuoc(
+            Long maDonThuoc);
+
+    @Query(value = """
             SELECT
                 dh.ma_don_hang AS maDonHang,
                 dh.ma_khach_hang AS maKhachHang,
@@ -85,8 +90,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                 OR dh.trang_thai_kiem_duyet = :trangThaiKiemDuyet
             )
             ORDER BY dh.ngay_dat_hang DESC
-            """,
-        countQuery = """
+            """, countQuery = """
             SELECT COUNT(*)
             FROM don_hang dh
             LEFT JOIN khach_hang kh
@@ -115,19 +119,15 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                 OR :trangThaiKiemDuyet = ''
                 OR dh.trang_thai_kiem_duyet = :trangThaiKiemDuyet
             )
-            """,
-        nativeQuery = true
-    )
+            """, nativeQuery = true)
     Page<DonHangDanhSachProjection> timKiemDonHang(
             @Param("keyword") String keyword,
             @Param("trangThaiDonHang") String trangThaiDonHang,
             @Param("trangThaiThanhToan") String trangThaiThanhToan,
             @Param("trangThaiKiemDuyet") String trangThaiKiemDuyet,
-            Pageable pageable
-    );
+            Pageable pageable);
 
-    @Query(
-        value = """
+    @Query(value = """
             SELECT
                 dh.ma_don_hang AS maDonHang,
                 dh.ma_khach_hang AS maKhachHang,
@@ -185,12 +185,9 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             LEFT JOIN don_thuoc dt
                 ON dt.ma_don_thuoc = dh.ma_don_thuoc
             WHERE dh.ma_don_hang = :maDonHang
-            """,
-        nativeQuery = true
-    )
+            """, nativeQuery = true)
     Optional<DonHangChiTietProjection> timChiTietDonHang(
-            @Param("maDonHang") long maDonHang
-    );
+            @Param("maDonHang") long maDonHang);
 
     /*
      * =========================
@@ -199,8 +196,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
      */
 
     List<DonHang> findByKhachHang_MaKhachHangOrderByNgayDatHangDesc(
-            Long maKhachHang
-    );
+            Long maKhachHang);
 
     @Query("""
             SELECT dh
@@ -212,8 +208,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             """)
     Optional<DonHang> timChiTietDonHangCuaKhachHang(
             @Param("maDonHang") Long maDonHang,
-            @Param("maKhachHang") Long maKhachHang
-    );
+            @Param("maKhachHang") Long maKhachHang);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
@@ -222,8 +217,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             WHERE dh.maDonHang = :maDonHang
             """)
     Optional<DonHang> timTheoMaDeCapNhat(
-            @Param("maDonHang") Long maDonHang
-    );
+            @Param("maDonHang") Long maDonHang);
 
     @Query("""
             SELECT dh.maDonHang
@@ -236,18 +230,13 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
             ORDER BY dh.maDonHang ASC
             """)
     List<Long> timMaDonHangZaloPayChoThanhToanQuaHan(
-            @Param("phuongThucThanhToan")
-            PhuongThucThanhToan phuongThucThanhToan,
+            @Param("phuongThucThanhToan") PhuongThucThanhToan phuongThucThanhToan,
 
-            @Param("trangThaiDonHang")
-            TrangThaiDonHang trangThaiDonHang,
+            @Param("trangThaiDonHang") TrangThaiDonHang trangThaiDonHang,
 
-            @Param("trangThaiThanhToan")
-            TrangThaiThanhToan trangThaiThanhToan,
+            @Param("trangThaiThanhToan") TrangThaiThanhToan trangThaiThanhToan,
 
-            @Param("thoiDiemGioiHan")
-            LocalDateTime thoiDiemGioiHan
-    );
+            @Param("thoiDiemGioiHan") LocalDateTime thoiDiemGioiHan);
 
     /*
      * =========================
@@ -257,12 +246,10 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
 
     long countByNgayDatHangGreaterThanEqualAndNgayDatHangLessThan(
             LocalDateTime tuNgay,
-            LocalDateTime denNgay
-    );
+            LocalDateTime denNgay);
 
     long countByTrangThaiDonHang(
-            TrangThaiDonHang trangThaiDonHang
-    );
+            TrangThaiDonHang trangThaiDonHang);
 
     @Query("""
             SELECT COALESCE(SUM(dh.tongThanhToan), 0)
@@ -277,10 +264,7 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
 
             @Param("denNgay") LocalDateTime denNgay,
 
-            @Param("trangThaiDonHang")
-            TrangThaiDonHang trangThaiDonHang,
+            @Param("trangThaiDonHang") TrangThaiDonHang trangThaiDonHang,
 
-            @Param("trangThaiThanhToan")
-            TrangThaiThanhToan trangThaiThanhToan
-    );
+            @Param("trangThaiThanhToan") TrangThaiThanhToan trangThaiThanhToan);
 }

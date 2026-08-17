@@ -1,10 +1,13 @@
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 
 import { isAxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
 import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
 
+import type { DonHangDuocSiChiTiet } from "../../don-hang/types/DonHangDuocSi";
+import LenDonChoKhachModal from "../../len-don/components/LenDonChoKhachModal";
 import DuocSiLoading from "../../shared/components/loading/DuocSiLoading";
 
 import {
@@ -67,6 +70,7 @@ function dinhDangNgayGio(giaTri: string) {
 }
 
 function QuanLyYeuCauTuVanDuocSiPage() {
+  const navigate = useNavigate();
   const thongBao = useThongBaoHeThong();
 
   const [danhSach, setDanhSach] = useState<YeuCauTuVanDuocSiDanhSach[]>([]);
@@ -86,6 +90,8 @@ function QuanLyYeuCauTuVanDuocSiPage() {
   const [dangTaiChiTiet, setDangTaiChiTiet] = useState(false);
 
   const [dangXuLy, setDangXuLy] = useState(false);
+
+  const [dangMoLenDon, setDangMoLenDon] = useState(false);
 
   const [ketQuaTuVan, setKetQuaTuVan] = useState("");
 
@@ -164,6 +170,7 @@ function QuanLyYeuCauTuVanDuocSiPage() {
       return;
     }
 
+    setDangMoLenDon(false);
     setChiTiet(null);
 
     setKetQuaTuVan("");
@@ -251,6 +258,21 @@ function QuanLyYeuCauTuVanDuocSiPage() {
     } finally {
       setDangXuLy(false);
     }
+  };
+
+  const xuLyLenDonThanhCong = (donHang: DonHangDuocSiChiTiet) => {
+    setDangMoLenDon(false);
+    setChiTiet(null);
+
+    thongBao.hienThongBao(
+      donHang.phuongThucThanhToan === "ZALOPAY"
+        ? `Đã tạo đơn #${donHang.maDonHang}. Khách hàng cần thanh toán ZaloPay trong tài khoản.`
+        : `Đã tạo đơn #${donHang.maDonHang} và chuyển sang trạng thái đang xử lý.`,
+      "THANH_CONG",
+      "Tạo đơn hàng thành công",
+    );
+
+    void taiDanhSach();
   };
 
   const doiBoLoc = (giaTri: string) => {
@@ -595,6 +617,46 @@ function QuanLyYeuCauTuVanDuocSiPage() {
                         <p>{chiTiet.ketQuaTuVan || "Chưa có nội dung."}</p>
                       </div>
                     )}
+
+                    {chiTiet.trangThaiTuVan === "DA_TU_VAN" &&
+                      (chiTiet.maDonHang !== null ? (
+                        <>
+                          <div className="ds-tv-content-box">
+                            <strong>Đơn hàng đã được tạo</strong>
+                            <p>
+                              Yêu cầu tư vấn này đã được dùng để tạo đơn #{chiTiet.maDonHang}.
+                            </p>
+                          </div>
+
+                          <div className="ds-tv-modal-actions">
+                            <button
+                              type="button"
+                              className="ds-tv-button ds-tv-button--secondary"
+                              onClick={() => navigate("/duoc-si/don-hang")}
+                            >
+                              Đến quản lý đơn hàng
+                            </button>
+                          </div>
+                        </>
+                      ) : chiTiet.maKhachHang !== null ? (
+                        <div className="ds-tv-modal-actions">
+                          <button
+                            type="button"
+                            className="ds-tv-button ds-tv-button--primary"
+                            disabled={dangXuLy}
+                            onClick={() => setDangMoLenDon(true)}
+                          >
+                            Lên đơn cho khách
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="ds-tv-content-box">
+                          <strong>Không thể lên đơn</strong>
+                          <p>
+                            Yêu cầu tư vấn chưa liên kết với tài khoản khách hàng.
+                          </p>
+                        </div>
+                      ))}
                   </div>
                 </>
               )
@@ -602,6 +664,23 @@ function QuanLyYeuCauTuVanDuocSiPage() {
           </div>
         </div>
       )}
+
+      <LenDonChoKhachModal
+        dangHien={dangMoLenDon && chiTiet !== null}
+        nguon={
+          chiTiet && chiTiet.maKhachHang !== null
+            ? {
+                loaiNguon: "YEU_CAU_TU_VAN",
+                maNguon: chiTiet.maYeuCauTuVan,
+                maKhachHang: chiTiet.maKhachHang,
+                tenKhachHang: chiTiet.tenKhachHang,
+                soDienThoaiKhachHang: chiTiet.soDienThoai,
+              }
+            : null
+        }
+        onDong={() => setDangMoLenDon(false)}
+        onThanhCong={xuLyLenDonThanhCong}
+      />
     </div>
   );
 }

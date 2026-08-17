@@ -65,4 +65,25 @@ public interface SanPhamRepository
             @Param("danhSachMaSanPham") List<Long> danhSachMaSanPham,
             @Param("trangThaiSanPham") Boolean trangThaiSanPham
     );
+
+    @Query("""
+            SELECT sp
+            FROM SanPham sp
+            WHERE sp.trangThaiSanPham = true
+              AND (:keyword IS NULL
+                   OR LOWER(sp.tenSanPham) LIKE LOWER(CONCAT('%', :keyword, '%')))
+              AND EXISTS (
+                  SELECT dvsp.maDonViSanPham
+                  FROM DonViSanPham dvsp
+                  WHERE dvsp.sanPham = sp
+                    AND dvsp.choPhepBan = true
+                    AND dvsp.trangThai = true
+                    AND dvsp.giaBanTheoDonVi IS NOT NULL
+                    AND dvsp.giaBanTheoDonVi > 0
+              )
+            """)
+    Page<SanPham> timKiemSanPhamCoTheBanChoDuocSi(
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 }

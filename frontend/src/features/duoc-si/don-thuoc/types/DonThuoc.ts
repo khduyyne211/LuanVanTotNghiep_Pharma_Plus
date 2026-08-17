@@ -6,6 +6,7 @@ export type TrangThaiDonThuoc =
 
 export interface DonThuoc {
   maDonThuoc: number;
+  maDonHang: number | null;
 
   maKhachHang: number;
   tenKhachHang: string;

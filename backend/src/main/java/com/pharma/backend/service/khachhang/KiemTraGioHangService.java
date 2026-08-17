@@ -31,297 +31,232 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class KiemTraGioHangService {
 
-    private final DonViSanPhamRepository
-            donViSanPhamRepository;
+        private final DonViSanPhamRepository donViSanPhamRepository;
 
-    private final TonKhoSanPhamService
-            tonKhoSanPhamService;
+        private final TonKhoSanPhamService tonKhoSanPhamService;
 
-    private final TinhGiaSanPhamService
-            tinhGiaSanPhamService;
+        private final TinhGiaSanPhamService tinhGiaSanPhamService;
 
-    @Transactional(readOnly = true)
-    public KiemTraGioHangResponseDto kiemTraGioHang(
-            KiemTraGioHangRequestDto request
-    ) {
-        Map<Long, Integer> soLuongTheoDonVi =
-                chuanHoaDanhSachChiTiet(request);
+        @Transactional(readOnly = true)
+        public KiemTraGioHangResponseDto kiemTraGioHang(
+                        KiemTraGioHangRequestDto request) {
+                Map<Long, Integer> soLuongTheoDonVi = chuanHoaDanhSachChiTiet(request);
 
-        List<DonViSanPham> danhSachDonVi =
-                donViSanPhamRepository.findAllById(
-                        soLuongTheoDonVi.keySet()
-                );
+                List<DonViSanPham> danhSachDonVi = donViSanPhamRepository.findAllById(
+                                soLuongTheoDonVi.keySet());
 
-        Map<Long, DonViSanPham> donViTheoMa =
-                taoMapDonViSanPham(
-                        danhSachDonVi
-                );
+                Map<Long, DonViSanPham> donViTheoMa = taoMapDonViSanPham(
+                                danhSachDonVi);
 
-        if (donViTheoMa.size()
-                != soLuongTheoDonVi.size()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Có đơn vị sản phẩm không tồn tại."
-            );
+                if (donViTheoMa.size() != soLuongTheoDonVi.size()) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "Có đơn vị sản phẩm không tồn tại.");
+                }
+
+                for (DonViSanPham donViSanPham : danhSachDonVi) {
+                        kiemTraDonViDuocBan(
+                                        donViSanPham);
+                }
+
+                List<Long> danhSachMaSanPham = danhSachDonVi.stream()
+                                .map(donViSanPham -> donViSanPham.getSanPham()
+                                                .getMaSanPham())
+                                .distinct()
+                                .toList();
+
+                Map<Long, List<QuyDoiDonVi>> quyDoiTheoSanPham = tonKhoSanPhamService
+                                .layQuyDoiTheoDanhSachSanPham(
+                                                danhSachMaSanPham);
+
+                Map<Long, BigDecimal> tonTheoSanPham = tonKhoSanPhamService
+                                .layTonKhaDungTheoDanhSachSanPham(
+                                                danhSachMaSanPham);
+
+                /*
+                 * Toàn bộ giỏ hàng sử dụng chung một thời điểm tính giá.
+                 */
+                LocalDateTime thoiDiemTinhGia = LocalDateTime.now();
+
+                Map<Long, KetQuaTinhGiaSanPham> ketQuaGiaTheoDonVi = tinhGiaSanPhamService
+                                .tinhGiaTheoDanhSachDonVi(
+                                                danhSachDonVi,
+                                                thoiDiemTinhGia);
+
+                List<ThongTinKiemTraGioHangDto> danhSachThongTin = new ArrayList<>();
+
+                Map<Long, BigDecimal> tongCanTheoSanPham = new HashMap<>();
+
+                for (Map.Entry<Long, Integer> entry : soLuongTheoDonVi.entrySet()) {
+                        DonViSanPham donViSanPham = donViTheoMa.get(
+                                        entry.getKey());
+
+                        Long maSanPham = donViSanPham.getSanPham()
+                                        .getMaSanPham();
+
+                        List<QuyDoiDonVi> danhSachQuyDoi = quyDoiTheoSanPham.getOrDefault(
+                                        maSanPham,
+                                        List.of());
+
+                        BigDecimal heSoQuyDoi = tonKhoSanPhamService
+                                        .tinhHeSoVeDonViCoSo(
+                                                        donViSanPham,
+                                                        danhSachQuyDoi);
+
+                        BigDecimal soLuongCan = heSoQuyDoi.multiply(
+                                        BigDecimal.valueOf(
+                                                        entry.getValue()));
+
+                        tongCanTheoSanPham.merge(
+                                        maSanPham,
+                                        soLuongCan,
+                                        BigDecimal::add);
+
+                        BigDecimal tonKhaDung = tonTheoSanPham.getOrDefault(
+                                        maSanPham,
+                                        BigDecimal.ZERO);
+
+                        KetQuaTinhGiaSanPham ketQuaGia = ketQuaGiaTheoDonVi.get(
+                                        donViSanPham
+                                                        .getMaDonViSanPham());
+
+                        if (ketQuaGia == null) {
+                                throw new ResponseStatusException(
+                                                HttpStatus.INTERNAL_SERVER_ERROR,
+                                                "Không tìm thấy kết quả tính giá của đơn vị sản phẩm.");
+                        }
+
+                        danhSachThongTin.add(
+                                        new ThongTinKiemTraGioHangDto(
+                                                        maSanPham,
+                                                        donViSanPham
+                                                                        .getMaDonViSanPham(),
+                                                        ketQuaGia.giaGoc(),
+                                                        ketQuaGia
+                                                                        .soTienGiamMoiDonVi(),
+                                                        ketQuaGia
+                                                                        .giaSauKhuyenMai(),
+                                                        ketQuaGia.coKhuyenMai(),
+                                                        heSoQuyDoi,
+                                                        tonKhaDung));
+                }
+
+                boolean hopLe = tonKhoSanPhamService
+                                .kiemTraDuTon(
+                                                tongCanTheoSanPham,
+                                                tonTheoSanPham);
+
+                return new KiemTraGioHangResponseDto(
+                                hopLe,
+                                danhSachThongTin);
         }
 
-        for (DonViSanPham donViSanPham
-                : danhSachDonVi) {
-            kiemTraDonViDuocBan(
-                    donViSanPham
-            );
-        }
-
-        List<Long> danhSachMaSanPham =
-                danhSachDonVi.stream()
-                        .map(donViSanPham ->
-                                donViSanPham.getSanPham()
-                                        .getMaSanPham()
-                        )
-                        .distinct()
-                        .toList();
-
-        Map<Long, List<QuyDoiDonVi>>
-                quyDoiTheoSanPham =
-                tonKhoSanPhamService
-                        .layQuyDoiTheoDanhSachSanPham(
-                                danhSachMaSanPham
-                        );
-
-        Map<Long, BigDecimal> tonTheoSanPham =
-                tonKhoSanPhamService
-                        .layTonKhaDungTheoDanhSachSanPham(
-                                danhSachMaSanPham
-                        );
-
-        /*
-         * Toàn bộ giỏ hàng sử dụng chung một thời điểm tính giá.
+        /**
+         * Dùng khi đồng bộ giỏ hàng local vào cơ sở dữ liệu.
+         * Không đủ tồn thì dừng trước khi xóa hoặc ghi chi tiết giỏ hàng.
          */
-        LocalDateTime thoiDiemTinhGia =
-                LocalDateTime.now();
+        @Transactional(readOnly = true)
+        public KiemTraGioHangResponseDto kiemTraDuDieuKienDongBo(
+                        KiemTraGioHangRequestDto request) {
+                KiemTraGioHangResponseDto ketQuaKiemTra = kiemTraGioHang(request);
 
-        Map<Long, KetQuaTinhGiaSanPham>
-                ketQuaGiaTheoDonVi =
-                tinhGiaSanPhamService
-                        .tinhGiaTheoDanhSachDonVi(
-                                danhSachDonVi,
-                                thoiDiemTinhGia
-                        );
+                if (!ketQuaKiemTra.isHopLe()) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.CONFLICT,
+                                        "Một hoặc nhiều sản phẩm không đủ số lượng tồn kho.");
+                }
 
-        List<ThongTinKiemTraGioHangDto>
-                danhSachThongTin =
-                new ArrayList<>();
-
-        Map<Long, BigDecimal>
-                tongCanTheoSanPham =
-                new HashMap<>();
-
-        for (Map.Entry<Long, Integer> entry
-                : soLuongTheoDonVi.entrySet()) {
-            DonViSanPham donViSanPham =
-                    donViTheoMa.get(
-                            entry.getKey()
-                    );
-
-            Long maSanPham =
-                    donViSanPham.getSanPham()
-                            .getMaSanPham();
-
-            List<QuyDoiDonVi>
-                    danhSachQuyDoi =
-                    quyDoiTheoSanPham.getOrDefault(
-                            maSanPham,
-                            List.of()
-                    );
-
-            BigDecimal heSoQuyDoi =
-                    tonKhoSanPhamService
-                            .tinhHeSoVeDonViCoSo(
-                                    donViSanPham,
-                                    danhSachQuyDoi
-                            );
-
-            BigDecimal soLuongCan =
-                    heSoQuyDoi.multiply(
-                            BigDecimal.valueOf(
-                                    entry.getValue()
-                            )
-                    );
-
-            tongCanTheoSanPham.merge(
-                    maSanPham,
-                    soLuongCan,
-                    BigDecimal::add
-            );
-
-            BigDecimal tonKhaDung =
-                    tonTheoSanPham.getOrDefault(
-                            maSanPham,
-                            BigDecimal.ZERO
-                    );
-
-            KetQuaTinhGiaSanPham ketQuaGia =
-                    ketQuaGiaTheoDonVi.get(
-                            donViSanPham
-                                    .getMaDonViSanPham()
-                    );
-
-            if (ketQuaGia == null) {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Không tìm thấy kết quả tính giá của đơn vị sản phẩm."
-                );
-            }
-
-            danhSachThongTin.add(
-                    new ThongTinKiemTraGioHangDto(
-                            maSanPham,
-                            donViSanPham
-                                    .getMaDonViSanPham(),
-                            ketQuaGia.giaGoc(),
-                            ketQuaGia
-                                    .soTienGiamMoiDonVi(),
-                            ketQuaGia
-                                    .giaSauKhuyenMai(),
-                            ketQuaGia.coKhuyenMai(),
-                            heSoQuyDoi,
-                            tonKhaDung
-                    )
-            );
+                return ketQuaKiemTra;
         }
 
-        boolean hopLe =
-                tonKhoSanPhamService
-                        .kiemTraDuTon(
-                                tongCanTheoSanPham,
-                                tonTheoSanPham
-                        );
+        private Map<Long, Integer> chuanHoaDanhSachChiTiet(
+                        KiemTraGioHangRequestDto request) {
+                if (request == null
+                                || request.getDanhSachChiTiet() == null
+                                || request.getDanhSachChiTiet()
+                                                .isEmpty()) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "Giỏ hàng không có sản phẩm.");
+                }
 
-        return new KiemTraGioHangResponseDto(
-                hopLe,
-                danhSachThongTin
-        );
-    }
+                Map<Long, Integer> soLuongTheoDonVi = new LinkedHashMap<>();
 
-    /**
-     * Dùng khi đồng bộ giỏ hàng local vào cơ sở dữ liệu.
-     * Không đủ tồn thì dừng trước khi xóa hoặc ghi chi tiết giỏ hàng.
-     */
-    @Transactional(readOnly = true)
-    public KiemTraGioHangResponseDto
-            kiemTraDuDieuKienDongBo(
-                    KiemTraGioHangRequestDto request
-            ) {
-        KiemTraGioHangResponseDto ketQuaKiemTra =
-                kiemTraGioHang(request);
+                for (ChiTietGioHangLocalRequestDto chiTiet : request.getDanhSachChiTiet()) {
+                        if (chiTiet == null
+                                        || chiTiet.getMaDonViSanPham() == null
+                                        || chiTiet.getSoLuong() == null
+                                        || chiTiet.getSoLuong() <= 0) {
+                                throw new ResponseStatusException(
+                                                HttpStatus.BAD_REQUEST,
+                                                "Mã đơn vị sản phẩm và số lượng phải hợp lệ.");
+                        }
 
-        if (!ketQuaKiemTra.isHopLe()) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Một hoặc nhiều sản phẩm không đủ số lượng tồn kho."
-            );
+                        soLuongTheoDonVi.merge(
+                                        chiTiet.getMaDonViSanPham(),
+                                        chiTiet.getSoLuong(),
+                                        Integer::sum);
+                }
+
+                return soLuongTheoDonVi;
         }
 
-        return ketQuaKiemTra;
-    }
+        private Map<Long, DonViSanPham> taoMapDonViSanPham(
+                        List<DonViSanPham> danhSachDonVi) {
+                Map<Long, DonViSanPham> donViTheoMa = new HashMap<>();
 
-    private Map<Long, Integer>
-            chuanHoaDanhSachChiTiet(
-                    KiemTraGioHangRequestDto request
-            ) {
-        if (request == null
-                || request.getDanhSachChiTiet() == null
-                || request.getDanhSachChiTiet()
-                        .isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Giỏ hàng không có sản phẩm."
-            );
+                for (DonViSanPham donViSanPham : danhSachDonVi) {
+                        donViTheoMa.put(
+                                        donViSanPham
+                                                        .getMaDonViSanPham(),
+                                        donViSanPham);
+                }
+
+                return donViTheoMa;
         }
 
-        Map<Long, Integer> soLuongTheoDonVi =
-                new LinkedHashMap<>();
+        private void kiemTraDonViDuocBan(
+                        DonViSanPham donViSanPham) {
+                if (donViSanPham == null
+                                || donViSanPham.getSanPham() == null) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "Thông tin đơn vị sản phẩm không hợp lệ.");
+                }
 
-        for (ChiTietGioHangLocalRequestDto chiTiet
-                : request.getDanhSachChiTiet()) {
-            if (chiTiet == null
-                    || chiTiet.getMaDonViSanPham() == null
-                    || chiTiet.getSoLuong() == null
-                    || chiTiet.getSoLuong() <= 0) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Mã đơn vị sản phẩm và số lượng phải hợp lệ."
-                );
-            }
+                if (Boolean.TRUE.equals(
+                                donViSanPham
+                                                .getSanPham()
+                                                .getLaThuocKeDon())) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.CONFLICT,
+                                        "Thuốc kê đơn không thể thêm vào giỏ hàng. "
+                                                        + "Vui lòng gửi yêu cầu tư vấn hoặc đơn thuốc "
+                                                        + "để Dược sĩ hỗ trợ lên đơn.");
+                }
 
-            soLuongTheoDonVi.merge(
-                    chiTiet.getMaDonViSanPham(),
-                    chiTiet.getSoLuong(),
-                    Integer::sum
-            );
+                if (!Boolean.TRUE.equals(
+                                donViSanPham.getTrangThai())) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "Đơn vị sản phẩm đã ngừng hoạt động.");
+                }
+
+                if (!Boolean.TRUE.equals(
+                                donViSanPham.getChoPhepBan())) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "Đơn vị sản phẩm không được phép bán.");
+                }
+
+                if (donViSanPham.getGiaBanTheoDonVi() == null
+                                || donViSanPham
+                                                .getGiaBanTheoDonVi()
+                                                .compareTo(
+                                                                BigDecimal.ZERO) <= 0) {
+                        throw new ResponseStatusException(
+                                        HttpStatus.BAD_REQUEST,
+                                        "Đơn vị sản phẩm chưa có giá bán hợp lệ.");
+                }
         }
-
-        return soLuongTheoDonVi;
-    }
-
-    private Map<Long, DonViSanPham>
-            taoMapDonViSanPham(
-                    List<DonViSanPham> danhSachDonVi
-            ) {
-        Map<Long, DonViSanPham> donViTheoMa =
-                new HashMap<>();
-
-        for (DonViSanPham donViSanPham
-                : danhSachDonVi) {
-            donViTheoMa.put(
-                    donViSanPham
-                            .getMaDonViSanPham(),
-                    donViSanPham
-            );
-        }
-
-        return donViTheoMa;
-    }
-
-    private void kiemTraDonViDuocBan(
-            DonViSanPham donViSanPham
-    ) {
-        if (donViSanPham == null
-                || donViSanPham.getSanPham() == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Thông tin đơn vị sản phẩm không hợp lệ."
-            );
-        }
-
-        if (!Boolean.TRUE.equals(
-                donViSanPham.getTrangThai()
-        )) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Đơn vị sản phẩm đã ngừng hoạt động."
-            );
-        }
-
-        if (!Boolean.TRUE.equals(
-                donViSanPham.getChoPhepBan()
-        )) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Đơn vị sản phẩm không được phép bán."
-            );
-        }
-
-        if (donViSanPham.getGiaBanTheoDonVi() == null
-                || donViSanPham
-                        .getGiaBanTheoDonVi()
-                        .compareTo(
-                                BigDecimal.ZERO
-                        ) <= 0) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Đơn vị sản phẩm chưa có giá bán hợp lệ."
-            );
-        }
-    }
 }

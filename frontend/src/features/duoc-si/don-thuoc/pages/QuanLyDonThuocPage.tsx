@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { isAxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 import ThongBaoHeThong from "../../../../shared/components/thong-bao/ThongBaoHeThong";
 import { useThongBaoHeThong } from "../../../../shared/hooks/useThongBaoHeThong";
 
+import type { DonHangDuocSiChiTiet } from "../../don-hang/types/DonHangDuocSi";
+import LenDonChoKhachModal from "../../len-don/components/LenDonChoKhachModal";
 import DuocSiLoading from "../../shared/components/loading/DuocSiLoading";
 import DuocSiXacNhan from "../../shared/components/xac-nhan/DuocSiXacNhan";
 
@@ -41,6 +44,7 @@ function layThongBaoLoi(error: unknown, macDinh: string) {
 }
 
 function QuanLyDonThuocPage() {
+  const navigate = useNavigate();
   const thongBao = useThongBaoHeThong();
 
   const [danhSachDonThuoc, setDanhSachDonThuoc] = useState<DonThuoc[]>([]);
@@ -74,6 +78,8 @@ function QuanLyDonThuocPage() {
   const [lyDoTuChoi, setLyDoTuChoi] = useState("");
 
   const [dangKiemDuyet, setDangKiemDuyet] = useState(false);
+
+  const [dangMoLenDon, setDangMoLenDon] = useState(false);
 
   const [thaoTacChoXacNhan, setThaoTacChoXacNhan] =
     useState<ThaoTacKiemDuyet>(null);
@@ -161,6 +167,7 @@ function QuanLyDonThuocPage() {
       return;
     }
 
+    setDangMoLenDon(false);
     setDonThuocChiTiet(null);
 
     setGhiChu("");
@@ -309,6 +316,21 @@ function QuanLyDonThuocPage() {
     if (thaoTacChoXacNhan === "TU_CHOI") {
       void xuLyTuChoi();
     }
+  };
+
+  const xuLyLenDonThanhCong = (donHang: DonHangDuocSiChiTiet) => {
+    setDangMoLenDon(false);
+    setDonThuocChiTiet(null);
+
+    thongBao.hienThongBao(
+      donHang.phuongThucThanhToan === "ZALOPAY"
+        ? `Đã tạo đơn #${donHang.maDonHang}. Khách hàng cần thanh toán ZaloPay trong tài khoản.`
+        : `Đã tạo đơn #${donHang.maDonHang} và chuyển sang trạng thái đang xử lý.`,
+      "THANH_CONG",
+      "Tạo đơn hàng thành công",
+    );
+
+    void taiDanhSachDonThuoc();
   };
 
   const dinhDangNgayGio = (giaTri: string) => {
@@ -712,10 +734,58 @@ function QuanLyDonThuocPage() {
                   )}
                 </div>
               )}
+
+              {donThuocChiTiet.trangThaiDonThuoc === "DA_DUYET" &&
+                (donThuocChiTiet.maDonHang !== null ? (
+                  <div className="ds-dt-section ds-dt-result">
+                    <h3>Đơn hàng đã được tạo</h3>
+
+                    <p>
+                      Đơn thuốc này đã được dùng để tạo đơn #{donThuocChiTiet.maDonHang}.
+                    </p>
+
+                    <div className="ds-dt-review-actions">
+                      <button
+                        type="button"
+                        className="ds-dt-button ds-dt-button--secondary"
+                        onClick={() => navigate("/duoc-si/don-hang")}
+                      >
+                        Đến quản lý đơn hàng
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="ds-dt-review-actions">
+                    <button
+                      type="button"
+                      className="ds-dt-button ds-dt-button--primary"
+                      onClick={() => setDangMoLenDon(true)}
+                    >
+                      Lên đơn cho khách
+                    </button>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
       )}
+
+      <LenDonChoKhachModal
+        dangHien={dangMoLenDon && donThuocChiTiet !== null}
+        nguon={
+          donThuocChiTiet
+            ? {
+                loaiNguon: "DON_THUOC",
+                maNguon: donThuocChiTiet.maDonThuoc,
+                maKhachHang: donThuocChiTiet.maKhachHang,
+                tenKhachHang: donThuocChiTiet.tenKhachHang,
+                soDienThoaiKhachHang: donThuocChiTiet.soDienThoaiKhachHang,
+              }
+            : null
+        }
+        onDong={() => setDangMoLenDon(false)}
+        onThanhCong={xuLyLenDonThanhCong}
+      />
     </div>
   );
 }

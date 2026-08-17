@@ -12,6 +12,7 @@ import lombok.Getter;
 public class DonThuocResponse {
 
     private Long maDonThuoc;
+    private Long maDonHang;
 
     private Long maKhachHang;
     private String tenKhachHang;

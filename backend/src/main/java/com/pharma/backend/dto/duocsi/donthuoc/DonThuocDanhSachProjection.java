@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public interface DonThuocDanhSachProjection {
 
     Long getMaDonThuoc();
+    Long getMaDonHang();
 
     Long getMaKhachHang();
     String getTenKhachHang();

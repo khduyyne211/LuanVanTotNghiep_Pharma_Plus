@@ -58,4 +58,7 @@ public class YeuCauTuVan {
     @CreationTimestamp
     @Column(name = "ngay_tao", nullable = false)
     private LocalDateTime ngayTao;
+
+    @OneToOne(mappedBy = "yeuCauTuVan", fetch = FetchType.LAZY)
+    private DonHang donHang;
 }

@@ -8,6 +8,7 @@ import com.pharma.backend.enums.tuvan.TrangThaiTuVan;
 public record YeuCauTuVanDuocSiChiTietResponseDto(
         Long maYeuCauTuVan,
         Long maKhachHang,
+        Long maDonHang,
         String tenKhachHang,
         String soDienThoai,
         String noiDungCanTuVan,

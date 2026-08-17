@@ -22,235 +22,195 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DiaChiGiaoHangService {
 
-        private final DiaChiGiaoHangRepository diaChiGiaoHangRepository;
-        private final KhachHangRepository khachHangRepository;
+    private final DiaChiGiaoHangRepository diaChiGiaoHangRepository;
+    private final KhachHangRepository khachHangRepository;
 
-        @Transactional(readOnly = true)
-        public List<DiaChiGiaoHangResponseDto> layDanhSachDiaChiDangSuDung(
-                        Long maKhachHang) {
-                return layDanhSachDiaChiDangSuDungCuaKhachHang(maKhachHang)
-                                .stream()
-                                .map(this::chuyenSangDiaChiGiaoHangResponseDto)
-                                .toList();
+    @Transactional(readOnly = true)
+    public List<DiaChiGiaoHangResponseDto> layDanhSachDiaChiDangSuDung(Long maKhachHang) {
+        return layDanhSachDiaChiDangSuDungCuaKhachHang(maKhachHang)
+                .stream()
+                .map(this::chuyenSangDiaChiGiaoHangResponseDto)
+                .toList();
+    }
+
+    @Transactional
+    public DiaChiGiaoHangResponseDto themDiaChiGiaoHang(
+            Long maKhachHang,
+            LuuDiaChiGiaoHangRequestDto request) {
+        DiaChiGiaoHang diaChiMoi = taoDiaChiGiaoHang(maKhachHang, request);
+        return chuyenSangDiaChiGiaoHangResponseDto(diaChiMoi);
+    }
+
+    /**
+     * Tạo địa chỉ giao hàng và trả về Entity đã lưu.
+     *
+     * Hàm này dùng cho các luồng nghiệp vụ nội bộ cần liên kết trực tiếp
+     * địa chỉ vừa tạo với đơn hàng, ví dụ Dược sĩ lên đơn cho khách.
+     */
+    @Transactional
+    public DiaChiGiaoHang taoDiaChiGiaoHang(
+            Long maKhachHang,
+            LuuDiaChiGiaoHangRequestDto request) {
+        KhachHang khachHang = layKhachHangDangHoatDong(maKhachHang);
+        List<DiaChiGiaoHang> danhSachDiaChi = layDanhSachDiaChiDangSuDungCuaKhachHang(maKhachHang);
+
+        DiaChiGiaoHang diaChiMoi = new DiaChiGiaoHang();
+        diaChiMoi.setKhachHang(khachHang);
+        diaChiMoi.setTrangThaiSuDung(true);
+
+        ganDuLieuDiaChi(diaChiMoi, request);
+
+        boolean laDiaChiDauTien = danhSachDiaChi.isEmpty();
+        boolean datLamMacDinh = laDiaChiDauTien || Boolean.TRUE.equals(request.getLaMacDinh());
+
+        if (datLamMacDinh) {
+            boMacDinhDanhSachDiaChi(danhSachDiaChi);
         }
 
-        @Transactional
-        public DiaChiGiaoHangResponseDto themDiaChiGiaoHang(
-                        Long maKhachHang,
-                        LuuDiaChiGiaoHangRequestDto request) {
-                KhachHang khachHang = layKhachHangDangHoatDong(maKhachHang);
-                List<DiaChiGiaoHang> danhSachDiaChi = layDanhSachDiaChiDangSuDungCuaKhachHang(maKhachHang);
+        diaChiMoi.setLaMacDinh(datLamMacDinh);
 
-                DiaChiGiaoHang diaChiMoi = new DiaChiGiaoHang();
-                diaChiMoi.setKhachHang(khachHang);
-                diaChiMoi.setTrangThaiSuDung(true);
+        return diaChiGiaoHangRepository.save(diaChiMoi);
+    }
 
-                ganDuLieuDiaChi(diaChiMoi, request);
+    @Transactional
+    public DiaChiGiaoHangResponseDto capNhatDiaChiGiaoHang(
+            Long maKhachHang,
+            Long maDiaChi,
+            LuuDiaChiGiaoHangRequestDto request) {
+        DiaChiGiaoHang diaChi = layDiaChiDangSuDung(maDiaChi, maKhachHang);
+        List<DiaChiGiaoHang> danhSachDiaChi = layDanhSachDiaChiDangSuDungCuaKhachHang(maKhachHang);
 
-                boolean laDiaChiDauTien = danhSachDiaChi.isEmpty();
-                boolean datLamMacDinh = laDiaChiDauTien
-                                || Boolean.TRUE.equals(request.getLaMacDinh());
+        ganDuLieuDiaChi(diaChi, request);
+        xuLyMacDinhKhiCapNhat(diaChi, danhSachDiaChi, request.getLaMacDinh());
 
-                if (datLamMacDinh) {
-                        boMacDinhDanhSachDiaChi(danhSachDiaChi);
-                }
+        DiaChiGiaoHang diaChiDaCapNhat = diaChiGiaoHangRepository.save(diaChi);
+        return chuyenSangDiaChiGiaoHangResponseDto(diaChiDaCapNhat);
+    }
 
-                diaChiMoi.setLaMacDinh(datLamMacDinh);
+    @Transactional
+    public void xoaDiaChiGiaoHang(Long maKhachHang, Long maDiaChi) {
+        DiaChiGiaoHang diaChi = layDiaChiDangSuDung(maDiaChi, maKhachHang);
+        List<DiaChiGiaoHang> danhSachDiaChi = layDanhSachDiaChiDangSuDungCuaKhachHang(maKhachHang);
 
-                DiaChiGiaoHang diaChiDaLuu = diaChiGiaoHangRepository.save(diaChiMoi);
+        boolean laDiaChiMacDinh = Boolean.TRUE.equals(diaChi.getLaMacDinh());
 
-                return chuyenSangDiaChiGiaoHangResponseDto(diaChiDaLuu);
+        diaChi.setTrangThaiSuDung(false);
+        diaChi.setLaMacDinh(false);
+        diaChiGiaoHangRepository.save(diaChi);
+
+        if (laDiaChiMacDinh) {
+            datDiaChiKhacLamMacDinh(danhSachDiaChi, maDiaChi);
+        }
+    }
+
+    private void xuLyMacDinhKhiCapNhat(
+            DiaChiGiaoHang diaChi,
+            List<DiaChiGiaoHang> danhSachDiaChi,
+            Boolean yeuCauMacDinh) {
+        if (Boolean.TRUE.equals(yeuCauMacDinh)) {
+            boMacDinhDanhSachDiaChi(danhSachDiaChi);
+            diaChi.setLaMacDinh(true);
+            return;
         }
 
-        @Transactional
-        public DiaChiGiaoHangResponseDto capNhatDiaChiGiaoHang(
-                        Long maKhachHang,
-                        Long maDiaChi,
-                        LuuDiaChiGiaoHangRequestDto request) {
-                DiaChiGiaoHang diaChi = layDiaChiDangSuDung(maDiaChi, maKhachHang);
-
-                List<DiaChiGiaoHang> danhSachDiaChi = layDanhSachDiaChiDangSuDungCuaKhachHang(maKhachHang);
-
-                ganDuLieuDiaChi(diaChi, request);
-                xuLyMacDinhKhiCapNhat(
-                                diaChi,
-                                danhSachDiaChi,
-                                request.getLaMacDinh());
-
-                DiaChiGiaoHang diaChiDaCapNhat = diaChiGiaoHangRepository.save(diaChi);
-
-                return chuyenSangDiaChiGiaoHangResponseDto(
-                                diaChiDaCapNhat);
+        if (!Boolean.TRUE.equals(diaChi.getLaMacDinh())) {
+            diaChi.setLaMacDinh(false);
+            return;
         }
 
-        @Transactional
-        public void xoaDiaChiGiaoHang(
-                        Long maKhachHang,
-                        Long maDiaChi) {
-                DiaChiGiaoHang diaChi = layDiaChiDangSuDung(maDiaChi, maKhachHang);
+        Optional<DiaChiGiaoHang> diaChiKhac = timDiaChiKhac(danhSachDiaChi, diaChi.getMaDiaChi());
 
-                List<DiaChiGiaoHang> danhSachDiaChi = layDanhSachDiaChiDangSuDungCuaKhachHang(maKhachHang);
+        if (diaChiKhac.isPresent()) {
+            diaChi.setLaMacDinh(false);
 
-                boolean laDiaChiMacDinh = Boolean.TRUE.equals(diaChi.getLaMacDinh());
+            DiaChiGiaoHang diaChiMacDinhMoi = diaChiKhac.get();
+            diaChiMacDinhMoi.setLaMacDinh(true);
+            diaChiGiaoHangRepository.save(diaChiMacDinhMoi);
+        } else {
+            diaChi.setLaMacDinh(true);
+        }
+    }
 
-                diaChi.setTrangThaiSuDung(false);
-                diaChi.setLaMacDinh(false);
-                diaChiGiaoHangRepository.save(diaChi);
+    private void datDiaChiKhacLamMacDinh(List<DiaChiGiaoHang> danhSachDiaChi, Long maDiaChiDaXoa) {
+        timDiaChiKhac(danhSachDiaChi, maDiaChiDaXoa)
+                .ifPresent(diaChi -> {
+                    diaChi.setLaMacDinh(true);
+                    diaChiGiaoHangRepository.save(diaChi);
+                });
+    }
 
-                if (laDiaChiMacDinh) {
-                        datDiaChiKhacLamMacDinh(
-                                        danhSachDiaChi,
-                                        maDiaChi);
-                }
+    private Optional<DiaChiGiaoHang> timDiaChiKhac(
+            List<DiaChiGiaoHang> danhSachDiaChi,
+            Long maDiaChiCanBoQua) {
+        return danhSachDiaChi
+                .stream()
+                .filter(diaChi -> !diaChi.getMaDiaChi().equals(maDiaChiCanBoQua))
+                .findFirst();
+    }
+
+    private void boMacDinhDanhSachDiaChi(List<DiaChiGiaoHang> danhSachDiaChi) {
+        danhSachDiaChi.forEach(diaChi -> diaChi.setLaMacDinh(false));
+        diaChiGiaoHangRepository.saveAll(danhSachDiaChi);
+    }
+
+    private void ganDuLieuDiaChi(
+            DiaChiGiaoHang diaChi,
+            LuuDiaChiGiaoHangRequestDto request) {
+        TinhThanhGiaoHang tinhThanhGiaoHang = TinhThanhGiaoHang
+                .timTheoTenHienThi(request.getThanhPho())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Hiện hệ thống chưa hỗ trợ giao hàng tại tỉnh/thành phố này."));
+
+        diaChi.setTenNguoiNhan(request.getTenNguoiNhan().trim());
+        diaChi.setSoDienThoaiNhan(request.getSoDienThoaiNhan().trim());
+
+        /*
+         * Luôn lưu tên chuẩn từ enum,
+         * không lấy nguyên chuỗi client gửi lên.
+         */
+        diaChi.setThanhPho(tinhThanhGiaoHang.getTenHienThi());
+        diaChi.setPhuongKhuVuc(request.getPhuongKhuVuc().trim());
+        diaChi.setDiaChiChiTiet(request.getDiaChiChiTiet().trim());
+    }
+
+    private KhachHang layKhachHangDangHoatDong(Long maKhachHang) {
+        if (maKhachHang == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Không xác định được khách hàng đang đăng nhập.");
         }
 
-        private void xuLyMacDinhKhiCapNhat(
-                        DiaChiGiaoHang diaChi,
-                        List<DiaChiGiaoHang> danhSachDiaChi,
-                        Boolean yeuCauMacDinh) {
-                if (Boolean.TRUE.equals(yeuCauMacDinh)) {
-                        boMacDinhDanhSachDiaChi(danhSachDiaChi);
-                        diaChi.setLaMacDinh(true);
-                        return;
-                }
+        return khachHangRepository
+                .findById(maKhachHang)
+                .filter(khachHang -> Boolean.TRUE.equals(khachHang.getTrangThai()))
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Không tìm thấy khách hàng đang hoạt động."));
+    }
 
-                if (!Boolean.TRUE.equals(diaChi.getLaMacDinh())) {
-                        diaChi.setLaMacDinh(false);
-                        return;
-                }
+    private DiaChiGiaoHang layDiaChiDangSuDung(Long maDiaChi, Long maKhachHang) {
+        return diaChiGiaoHangRepository
+                .findByMaDiaChiAndKhachHang_MaKhachHangAndTrangThaiSuDungTrue(maDiaChi, maKhachHang)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Không tìm thấy địa chỉ giao hàng."));
+    }
 
-                Optional<DiaChiGiaoHang> diaChiKhac = timDiaChiKhac(danhSachDiaChi, diaChi.getMaDiaChi());
+    private List<DiaChiGiaoHang> layDanhSachDiaChiDangSuDungCuaKhachHang(Long maKhachHang) {
+        return diaChiGiaoHangRepository
+                .findByKhachHang_MaKhachHangAndTrangThaiSuDungTrueOrderByLaMacDinhDescMaDiaChiDesc(maKhachHang);
+    }
 
-                if (diaChiKhac.isPresent()) {
-                        diaChi.setLaMacDinh(false);
-
-                        DiaChiGiaoHang diaChiMacDinhMoi = diaChiKhac.get();
-
-                        diaChiMacDinhMoi.setLaMacDinh(true);
-                        diaChiGiaoHangRepository.save(
-                                        diaChiMacDinhMoi);
-                } else {
-                        diaChi.setLaMacDinh(true);
-                }
-        }
-
-        private void datDiaChiKhacLamMacDinh(
-                        List<DiaChiGiaoHang> danhSachDiaChi,
-                        Long maDiaChiDaXoa) {
-                timDiaChiKhac(danhSachDiaChi, maDiaChiDaXoa)
-                                .ifPresent(diaChi -> {
-                                        diaChi.setLaMacDinh(true);
-                                        diaChiGiaoHangRepository.save(diaChi);
-                                });
-        }
-
-        private Optional<DiaChiGiaoHang> timDiaChiKhac(
-                        List<DiaChiGiaoHang> danhSachDiaChi,
-                        Long maDiaChiCanBoQua) {
-                return danhSachDiaChi
-                                .stream()
-                                .filter(diaChi -> !diaChi.getMaDiaChi()
-                                                .equals(maDiaChiCanBoQua))
-                                .findFirst();
-        }
-
-        private void boMacDinhDanhSachDiaChi(
-                        List<DiaChiGiaoHang> danhSachDiaChi) {
-                danhSachDiaChi.forEach(
-                                diaChi -> diaChi.setLaMacDinh(false));
-
-                diaChiGiaoHangRepository.saveAll(
-                                danhSachDiaChi);
-        }
-
-        private void ganDuLieuDiaChi(
-                DiaChiGiaoHang diaChi,
-                LuuDiaChiGiaoHangRequestDto request
-        ) {
-                TinhThanhGiaoHang tinhThanhGiaoHang =
-                        TinhThanhGiaoHang
-                                .timTheoTenHienThi(
-                                        request.getThanhPho()
-                                )
-                                .orElseThrow(() ->
-                                        new ResponseStatusException(
-                                                HttpStatus.BAD_REQUEST,
-                                                "Hiện hệ thống chưa hỗ trợ giao hàng "
-                                                        + "tại tỉnh/thành phố này."
-                                        )
-                                );
-
-                diaChi.setTenNguoiNhan(
-                        request.getTenNguoiNhan().trim()
-                );
-
-                diaChi.setSoDienThoaiNhan(
-                        request.getSoDienThoaiNhan().trim()
-                );
-
-                /*
-                * Luôn lưu tên chuẩn từ enum,
-                * không lấy nguyên chuỗi client gửi lên.
-                */
-                diaChi.setThanhPho(
-                        tinhThanhGiaoHang.getTenHienThi()
-                );
-
-                diaChi.setPhuongKhuVuc(
-                        request.getPhuongKhuVuc().trim()
-                );
-
-                diaChi.setDiaChiChiTiet(
-                        request.getDiaChiChiTiet().trim()
-                );
-        }
-
-        private KhachHang layKhachHangDangHoatDong(
-                        Long maKhachHang) {
-                if (maKhachHang == null) {
-                        throw new ResponseStatusException(
-                                        HttpStatus.UNAUTHORIZED,
-                                        "Không xác định được khách hàng đang đăng nhập.");
-                }
-
-                return khachHangRepository
-                                .findById(maKhachHang)
-                                .filter(khachHang -> Boolean.TRUE.equals(
-                                                khachHang.getTrangThai()))
-                                .orElseThrow(() -> new ResponseStatusException(
-                                                HttpStatus.NOT_FOUND,
-                                                "Không tìm thấy khách hàng đang hoạt động."));
-        }
-
-        private DiaChiGiaoHang layDiaChiDangSuDung(
-                        Long maDiaChi,
-                        Long maKhachHang) {
-                return diaChiGiaoHangRepository
-                                .findByMaDiaChiAndKhachHang_MaKhachHangAndTrangThaiSuDungTrue(
-                                                maDiaChi,
-                                                maKhachHang)
-                                .orElseThrow(() -> new ResponseStatusException(
-                                                HttpStatus.NOT_FOUND,
-                                                "Không tìm thấy địa chỉ giao hàng."));
-        }
-
-        private List<DiaChiGiaoHang> layDanhSachDiaChiDangSuDungCuaKhachHang(
-                        Long maKhachHang) {
-                return diaChiGiaoHangRepository
-                                .findByKhachHang_MaKhachHangAndTrangThaiSuDungTrueOrderByLaMacDinhDescMaDiaChiDesc(
-                                                maKhachHang);
-        }
-
-        private DiaChiGiaoHangResponseDto chuyenSangDiaChiGiaoHangResponseDto(
-                        DiaChiGiaoHang diaChi) {
-                return new DiaChiGiaoHangResponseDto(
-                                diaChi.getMaDiaChi(),
-                                diaChi.getTenNguoiNhan(),
-                                diaChi.getSoDienThoaiNhan(),
-                                diaChi.getThanhPho(),
-                                diaChi.getPhuongKhuVuc(),
-                                diaChi.getDiaChiChiTiet(),
-                                diaChi.getLaMacDinh(),
-                                diaChi.getTrangThaiSuDung());
-        }
+    private DiaChiGiaoHangResponseDto chuyenSangDiaChiGiaoHangResponseDto(DiaChiGiaoHang diaChi) {
+        return new DiaChiGiaoHangResponseDto(
+                diaChi.getMaDiaChi(),
+                diaChi.getTenNguoiNhan(),
+                diaChi.getSoDienThoaiNhan(),
+                diaChi.getThanhPho(),
+                diaChi.getPhuongKhuVuc(),
+                diaChi.getDiaChiChiTiet(),
+                diaChi.getLaMacDinh(),
+                diaChi.getTrangThaiSuDung());
+    }
 }

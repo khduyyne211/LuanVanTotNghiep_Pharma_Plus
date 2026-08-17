@@ -21,6 +21,7 @@ export type YeuCauTuVanDuocSiDanhSach = {
 export type YeuCauTuVanDuocSiChiTiet = {
   maYeuCauTuVan: number;
   maKhachHang: number | null;
+  maDonHang: number | null;
   tenKhachHang: string;
   soDienThoai: string;
   noiDungCanTuVan: string;

@@ -50,6 +50,10 @@ public class DonHang {
     private DonThuoc donThuoc;
 
     @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "ma_yeu_cau_tu_van", nullable = true, unique = true)
+    private YeuCauTuVan yeuCauTuVan;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "ma_gio_hang", nullable = true)
     private GioHang gioHang;
 
@@ -68,7 +72,7 @@ public class DonHang {
     @Digits(integer = 13, fraction = 2)
     @Column(name = "tong_tien_hang", nullable = false, precision = 15, scale = 2)
     private BigDecimal tongTienHang = new BigDecimal("0.00");
-    
+
     @Digits(integer = 13, fraction = 2)
     @Column(name = "phi_giao_hang", nullable = false, precision = 15, scale = 2)
     private BigDecimal phiGiaoHang = new BigDecimal("0.00");
